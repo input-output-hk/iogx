@@ -7,7 +7,7 @@ let
     shellName = "antaeus";
     systems = [ "x86_64-linux" "x86_64-darwin" ];
     haskell.compilers = [ "ghc8107" ];
-    crossSystem = "x86_64-linux";
+    haskell.crossSystem = "x86_64-linux";
   };
 in
 flake

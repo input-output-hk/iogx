@@ -1,4 +1,4 @@
 { iogx-inputs, user-inputs }:
 
 # TODO
-user-inputs // iogx-inputs
+user-inputs // iogx-inputs // { self = user-inputs.self; }

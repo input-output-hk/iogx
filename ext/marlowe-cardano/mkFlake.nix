@@ -1,7 +1,7 @@
 { iogx-inputs }:
 
 let
-  flake = iogx-inputs.self.mkFlake { } {
+  flake = iogx-inputs.self.mkFlake { self = flake; } {
     repoRoot = iogx-inputs.marlowe-cardano;
     shellName = "marlowe-cardano";
     nixFolder = ./nix;

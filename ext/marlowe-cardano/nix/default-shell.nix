@@ -38,12 +38,12 @@ in
     export PGUSER=postgres
   '';
 
-  # scripts = {
-  #   re-up = {
-  #     description = "re-up";
-  #     exec = scripts.re-up;
-  #     enabled = pkgs.stdenv.system == "x86_64-linux";
-  #   };
-  #   start-cardano-node.exec = scripts.start-cardano-node;
-  # };
+  scripts = {
+    re-up = {
+      description = "re-up";
+      exec = scripts.re-up;
+      enabled = pkgs.stdenv.system == "x86_64-linux";
+    };
+    start-cardano-node.exec = scripts.start-cardano-node;
+  };
 }

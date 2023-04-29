@@ -50,7 +50,8 @@ let
 
       flake' = prefixFlake { inherit ghc cross profiled flake; };
 
-      flake'' = flake' // {
+      flake'' = flake' // rec {
+        ciJobs = hydraJobs;
         hydraJobs = iogx.core.hydraJobs {
           hydraJobs = flake'.hydraJobs;
         };

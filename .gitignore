@@ -1,1 +1,5 @@
 private
+result
+__repo__
+.devenv
+.pre-commit-config.yaml

@@ -1,0 +1,3 @@
+- Wait for admin powers on the repo
+- Setup hydra on GitHub
+- Fix failing tests https://ci.zw3rk.com/build/2097292/nixlog/73

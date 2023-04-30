@@ -1,11 +1,11 @@
 { inputs, pkgs, flakeopts, iogx, ... }:
 
-{ ghc, shell }:
+{ shell }:
 
 let
   l = pkgs.lib;
 
-  haskell-toolchain = iogx.toolchain."haskell-toolchain-${ghc}";
+  haskell-toolchain = iogx.toolchain."haskell-toolchain-${shell.ghc}";
 
   optional-env = l.optional (shell ? CABAL_CONFIG) {
     CABAL_CONFIG = shell.CABAL_CONFIG;
@@ -17,14 +17,12 @@ let
   };
 
   shellPackages =
-
     shell.buildInputs ++
     shell.nativeBuildInputs ++
     shell.stdenv.defaultNativeBuildInputs ++
     [
       shell.stdenv.cc.bintools
 
-      iogx.toolchain.sphinx-toolchain
       iogx.toolchain.nixpkgs-fmt
       iogx.toolchain.scriv
       iogx.toolchain.fix-cabal-fmt
@@ -37,7 +35,6 @@ let
       haskell-toolchain.haskell-language-server
       haskell-toolchain.haskell-language-server-wrapper
       haskell-toolchain.hlint
-      # haskell-toolchain.hie-bios
       haskell-toolchain.stylish-haskell
 
       pkgs.nodePackages.prettier

@@ -1,4 +1,6 @@
-{ pkgs, flakeopts, sphinx-toolchain, combined-plutus-haddock }:
+{ pkgs, iogx, flakeopts, ... }:
+
+ghc:
 
 pkgs.stdenv.mkDerivation {
 
@@ -9,7 +11,7 @@ pkgs.stdenv.mkDerivation {
 
   buildInputs = [
 
-    sphinx-toolchain
+    iogx.toolchain.sphinx-toolchain
     # We need this here in order to get the `plantuml` executable in PATH.
     # Unfortunately `python3.withPackages` (used by sphinx-toolchain above)
     # won't do it automatically.
@@ -19,7 +21,7 @@ pkgs.stdenv.mkDerivation {
   dontInstall = true;
 
   buildPhase = ''
-    cp -aR ${combined-plutus-haddock}/share/doc haddock
+    cp -aR ${iogx.readthedoc.project-haddock ghc}/share/doc haddock
     # -n gives warnings on missing link targets, -W makes warnings into errors
     SPHINX_HADDOCK_DIR=haddock sphinx-build -n -W . $out
     cp -aR haddock $out

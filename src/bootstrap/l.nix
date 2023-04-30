@@ -5,6 +5,8 @@ let
 
   utils = rec {
 
+    composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
+
     mergePrefixFlakes = flake1: flake2: prefix:
       l.recursiveUpdate flake1 (l.mapAttrs (_: value: nestAttrs value [ prefix ]) flake2);
 
@@ -17,7 +19,7 @@ let
     maximumBy = f: l.foldl' (x: max: if f x > f max then x else max);
 
     # TODO is this in the stdlib?
-    getAttrWithDefault = name: set: def:
+    getAttrWithDefault = name: def: set:
       if l.hasAttr name set then
         l.getAttr name set
       else
@@ -48,7 +50,6 @@ let
           set // { ${name} = deleteAttrByPath rest set.${name}; }
         else
           set;
-
 
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 

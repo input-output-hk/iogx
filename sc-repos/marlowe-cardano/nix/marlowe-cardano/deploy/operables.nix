@@ -14,13 +14,13 @@ let
     ;
   inherit (bitte-cells._utils.packages) srvaddr;
 
-  marlowe-chain-indexer = self.packages."marlowe-chain-sync:exe:marlowe-chain-indexer";
-  marlowe-chain-sync = self.packages."marlowe-chain-sync:exe:marlowe-chain-sync";
-  marlowe-tx = self.packages."marlowe-runtime:exe:marlowe-tx";
-  marlowe-proxy = self.packages."marlowe-runtime:exe:marlowe-proxy";
-  marlowe-indexer = self.packages."marlowe-runtime:exe:marlowe-indexer";
-  marlowe-web-server = self.packages."marlowe-runtime-web:exe:marlowe-web-server";
-  marlowe-sync = self.packages."marlowe-runtime:exe:marlowe-sync";
+  marlowe-chain-indexer = self.packages.ghc8107-marlowe-chain-sync-exe-marlowe-chain-indexer;
+  marlowe-chain-sync = self.packages.ghc8107-marlowe-chain-sync-exe-marlowe-chain-sync;
+  marlowe-tx = self.packages.ghc8107-marlowe-runtime-exe-marlowe-tx;
+  marlowe-proxy = self.packages.ghc8107-marlowe-runtime-exe-marlowe-proxy;
+  marlowe-indexer = self.packages.ghc8107-marlowe-runtime-exe-marlowe-indexer;
+  marlowe-web-server = self.packages.ghc8107-marlowe-runtime-web-exe-marlowe-web-server;
+  marlowe-sync = self.packages.ghc8107-marlowe-runtime-exe-marlowe-sync;
 
   # Ensure this path only changes when sqitch.plan file is updated, or DDL
   # files are updated.

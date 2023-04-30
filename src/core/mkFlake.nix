@@ -1,23 +1,25 @@
 { inputs, systemized-inputs, flakeopts, pkgs, l, iogx, ... }:
 
 let
-
   # marlowe:runtime-web:lib:server ->
   #   ghc8107-marlowe-runtime-web-lib-server-profiled
   #   ghc8107-marlowe-runtime-web-lib-server
   #   ghc8107-mingwW64-marlowe-runtime-web-lib-server-profiled
   #   ghc8107-mingwW64-marlowe-runtime-web-lib-server
-  prefixFlake = { flake, ghc, cross, profiled }:
+  renameFlakeOutputs = { flake, ghc, cross, profiled }:
     let
       replaceCons = l.replaceStrings [ ":" ] [ "-" ];
 
       prefixName = name:
         let
+          # is-single-compiler = l.listLength flakeopts.haskellCompilers == 1;
+          # is-default-compiler = ghc == flakeopts.defaultHaskellCompiler;
+          prefix = flakeopts.flakeOutputsPrefix;
           cross' = l.optionalString cross "-mingwW64";
           name' = "-${replaceCons name}";
           profiled' = l.optionalString profiled "-profiled";
         in
-        l.nameValuePair "${ghc}${cross'}${name'}${profiled'}";
+        l.nameValuePair "${prefix}${ghc}${cross'}${name'}${profiled'}";
 
       prefixGroup = group: attrs:
         if group == "hydraJobs" then
@@ -30,80 +32,139 @@ let
     l.mapAttrs prefixGroup flake;
 
 
-  mkFlakeFor = { ghc, cross, profiled, haddock }:
+  mkFlakeFor = { ghc, cross, profiled }:
     let
-      project' = flakeopts.haskell.project {
+      project' = flakeopts.haskellProjectFile {
         inherit inputs systemized-inputs flakeopts pkgs ghc;
+        deferPluginErrors = false;
         enableProfiling = profiled;
-        deferPluginErrors = haddock;
       };
 
       project = if cross then project'.projectCross.mingwW64 else project';
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake project {
-        devShell = iogx.core.devenvShell {
-          inherit ghc;
-          flake = final-flake; # TODO note the rec, use merged-flakes instead? 
-          shell = project.shellFor { withHoogle = false; };
-        };
-      };
-
-      flake' = prefixFlake { inherit ghc cross profiled flake; };
-
-      flake'' = flake' // rec {
-        ciJobs = hydraJobs;
-        hydraJobs = iogx.core.hydraJobs {
-          hydraJobs = flake'.hydraJobs;
-        };
+        # NOTE: we append the ghc to the shell, so that we can retrieve it 
+        # later when making the devenvShell.
+        devShell = project.shellFor { withHoogle = false; } // { inherit ghc; };
       };
     in
-    flake'';
+    renameFlakeOutputs { inherit ghc cross profiled flake; };
 
 
   mkFlakeForCompiler = ghc:
     let
       unprofiled-flake =
-        mkFlakeFor { ghc = ghc; profiled = false; cross = false; haddock = false; };
-
+        mkFlakeFor { inherit ghc; profiled = false; cross = false; };
       profiled-flake =
-        mkFlakeFor { ghc = ghc; profiled = true; cross = false; haddock = false; };
-
+        mkFlakeFor { inherit ghc; profiled = true; cross = false; };
       cross-unprofiled-flake =
-        mkFlakeFor { ghc = ghc; profiled = false; cross = true; haddock = false; };
-
+        mkFlakeFor { inherit ghc; profiled = false; cross = true; };
       cross-profiled-flake =
-        mkFlakeFor { ghc = ghc; profiled = true; cross = true; haddock = false; };
+        mkFlakeFor { inherit ghc; profiled = true; cross = true; };
 
       native-flakes = [ unprofiled-flake profiled-flake ];
-
-      should-cross-compile = flakeopts.haskell.crossSystem == pkgs.stdenv.system;
-
+      should-cross-compile = flakeopts.haskellCrossSystem == pkgs.stdenv.system;
       cross-flakes = [ cross-unprofiled-flake cross-profiled-flake ];
-
       all-flakes = native-flakes ++ l.optionals should-cross-compile cross-flakes;
-
-      final-flake = l.recursiveUpdateMany all-flakes;
     in
-    final-flake;
+    l.recursiveUpdateMany all-flakes;
 
 
-  merged-flake =
+  # Manually add the default devShell, since all existing devShells in the 
+  # flake are prefixed by the compiler name (e.g. ghc8107-default).
+  addDefaultDevenvShell = flake:
     let
-      all-flakes = map mkFlakeForCompiler flakeopts.haskell.compilers;
+      ghc = "${flakeopts.defaultHaskellCompiler}-default";
+      flake' = { devShells.default = flake.devShells.${ghc}; };
+    in
+    l.recursiveUpdate flake flake';
 
-      final-flake = l.recursiveUpdateMany all-flakes;
 
-      default-devshell = {
-        devShells.default = final-flake.devShells."${flakeopts.haskell.defaultCompiler}-default";
+  addUserPerSystemOutputs = flake:
+    let
+      flake' = flakeopts.perSystemOutputs
+        { inherit inputs systemized-inputs flakeopts pkgs; };
+    in
+    l.recursiveUpdate flake flake';
+
+
+  addReadTheDocsPackages = flake:
+    let
+      flake' = rec {
+        packages = iogx.readthedocs.sites;
+        hydraJobs.packages = packages;
       };
     in
-    l.recursiveUpdate final-flake default-devshell;
+    if flakeopts.includeReadTheDocsSite then
+      l.recursiveUpdate flake flake'
+    else
+      flake;
 
 
-  user-flake = flakeopts.perSystemOutputs
-    { inherit inputs systemized-inputs flakeopts pkgs; };
+  addDevShells = flake:
+    let
+      mkDevShell = _: shell: iogx.core.mkDevShell.mkDevShell { inherit shell flake; };
+      flake' = { devShells = l.mapAttrs mkDevShell flake.devShells; };
+    in
+    if flakeopts.includeDevShells then
+      l.recursiveUpdate flake flake'
+    else
+      flake;
 
-  final-flake = l.recursiveUpdate merged-flake user-flake;
+
+  addHydraJobs = flake:
+    let
+      flake' = rec {
+        hydraJobs = iogx.core.mkHydraJobs { inherit flake; };
+        ciJobs = hydraJobs;
+      };
+    in
+    if flakeopts.includeHydraJobs then
+      flake // flake'
+    else
+      flake;
+
+
+  removeUnwantedOutputs = flake:
+    let
+      attrs =
+        l.optionals (!flakeopts.includeHaskellApps) [ "apps" ] ++
+        l.optionals (!flakeopts.includeHaskellChecks) [ "checks" ] ++
+        l.optionals (!flakeopts.includeHaskellPackages) [ "packages" ] ++
+        [ "devShell" ]; # We always remove the legacy devShell
+    in
+    removeAttrs flake attrs;
+
+
+  mergeBaseFlake = flake:
+    l.recursiveUpdate flakeopts.baseFlake flake;
+
+
+  mkFinalFlake =
+    l.composeManyLeft [
+      # First we remove the unwanted stuff
+      removeUnwantedOutputs
+      # Then we add the user outputs
+      addUserPerSystemOutputs
+      # Then we add the readthedocs stuff both to packages and hydraJobs
+      addReadTheDocsPackages
+      # Then we add the devShells
+      addDevShells
+      # Must come after addDevShells
+      addDefaultDevenvShell
+      # We can now add the hydraJobs, since the flake is fully populated now
+      addHydraJobs
+      # And finally merge with the existing flake
+      mergeBaseFlake
+    ];
+
+
+  __finalflake__ =
+    let
+      all-flakes = map mkFlakeForCompiler flakeopts.haskellCompilers;
+      merged-flake = l.recursiveUpdateMany all-flakes;
+    in
+    mkFinalFlake merged-flake;
 
 in
-final-flake
+__finalflake__

@@ -8,22 +8,26 @@ let
 
   modularise = import ./modularise.nix { inherit l; };
 
-  mkFlake = user-inputs: unvalidated-flakeopts:
+  mkFlake = unvalidated-flakeopts:
     let
-      merged-inputs = import ./merge-inputs.nix { inherit iogx-inputs user-inputs; };
       flakeopts = import ./validate-flakeopts.nix { inherit unvalidated-flakeopts l; };
+
+      merged-inputs = import ./merge-inputs.nix {
+        inherit iogx-inputs;
+        user-inputs = flakeopts.inputs;
+      };
     in
     iogx-inputs.flake-utils.lib.eachSystem flakeopts.systems (system:
       let
         iogx = modularise {
+          root = ../.;
+          module = "iogx";
           args = {
             inherit flakeopts l;
             inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
             systemized-inputs = merged-inputs;
             pkgs = import ./pkgs.nix { inherit iogx-inputs system; };
           };
-          src = ../.;
-          module = "iogx";
         };
       in
       iogx.core.mkFlake

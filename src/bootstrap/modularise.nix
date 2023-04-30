@@ -1,13 +1,13 @@
 { l }:
 
-{ args, src, module }:
+{ root, module, args }:
 
 let
-  fileToModule = root: path:
+  fileToModule = dir: path:
     if l.hasSuffix ".nix" path then
       let
         name = l.removeSuffix ".nix" path;
-        value = import "${root}/${path}" (args // { "${module}" = __module__; });
+        value = import "${dir}/${path}" (args // { ${module} = __module__; });
       in
       l.nameValuePair name value
     else
@@ -15,27 +15,27 @@ let
   # TODO 
   # l.throw "[modularise] ${path} is not a nix file.";
 
-  dirToModule = root: path:
+  dirToModule = dir: path:
     let
       name = path;
-      value = l.mapAttrs' (pathToModule "${root}/${path}") (l.readDir "${root}/${path}");
+      value = l.mapAttrs' (pathToModule "${dir}/${path}") (l.readDir "${dir}/${path}");
     in
     l.nameValuePair name value;
 
-  pathToModule = root: path: type:
+  pathToModule = dir: path: type:
     if type == "directory" then
-      dirToModule root path
+      dirToModule dir path
     else if type == "regular" then
-      fileToModule root path
+      fileToModule dir path
     else
-      l.throw "[modularise] unexpected file ${root}/${path} of type ${type}.";
+      l.throw "[modularise] unexpected file ${dir}/${path} of type ${type}.";
 
   mkModule = path:
     if !l.pathExists path then
-      l.throw "[modularise] path ${src} does not exist."
+      l.throw "[modularise] path ${path} does not exist."
     else
       (dirToModule "" path).value;
 
-  __module__ = mkModule (l.toPath src);
+  __module__ = mkModule (l.toPath root);
 in
 __module__

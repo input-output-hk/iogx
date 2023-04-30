@@ -54,7 +54,7 @@
         # This is a required field and cannot be the empty list.
         # Available compilers are: 
         #   ghc8107 ghc924
-        haskell.compilers = [ "ghc8107" ];
+        haskellCompilers = [ "ghc8107" ];
 
         # Only for cosmetic purposes, the shell name will be included in the 
         # default `shellPrompt` and appear in the shell welcome message. 
@@ -82,25 +82,25 @@
         # The default GHC compiler.
         # When running `nix develop` this is the compiler that will be available 
         # in the shell. 
-        # It defaults to the first compiler in `haskell.compilers`.
-        # haskell.defaultCompiler = "ghc8107";
+        # It defaults to the first compiler in `haskellCompilers`.
+        # defaultHaskellCompiler = "ghc8107";
 
         # The host system for cross-compiling on migwW64.
         # Do not set this value if your project does not support 
         # cross-compilation, otherwise set this value to the host system, 
         # usually `x86_64-linux`.
-        # haskell.crossSystem = "x86_64-linux";
+        # haskellCrossSystem = "x86_64-linux";
 
         # A list of derivations to be excluded from CI.
         # Each item in the list is an attribute path inside `hydraJobs` in the 
         # form of a dot-string. For example:
         #   [ "packages.my-attrs.my-nested-attr.my-pkg" "checks.exclude-me" ]
         # This defaults to the empty list.
-        # hydraJobs.blacklistedDerivations = [];
+        # blacklistedHydraJobs = [];
 
         # Whether to exclude profiled haskell builds from CI.
         # This defaults to true: we don't run profiled haskell builds in CI.
-        # hydraJobs.excludeProfiledHaskell = true;
+        # excludeProfiledHaskellFromHydraJobs = true;
 
         # Shell prompt i.e. the value of the `PS1` evnvar. 
         # Defaults to the legacy nix-shell green prompt using the `shellName`.

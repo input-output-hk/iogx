@@ -1,90 +1,75 @@
 { unvalidated-flakeopts, l }:
+
 let
-  c = unvalidated-flakeopts;
 
-  findFile = path: default:
-    if l.hasAttrByPath path c then
-      l.attrByPath path c
-    else if l.pathExists (c.nixFolder + "/${default}/default.nix") then
-      import (c.nixFolder + "/${default}/default.nix")
-    else if l.pathExists (c.nixFolder + "/${default}.nix") then
-      import (c.nixFolder + "/${default}.nix")
-    else
-      (_: { });
+  optionalFile = path:
+    if l.pathExists path then import path else _: { };
 
+
+  validateOptions =
+    { inputs ? { }
+    , debug ? false
+    , flakeOutputsPrefix ? ""
+    , systems ? [ "x86_64-linux" "x86_64-darwin" ]
+    , repoRoot
+    , haskellCompilers ? [ "ghc8107" ]
+    , defaultHaskellCompiler ? l.head haskellCompilers
+    , haskellCrossSystem ? null
+    , haskellProjectFile ? optionalFile (repoRoot + "/nix/haskell-project.nix")
+      # Selective including
+    , includeHaskellApps ? true
+    , includeHaskellChecks ? true
+    , includeHaskellPackages ? true
+      # devShells
+    , includeDevShells ? true
+    , shellName ? "iogx"
+    , shellPrompt ? "\n\\[\\033[1;32m\\][${shellName}:\\w]\\$\\[\\033[0m\\] "
+    , shellModule ? optionalFile (repoRoot + "/nix/shell-module.nix")
+      # hydraJobs
+    , includeHydraJobs ? true
+    , blacklistedHydraJobs ? [ ]
+    , excludeProfiledHaskellFromHydraJobs ? true
+    , includedFlakeOutputsInHydraJobs ? [ "packages" "apps" "checks" ]
+      # ReadTheDocsSite
+    , includeReadTheDocsSite ? false
+    , readTheDocsSiteRoot ? repoRoot + "/doc"
+    , readTheDocsHaddockPrologue ? ""
+    , readTheDocsExtraHaddockPackages ? _: [ ]
+      # Custom perSystemOutputs
+    , perSystemOutputs ? optionalFile (repoRoot + "/nix/per-system-outputs.nix") # TODO rename 
+      # Base flake
+    , baseFlake ? { }
+    }:
+    {
+      inherit
+        inputs
+        debug
+        flakeOutputsPrefix
+        systems
+        repoRoot
+        haskellCompilers
+        defaultHaskellCompiler
+        haskellCrossSystem
+        haskellProjectFile
+        includeHaskellApps
+        includeHaskellChecks
+        includeHaskellPackages
+        includeDevShells
+        shellName
+        shellPrompt
+        shellModule
+        includeHydraJobs
+        blacklistedHydraJobs
+        excludeProfiledHaskellFromHydraJobs
+        includeReadTheDocsSite
+        readTheDocsSiteRoot
+        readTheDocsHaddockPrologue
+        readTheDocsExtraHaddockPackages
+        perSystemOutputs
+        baseFlake;
+    };
 in
-rec {
-  systems = c.systems;
-
-  repoRoot = c.repoRoot;
-  nixFolder = c.nixFolder; # TODO make default somehow
-
-  shellPrompt =
-    if c ? shellPrompt then
-      c.shellPrompt
-    else
-      "\n\\[\\033[1;32m\\][${shellName}:\\w]\\$\\[\\033[0m\\] ";
-
-  shellName =
-    if c ? shellName then
-      c.shellName
-    else
-      "nix-shell";
-
-  # repoRoot =
-  #   if c ? repoRoot then
-  #     c.repoRoot
-  #   else
-  #     outPath;
-
-  readTheDocsFolder =
-    if c ? readTheDocsFolder then
-      c.readTheDocsFolder
-    else
-      null;
-
-  systemIndependentOutputs = findFile [ "systemIndependentOutputs" ] "system-independent-outputs";
-
-  perSystemOutputs = findFile [ "perSystemOutputs" ] "per-system-outputs";
-
-  defaultShell = findFile [ "defaultShell" ] "default-shell";
-
-  overlays = findFile [ "overlays" ] "overlays";
-
-  haskell = rec {
-
-    crossSystem =
-      if c ? haskell.crossSystem then
-        c.haskell.crossSystem
-      else
-        null;
-
-    compilers = c.haskell.compilers;
-
-    project = findFile [ "haskell" "project" ] "haskell-project";
-
-    defaultCompiler =
-      if c ? haskell.defaultCompiler then
-        c.haskell.defaultCompiler
-      else
-        l.head compilers;
-  };
-
-  hydraJobs = rec {
-
-    blacklistedDerivations =
-      if c ? hydraJobs.blacklistedDerivations then
-        c.hydraJobs.blacklistedDerivations
-      else
-        [ ];
-
-    excludeProfiledHaskell =
-      if c ? hydraJobs.excludeProfiledHaskell then
-        c.hydraJobs.excludeProfiledHaskell
-      else
-        true;
-  };
-}
+validateOptions unvalidated-flakeopts
 
 # invalidField = name: value: message: l.throw ''
 #   Error validating `mkFlake` configuration!
@@ -153,31 +138,31 @@ rec {
 #     null;
 
 #   haskellCompilers =
-#     if c ? haskell.compilers then
-#       if l.length c.haskell.compilers == 0 then
+#     if c ? haskellCompilers then
+#       if l.length c.haskellCompilers == 0 then
 #         throw ''
-#           Invalid value for configuration field 'haskell.compilers': empty list.
+#           Invalid value for configuration field 'haskellCompilers': empty list.
 #           Please specify at least one compiler.
 #           Available options are: ["ghc8107", "ghc924"].
 #           The default compiler will be first item in the list.
-#           To override this set `haskell.defaultCompiler` manually.
+#           To override this set `defaultHaskellCompiler` manually.
 #         ''
 #       else
-#         l.forEach c.haskell.compilers (checkEnum "haskell.compilers" [ "ghc8107" "ghc924" ])
+#         l.forEach c.haskellCompilers (checkEnum "haskellCompilers" [ "ghc8107" "ghc924" ])
 #     else
 #       throw ''
-#         Configuration field `haskell.compilers` not set.
+#         Configuration field `haskellCompilers` not set.
 #         Please provide a list of supported compilers.
 #         Available options are: ["ghc8107", "ghc924"].
 #         The default compiler will be first item in the list.
-#         To override this set `haskell.defaultCompiler` manually.
+#         To override this set `defaultHaskellCompiler` manually.
 #       '';
 
 #   haskellDefaultCompiler =
-#     if c ? haskell.defaultCompiler then
-#       checkEnum "haskell.defaultCompiler" haskellCompilers c.haskell.defaultCompiler
+#     if c ? defaultHaskellCompiler then
+#       checkEnum "defaultHaskellCompiler" haskellCompilers c.defaultHaskellCompiler
 #     else
-#       traceDefault "haskell.defaultCompiler" (l.head haskellCompilers);
+#       traceDefault "defaultHaskellCompiler" (l.head haskellCompilers);
 #   x = 1;
 # in 
 #   unverified-config

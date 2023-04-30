@@ -1,6 +1,5 @@
 # Your development shell is defined here.
 # You can add packages, custom scripts and a shell hook.
-
 {
   # Desystemized merged inputs.
   # All the inputs from iogx (e.g. CHaP, haskell-nix, etc..) unioned with the 

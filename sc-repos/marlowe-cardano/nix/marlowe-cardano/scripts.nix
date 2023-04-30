@@ -4,7 +4,7 @@ let
   networkNixName = "preprod";
 
   # networks = import ./networks.nix { inherit inputs pkgs; };
-  network = inputs.self.networks.${networkNixName};
+  network = inputs.self.networks.${networkNixName}; # TODO remove the __iogx__ when merged
   # network = networks.${networkNixName};
 
   inherit (pkgs) lib;
@@ -54,8 +54,8 @@ let
     export ENVIRONMENT=${network.name}
     export SOCKET_PATH=${devNetworkConfig.node.socket-path}
     mkdir -p ${devNetworkConfig.node.database-path}
-    ${inputs.self.packages.entrypoints.cardano-node}/bin/cardano-node
-  '';
+    ${inputs.self.packages.entrypoints.cardano-node}/bin/cardano-node 
+  ''; # TODO remove the __iogx__ when merged
 
   re-up = ''
     cd $(git rev-parse --show-toplevel)

@@ -85,7 +85,6 @@ let
     echo 
     echo "${menu-content}"
     echo
-    echo
   '';
 
 
@@ -97,10 +96,8 @@ let
 
   utility-module = {
     scripts = { inherit list-haskell-outputs menu; };
-    enterShell = ''
-      export PS1="${flakeopts.shellPrompt}"
-      menu
-    '';
+    env.PS1 = flakeopts.shellPrompt;
+    enterShell = "menu";
   };
 in
 utility-module

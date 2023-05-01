@@ -45,9 +45,19 @@ let
       flake = flakeopts.perSystemOutputs
         { inherit inputs systemized-inputs flakeopts pkgs; };
 
+      # TODO why exclude user's hydraJobs?
       jobs' = removeAttrs flake [ "ciJobs" "hydraJobs" ];
     in
     l.recursiveUpdate jobs jobs';
+
+
+  removeUnwantedOutputs = jobs:
+    let
+      all-names = l.attrNames jobs;
+      included-names = flakeopts.includedFlakeOutputsInHydraJobs;
+      remove-names = l.subtractLists included-names all-names;
+    in
+    removeAttrs jobs remove-names;
 
 
   mkFinalJobset =
@@ -58,6 +68,7 @@ let
       addUserPerSystemOutputs
       blacklistJobs
       cleanJobs
+      removeUnwantedOutputs
       addRequiredJob
     ];
 

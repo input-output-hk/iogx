@@ -7,7 +7,7 @@ let
 
   haskell-toolchain = iogx.toolchain."haskell-toolchain-${shell.ghc}";
 
-  optional-env = l.optional (shell ? CABAL_CONFIG) {
+  optional-env = l.optionalAttrs (shell ? CABAL_CONFIG) {
     CABAL_CONFIG = shell.CABAL_CONFIG;
   };
 
@@ -65,6 +65,8 @@ let
 in
 {
   packages = l.filter l.isDerivation shellPackages;
+
+  inherit env;
 
   enterShell = ''
     ${shell.shellHook}

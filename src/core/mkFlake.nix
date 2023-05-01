@@ -131,6 +131,8 @@ let
         l.optionals (!flakeopts.includeHaskellApps) [ "apps" ] ++
         l.optionals (!flakeopts.includeHaskellChecks) [ "checks" ] ++
         l.optionals (!flakeopts.includeHaskellPackages) [ "packages" ] ++
+        l.optionals (!flakeopts.includeDevShells) [ "devShells" ] ++
+        l.optionals (!flakeopts.includeHydraJobs) [ "hydraJobs" ] ++
         [ "devShell" ]; # We always remove the legacy devShell
     in
     removeAttrs flake attrs;
@@ -142,9 +144,7 @@ let
 
   mkFinalFlake =
     l.composeManyLeft [
-      # First we remove the unwanted stuff
-      removeUnwantedOutputs
-      # Then we add the user outputs
+      # First we add the user outputs
       addUserPerSystemOutputs
       # Then we add the readthedocs stuff both to packages and hydraJobs
       addReadTheDocsPackages
@@ -154,6 +154,8 @@ let
       addDefaultDevenvShell
       # We can now add the hydraJobs, since the flake is fully populated now
       addHydraJobs
+      # Then we remove the unwanted stuff
+      removeUnwantedOutputs
       # And finally merge with the existing flake
       mergeBaseFlake
     ];

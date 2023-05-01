@@ -2,7 +2,7 @@
   description = "Development Environemnt for IOG Projects";
 
   inputs = {
-    devenv.url = "github:cachix/devenv";
+    # devenv.url = "github:cachix/devenv";
 
     CHaP = {
       url = "github:input-output-hk/cardano-haskell-packages/4a9d10b2ecc88a5df933e54a150339e5a97319e2";

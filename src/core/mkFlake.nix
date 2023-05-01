@@ -14,12 +14,11 @@ let
         let
           # is-single-compiler = l.listLength flakeopts.haskellCompilers == 1;
           # is-default-compiler = ghc == flakeopts.defaultHaskellCompiler;
-          prefix = flakeopts.flakeOutputsPrefix;
           cross' = l.optionalString cross "-mingwW64";
           name' = "-${replaceCons name}";
           profiled' = l.optionalString profiled "-profiled";
         in
-        l.nameValuePair "${prefix}${ghc}${cross'}${name'}${profiled'}";
+        l.nameValuePair "${ghc}${cross'}${name'}${profiled'}";
 
       prefixGroup = group: attrs:
         if group == "hydraJobs" then
@@ -138,8 +137,14 @@ let
     removeAttrs flake attrs;
 
 
-  mergeBaseFlake = flake:
-    l.recursiveUpdate flakeopts.baseFlake flake;
+  mergeBaseFlake = flake: l.recursiveUpdate flakeopts.baseFlake flake;
+
+
+  addOutputsPrefix = flake:
+    if flakeopts.flakeOutputsPrefix != "" then
+      l.nestAttrs flake [ flakeopts.flakeOutputsPrefix ]
+    else
+      flake;
 
 
   mkFinalFlake =
@@ -156,6 +161,8 @@ let
       addHydraJobs
       # Then we remove the unwanted stuff
       removeUnwantedOutputs
+      # 
+      addOutputsPrefix
       # And finally merge with the existing flake
       mergeBaseFlake
     ];

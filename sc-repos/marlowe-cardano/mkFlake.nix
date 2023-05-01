@@ -8,6 +8,7 @@ let
     haskellProjectFile = import ./nix/haskell-project.nix;
     shellModule = import ./nix/shell-module.nix;
     perSystemOutputs = import ./nix/per-system-outputs.nix;
+    flakeOutputsPrefix = "__iogx__";
   };
 in
 flake

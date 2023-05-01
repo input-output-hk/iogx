@@ -137,6 +137,7 @@ let
     removeAttrs flake attrs;
 
 
+  # TODO remove
   mergeBaseFlake = flake: l.recursiveUpdate flakeopts.baseFlake flake;
 
 
@@ -164,7 +165,7 @@ let
       # 
       addOutputsPrefix
       # And finally merge with the existing flake
-      mergeBaseFlake
+      # mergeBaseFlake
     ];
 
 

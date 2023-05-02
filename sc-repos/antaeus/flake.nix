@@ -10,6 +10,7 @@
       inherit inputs;
       repoRoot = inputs.iogx.inputs.antaeus;
       shellName = "antaeus";
+      shellModule = import ./nix/shell-module.nix;
       haskellProjectFile = import ./nix/haskell-project.nix;
     };
 

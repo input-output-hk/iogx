@@ -1,14 +1,6 @@
-# The actual flake outputs, per system.
-# 
-# This is where you define extra `packages`, `checks`, `apps`, etc..., or any 
-# non-standard flake output like `nomadTasks` or `operables`.
-#
-# Remember that you can access these using `self` from `inputs` or 
-# `systemized-inputs`, for example:
-#   `inputs.self.nomadTasks`
-#   `systemized-inputs.self.nomadTasks.x86_64-linux`
-#
-# iogx will union its outputs with yours, and yours will take precedence.
+# Your development shell is defined here.
+# You can add packages, custom scripts and a shell hook.
+
 {
   # Desystemized merged inputs.
   # All the inputs from iogx (e.g. CHaP, haskell-nix, etc..) unioned with the 
@@ -33,23 +25,9 @@
 }:
 
 let
-  system = pkgs.stdenv.system;
+  cardano = inputs.cardano-world.cardano.packages;
 in
-
 {
-  packages = { };
-
-  devShells = { };
-
-  checks = { };
-
-  apps = { };
-
-  # operables = {};
-
-  # oci-images = {};
-
-  # nomadTasks = {};
-
-  # anything-else = {};
+  env.CARDANO_CLI = "${cardano.cardano-cli}/bin/cardano-cli";
+  env.CARDANO_NODE = "${cardano.cardano-node}/bin/cardano-node";
 }

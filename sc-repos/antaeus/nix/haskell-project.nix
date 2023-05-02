@@ -42,7 +42,7 @@ let
       antaeus-e2e-tests.preCheck = "
         export CARDANO_CLI=${config.hsPkgs.cardano-cli.components.exes.cardano-cli}/bin/cardano-cli${pkgs.stdenv.hostPlatform.extensions.executable}
         export CARDANO_NODE=${config.hsPkgs.cardano-node.components.exes.cardano-node}/bin/cardano-node${pkgs.stdenv.hostPlatform.extensions.executable}
-        export CARDANO_NODE_SRC=${config.src}
+        export CARDANO_NODE_SRC=${flakeopts.repoRoot}
       ";
 
       # FIXME: Haddock mysteriously gives a spurious missing-home-modules warning

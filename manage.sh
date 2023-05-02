@@ -28,10 +28,10 @@ req-marcar() {
 
 
 testolino() {
-  # sh-ant
-  # sh-coni
-  # sh-qc
-  # sh-marcar
+  sh-ant
+  sh-coni
+  sh-qc
+  sh-marcar
 
   req-ant
   req-coni

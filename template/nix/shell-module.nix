@@ -17,7 +17,7 @@
 
   # The very config passed as second argument to `inputs.iogx.mkFlake` in your 
   # `flake.nix`.
-, iogx-config
+, flakeopts
 
   # Desystemized legacy nix packages configured against `haskell.nix`.
   # NEVER use the `nixpkgs` coming from `inputs` or `systemized-inputs`!

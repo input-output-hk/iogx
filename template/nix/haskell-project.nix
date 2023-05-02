@@ -16,7 +16,7 @@
 
   # The very config passed as second argument to `inputs.iogx.mkFlake` in your 
   # `flake.nix`.
-, iogx-config
+, flakeopts
 
   # Desystemized legacy nix packages configured against `haskell.nix`.
   # NEVER use the `nixpkgs` coming from `inputs` or `systemized-inputs`!
@@ -50,6 +50,10 @@ pkgs.haskell-nix.cabalProject' (_: {
   compiler-nix-name = ghc;
 
   src = iogx-config.repoRoot;
+
+  # Reccomended, otherwise you'll have to build haddock for the entire haskell
+  # dependecy tree.
+  shell.withHoolge = false;
 
   inputMap = {
     "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;

@@ -51,8 +51,11 @@ let
 
   # We want this in CI.
   addPreCommitCheck = jobs:
-    let check = iogx.toolchain."pre-commit-check-${flakeopts.defaultHaskellCompiler}";
-    in l.recursiveUpdate jobs { checks.pre-commit-check = check; };
+    if flakeopts.enablePreCommitCheck then
+      let check = iogx.toolchain."pre-commit-check-${flakeopts.defaultHaskellCompiler}";
+      in l.recursiveUpdate jobs { checks.pre-commit-check = check; }
+    else
+      jobs;
 
 
   # We want to build the read-the-docs sites in CI.

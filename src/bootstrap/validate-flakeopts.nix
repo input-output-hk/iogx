@@ -25,6 +25,8 @@ let
     , shellName ? "iogx"
     , shellPrompt ? "\n\\[\\033[1;32m\\][${shellName}:\\w]\\$\\[\\033[0m\\] "
     , shellModule ? optionalFile (repoRoot + "/nix/shell-module.nix")
+      # pre-commit-check
+    , enablePreCommitCheck ? true
       # hydraJobs
     , includeHydraJobs ? true
     , blacklistedHydraJobs ? [ ]
@@ -56,6 +58,7 @@ let
         shellName
         shellPrompt
         shellModule
+        enablePreCommitCheck
         includeHydraJobs
         blacklistedHydraJobs
         excludeProfiledHaskellFromHydraJobs

@@ -9,6 +9,7 @@
     inputs.iogx.mkFlake {
       inherit inputs;
       repoRoot = inputs.iogx.inputs.marlowe-cardano;
+      enablePreCommitCheck = false;
       shellName = "marlowe-cardano";
       haskellProjectFile = import ./__iogx__/haskell-project.nix;
       perSystemOutputs = import ./__iogx__/per-system-outputs.nix;

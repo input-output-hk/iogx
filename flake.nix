@@ -6,6 +6,7 @@
 
     CHaP = {
       url = "github:input-output-hk/cardano-haskell-packages/4a9d10b2ecc88a5df933e54a150339e5a97319e2";
+      # url = "github:input-output-hk/cardano-haskell-packages?ref=repo";
       flake = false;
     };
 
@@ -13,14 +14,15 @@
 
     haskell-nix = {
       url = "github:input-output-hk/haskell.nix/a6825537df7c0834a4410f652b6659e07ec5bde3";
+      # url = "github:input-output-hk/haskell.nix";
       inputs.hackage.follows = "hackage";
     };
 
     nixpkgs.follows = "haskell-nix/nixpkgs-2211";
 
     hackage = {
-      # url = "github:input-output-hk/hackage.nix/7a4c7ed70e382aaa8fd65cc2af57bdf920320ddc";
-      url = "github:input-output-hk/hackage.nix";
+      url = "github:input-output-hk/hackage.nix/7a4c7ed70e382aaa8fd65cc2af57bdf920320ddc";
+      # url = "github:input-output-hk/hackage.nix";
       flake = false;
     };
 
@@ -61,43 +63,45 @@
       flake = false;
     };
 
+    marconi.url = "github:input-output-hk/marconi";
     marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
     antaeus.url = "github:input-output-hk/antaeus";
+    quickcheck-dynamic = {
+      url = "github:input-output-hk/quickcheck-dynamic";
+      flake = false;
+    };
   };
 
-  outputs = inputs:
+  outputs = iogx-inputs:
     let
-      iogx = import ./src/bootstrap/main.nix { inherit inputs; };
+      iogx = import ./src/bootstrap/main.nix { inherit iogx-inputs; };
 
       inherit (iogx) mkFlake l;
 
-      mkRepo = name:
-        let
-          inputs-override = {
-            marlowe-cardano = { };
-            antaeus = { };
-            marconi = {
-              haskell-nix = inputs.marconi-haskell-nix;
-              hackage = inputs.marconi-hackage;
-            };
-          };
-          iogx-inputs = inputs // inputs-override.${name};
-        in
-        import (./sc-repos + "/${name}/mkFlake.nix") { inherit iogx-inputs; };
+      mkRepo = name: import (./sc-repos + "/${name}/mkFlake.nix") { inherit iogx-inputs; };
 
       marlowe-cardano = mkRepo "marlowe-cardano";
       antaeus = mkRepo "antaeus";
-      # marconi = mkRepo "marconi";
+      quickcheck-dynamic = mkRepo "quickcheck-dynamic";
+      marconi = mkRepo "marconi";
 
       mkOutputs = group: l.recursiveUpdateMany [
         (l.nestAttrs marlowe-cardano.${group} [ "marlowe-cardano" ])
         (l.nestAttrs antaeus.${group} [ "antaeus" ])
-        # (l.nestAttrs marconi.${group} [ "marconi" ])
+        (l.nestAttrs quickcheck-dynamic.${group} [ "quickcheck-dynamic" ])
+        (l.nestAttrs marconi.${group} [ "marconi" ])
       ];
     in
     {
-      inherit mkFlake l;
-      inherit antaeus marlowe-cardano;
+      inherit
+        mkFlake
+        l;
+
+      inherit
+        antaeus
+        marlowe-cardano
+        quickcheck-dynamic
+        marconi;
 
       hydraJobs = mkOutputs "hydraJobs";
       devShells = mkOutputs "devShells";
@@ -127,20 +131,3 @@
     allow-import-from-derivation = true;
   };
 }
-
-
-
-
-# Smart Contracts Repos for Testing 
-
-# marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
-
-# marconi.url = "github:input-output-hk/marconi/7a160bc44448497734c11512c595b43dae8b1977";
-# marconi-haskell-nix = {
-#   url = "github:input-output-hk/haskell.nix/3473e3c9955954a548f28c97d5d47115c5b17b53";
-#   inputs.hackage.follows = "marconi-hackage";
-# };
-# marconi-hackage = {
-#   url = "github:input-output-hk/hackage.nix/1ea938efb94c8d7ad4f6933efffaccd0fbc47cda";
-#   flake = false;
-# };

@@ -5,9 +5,9 @@ let
     inputs = { self = flake; };
     repoRoot = iogx-inputs.marlowe-cardano;
     shellName = "marlowe-cardano";
-    haskellProjectFile = import ./nix/haskell-project.nix;
-    shellModule = import ./nix/shell-module.nix;
-    perSystemOutputs = import ./nix/per-system-outputs.nix;
+    haskellProjectFile = import ./__iogx__/haskell-project.nix;
+    shellModule = import ./__iogx__/shell-module.nix;
+    perSystemOutputs = import ./__iogx__/per-system-outputs.nix;
     flakeOutputsPrefix = "__iogx__";
   };
 in

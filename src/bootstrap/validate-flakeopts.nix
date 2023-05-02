@@ -29,7 +29,7 @@ let
     , includeHydraJobs ? true
     , blacklistedHydraJobs ? [ ]
     , excludeProfiledHaskellFromHydraJobs ? true
-    , includedFlakeOutputsInHydraJobs ? [ "packages" "apps" "checks" "devShells" "roots" "coverage" ]
+    , includedFlakeOutputsInHydraJobs ? [ "packages" "apps" "checks" "devShells" "roots" "coverage" "required" ]
       # ReadTheDocsSite
     , includeReadTheDocsSite ? false
     , readTheDocsSiteRoot ? repoRoot + "/doc"

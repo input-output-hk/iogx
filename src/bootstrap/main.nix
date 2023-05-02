@@ -1,9 +1,7 @@
 # Given the iogx flake inputs, 
-{ inputs }:
+{ iogx-inputs }:
 
 let
-  iogx-inputs = inputs;
-
   l = import ./l.nix { inherit iogx-inputs; };
 
   modularise = import ./modularise.nix { inherit l; };

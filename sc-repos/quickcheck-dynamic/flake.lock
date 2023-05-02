@@ -607,6 +607,7 @@
     "agenix_11": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -633,6 +634,7 @@
     "agenix_12": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -658,6 +660,7 @@
     "agenix_13": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -700,6 +703,7 @@
     "agenix_15": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -725,6 +729,7 @@
     "agenix_16": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -767,6 +772,7 @@
     "agenix_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -792,6 +798,7 @@
     "agenix_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -816,6 +823,7 @@
     "agenix_5": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "ragenix",
@@ -857,6 +865,7 @@
     "agenix_7": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -881,6 +890,7 @@
     "agenix_8": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "ragenix",
@@ -1283,35 +1293,43 @@
     "bitte-cells_2": {
       "inputs": {
         "cardano-db-sync": [
+          "iogx",
           "cardano-world",
           "cardano-db-sync"
         ],
         "cardano-iohk-nix": [
+          "iogx",
           "cardano-world",
           "iohk-nix"
         ],
         "cardano-node": [
+          "iogx",
           "cardano-world",
           "cardano-node"
         ],
         "cardano-wallet": [
+          "iogx",
           "cardano-world",
           "cardano-wallet"
         ],
         "cicero": "cicero_2",
         "data-merge": [
+          "iogx",
           "cardano-world",
           "data-merge"
         ],
         "n2c": [
+          "iogx",
           "cardano-world",
           "n2c"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "nixpkgs"
         ],
         "std": [
+          "iogx",
           "cardano-world",
           "std"
         ]
@@ -1359,42 +1377,50 @@
     "bitte-cells_4": {
       "inputs": {
         "cardano-db-sync": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-db-sync"
         ],
         "cardano-iohk-nix": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "iohk-nix"
         ],
         "cardano-node": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-node"
         ],
         "cardano-wallet": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet"
         ],
         "cicero": "cicero_4",
         "data-merge": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "data-merge"
         ],
         "n2c": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "n2c"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "nixpkgs"
         ],
         "std": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std"
@@ -3097,6 +3123,7 @@
         "haskellNix": "haskellNix",
         "iohkNix": "iohkNix",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-db-sync",
           "haskellNix",
@@ -3127,6 +3154,7 @@
         "iohkNix": "iohkNix_4",
         "nixTools": "nixTools",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-db-sync",
           "haskellNix",
@@ -3155,6 +3183,7 @@
         "haskellNix": "haskellNix_6",
         "iohkNix": "iohkNix_6",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-db-sync",
@@ -3186,6 +3215,7 @@
         "iohkNix": "iohkNix_9",
         "nixTools": "nixTools_2",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-db-sync",
@@ -3356,6 +3386,7 @@
         "iohkNix": "iohkNix_2",
         "membench": "membench",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-node",
           "haskellNix",
@@ -3402,6 +3433,7 @@
         "iohkNix": "iohkNix_7",
         "membench": "membench_2",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node",
@@ -3802,12 +3834,14 @@
         "flake-utils": "flake-utils_22",
         "haskellNix": "haskellNix_3",
         "hostNixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-wallet",
           "nixpkgs"
         ],
         "iohkNix": "iohkNix_3",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-wallet",
           "haskellNix",
@@ -3837,12 +3871,14 @@
         "flake-utils": "flake-utils_49",
         "haskellNix": "haskellNix_5",
         "hostNixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-wallet",
           "nixpkgs"
         ],
         "iohkNix": "iohkNix_5",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-wallet",
           "haskellNix",
@@ -3872,6 +3908,7 @@
         "flake-utils": "flake-utils_80",
         "haskellNix": "haskellNix_8",
         "hostNixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-wallet",
@@ -3879,6 +3916,7 @@
         ],
         "iohkNix": "iohkNix_8",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-wallet",
@@ -3909,6 +3947,7 @@
         "flake-utils": "flake-utils_107",
         "haskellNix": "haskellNix_10",
         "hostNixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet",
@@ -3916,6 +3955,7 @@
         ],
         "iohkNix": "iohkNix_10",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet",
@@ -3958,6 +3998,7 @@
         "nix-inclusive": "nix-inclusive",
         "nixpkgs": "nixpkgs_82",
         "nixpkgs-haskell": [
+          "iogx",
           "cardano-world",
           "haskell-nix",
           "nixpkgs-unstable"
@@ -4001,6 +4042,7 @@
         "nix-inclusive": "nix-inclusive_2",
         "nixpkgs": "nixpkgs_172",
         "nixpkgs-haskell": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "haskell-nix",
@@ -4484,6 +4526,7 @@
         "fenix": "fenix",
         "flake-compat": "flake-compat_12",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -4513,6 +4556,7 @@
         "fenix": "fenix_3",
         "flake-compat": "flake-compat_13",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "deploy",
@@ -4540,6 +4584,7 @@
         "fenix": "fenix_5",
         "flake-compat": "flake-compat_14",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -4568,6 +4613,7 @@
         "fenix": "fenix_7",
         "flake-compat": "flake-compat_32",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -4598,6 +4644,7 @@
         "fenix": "fenix_9",
         "flake-compat": "flake-compat_33",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -4626,6 +4673,7 @@
         "fenix": "fenix_11",
         "flake-compat": "flake-compat_34",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -4653,6 +4701,7 @@
     "devshell": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -4660,6 +4709,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -4759,12 +4809,14 @@
     "devshell_15": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
@@ -4852,6 +4904,7 @@
     "devshell_2": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -4860,6 +4913,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -4930,11 +4984,13 @@
     "devshell_23": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "std",
           "nixpkgs"
@@ -4958,6 +5014,7 @@
       "inputs": {
         "flake-utils": "flake-utils_55",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "tullia",
           "std",
@@ -4981,12 +5038,14 @@
     "devshell_25": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -5010,6 +5069,7 @@
     "devshell_26": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -5017,6 +5077,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -5041,6 +5102,7 @@
     "devshell_27": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -5049,6 +5111,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -5074,12 +5137,14 @@
     "devshell_28": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -5103,11 +5168,13 @@
     "devshell_29": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "std",
           "nixpkgs"
@@ -5130,12 +5197,14 @@
     "devshell_3": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -5223,12 +5292,14 @@
     "devshell_34": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
@@ -5327,11 +5398,13 @@
     "devshell_4": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "std",
           "nixpkgs"
@@ -5354,6 +5427,7 @@
     "devshell_40": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -5361,6 +5435,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -5494,12 +5569,14 @@
     "devshell_48": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std",
@@ -5524,6 +5601,7 @@
       "inputs": {
         "flake-utils": "flake-utils_113",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "tullia",
@@ -5567,6 +5645,7 @@
     "devshell_50": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -5574,6 +5653,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -5598,11 +5678,13 @@
     "devshell_51": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
@@ -5625,12 +5707,14 @@
     "devshell_52": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -5654,10 +5738,12 @@
     "devshell_53": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "std",
           "nixpkgs"
         ]
@@ -5679,11 +5765,13 @@
     "devshell_54": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "tullia",
           "std",
           "nixpkgs"
@@ -5751,11 +5839,13 @@
     "devshell_9": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "bitte-cells",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "std",
           "nixpkgs"
@@ -5778,6 +5868,7 @@
     "dmerge": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -5785,6 +5876,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -5809,6 +5901,7 @@
     "dmerge_10": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -5817,6 +5910,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -5842,12 +5936,14 @@
     "dmerge_11": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -5871,11 +5967,13 @@
     "dmerge_12": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marconi",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marconi",
           "std",
           "yants"
@@ -5898,12 +5996,14 @@
     "dmerge_13": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
@@ -5927,6 +6027,7 @@
     "dmerge_14": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -5934,6 +6035,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -5958,12 +6060,14 @@
     "dmerge_15": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -5987,6 +6091,7 @@
     "dmerge_16": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -5994,6 +6099,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -6018,11 +6124,13 @@
     "dmerge_17": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "yants"
@@ -6045,12 +6153,14 @@
     "dmerge_18": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -6074,10 +6184,12 @@
     "dmerge_19": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "std",
           "yants"
         ]
@@ -6099,6 +6211,7 @@
     "dmerge_2": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -6107,6 +6220,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -6132,11 +6246,13 @@
     "dmerge_20": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "tullia",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "tullia",
           "std",
           "yants"
@@ -6159,12 +6275,14 @@
     "dmerge_3": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -6188,11 +6306,13 @@
     "dmerge_4": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "antaeus",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "antaeus",
           "std",
           "yants"
@@ -6215,11 +6335,13 @@
     "dmerge_5": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "bitte-cells",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "bitte-cells",
           "std",
           "yants"
@@ -6242,12 +6364,14 @@
     "dmerge_6": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
@@ -6271,11 +6395,13 @@
     "dmerge_7": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "cardano-world",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "cardano-world",
           "std",
           "yants"
@@ -6298,12 +6424,14 @@
     "dmerge_8": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -6327,6 +6455,7 @@
     "dmerge_9": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -6334,6 +6463,7 @@
           "nixpkgs"
         ],
         "yants": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -6361,6 +6491,7 @@
         "inclusive": "inclusive",
         "nix": "nix_3",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "nixpkgs"
@@ -6387,6 +6518,7 @@
         "inclusive": "inclusive_9",
         "nix": "nix_10",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -6414,6 +6546,7 @@
         "inclusive": "inclusive_15",
         "nix": "nix_21",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -6441,6 +6574,7 @@
         "inclusive": "inclusive_23",
         "nix": "nix_28",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -6695,6 +6829,7 @@
     "fenix_10": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -6738,6 +6873,7 @@
     "fenix_12": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -6763,6 +6899,7 @@
     "fenix_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -6807,6 +6944,7 @@
     "fenix_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "nixpkgs-unstable"
@@ -6849,6 +6987,7 @@
     "fenix_6": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -6892,6 +7031,7 @@
     "fenix_8": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -9644,6 +9784,7 @@
         "devshell": "devshell_7",
         "inclusive": "inclusive_2",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "nixpkgs"
@@ -9669,6 +9810,7 @@
         "devshell": "devshell_18",
         "inclusive": "inclusive_10",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -9695,6 +9837,7 @@
         "devshell": "devshell_32",
         "inclusive": "inclusive_16",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -9721,6 +9864,7 @@
         "devshell": "devshell_43",
         "inclusive": "inclusive_24",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -10120,6 +10264,7 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "pre-commit-hooks-nix",
           "nixpkgs"
@@ -10142,6 +10287,7 @@
     "gitignore-nix": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "nixpkgs"
         ]
@@ -10163,6 +10309,7 @@
     "gitignore-nix_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "nixpkgs"
@@ -10185,6 +10332,7 @@
     "gitignore-nix_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "nixpkgs"
         ]
@@ -10206,6 +10354,7 @@
     "gitignore-nix_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "nixpkgs"
@@ -10228,6 +10377,7 @@
     "gitignore_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "pre-commit-hooks-nix",
           "nixpkgs"
@@ -10250,6 +10400,7 @@
     "gitignore_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "pre-commit-hooks",
           "nixpkgs"
@@ -10272,6 +10423,7 @@
     "gitignore_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "pre-commit-hooks-nix",
           "nixpkgs"
         ]
@@ -10987,6 +11139,7 @@
         "flake-utils": "flake-utils",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk",
         "hackage": [
+          "iogx",
           "antaeus",
           "hackage-nix"
         ],
@@ -10994,6 +11147,7 @@
         "hydra": "hydra",
         "iserv-proxy": "iserv-proxy",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "nixpkgs"
         ],
@@ -11034,6 +11188,7 @@
         "hpc-coveralls": "hpc-coveralls_18",
         "nix-tools": "nix-tools_13",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -11045,6 +11200,7 @@
         "nixpkgs-2105": "nixpkgs-2105_18",
         "nixpkgs-2111": "nixpkgs-2111_18",
         "nixpkgs-unstable": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -11078,6 +11234,7 @@
         "flake-utils": "flake-utils_109",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_21",
         "hackage": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "hackage"
@@ -11086,6 +11243,7 @@
         "hydra": "hydra_17",
         "nix-tools": "nix-tools_16",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "haskell-nix",
@@ -11124,6 +11282,7 @@
         "flake-utils": "flake-utils_115",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_22",
         "hackage": [
+          "iogx",
           "marlowe-cardano",
           "hackage"
         ],
@@ -11131,6 +11290,7 @@
         "hydra": "hydra_18",
         "iserv-proxy": "iserv-proxy_6",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "nixpkgs-unstable"
@@ -11170,6 +11330,7 @@
         "flake-utils": "flake-utils_5",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_2",
         "hackage": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "hackage-nix"
@@ -11178,6 +11339,7 @@
         "hydra": "hydra_2",
         "iserv-proxy": "iserv-proxy_2",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "nixpkgs"
@@ -11219,6 +11381,7 @@
         "hpc-coveralls": "hpc-coveralls_6",
         "nix-tools": "nix-tools_4",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "haskell-nix",
@@ -11228,6 +11391,7 @@
         "nixpkgs-2105": "nixpkgs-2105_6",
         "nixpkgs-2111": "nixpkgs-2111_6",
         "nixpkgs-unstable": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "nixpkgs"
@@ -11262,6 +11426,7 @@
         "hpc-coveralls": "hpc-coveralls_7",
         "nix-tools": "nix-tools_5",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -11272,6 +11437,7 @@
         "nixpkgs-2105": "nixpkgs-2105_7",
         "nixpkgs-2111": "nixpkgs-2111_7",
         "nixpkgs-unstable": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -11304,6 +11470,7 @@
         "flake-utils": "flake-utils_51",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_10",
         "hackage": [
+          "iogx",
           "cardano-world",
           "hackage"
         ],
@@ -11311,6 +11478,7 @@
         "hydra": "hydra_8",
         "nix-tools": "nix-tools_8",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "haskell-nix",
           "nixpkgs-unstable"
@@ -11348,12 +11516,14 @@
         "flake-utils": "flake-utils_57",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_11",
         "hackage": [
+          "iogx",
           "hackage"
         ],
         "hpc-coveralls": "hpc-coveralls_11",
         "hydra": "hydra_9",
         "iserv-proxy": "iserv-proxy_3",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "nixpkgs-unstable"
         ],
@@ -11393,6 +11563,7 @@
         "flake-utils": "flake-utils_60",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_12",
         "hackage": [
+          "iogx",
           "marconi",
           "hackage-nix"
         ],
@@ -11401,6 +11572,7 @@
         "hydra": "hydra_10",
         "iserv-proxy": "iserv-proxy_4",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "nixpkgs"
         ],
@@ -11439,6 +11611,7 @@
         "flake-utils": "flake-utils_63",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk_13",
         "hackage": [
+          "iogx",
           "marconi",
           "plutus-core",
           "hackage-nix"
@@ -11447,6 +11620,7 @@
         "hydra": "hydra_11",
         "iserv-proxy": "iserv-proxy_5",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "nixpkgs"
@@ -11488,6 +11662,7 @@
         "hpc-coveralls": "hpc-coveralls_17",
         "nix-tools": "nix-tools_12",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -11498,6 +11673,7 @@
         "nixpkgs-2105": "nixpkgs-2105_17",
         "nixpkgs-2111": "nixpkgs-2111_17",
         "nixpkgs-unstable": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -11532,6 +11708,7 @@
         "hpc-coveralls": "hpc-coveralls_3",
         "nix-tools": "nix-tools",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-db-sync",
           "haskellNix",
@@ -11572,6 +11749,7 @@
         "hydra": "hydra_16",
         "nix-tools": "nix-tools_15",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet",
@@ -11611,6 +11789,7 @@
         "hpc-coveralls": "hpc-coveralls_4",
         "nix-tools": "nix-tools_2",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-node",
           "nixpkgs"
@@ -11649,6 +11828,7 @@
         "hpc-coveralls": "hpc-coveralls_5",
         "nix-tools": "nix-tools_3",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-wallet",
           "nixpkgs"
@@ -11688,6 +11868,7 @@
         "hydra": "hydra_6",
         "nix-tools": "nix-tools_6",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-db-sync",
           "haskellNix",
@@ -11728,6 +11909,7 @@
         "hydra": "hydra_7",
         "nix-tools": "nix-tools_7",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-wallet",
           "nixpkgs"
@@ -11765,6 +11947,7 @@
         "hpc-coveralls": "hpc-coveralls_14",
         "nix-tools": "nix-tools_9",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-db-sync",
@@ -11805,6 +11988,7 @@
         "hpc-coveralls": "hpc-coveralls_15",
         "nix-tools": "nix-tools_10",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node",
@@ -11844,6 +12028,7 @@
         "hpc-coveralls": "hpc-coveralls_16",
         "nix-tools": "nix-tools_11",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-wallet",
@@ -11884,6 +12069,7 @@
         "hydra": "hydra_15",
         "nix-tools": "nix-tools_14",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-db-sync",
@@ -12318,6 +12504,7 @@
       "inputs": {
         "nix": "nix",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "hydra",
@@ -12342,6 +12529,7 @@
       "inputs": {
         "nix": "nix_19",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "hydra",
@@ -12366,6 +12554,7 @@
       "inputs": {
         "nix": "nix_20",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -12390,6 +12579,7 @@
     "hydra_12": {
       "inputs": {
         "nix": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -12398,6 +12588,7 @@
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -12424,12 +12615,14 @@
     "hydra_13": {
       "inputs": {
         "nix": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -12454,6 +12647,7 @@
     "hydra_14": {
       "inputs": {
         "nix": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -12461,6 +12655,7 @@
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -12487,6 +12682,7 @@
       "inputs": {
         "nix": "nix_33",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-db-sync",
@@ -12513,6 +12709,7 @@
       "inputs": {
         "nix": "nix_34",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet",
@@ -12539,6 +12736,7 @@
       "inputs": {
         "nix": "nix_35",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "haskell-nix",
@@ -12564,6 +12762,7 @@
       "inputs": {
         "nix": "nix_36",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "hydra",
@@ -12588,6 +12787,7 @@
       "inputs": {
         "nix": "nix_2",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -12612,6 +12812,7 @@
     "hydra_3": {
       "inputs": {
         "nix": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -12619,6 +12820,7 @@
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -12644,11 +12846,13 @@
     "hydra_4": {
       "inputs": {
         "nix": [
+          "iogx",
           "cardano-world",
           "bitte",
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "nixpkgs"
@@ -12672,12 +12876,14 @@
     "hydra_5": {
       "inputs": {
         "nix": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
           "nix"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -12703,6 +12909,7 @@
       "inputs": {
         "nix": "nix_15",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-db-sync",
           "haskellNix",
@@ -12728,6 +12935,7 @@
       "inputs": {
         "nix": "nix_16",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-wallet",
           "haskellNix",
@@ -12753,6 +12961,7 @@
       "inputs": {
         "nix": "nix_17",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "haskell-nix",
           "hydra",
@@ -12777,6 +12986,7 @@
       "inputs": {
         "nix": "nix_18",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "hydra",
           "nix",
@@ -12799,6 +13009,7 @@
     "incl": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -12822,6 +13033,7 @@
     "incl_2": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -12846,6 +13058,7 @@
     "incl_3": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -12870,6 +13083,7 @@
     "incl_4": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
@@ -12892,6 +13106,7 @@
     "incl_5": {
       "inputs": {
         "nixlib": [
+          "iogx",
           "std",
           "nixpkgs"
         ]
@@ -13498,9 +13713,48 @@
         "type": "github"
       }
     },
+    "iogx": {
+      "inputs": {
+        "CHaP": "CHaP",
+        "antaeus": "antaeus",
+        "bitte-cells": "bitte-cells",
+        "cardano-world": "cardano-world",
+        "flake-compat": "flake-compat_18",
+        "flake-utils": "flake-utils_56",
+        "hackage": "hackage_9",
+        "haskell-language-server-1_3_0_0": "haskell-language-server-1_3_0_0",
+        "haskell-language-server-1_9_0_0": "haskell-language-server-1_9_0_0",
+        "haskell-nix": "haskell-nix_6",
+        "iohk-nix": "iohk-nix_4",
+        "marconi": "marconi",
+        "marlowe-cardano": "marlowe-cardano",
+        "nixpkgs": [
+          "iogx",
+          "haskell-nix",
+          "nixpkgs-2211"
+        ],
+        "nosys": "nosys_6",
+        "pre-commit-hooks-nix": "pre-commit-hooks-nix_5",
+        "quickcheck-dynamic": "quickcheck-dynamic",
+        "sphinxcontrib-haddock": "sphinxcontrib-haddock_6",
+        "std": "std_21",
+        "tullia": "tullia_10"
+      },
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-XReoA3lx/FTzjhFUKsaxWTufC8Zcbgwqvza4oU5hNQ4=",
+        "path": "../../.",
+        "type": "path"
+      },
+      "original": {
+        "path": "../../.",
+        "type": "path"
+      }
+    },
     "iohk-nix": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "nixpkgs"
         ]
@@ -13522,6 +13776,7 @@
     "iohk-nix_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "nixpkgs"
@@ -13544,6 +13799,7 @@
     "iohk-nix_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "nixpkgs"
         ]
@@ -13582,6 +13838,7 @@
     "iohk-nix_5": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "nixpkgs"
         ]
@@ -13603,6 +13860,7 @@
     "iohk-nix_6": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "nixpkgs"
@@ -13625,6 +13883,7 @@
     "iohk-nix_7": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "nixpkgs"
@@ -13664,6 +13923,7 @@
     "iohkNix": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-db-sync",
           "nixpkgs"
@@ -13686,6 +13946,7 @@
     "iohkNix_10": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-wallet",
@@ -13709,6 +13970,7 @@
     "iohkNix_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-node",
           "nixpkgs"
@@ -13731,6 +13993,7 @@
     "iohkNix_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-wallet",
           "nixpkgs"
@@ -13753,6 +14016,7 @@
     "iohkNix_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-db-sync",
           "nixpkgs"
@@ -13775,6 +14039,7 @@
     "iohkNix_5": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "cardano-wallet",
           "nixpkgs"
@@ -13797,6 +14062,7 @@
     "iohkNix_6": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-db-sync",
@@ -13820,6 +14086,7 @@
     "iohkNix_7": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node",
@@ -13843,6 +14110,7 @@
     "iohkNix_8": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-wallet",
@@ -13866,6 +14134,7 @@
     "iohkNix_9": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "cardano-db-sync",
@@ -14605,6 +14874,7 @@
         "haskell-nix": "haskell-nix_12",
         "iohk-nix": "iohk-nix_8",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "nixpkgs-2205"
@@ -14875,18 +15145,22 @@
       "inputs": {
         "cardano-mainnet-mirror": "cardano-mainnet-mirror",
         "cardano-node-measured": [
+          "iogx",
           "bitte-cells",
           "cardano-node"
         ],
         "cardano-node-process": [
+          "iogx",
           "bitte-cells",
           "cardano-node"
         ],
         "cardano-node-snapshot": [
+          "iogx",
           "bitte-cells",
           "cardano-node"
         ],
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cardano-node",
           "nixpkgs"
@@ -14911,21 +15185,25 @@
       "inputs": {
         "cardano-mainnet-mirror": "cardano-mainnet-mirror_2",
         "cardano-node-measured": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node"
         ],
         "cardano-node-process": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node"
         ],
         "cardano-node-snapshot": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cardano-node",
@@ -14951,6 +15229,7 @@
       "inputs": {
         "flake-utils": "flake-utils_4",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -14976,6 +15255,7 @@
       "inputs": {
         "flake-utils": "flake-utils_66",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -15002,6 +15282,7 @@
       "inputs": {
         "flake-utils": "flake-utils_69",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -15026,6 +15307,7 @@
       "inputs": {
         "flake-utils": "flake-utils_72",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "std",
           "nixpkgs"
@@ -15105,6 +15387,7 @@
     "n2c_16": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -15112,6 +15395,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -15136,11 +15420,13 @@
     "n2c_17": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
@@ -15164,6 +15450,7 @@
       "inputs": {
         "flake-utils": "flake-utils_122",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -15187,10 +15474,12 @@
     "n2c_19": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "std",
           "nixpkgs"
         ]
@@ -15213,6 +15502,7 @@
       "inputs": {
         "flake-utils": "flake-utils_8",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -15239,6 +15529,7 @@
       "inputs": {
         "flake-utils": "flake-utils_127",
         "nixpkgs": [
+          "iogx",
           "tullia",
           "std",
           "nixpkgs"
@@ -15262,6 +15553,7 @@
       "inputs": {
         "flake-utils": "flake-utils_11",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -15286,6 +15578,7 @@
       "inputs": {
         "flake-utils": "flake-utils_14",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "std",
           "nixpkgs"
@@ -15365,12 +15658,14 @@
     "n2c_8": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -15394,6 +15689,7 @@
     "n2c_9": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -15401,6 +15697,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -15447,11 +15744,13 @@
       "inputs": {
         "devshell": "devshell_8",
         "inclusive": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "inclusive"
         ],
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "nixpkgs"
@@ -15476,12 +15775,14 @@
       "inputs": {
         "devshell": "devshell_19",
         "inclusive": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
           "inclusive"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -15507,12 +15808,14 @@
       "inputs": {
         "devshell": "devshell_33",
         "inclusive": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
           "inclusive"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -15538,6 +15841,7 @@
       "inputs": {
         "devshell": "devshell_44",
         "inclusive": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -15545,6 +15849,7 @@
           "inclusive"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -15607,6 +15912,7 @@
       "inputs": {
         "flake-compat": "flake-compat_3",
         "flake-utils": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -15615,12 +15921,14 @@
         ],
         "gomod2nix": "gomod2nix",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -15645,6 +15953,7 @@
       "inputs": {
         "flake-compat": "flake-compat_5",
         "flake-utils": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -15654,6 +15963,7 @@
         ],
         "gomod2nix": "gomod2nix_2",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -15661,6 +15971,7 @@
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -15686,6 +15997,7 @@
       "inputs": {
         "flake-compat": "flake-compat_20",
         "flake-utils": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "nix2container",
@@ -15693,11 +16005,13 @@
         ],
         "gomod2nix": "gomod2nix_3",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "nixpkgs"
@@ -15721,6 +16035,7 @@
       "inputs": {
         "flake-compat": "flake-compat_23",
         "flake-utils": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -15729,12 +16044,14 @@
         ],
         "gomod2nix": "gomod2nix_4",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -15759,6 +16076,7 @@
       "inputs": {
         "flake-compat": "flake-compat_25",
         "flake-utils": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -15768,6 +16086,7 @@
         ],
         "gomod2nix": "gomod2nix_5",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -15775,6 +16094,7 @@
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -15800,6 +16120,7 @@
       "inputs": {
         "flake-compat": "flake-compat_39",
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -15808,12 +16129,14 @@
         ],
         "gomod2nix": "gomod2nix_6",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -15838,6 +16161,7 @@
       "inputs": {
         "flake-compat": "flake-compat_41",
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "nix2container",
@@ -15845,11 +16169,13 @@
         ],
         "gomod2nix": "gomod2nix_7",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "nixpkgs"
@@ -15873,16 +16199,19 @@
       "inputs": {
         "flake-compat": "flake-compat_43",
         "flake-utils": [
+          "iogx",
           "tullia",
           "nix2container",
           "flake-utils"
         ],
         "gomod2nix": "gomod2nix_8",
         "nixpkgs": [
+          "iogx",
           "tullia",
           "nixpkgs"
         ],
         "nixpkgs-lib": [
+          "iogx",
           "tullia",
           "nixpkgs"
         ]
@@ -17105,6 +17434,7 @@
     "nixago": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -17112,6 +17442,7 @@
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -17119,6 +17450,7 @@
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -17233,6 +17565,7 @@
     "nixago_10": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -17241,6 +17574,7 @@
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -17249,6 +17583,7 @@
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -17274,18 +17609,21 @@
     "nixago_11": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -17309,16 +17647,19 @@
     "nixago_12": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marconi",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "std",
           "nixpkgs"
@@ -17341,6 +17682,7 @@
     "nixago_13": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
@@ -17348,6 +17690,7 @@
         ],
         "nixago-exts": "nixago-exts_4",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
@@ -17371,6 +17714,7 @@
     "nixago_14": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -17379,6 +17723,7 @@
         ],
         "nixago-exts": "nixago-exts_5",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -17403,6 +17748,7 @@
     "nixago_15": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std",
@@ -17410,6 +17756,7 @@
         ],
         "nixago-exts": "nixago-exts_6",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std",
@@ -17433,6 +17780,7 @@
     "nixago_16": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -17440,6 +17788,7 @@
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -17447,6 +17796,7 @@
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -17471,16 +17821,19 @@
     "nixago_17": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
@@ -17503,18 +17856,21 @@
     "nixago_18": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -17538,14 +17894,17 @@
     "nixago_19": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "std",
           "nixpkgs"
         ]
@@ -17567,6 +17926,7 @@
     "nixago_2": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -17575,6 +17935,7 @@
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -17583,6 +17944,7 @@
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -17608,16 +17970,19 @@
     "nixago_20": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "tullia",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "tullia",
           "std",
           "nixpkgs"
@@ -17640,18 +18005,21 @@
     "nixago_3": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -17675,16 +18043,19 @@
     "nixago_4": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "antaeus",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "antaeus",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "std",
           "nixpkgs"
@@ -17707,12 +18078,14 @@
     "nixago_5": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "bitte-cells",
           "std",
           "flake-utils"
         ],
         "nixago-exts": "nixago-exts",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "std",
           "nixpkgs"
@@ -17735,6 +18108,7 @@
     "nixago_6": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
@@ -17742,6 +18116,7 @@
         ],
         "nixago-exts": "nixago-exts_2",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",
@@ -17765,12 +18140,14 @@
     "nixago_7": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "std",
           "flake-utils"
         ],
         "nixago-exts": "nixago-exts_3",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "std",
           "nixpkgs"
@@ -17793,18 +18170,21 @@
     "nixago_8": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -17828,6 +18208,7 @@
     "nixago_9": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -17835,6 +18216,7 @@
           "flake-utils"
         ],
         "nixago-exts": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -17842,6 +18224,7 @@
           "blank"
         ],
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -24317,6 +24700,7 @@
       "inputs": {
         "flake-utils": "flake-utils_26",
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "cicero",
           "nixpkgs"
@@ -24341,6 +24725,7 @@
       "inputs": {
         "flake-utils": "flake-utils_40",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte-cells",
           "cicero",
@@ -24366,6 +24751,7 @@
       "inputs": {
         "flake-utils": "flake-utils_84",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "cicero",
@@ -24391,6 +24777,7 @@
       "inputs": {
         "flake-utils": "flake-utils_98",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte-cells",
@@ -24436,6 +24823,7 @@
       "inputs": {
         "flake-utils": "flake-utils_9",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "nixpkgs"
@@ -24461,6 +24849,7 @@
         "flake-utils": "flake-utils_12",
         "gitignore": "gitignore",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "nixpkgs"
         ],
@@ -24484,6 +24873,7 @@
       "inputs": {
         "flake-utils": "flake-utils_67",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "nixpkgs"
@@ -24509,6 +24899,7 @@
         "flake-utils": "flake-utils_70",
         "gitignore": "gitignore_2",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "nixpkgs"
         ],
@@ -24614,6 +25005,7 @@
         "flake-utils": "flake-utils_118",
         "gitignore": "gitignore_3",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "nixpkgs"
         ],
@@ -24861,29 +25253,7 @@
     },
     "root": {
       "inputs": {
-        "CHaP": "CHaP",
-        "antaeus": "antaeus",
-        "bitte-cells": "bitte-cells",
-        "cardano-world": "cardano-world",
-        "flake-compat": "flake-compat_18",
-        "flake-utils": "flake-utils_56",
-        "hackage": "hackage_9",
-        "haskell-language-server-1_3_0_0": "haskell-language-server-1_3_0_0",
-        "haskell-language-server-1_9_0_0": "haskell-language-server-1_9_0_0",
-        "haskell-nix": "haskell-nix_6",
-        "iohk-nix": "iohk-nix_4",
-        "marconi": "marconi",
-        "marlowe-cardano": "marlowe-cardano",
-        "nixpkgs": [
-          "haskell-nix",
-          "nixpkgs-2211"
-        ],
-        "nosys": "nosys_6",
-        "pre-commit-hooks-nix": "pre-commit-hooks-nix_5",
-        "quickcheck-dynamic": "quickcheck-dynamic",
-        "sphinxcontrib-haddock": "sphinxcontrib-haddock_6",
-        "std": "std_21",
-        "tullia": "tullia_10"
+        "iogx": "iogx"
       }
     },
     "rust-analyzer-src": {
@@ -25093,6 +25463,7 @@
     "rust-overlay": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -25101,6 +25472,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -25126,6 +25498,7 @@
     "rust-overlay_10": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -25133,6 +25506,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -25157,6 +25531,7 @@
     "rust-overlay_2": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -25164,6 +25539,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -25188,12 +25564,14 @@
     "rust-overlay_3": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "bitte",
           "ragenix",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "ragenix",
@@ -25217,6 +25595,7 @@
     "rust-overlay_4": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -25224,6 +25603,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -25248,12 +25628,14 @@
     "rust-overlay_5": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "cardano-world",
           "capsules",
           "ragenix",
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "ragenix",
@@ -25277,6 +25659,7 @@
     "rust-overlay_6": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25286,6 +25669,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25312,6 +25696,7 @@
     "rust-overlay_7": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25320,6 +25705,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25345,6 +25731,7 @@
     "rust-overlay_8": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25352,6 +25739,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -25376,6 +25764,7 @@
     "rust-overlay_9": {
       "inputs": {
         "flake-utils": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -25384,6 +25773,7 @@
           "flake-utils"
         ],
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -25862,6 +26252,7 @@
         "dmerge": "dmerge",
         "flake-utils": "flake-utils_3",
         "makes": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -25870,6 +26261,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor",
         "microvm": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -25898,6 +26290,7 @@
     "std_10": {
       "inputs": {
         "arion": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -25910,6 +26303,7 @@
         "flake-utils": "flake-utils_62",
         "incl": "incl_2",
         "makes": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -25917,6 +26311,7 @@
           "blank"
         ],
         "microvm": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -25950,6 +26345,7 @@
         "dmerge": "dmerge_10",
         "flake-utils": "flake-utils_65",
         "makes": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -25959,6 +26355,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_8",
         "microvm": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -25992,6 +26389,7 @@
         "dmerge": "dmerge_11",
         "flake-utils": "flake-utils_68",
         "makes": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -25999,6 +26397,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_9",
         "microvm": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -26007,6 +26406,7 @@
         "n2c": "n2c_11",
         "nixago": "nixago_11",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "nixpkgs"
@@ -26034,12 +26434,14 @@
         "dmerge": "dmerge_12",
         "flake-utils": "flake-utils_71",
         "makes": [
+          "iogx",
           "marconi",
           "std",
           "blank"
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_10",
         "microvm": [
+          "iogx",
           "marconi",
           "std",
           "blank"
@@ -26047,6 +26449,7 @@
         "n2c": "n2c_12",
         "nixago": "nixago_12",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "nixpkgs"
         ],
@@ -26161,6 +26564,7 @@
     "std_18": {
       "inputs": {
         "arion": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -26173,6 +26577,7 @@
         "flake-utils": "flake-utils_117",
         "incl": "incl_3",
         "makes": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -26180,6 +26585,7 @@
           "blank"
         ],
         "microvm": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -26209,6 +26615,7 @@
     "std_19": {
       "inputs": {
         "arion": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "blank"
@@ -26219,11 +26626,13 @@
         "flake-utils": "flake-utils_119",
         "incl": "incl_4",
         "makes": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "blank"
         ],
         "microvm": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "blank"
@@ -26255,6 +26664,7 @@
         "dmerge": "dmerge_2",
         "flake-utils": "flake-utils_7",
         "makes": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -26264,6 +26674,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_2",
         "microvm": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -26297,6 +26708,7 @@
         "dmerge": "dmerge_18",
         "flake-utils": "flake-utils_121",
         "makes": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -26304,6 +26716,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_14",
         "microvm": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -26331,6 +26744,7 @@
     "std_21": {
       "inputs": {
         "arion": [
+          "iogx",
           "std",
           "blank"
         ],
@@ -26340,10 +26754,12 @@
         "flake-utils": "flake-utils_124",
         "incl": "incl_5",
         "makes": [
+          "iogx",
           "std",
           "blank"
         ],
         "microvm": [
+          "iogx",
           "std",
           "blank"
         ],
@@ -26375,12 +26791,14 @@
         "dmerge": "dmerge_20",
         "flake-utils": "flake-utils_126",
         "makes": [
+          "iogx",
           "tullia",
           "std",
           "blank"
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_15",
         "microvm": [
+          "iogx",
           "tullia",
           "std",
           "blank"
@@ -26411,6 +26829,7 @@
         "dmerge": "dmerge_3",
         "flake-utils": "flake-utils_10",
         "makes": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -26418,6 +26837,7 @@
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_3",
         "microvm": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -26426,6 +26846,7 @@
         "n2c": "n2c_3",
         "nixago": "nixago_3",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "nixpkgs"
@@ -26453,12 +26874,14 @@
         "dmerge": "dmerge_4",
         "flake-utils": "flake-utils_13",
         "makes": [
+          "iogx",
           "antaeus",
           "std",
           "blank"
         ],
         "mdbook-kroki-preprocessor": "mdbook-kroki-preprocessor_4",
         "microvm": [
+          "iogx",
           "antaeus",
           "std",
           "blank"
@@ -26466,6 +26889,7 @@
         "n2c": "n2c_4",
         "nixago": "nixago_4",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "nixpkgs"
         ],
@@ -26580,6 +27004,7 @@
     "std_9": {
       "inputs": {
         "arion": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -26591,12 +27016,14 @@
         "flake-utils": "flake-utils_59",
         "incl": "incl",
         "makes": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
           "blank"
         ],
         "microvm": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -27202,6 +27629,7 @@
         "bats-support": "bats-support",
         "flake-utils": "flake-utils_32",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "capsules",
@@ -27320,6 +27748,7 @@
         "bats-support": "bats-support_2",
         "flake-utils": "flake-utils_37",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "blank"
@@ -27346,6 +27775,7 @@
         "bats-support": "bats-support_3",
         "flake-utils": "flake-utils_43",
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "capsules",
           "bitte",
@@ -27373,6 +27803,7 @@
         "bats-support": "bats-support_4",
         "flake-utils": "flake-utils_90",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -27402,6 +27833,7 @@
         "bats-support": "bats-support_5",
         "flake-utils": "flake-utils_95",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -27429,6 +27861,7 @@
         "bats-support": "bats-support_6",
         "flake-utils": "flake-utils_101",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "capsules",
@@ -27456,6 +27889,7 @@
         "nix-nomad": "nix-nomad",
         "nix2container": "nix2container",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "nixpkgs"
@@ -27503,6 +27937,7 @@
         "nix-nomad": "nix-nomad_2",
         "nix2container": "nix2container_2",
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -27549,6 +27984,7 @@
         "nix-nomad": "nix-nomad_3",
         "nix2container": "nix2container_4",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "nixpkgs"
         ],
@@ -27573,6 +28009,7 @@
         "nix-nomad": "nix-nomad_4",
         "nix2container": "nix2container_5",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "nixpkgs"
@@ -27598,6 +28035,7 @@
         "nix-nomad": "nix-nomad_5",
         "nix2container": "nix2container_6",
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -27644,6 +28082,7 @@
         "nix-nomad": "nix-nomad_6",
         "nix2container": "nix2container_8",
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "nixpkgs"
@@ -28686,6 +29125,7 @@
     "yants": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "haskell-nix",
           "tullia",
@@ -28710,6 +29150,7 @@
     "yants_10": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "std",
           "nixpkgs"
@@ -28732,6 +29173,7 @@
     "yants_11": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "tullia",
           "std",
@@ -28755,6 +29197,7 @@
     "yants_12": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "tullia",
           "std",
@@ -28778,6 +29221,7 @@
     "yants_13": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "haskell-nix",
           "tullia",
@@ -28802,6 +29246,7 @@
     "yants_14": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "haskell-nix",
@@ -28827,6 +29272,7 @@
     "yants_15": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "plutus-core",
           "std",
@@ -28850,6 +29296,7 @@
     "yants_16": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marconi",
           "std",
           "nixpkgs"
@@ -28890,6 +29337,7 @@
     "yants_18": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "bitte-cells",
           "std",
@@ -28931,6 +29379,7 @@
     "yants_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "haskell-nix",
@@ -28956,6 +29405,7 @@
     "yants_20": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "bitte",
@@ -28998,6 +29448,7 @@
     "yants_22": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "std",
@@ -29021,6 +29472,7 @@
     "yants_23": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "cardano-world",
           "tullia",
@@ -29063,6 +29515,7 @@
     "yants_25": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "haskell-nix",
           "tullia",
@@ -29087,6 +29540,7 @@
     "yants_26": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "std",
           "nixpkgs"
@@ -29109,6 +29563,7 @@
     "yants_27": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "marlowe-cardano",
           "tullia",
           "std",
@@ -29132,6 +29587,7 @@
     "yants_28": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "std",
           "nixpkgs"
         ]
@@ -29153,6 +29609,7 @@
     "yants_29": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "tullia",
           "std",
           "nixpkgs"
@@ -29175,6 +29632,7 @@
     "yants_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "plutus-core",
           "std",
@@ -29198,6 +29656,7 @@
     "yants_4": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "antaeus",
           "std",
           "nixpkgs"
@@ -29238,6 +29697,7 @@
     "yants_6": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "bitte-cells",
           "std",
           "nixpkgs"
@@ -29278,6 +29738,7 @@
     "yants_8": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "cardano-world",
           "bitte",
           "std",

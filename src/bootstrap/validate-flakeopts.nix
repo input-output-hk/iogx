@@ -37,8 +37,6 @@ let
     , readTheDocsExtraHaddockPackages ? _: [ ]
       # Custom perSystemOutputs
     , perSystemOutputs ? optionalFile (repoRoot + "/nix/per-system-outputs.nix") # TODO rename 
-      # Base flake
-    , baseFlake ? { }
     }:
     {
       inherit
@@ -66,8 +64,7 @@ let
         readTheDocsSiteRoot
         readTheDocsHaddockPrologue
         readTheDocsExtraHaddockPackages
-        perSystemOutputs
-        baseFlake;
+        perSystemOutputs;
     };
 in
 validateOptions unvalidated-flakeopts

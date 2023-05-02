@@ -3,16 +3,6 @@
 { shell, flake }:
 
 let
-  # # Very fiddly! This does the trick, makes devevn.sh happy.
-  # adaptDevenvModule = module:
-  #   let
-  #     scripts = l.getAttrWithDefault "scripts" { } module;
-  #     filtered-scripts = filterDisabledScripts scripts;
-  #     mkScript = name: script: { scripts.${name}.exec = script.exec; };
-  #     final-scripts = l.recursiveUpdateMany (l.mapAttrsToList mkScript filtered-scripts);
-  #   in
-  #   module // final-scripts;
-
   mergeModules = mod1: mod2:
     {
       packages =
@@ -29,7 +19,7 @@ let
         l.getAttrWithDefault "scripts" { } mod1 //
         l.getAttrWithDefault "scripts" { } mod2;
 
-      env =
+      env = # TODO check collisions
         l.getAttrWithDefault "env" { } mod1 //
         l.getAttrWithDefault "env" { } mod2;
     };
@@ -68,8 +58,7 @@ let
       base-module = iogx.core.mkDevShell.mkBaseModule
         { inherit shell; };
 
-      # NOTE: calling config function
-      user-module = flakeopts.shellModule
+      user-module = flakeopts.shellModule # NOTE: using flakeopts
         { inherit inputs systemized-inputs flakeopts pkgs; };
 
       readthedocs-module =
@@ -88,9 +77,6 @@ let
       ];
     in
     moduleToShell merged-module;
-  # inputs.devenv.lib.mkShell {
-  #   inherit pkgs inputs modules;
-  # };
 in
 devShell
 

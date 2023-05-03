@@ -1,10 +1,8 @@
-{ inputs, pkgs, flakeopts, iogx, ... }:
+{ inputs, pkgs, flakeopts, iogx, l, ... }:
 
 { shell }:
 
 let
-  l = pkgs.lib;
-
   haskell-toolchain = iogx.toolchain."haskell-toolchain-${shell.ghc}";
 
   optional-env = l.optionalAttrs (shell ? CABAL_CONFIG) {
@@ -14,6 +12,7 @@ let
   env = optional-env // {
     PKG_CONFIG_PATH = l.makeSearchPath "lib/pkgconfig" shell.buildInputs;
     NIX_GHC_LIBDIR = shell.NIX_GHC_LIBDIR;
+    REPO_ROOT = flakeopts.repoRoot;
   };
 
   shellPackages =
@@ -41,6 +40,7 @@ let
       pkgs.curl
       pkgs.ghcid
       pkgs.jq
+      pkgs.fd
       pkgs.editorconfig-core-c
       pkgs.openssl
       pkgs.pkg-config
@@ -67,6 +67,30 @@ in
   packages = l.filter l.isDerivation shellPackages;
 
   inherit env;
+
+  scripts = {
+    fix-cabal-fmt = {
+      exec = iogx.toolchain.fix-cabal-fmt;
+      description = "format all .cabal files in the repo";
+
+    };
+    fix-png-optimization = {
+      exec = iogx.toolchain.fix-png-optimization;
+      description = "optimize all .png files in the repo";
+    };
+    fix-prettier = {
+      exec = iogx.toolchain.fix-prettier;
+      description = "format all .js .ts .html .css files in the repo";
+    };
+    fix-stylish-haskell = {
+      exec = haskell-toolchain.fix-stylish-haskell;
+      description = "format all .hs files in the repo";
+    };
+    fix-nixpkgs-fmt = {
+      exec = iogx.toolchain.fix-nixpkgs-fmt;
+      description = "format all .nix files in the repo";
+    };
+  };
 
   enterShell = ''
     ${shell.shellHook}

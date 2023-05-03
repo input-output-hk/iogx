@@ -10,7 +10,7 @@ pkgs.writeShellApplication {
   ];
 
   text = ''
-    fd \
+    PWD="$REPO_ROOT" fd \
       --extension html \
       --extension js \
       --extension ts \

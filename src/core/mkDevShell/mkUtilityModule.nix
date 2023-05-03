@@ -58,25 +58,24 @@ let
       in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
 
 
-  formatted-haskell-outputs = ''
-    ******************** Haskell Packages ********************
-
-    ${formatFlakeOutputs "packages" "build"}
-
-    ******************** Haskell Apps ******************** 
-
-    ${formatFlakeOutputs "apps" "run"}
-
-    ******************** Development Shells ******************** 
-
-    ${formatFlakeOutputs "devShells" "develop"}
-  '';
+  formatted-haskell-outputs = l.concatStringsSep "\n\n" [
+    (l.ansiColor "Haskell Packages" "yellow" "bold")
+    (formatFlakeOutputs "packages" "build")
+    (l.ansiColor "Haskell Apps" "yellow" "bold")
+    (formatFlakeOutputs "apps" "run")
+    (l.ansiColor "Development Shells" "yellow" "bold")
+    (formatFlakeOutputs "devShells" "develop")
+  ];
 
 
   list-haskell-outputs = {
     group = "devenv";
     description = "list the haskell outputs buildable by nix";
-    exec = ''echo "${formatted-haskell-outputs}"'';
+    exec = ''
+      echo
+      printf "${formatted-haskell-outputs}"
+      echo
+    '';
   };
 
 
@@ -114,7 +113,7 @@ let
   print-menu-content = ''
     echo
     echo
-    printf "${l.ansiColor flakeopts.shellName "green" "bold"} development shell\n"
+    printf "${l.ansiColor flakeopts.shellName "red" "bold"} development shell\n"
     echo 
     ${menu-content}
   '';

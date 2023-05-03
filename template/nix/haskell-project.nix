@@ -14,8 +14,7 @@
   # iogx and your `flake.nix`.
 , systemized-inputs
 
-  # The very config passed as second argument to `inputs.iogx.mkFlake` in your 
-  # `flake.nix`.
+  # The very attrset passed to `inputs.iogx.mkFlake` in your `flake.nix`.
 , flakeopts
 
   # Desystemized legacy nix packages configured against `haskell.nix`.

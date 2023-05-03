@@ -1,5 +1,5 @@
 # Your development shell is defined here.
-# You can add packages, custom scripts and a shell hook.
+# You can add packages, scripts, envvars, and a shell hook.
 
 {
   # Desystemized merged inputs.
@@ -15,8 +15,7 @@
   # iogx and your `flake.nix`.
 , systemized-inputs
 
-  # The very config passed as second argument to `inputs.iogx.mkFlake` in your 
-  # `flake.nix`.
+  # The very attrset passed to `inputs.iogx.mkFlake` in your `flake.nix`.
 , flakeopts
 
   # Desystemized legacy nix packages configured against `haskell.nix`.
@@ -37,20 +36,27 @@
   # the attribute value is an attrset `{ exec, description, enabled }`.
   # `description` is optional will appear next to the script name.
   # `exec` is bash code to be executed when the script is run.
-  # `enabled` is optiona, defaults to true if not set, and can be used to 
+  # `enabled` is optional, defaults to true if not set, and can be used to 
   # include scripts conditionally, for example:
   #   { enabled = pkgs.stdenv.system != "x86_64-darwin"; }
   scripts = {
     foobar = {
       exec = ''
         # Bash code to be executed whenever the script `foobar` is run.
-        echo "Delete me from your default-shell.nix!"
+        echo "Delete me from your shell-module.nix!"
       '';
       description = ''
         You might want to delete the foobar script.
       '';
       enabled = true;
     };
+  };
+
+  # Add your environment variables here.
+  # For each key-value pair the bash line:
+  # `export NAME="VALUE"` will be appended to `enterShell`. 
+  env = {
+    NAME = VALUE;
   };
 
   enterShell = ''

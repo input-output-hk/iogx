@@ -51,7 +51,7 @@ let
 
   # We want this in CI.
   addPreCommitCheck = jobs:
-    if flakeopts.enablePreCommitCheck then
+    if flakeopts.enableHydraPreCommitCheck then
       let check = iogx.toolchain."pre-commit-check-${flakeopts.defaultHaskellCompiler}";
       in l.recursiveUpdate jobs { checks.pre-commit-check = check; }
     else

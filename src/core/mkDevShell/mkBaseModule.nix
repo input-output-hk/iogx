@@ -12,7 +12,6 @@ let
   env = optional-env // {
     PKG_CONFIG_PATH = l.makeSearchPath "lib/pkgconfig" shell.buildInputs;
     NIX_GHC_LIBDIR = shell.NIX_GHC_LIBDIR;
-    REPO_ROOT = flakeopts.repoRoot;
   };
 
   shellPackages =
@@ -24,13 +23,9 @@ let
 
       iogx.toolchain.nixpkgs-fmt
       iogx.toolchain.scriv
-      iogx.toolchain.fix-cabal-fmt
-      iogx.toolchain.fix-png-optimization
-      iogx.toolchain.fix-prettier
       iogx.toolchain.cabal-fmt
 
       haskell-toolchain.cabal-install
-      haskell-toolchain.fix-stylish-haskell
       haskell-toolchain.haskell-language-server
       haskell-toolchain.haskell-language-server-wrapper
       haskell-toolchain.hlint
@@ -70,25 +65,29 @@ in
 
   scripts = {
     fix-cabal-fmt = {
-      exec = iogx.toolchain.fix-cabal-fmt;
-      description = "format all .cabal files in the repo";
-
+      exec = "${iogx.toolchain.fix-cabal-fmt}/bin/fix-cabal-fmt";
+      description = "format all .cabal files in the current directory";
+      group = "formatters";
     };
     fix-png-optimization = {
-      exec = iogx.toolchain.fix-png-optimization;
-      description = "optimize all .png files in the repo";
+      exec = "${iogx.toolchain.fix-png-optimization}/bin/fix-png-optimization";
+      description = "optimize all .png files in the current directory";
+      group = "formatters";
     };
     fix-prettier = {
-      exec = iogx.toolchain.fix-prettier;
-      description = "format all .js .ts .html .css files in the repo";
+      exec = "${iogx.toolchain.fix-prettier}/bin/fix-prettier";
+      description = "format all .js .ts .html .css files in the current directory";
+      group = "formatters";
     };
     fix-stylish-haskell = {
-      exec = haskell-toolchain.fix-stylish-haskell;
-      description = "format all .hs files in the repo";
+      exec = "${haskell-toolchain.fix-stylish-haskell}/bin/fix-stylish-haskell";
+      description = "format all .hs files in the current directory";
+      group = "formatters";
     };
     fix-nixpkgs-fmt = {
-      exec = iogx.toolchain.fix-nixpkgs-fmt;
-      description = "format all .nix files in the repo";
+      exec = "${iogx.toolchain.fix-nixpkgs-fmt}/bin/fix-nixpkgs-fmt";
+      description = "format all .nix files in the current directory";
+      group = "formatters";
     };
   };
 

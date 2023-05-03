@@ -51,6 +51,27 @@ let
         else
           set;
 
+
+    ansiColor = text: fg: style:
+      let
+        colors = {
+          black = "30";
+          red = "31";
+          green = "32";
+          yellow = "33";
+          blue = "34";
+          purple = "35";
+          cyan = "36";
+          white = "37";
+        };
+
+        colorBit = getAttrWithDefault fg "white" colors;
+
+        boldBit = if style == "bold" then "1" else "0";
+      in
+      "\\033[${boldBit};${colorBit}m${text}\\033[0m";
+
+
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 
     #   rights = ["longlonglong" "short"]; 

@@ -10,7 +10,7 @@ pkgs.writeShellApplication {
   ];
 
   text = ''
-    PWD="$REPO_ROOT" fd \
+    fd \
       --extension cabal \
       --exclude 'dist-newstyle/*' \
       --exclude 'dist/*' \

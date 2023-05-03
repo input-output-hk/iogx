@@ -10,6 +10,6 @@ pkgs.writeShellApplication {
   ];
 
   text = ''
-    fd --extension png --exec "optipng" {}
+    fd --extension png --exec "optipng" {} 
   '';
 }

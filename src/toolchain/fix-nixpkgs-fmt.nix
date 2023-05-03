@@ -4,11 +4,7 @@ pkgs.writeShellApplication {
 
   name = "fix-nixpkgs-fmt";
 
-  runtimeInputs = [
-    iogx.toolchain.nixpkgs-fmt
-  ];
-
   text = ''
-    nixpkgs-fmt "$REPO_ROOT"
+    ${iogx.toolchain.nixpkgs-fmt}/bin/nixpkgs-fmt "$REPO_ROOT"
   '';
 }

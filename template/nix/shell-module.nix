@@ -21,6 +21,16 @@
   # Desystemized legacy nix packages configured against `haskell.nix`.
   # NEVER use the `nixpkgs` coming from `inputs` or `systemized-inputs`!
 , pkgs
+
+  # A reference to the `haskell.nix` project on top of which this shell will be 
+  # built. This can be used for example to bring some haskell executables into 
+  # the shell:
+  # packages = [
+  #   haskell-nix-project.hsPkgs.cardano-cli.components.exes.cardano-cli
+  #   haskell-nix-project.hsPkgs.cardano-node.components.exes.cardano-node
+  # ];
+  # Be careful not to refence the project's own haskell packages.
+, haskell-nix-project
 }:
 
 {

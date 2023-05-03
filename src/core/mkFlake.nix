@@ -56,9 +56,9 @@ let
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake project {
         # TODO remove withHoogle = false; and set it manually to all projects.
-        # NOTE: we append the ghc to the shell so that we can retrieve it 
-        # later when making the devShell.
-        devShell = project.shellFor { withHoogle = false; } // { inherit ghc; };
+        # NOTE: we append the ghc & project to the shell so that we can retrieve 
+        # them later when making the devShell.
+        devShell = project.shellFor { withHoogle = false; } // { inherit ghc project; };
       };
     in
     renameFlakeOutputs { inherit ghc cross profiled flake; };

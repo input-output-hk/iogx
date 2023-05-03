@@ -59,7 +59,10 @@ let
         { inherit shell; };
 
       user-module = flakeopts.shellModule # NOTE: using flakeopts
-        { inherit inputs systemized-inputs flakeopts pkgs; };
+        {
+          inherit inputs systemized-inputs flakeopts pkgs;
+          haskell-nix-project = shell.project;
+        };
 
       readthedocs-module =
         l.optionalAttrs flakeopts.includeReadTheDocsSite iogx.readthedocs.devenv-module;

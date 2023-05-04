@@ -39,8 +39,8 @@
       flake = false;
     };
 
-    haskell-language-server-1_3_0_0 = {
-      url = "github:haskell/haskell-language-server/e7c5e90b6df5dff2760d76169eddaea3bdd6a831";
+    haskell-language-server-1_8_0_0 = {
+      url = "github:haskell/haskell-language-server?ref=1.8.0.0";
       flake = false;
     };
 

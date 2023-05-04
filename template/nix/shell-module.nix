@@ -43,9 +43,10 @@
 
   # Add any script that you want in your shell here.
   # `scripts` is an attrset where each attribute name is the script name, and 
-  # the attribute value is an attrset `{ exec, description, enabled }`.
+  # the attribute value is an attrset `{ exec, description, enabled, group }`.
   # `description` is optional will appear next to the script name.
   # `exec` is bash code to be executed when the script is run.
+  # `group` is optional used to tag scripts together when printed.
   # `enabled` is optional, defaults to true if not set, and can be used to 
   # include scripts conditionally, for example:
   #   { enabled = pkgs.stdenv.system != "x86_64-darwin"; }
@@ -58,13 +59,15 @@
       description = ''
         You might want to delete the foobar script.
       '';
+      group = "group-name";
       enabled = true;
     };
   };
 
   # Add your environment variables here.
   # For each key-value pair the bash line:
-  # `export NAME="VALUE"` will be appended to `enterShell`. 
+  # `export NAME="VALUE"` 
+  # will be appended to `enterShell`. 
   env = {
     NAME = VALUE;
   };

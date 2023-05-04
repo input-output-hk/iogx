@@ -14,14 +14,14 @@ pkgs.haskell-nix.cabalProject' {
   # b) Pull out the tools themselves from the HLS project so we can use
   #    them elsewhere
   cabalProjectLocal = ''
-    constraints: stylish-haskell==0.14.2.0, hlint==3.4.1
+    constraints: stylish-haskell==0.13.0.0, hlint==3.2.8
   '';
 
-  src = inputs.haskell-language-server-1_9_0_0;
+  src = inputs.haskell-language-server-1_8_0_0;
 
-  compiler-nix-name = "ghc924";
+  compiler-nix-name = "ghc8107";
 
-  index-state = "2023-03-05T00:00:00Z";
+  # index-state = "2022-12-19T19:08:33Z";
 
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line

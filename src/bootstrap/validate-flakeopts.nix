@@ -1,7 +1,6 @@
 { unvalidated-flakeopts, l }:
 
 let
-
   optionalFile = path:
     if l.pathExists path then import path else _: { };
 
@@ -30,7 +29,6 @@ let
     , enableHydraPreCommitCheck ? true
     , blacklistedHydraJobs ? [ ]
     , excludeProfiledHaskellFromHydraJobs ? true
-    , includedFlakeOutputsInHydraJobs ? [ "packages" "apps" "checks" "devShells" "roots" "coverage" "required" ]
       # ReadTheDocsSite
     , includeReadTheDocsSite ? false
     , readTheDocsSiteRoot ? repoRoot + "/doc"
@@ -61,7 +59,6 @@ let
         includeHydraJobs
         blacklistedHydraJobs
         excludeProfiledHaskellFromHydraJobs
-        includedFlakeOutputsInHydraJobs
         includeReadTheDocsSite
         readTheDocsSiteRoot
         readTheDocsHaddockPrologue

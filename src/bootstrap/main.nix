@@ -11,7 +11,7 @@ let
       flakeopts = import ./validate-flakeopts.nix { inherit unvalidated-flakeopts l; };
 
       merged-inputs = import ./merge-inputs.nix {
-        inherit iogx-inputs;
+        inherit iogx-inputs flakeopts l;
         user-inputs = flakeopts.inputs;
       };
     in

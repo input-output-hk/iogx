@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
 
   runtimeInputs = [
     pkgs.fd
-    iogx.toolchain."stylish-haskell-0.12.2.0"
+    iogx.toolchain.stylish-haskell-ghc925
   ];
 
   text = ''

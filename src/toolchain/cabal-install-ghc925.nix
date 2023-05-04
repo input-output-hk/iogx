@@ -5,7 +5,7 @@ let
 
     version = "3.8.1.0";
 
-    compiler-nix-name = "ghc924";
+    compiler-nix-name = "ghc925";
 
     index-state = "2023-03-05T00:00:00Z";
 

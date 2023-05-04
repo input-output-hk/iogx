@@ -69,7 +69,7 @@ let
 
 
   list-haskell-outputs = {
-    group = "devenv";
+    group = "iogx";
     description = "list the haskell outputs buildable by nix";
     exec = ''
       echo
@@ -120,7 +120,7 @@ let
 
 
   menu = {
-    group = "devenv";
+    group = "iogx";
     description = "print this message";
     exec = print-menu-content;
   };
@@ -143,7 +143,7 @@ let
   '';
 
   print-env = {
-    group = "devenv";
+    group = "iogx";
     description = "print your evironment variables";
     exec = print-env-content;
   };

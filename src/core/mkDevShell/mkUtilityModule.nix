@@ -49,13 +49,87 @@ let
     final-env;
 
 
+  flake-prefix =
+    if flakeopts.flakeOutputsPrefix == ""
+    then ""
+    else "${flakeopts.flakeOutputsPrefix}.";
+
+
+  # TODO this does not take into account the 
   formatFlakeOutputs = group: command:
     if group == "devShells" then
-      let fromGhc = ghc: "nix develop .#${ghc}\nnix develop .#${ghc}-profiled";
-      in l.concatStringsSep "\n" (map fromGhc flakeopts.haskellCompilers)
+      let
+        fromGhc = ghc: l.concatStringsSep "\n" [
+          "nix develop .#${flake-prefix}${ghc}-default"
+          "nix develop .#${flake-prefix}${ghc}-default-profiled"
+        ];
+
+        default =
+          if flake-prefix == ""
+          then "nix develop"
+          else "nix develop .#${flake-prefix}default";
+
+        all-shells = [ default ] ++ map fromGhc flakeopts.haskellCompilers;
+      in
+      l.concatStringsSep "\n" all-shells
     else
-      let fromName = name: _: "nix ${command} .#${name}";
+      let fromName = name: _: "nix ${command} .#${flake-prefix}${name}";
+        # NOTE: at this point the flakeOutputsPrefix has not been added to the 
+        # flake, that's why we can do flake.${group} and not 
+        # flake.${group}.formatFlakeOutputs
       in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
+
+
+  formatted-hydra-jobs =
+    let
+      # TODO take into account
+      # excludeProfiledHaskellFromHydraJobs 
+      # blacklistedHydraJobs 
+      # enableHydraPreCommitCheck 
+
+      formatSimple = system:
+        let nix-build = "nix build .#hydraJobs.${system}.";
+        in name: "${nix-build}${flake-prefix}${name}";
+
+      formatGroup = system: group:
+        let
+          nix-build = "nix build .#hydraJobs.${system}.";
+          formatOne = name: _: "${nix-build}${flake-prefix}${group}.${name}";
+          strings = l.mapAttrsToList formatOne flake.hydraJobs.${group};
+        in
+        l.concatStringsSep "\n" strings;
+
+      formatSystem = system:
+        let
+          content = l.concatStringsSep "\n" [
+            (formatGroup system "packages")
+            (formatGroup system "checks")
+            (formatGroup system "devShells")
+            (formatSimple system "pre-commit-check")
+            (formatSimple system "roots")
+            (formatSimple system "coverage")
+            (formatSimple system "plan-nix")
+            (formatSimple system "required")
+          ];
+        in
+        ''
+          ${l.ansiColor system "yellow" "bold"}
+
+          ${content}
+        '';
+    in
+    l.concatStringsSep "\n" (map formatSystem flakeopts.systems);
+
+
+  list-hydra-jobs = {
+    group = "iogx";
+    description = "list everything that will be built by CI";
+    exec = ''
+      echo
+      printf "${formatted-hydra-jobs}"
+      echo
+    '';
+  };
 
 
   formatted-haskell-outputs = l.concatStringsSep "\n\n" [
@@ -82,7 +156,7 @@ let
   menu-content =
     let
       extra-scripts = {
-        inherit menu print-env list-haskell-outputs;
+        inherit menu print-env list-haskell-outputs list-hydra-jobs;
       };
 
       groups = partitionScriptsByGroup (all-scripts // extra-scripts);
@@ -142,6 +216,7 @@ let
     echo 
   '';
 
+
   print-env = {
     group = "iogx";
     description = "print your evironment variables";
@@ -150,7 +225,7 @@ let
 
 
   utility-module = {
-    scripts = { inherit list-haskell-outputs print-env menu; };
+    scripts = { inherit list-haskell-outputs print-env menu list-hydra-jobs; };
     env.PS1 = flakeopts.shellPrompt;
     enterShell = "menu";
   };

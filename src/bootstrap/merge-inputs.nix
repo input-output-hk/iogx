@@ -8,7 +8,7 @@ let
   pretty-common-inputs = l.concatStringsSep "\n  " common-inputs;
 
   debug-message = ''
-    [iogx] warning: your flake has ${l.toString num-common-inputs} unexpected inputs.
+    [IOGX] warning: your flake has ${l.toString num-common-inputs} unexpected inputs.
     The inputs listed below are already managed by the IOGX flake.
     You should not need to duplicate them in your flake.
     Instead, you should override them like so:

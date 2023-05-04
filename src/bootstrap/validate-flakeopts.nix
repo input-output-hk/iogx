@@ -22,6 +22,7 @@ let
       # devShells
     , includeDevShells ? true
     , shellName ? "iogx"
+    , shellWelcomeMessage ? "🤟 \\033[1;31mWelcome to ${shellName}\\033[0m 🤟"
     , shellPrompt ? "\n\\[\\033[1;32m\\][${shellName}:\\w]\\$\\[\\033[0m\\] "
     , shellModule ? optionalFile (repoRoot + "/nix/shell-module.nix")
       # hydraJobs
@@ -55,6 +56,7 @@ let
         shellName
         shellPrompt
         shellModule
+        shellWelcomeMessage
         enableHydraPreCommitCheck
         includeHydraJobs
         blacklistedHydraJobs

@@ -114,6 +114,12 @@
         # This field defaults to "iogx";
         shellName = "iogx";
 
+        # Only for cosmetic purposes, the shell welcome message will be printed 
+        # when you enter the shell.
+        # This field is optional.
+        # This field defaults to "Welcome to $shellName!";
+        shellWelcomeMessage = "🤟 \\033[1;31mWelcome to ${shellName}\\033[0m 🤟";
+
         # Shell prompt i.e. the value of the `PS1` evnvar. 
         # This field is optional.
         # This field defaults to the familiar nix-shell green prompt.

@@ -3,22 +3,6 @@
 { flake, core-modules }:
 
 let
-  filterDisabledScripts =
-    l.filterAttrs (_: { enabled ? true, ... }: enabled);
-
-
-  extractScriptNames =
-    l.attrNames;
-
-
-  extractScriptDescriptions =
-    l.mapAttrsToList (_: l.getAttrWithDefault "description" "");
-
-
-  getAndFilterDisabledScripts = mod:
-    filterDisabledScripts (l.getAttrWithDefault "scripts" { } mod);
-
-
   # { group1 = { name1 = { exec1, group1, description1 } }}
   partitionScriptsByGroup = scripts:
     let
@@ -32,127 +16,97 @@ let
     partitioned;
 
 
-  all-packages =
-    l.concatMap (l.getAttrWithDefault "packages" [ ]) core-modules;
-
-
-  all-scripts =
-    l.recursiveUpdateMany (map getAndFilterDisabledScripts core-modules);
-
-
-  all-envs =
+  list-haskell-outputs =
     let
-      getEnv = l.getAttrWithDefault "env" { };
-      merged-env = l.recursiveUpdateMany (map getEnv core-modules);
-      final-env = removeAttrs merged-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" ];
-    in
-    final-env;
+      formatGroup = group: command:
+        if group == "devShells" then
+          let fromGhc = ghc: "nix develop .#${ghc}\nnix develop .#${ghc}-profiled";
+          in l.concatStringsSep "\n" (map fromGhc flakeopts.haskellCompilers)
+        else
+          let fromName = name: _: "nix ${command} .#${name}";
+          in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
 
+      formatted-outputs = l.concatStringsSep "\n\n" [
+        (l.ansiColor "Haskell Packages" "yellow" "bold")
+        (formatGroup "packages" "build")
+        (l.ansiColor "Haskell Apps" "yellow" "bold")
+        (formatGroup "apps" "run")
+        (l.ansiColor "Development Shells" "yellow" "bold")
+        (formatGroup "devShells" "develop")
+      ];
 
-  formatFlakeOutputs = group: command:
-    if group == "devShells" then
-      let fromGhc = ghc: "nix develop .#${ghc}\nnix develop .#${ghc}-profiled";
-      in l.concatStringsSep "\n" (map fromGhc flakeopts.haskellCompilers)
-    else
-      let fromName = name: _: "nix ${command} .#${name}";
-      in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
-
-
-  formatted-haskell-outputs = l.concatStringsSep "\n\n" [
-    (l.ansiColor "Haskell Packages" "yellow" "bold")
-    (formatFlakeOutputs "packages" "build")
-    (l.ansiColor "Haskell Apps" "yellow" "bold")
-    (formatFlakeOutputs "apps" "run")
-    (l.ansiColor "Development Shells" "yellow" "bold")
-    (formatFlakeOutputs "devShells" "develop")
-  ];
-
-
-  list-haskell-outputs = {
-    group = "iogx";
-    description = "list the haskell outputs buildable by nix";
-    exec = ''
-      echo
-      printf "${formatted-haskell-outputs}"
-      echo
-    '';
-  };
-
-
-  menu-content =
-    let
-      extra-scripts = {
-        inherit menu print-env list-haskell-outputs;
+      script = {
+        group = "iogx";
+        description = "List the haskell outputs buildable by nix";
+        exec = ''
+          echo
+          printf "${formatted-outputs}"
+          echo
+        '';
       };
+    in
+    script;
 
-      groups = partitionScriptsByGroup (all-scripts // extra-scripts);
+
+  info =
+    let
+      all-scripts =
+        let
+          filterDisabled = l.filterAttrs (_: { enabled ? true, ... }: enabled);
+          getModuleScripts = mod: filterDisabled (l.getAttrWithDefault "scripts" { } mod);
+          mods-scripts = l.recursiveUpdateMany (map getModuleScripts core-modules);
+          extra-scripts = { inherit info list-haskell-outputs; };
+        in
+        mods-scripts // extra-scripts;
 
       formatGroup = group: scripts:
         let
-          bolden = name: l.ansiColor name "white" "bold";
-
-          list = l.prettyTwoColumnsLayout {
-            indent = "  ";
-            gap-width = 2;
-            max-width = 120;
-            lefts = map bolden (extractScriptNames scripts);
-            rights = extractScriptDescriptions scripts;
-          };
+          formatScript = name: script: ''
+            — ${l.ansiColor name "white" "bold"} ∷ ${script.description or ""}
+          '';
+          formatted-group = l.concatStrings (l.mapAttrsToList formatScript scripts);
         in
         ''
-          printf " ${l.ansiColor group "yellow" "bold"}\n"
-          printf "${list}\n"
-          echo
+          ${l.ansiColor "λ ${group}" "yellow" "bold"}
+          ${formatted-group}
         '';
 
-      content = l.concatStringsSep "\n" (l.mapAttrsToList formatGroup groups);
+      formatted-script-groups =
+        let groups = partitionScriptsByGroup all-scripts;
+        in l.concatStrings (l.mapAttrsToList formatGroup groups);
+
+      formatted-env =
+        let
+          getEnv = l.getAttrWithDefault "env" { };
+          merged-env = l.recursiveUpdateMany (map getEnv core-modules);
+          final-env = removeAttrs merged-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" ];
+          formatVar = var: val: ''
+            — ${l.ansiColor var "white" "bold"} ∷ ${val}
+          '';
+          content = l.concatStrings (l.mapAttrsToList formatVar final-env);
+        in
+        ''
+          ${l.ansiColor "λ environment" "purple" "bold"}
+          ${content}
+        '';
+
+      script = {
+        group = "iogx";
+        description = "Print this message";
+        exec = ''
+          printf "\n${flakeopts.shellWelcomeMessage}\n\n"
+          printf "${formatted-env}"
+          printf "${formatted-script-groups}"
+        '';
+      };
     in
-    content;
-
-
-  print-menu-content = ''
-    echo
-    echo
-    printf "${l.ansiColor flakeopts.shellName "red" "bold"} development shell\n"
-    echo 
-    ${menu-content}
-  '';
-
-
-  menu = {
-    group = "iogx";
-    description = "print this message";
-    exec = print-menu-content;
-  };
-
-
-  env-content = l.prettyTwoColumnsLayout {
-    indent = "  ";
-    gap-width = 2;
-    max-width = 1000;
-    lefts = l.attrNames all-envs;
-    rights = l.attrValues all-envs;
-  };
-
-
-  print-env-content = ''
-    echo
-    echo
-    echo "${env-content}"
-    echo 
-  '';
-
-  print-env = {
-    group = "iogx";
-    description = "print your evironment variables";
-    exec = print-env-content;
-  };
+    script;
 
 
   utility-module = {
-    scripts = { inherit list-haskell-outputs print-env menu; };
+    scripts = { inherit list-haskell-outputs info; };
     env.PS1 = flakeopts.shellPrompt;
-    enterShell = "menu";
+    enterShell = "info";
   };
 in
 utility-module

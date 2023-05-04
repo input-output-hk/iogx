@@ -25,7 +25,7 @@ let
 
       meta = with lib; {
         homepage = "https://github.com/nedbat/scriv";
-        description = "";
+        description = "Maintain useful changelogs.";
         maintainers = with maintainers; [ michaelpj ];
       };
     };

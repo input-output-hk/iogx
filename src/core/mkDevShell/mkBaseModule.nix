@@ -22,34 +22,21 @@ let
       shell.stdenv.cc.bintools
 
       iogx.toolchain.nixpkgs-fmt
-      iogx.toolchain.scriv
       iogx.toolchain.cabal-fmt
-
-      haskell-toolchain.cabal-install
-      haskell-toolchain.haskell-language-server
-      haskell-toolchain.haskell-language-server-wrapper
-      haskell-toolchain.hlint
-      haskell-toolchain.stylish-haskell
 
       pkgs.nodePackages.prettier
       pkgs.curl
       pkgs.ghcid
       pkgs.jq
       pkgs.fd
-      pkgs.editorconfig-core-c
       pkgs.openssl
       pkgs.pkg-config
       pkgs.pre-commit
-      pkgs.shellcheck
-      pkgs.sqlite-interactive
       pkgs.yq
       pkgs.z3
       pkgs.docker-compose
-      pkgs.sqitchPg
       pkgs.json2yaml
       pkgs.yaml2json
-      pkgs.postgresql
-
       pkgs.glibcLocales
       pkgs.libsodium-vrf
       pkgs.lzma
@@ -65,29 +52,60 @@ in
 
   scripts = {
     fix-cabal-fmt = {
-      exec = "${iogx.toolchain.fix-cabal-fmt}/bin/fix-cabal-fmt";
-      description = "format all .cabal files in the current directory";
+      exec = l.getExe iogx.toolchain.fix-cabal-fmt;
+      description = "Format all cabal files";
       group = "formatters";
     };
     fix-png-optimization = {
-      exec = "${iogx.toolchain.fix-png-optimization}/bin/fix-png-optimization";
-      description = "optimize all .png files in the current directory";
+      exec = l.getExe iogx.toolchain.fix-png-optimization;
+      description = "Optimize all png files";
       group = "formatters";
     };
     fix-prettier = {
-      exec = "${iogx.toolchain.fix-prettier}/bin/fix-prettier";
-      description = "format all .js .ts .html .css files in the current directory";
+      exec = l.getExe iogx.toolchain.fix-prettier;
+      description = "Format all js, ts, html and css files";
       group = "formatters";
     };
     fix-stylish-haskell = {
-      exec = "${haskell-toolchain.fix-stylish-haskell}/bin/fix-stylish-haskell";
-      description = "format all .hs files in the current directory";
+      exec = l.getExe haskell-toolchain.fix-stylish-haskell;
+      description = "Format all haskell files";
       group = "formatters";
     };
     fix-nixpkgs-fmt = {
-      exec = "${iogx.toolchain.fix-nixpkgs-fmt}/bin/fix-nixpkgs-fmt";
-      description = "format all .nix files in the current directory";
+      exec = l.getExe iogx.toolchain.fix-nixpkgs-fmt;
+      description = "Format all nix files";
       group = "formatters";
+    };
+
+    cabal = {
+      exec = haskell-toolchain.cabal-install;
+      description = "The command-line interface for Cabal and Hackage";
+      group = "packages";
+    };
+    hlint = {
+      exec = haskell-toolchain.hlint;
+      description = "Haskell source code suggestions";
+      group = "packages";
+    };
+    stylish-haskell = {
+      exec = haskell-toolchain.stylish-haskell;
+      description = "Haskell code prettifier";
+      group = "packages";
+    };
+    haskell-language-server-wrapper = {
+      exec = haskell-toolchain.haskell-language-server-wrapper;
+      description = "LSP server for GHC";
+      group = "packages";
+    };
+    scriv = {
+      exec = iogx.toolchain.scriv;
+      description = "Maintain useful changelogs";
+      group = "packages";
+    };
+    shellcheck = {
+      exec = pkgs.shellcheck;
+      description = "Shell script analysis tool";
+      group = "packages";
     };
   };
 

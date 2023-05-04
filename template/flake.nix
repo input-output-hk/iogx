@@ -44,8 +44,8 @@
 
         # Trace debugging information in the `mkFlake` function.
         # This field is optional.
-        # This field defaults to false.
-        debug = false;
+        # This field defaults to true.
+        debug = true;
 
         # While migrating to IOGX, you might want to keep the old flake outputs 
         # alongside the new ones. An easy way to do this is to prefix (nest) 

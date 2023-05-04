@@ -149,19 +149,6 @@ let
       flake;
 
 
-  # TODO remove me, most likely not needed
-  # removeUnwantedOutputs = flake:
-  #   let
-  #     attrs =
-  #       l.optionals (!flakeopts.includeHaskellApps) [ "apps" ] ++
-  #       l.optionals (!flakeopts.includeHaskellChecks) [ "checks" ] ++
-  #       l.optionals (!flakeopts.includeHaskellPackages) [ "packages" ] ++
-  #       l.optionals (!flakeopts.includeDevShells) [ "devShells" ] ++
-  #       l.optionals (!flakeopts.includeHydraJobs) [ "hydraJobs" ];
-  #   in
-  #   removeAttrs flake attrs;
-
-
   # When migrating to IOGX, one might want to keep the old flake outputs 
   # as well as the new ones. An easy way to do this is to prefix (nest) each 
   # output group { packages, apps, <custom>, devShells, ... } with a custom 

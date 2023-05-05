@@ -52,58 +52,58 @@ in
 
   scripts = {
     fix-cabal-fmt = {
-      exec = l.getExe iogx.toolchain.fix-cabal-fmt;
+      exec = l.pkgToExec iogx.toolchain.fix-cabal-fmt;
       description = "Format all cabal files";
       group = "formatters";
     };
     fix-png-optimization = {
-      exec = l.getExe iogx.toolchain.fix-png-optimization;
+      exec = l.pkgToExec iogx.toolchain.fix-png-optimization;
       description = "Optimize all png files";
       group = "formatters";
     };
     fix-prettier = {
-      exec = l.getExe iogx.toolchain.fix-prettier;
+      exec = l.pkgToExec iogx.toolchain.fix-prettier;
       description = "Format all js, ts, html and css files";
       group = "formatters";
     };
     fix-stylish-haskell = {
-      exec = l.getExe haskell-toolchain.fix-stylish-haskell;
+      exec = l.pkgToExec haskell-toolchain.fix-stylish-haskell;
       description = "Format all haskell files";
       group = "formatters";
     };
     fix-nixpkgs-fmt = {
-      exec = l.getExe iogx.toolchain.fix-nixpkgs-fmt;
+      exec = l.pkgToExec iogx.toolchain.fix-nixpkgs-fmt;
       description = "Format all nix files";
       group = "formatters";
     };
 
     cabal = {
-      exec = haskell-toolchain.cabal-install;
+      exec = l.pkgToExec haskell-toolchain.cabal-install;
       description = "The command-line interface for Cabal and Hackage";
       group = "packages";
     };
     hlint = {
-      exec = haskell-toolchain.hlint;
+      exec = l.pkgToExec haskell-toolchain.hlint;
       description = "Haskell source code suggestions";
       group = "packages";
     };
     stylish-haskell = {
-      exec = haskell-toolchain.stylish-haskell;
+      exec = l.pkgToExec haskell-toolchain.stylish-haskell;
       description = "Haskell code prettifier";
       group = "packages";
     };
     haskell-language-server-wrapper = {
-      exec = haskell-toolchain.haskell-language-server-wrapper;
+      exec = l.pkgToExec haskell-toolchain.haskell-language-server-wrapper;
       description = "LSP server for GHC";
       group = "packages";
     };
     scriv = {
-      exec = iogx.toolchain.scriv;
+      exec = l.pkgToExec iogx.toolchain.scriv;
       description = "Maintain useful changelogs";
       group = "packages";
     };
     shellcheck = {
-      exec = pkgs.shellcheck;
+      exec = l.pkgToExec pkgs.shellcheck;
       description = "Shell script analysis tool";
       group = "packages";
     };

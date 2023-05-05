@@ -75,6 +75,10 @@ let
     ansiBold = text: ansiColor text "white" "bold";
 
 
+    pkgToExec = pkg: ''
+      ${l.getExe pkg} "$@"
+    '';
+
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 
     #   rights = ["longlonglong" "short"]; 

@@ -87,7 +87,7 @@ let
 
       script = {
         group = "iogx";
-        description = "List everything that can be built by CI";
+        description = "List everything that can be built by CI [experimental]";
         exec = ''
           echo
           printf "${formatted-hydra-jobs}"
@@ -96,7 +96,6 @@ let
       };
     in
     script;
-
 
   list-haskell-outputs =
     let

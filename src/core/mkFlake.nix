@@ -97,7 +97,10 @@ let
       flake' = import flakeopts.perSystemOutputs # NOTE: using flakeopts 
         { inherit inputs systemized-inputs flakeopts pkgs; };
     in
-    l.recursiveUpdate flake flake';
+    if flakeopts.perSystemOutputs == null then
+      flake
+    else
+      l.recursiveUpdate flake flake';
 
 
   # If required, we add the read-the-docs sites to the packages outputs.

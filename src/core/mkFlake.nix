@@ -45,7 +45,7 @@ let
   # The returned flake has already been renamed (see renameFlakeOutputs).
   mkFlakeFor = { ghc, cross, profiled }:
     let
-      project' = import flakeopts.haskellProjectFile {
+      project' = import flakeopts.haskellProject {
         # NOTE: using flakeopts
         inherit inputs systemized-inputs flakeopts pkgs ghc;
         deferPluginErrors = false;
@@ -81,7 +81,7 @@ let
         mkFlakeFor { inherit ghc; profiled = true; cross = true; };
 
       native-flakes = [ unprofiled-flake profiled-flake ];
-      should-cross-compile = flakeopts.haskellCrossSystem == pkgs.stdenv.system;
+      should-cross-compile = toString flakeopts.haskellCrossSystem == pkgs.stdenv.system;
       cross-flakes = [ cross-unprofiled-flake cross-profiled-flake ];
       all-flakes = native-flakes ++ l.optionals should-cross-compile cross-flakes;
     in

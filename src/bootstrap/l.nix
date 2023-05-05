@@ -25,6 +25,8 @@ let
       else
         def;
 
+    validPathOrNull = path: if l.pathExists path then path else null;
+
     deleteManyAttrsByPathString = l.foldl' (l.flip deleteAttrByPathString);
 
     deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);

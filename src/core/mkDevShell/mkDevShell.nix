@@ -58,11 +58,16 @@ let
       base-module = iogx.core.mkDevShell.mkBaseModule
         { inherit shell; };
 
-      user-module = import flakeopts.shellModule # NOTE: using flakeopts
-        {
-          inherit inputs systemized-inputs flakeopts pkgs;
-          haskell-nix-project = shell.project;
-        };
+      user-module =
+        if flakeopts.shellModule != null then
+          import flakeopts.shellModule
+            {
+              # NOTE: using flakeopts
+              inherit inputs systemized-inputs flakeopts pkgs;
+              haskell-nix-project = shell.project;
+            }
+        else
+          { };
 
       readthedocs-module =
         l.optionalAttrs flakeopts.includeReadTheDocsSite iogx.readthedocs.devenv-module;

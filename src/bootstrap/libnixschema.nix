@@ -51,6 +51,17 @@ let
 
   validators = # { [validator-name] -> FieldValidator }
     {
+      path = field: value: # Field -> Value -> FieldValidationResult
+        if l.typeOf value == "path" then
+          success field value
+        else {
+          status = "failure";
+          tag = "simple-type-mismatch";
+          expected-type = "path";
+          actual-type = l.typeOf value;
+          inherit field value;
+        };
+
       function = field: value: # Field -> Value -> FieldValidationResult
         if l.typeOf value == "function" then
           success field value
@@ -74,12 +85,12 @@ let
         };
 
       boolean = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "boolean" then
+        if l.typeOf value == "bool" then
           success field value
         else {
           status = "failure";
           tag = "simple-type-mismatch";
-          expected-type = "boolean";
+          expected-type = "bool";
           actual-type = l.typeOf value;
           inherit field value;
         };
@@ -109,6 +120,13 @@ let
         else
           success field value;
 
+      # FieldValidator -> Field -> Value -> FieldValidationResult
+      null-or = validator: field: value:
+        if value == null then
+          success field value
+        else
+          validator field value;
+
       # FieldValidator -> [Value] -> Field -> Value -> FieldValidationResult
       enum = validator: gammut: field: value:
         let
@@ -128,21 +146,21 @@ let
       enum-list = validator: gammut: field: list:
         let
           isFailure = value: (validator field value).status == "failure";
-          result = l.findFirst isFailure success list;
+          result = l.findFirst isFailure (success field list) list;
         in
         if result.status == "failure" then
           result
         else
           let
-            unknowns = l.subtractLists list gammut;
+            unknowns = l.subtractLists gammut list;
           in
-          if l.lengthList unknowns == 0 then
+          if l.length unknowns == 0 then
             success field list
           else {
             status = "failure";
             tag = "many-unknown-enums";
             value = list;
-            unknwon-values = unknowns;
+            unknown-values = unknowns;
             inherit gammut field;
           };
 
@@ -154,7 +172,7 @@ let
         in
         if result.status == "failure" then
           result
-        else if l.lengthList list == 0 then {
+        else if l.length list == 0 then {
           status = "failure";
           tag = "empty-enum-list";
           value = list;
@@ -167,7 +185,7 @@ let
       list = validator: field: list:
         let
           isFailure = value: (validator field value).status == "failure";
-          result = l.findFirst isFailure success list;
+          result = l.findFirst isFailure (success field list) list;
         in
         if result.status == "failure" then
           result
@@ -175,7 +193,10 @@ let
           success field list;
 
       path-exists = field: path: # Field -> Value -> FieldValidationResult
-        if l.pathExists path then
+        let result = V.path field path; in
+        if result.status == "failure" then
+          result
+        else if l.pathExists path then
           success field path
         else {
           status = "failure";
@@ -187,7 +208,7 @@ let
       # Field -> Value -> Value -> FieldValidationResult
       dir-with-file = field: file: dir:
         let
-          result = V.path-exists dir;
+          result = V.path-exists field dir;
         in
         if result.status == "failure" then
           result
@@ -234,7 +255,7 @@ let
 
       config-fields = l.attrNames config; # [String]
 
-      unknown-fields = l.listDifference config fields; # [String]
+      unknown-fields = l.subtractLists schema-fields config-fields; # [String]
 
       toUnknownFieldResult = field: {
         # Field -> FieldValidationResult
@@ -252,12 +273,15 @@ let
       all-results = # [FieldValidationResult]
         unknown-fields-results ++ known-fields-results;
 
+      failed-results = # [FieldValidationResult]
+        l.filter (result: result.status == "failure") all-results;
+
       config-is-valid = # Bool
         l.all (result: result.status == "success") all-results;
 
       __finalconfig__ = # Config 
         let mkNameVal = result: { ${result.field} = result.value; };
-        in l.recursiveUpdateMany (map mkConfigFieldFromResult all-results);
+        in l.recursiveUpdateMany (map mkNameVal all-results);
 
       schema-result = # SchemaValidationResult
         if config-is-valid then {
@@ -265,53 +289,53 @@ let
           config = __finalconfig__;
         } else {
           status = "failure";
-          results = all-results;
+          results = failed-results;
         };
     in
     schema-result;
 
 
   resultToErrorString = result: # FieldValidationResult -> String 
-    if tag == "simple-type-mismatch" then ''
+    if result.tag == "simple-type-mismatch" then ''
       Type mismatch for field: `${result.field}`
       With value: `${toString result.value}`
       Expecting type: `${result.expected-type}`
       Actual type: `${result.actual-type}`
     ''
-    else if tag == "empty-string" then ''
+    else if result.tag == "empty-string" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       This field cannot be the empty string.
     ''
-    else if tag == "unknown-enum" then ''
+    else if result.tag == "unknown-enum" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       It must be one of: `${l.concatStringsSep "` - `" result.gammut}
     ''
-    else if tag == "many-unknown-enums" then ''
+    else if result.tag == "many-unknown-enums" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       Available values: `${l.concatStringsSep "` - `" result.gammut}
     ''
-    else if tag == "empty-enum-list" then ''
+    else if result.tag == "empty-enum-list" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       This field cannot be the empty string.
     ''
-    else if tag == "path-does-not-exist" then ''
+    else if result.tag == "path-does-not-exist" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       This path does not exist.
     ''
-    else if tag == "dir-does-not-have-file" then ''
+    else if result.tag == "dir-does-not-have-file" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       The directory does not contain the expected file `${result.file}`
     ''
-    else if tag == "missing-required-field" then ''
+    else if result.tag == "missing-required-field" then ''
       Missing required field: `${result.field}`
     ''
-    else if tag == "unknown-field" then ''
+    else if result.tag == "unknown-field" then ''
       Unknown field: `${result.field}`
     '' else '' 
       Internal error, please report this as a bug.
@@ -326,143 +350,14 @@ let
     if result.status == "success" then
       result.config
     else
-      let errors = map resultToErrorString result.errors;
+      let
+        errors = map resultToErrorString result.errors;
       in
       l.throw ''
         Your configuration has errors:
         ${l.concatStringsSep "\n\n" errors}
       '';
-
-
-  flakeopts-schema = {
-    inputs = {
-      validator = V.attrset;
-      optional = false;
-    };
-
-    debug = {
-      validator = V.boolean;
-      optional = true;
-      default = _: true;
-    };
-
-    repoRoot = {
-      validator = V.dir-with-file "cabal.project";
-      optional = false;
-    };
-
-    flakeOutputsPrefix = {
-      validator = V.string;
-      optional = true;
-      default = _: "";
-    };
-
-    systems = {
-      validator = V.nonempty-enum-list V.string [ "x86_64-linux" "x86_64-darwin" ];
-      optional = true;
-      default = _: [ "x86_64-linux" "x86_64-darwin" ];
-    };
-
-    haskellCompilers = {
-      validator = V.nonempty-enum-list V.string [ "ghc8107" "ghc925" ];
-      optional = true;
-      default = _: [ "ghc8107" ];
-    };
-
-    defaultHaskellCompiler = {
-      validator = V.enum V.string [ "ghc8107" "ghc925" ];
-      optional = true;
-      default = spec: l.head spec.haskellCompilers;
-    };
-
-    haskellCrossSystem = {
-      validator = V.enum V.string [ "x86_64-linux" "x86_64-darwin" ];
-      optional = true;
-      default = _: "";
-    };
-
-    # TODO rename to haskellProject
-    haskellProject = {
-      validator = V.path-exists;
-      optional = true;
-      default = spec: spec.repoRoot + "/nix/haskell-project.nix";
-    };
-
-    perSystemOutputs = {
-      validator = V.path-exists;
-      optional = true;
-      default = spec: spec.repoRoot + "/nix/per-system-outputs.nix";
-    };
-
-    shellName = {
-      validator = V.nonempty-string;
-      optional = true;
-      default = _: "[unnamed]";
-    };
-
-    shellPrompt = {
-      validator = V.nonempty-string;
-      optional = true;
-      default = spec: "\n\\[\\033[1;32m\\][${spec.shellName}:\\w]\\$\\[\\033[0m\\] ";
-    };
-
-    shellWelcomeMessage = {
-      validator = V.nonempty-string;
-      optional = true;
-      default = spec: "🤟 \\033[1;31mWelcome to ${spec.shellName}\\033[0m 🤟";
-    };
-
-    shellModule = {
-      validator = V.path-exists;
-      optional = true;
-      default = spec: spec.repoRoot + "/nix/shell-module.nix";
-    };
-
-    includeHydraJobs = {
-      validator = V.boolean;
-      optional = true;
-      default = _: true;
-    };
-
-    excludeProfiledHaskellFromHydraJobs = {
-      validator = V.boolean;
-      optional = true;
-      default = _: true;
-    };
-
-    blacklistedHydraJobs = {
-      validator = V.list V.string;
-      optional = true;
-      default = _: [ ];
-    };
-
-    enableHydraPreCommitCheck = {
-      validator = V.boolean;
-      optional = true;
-      default = _: true;
-    };
-
-    includeReadTheDocsSite = {
-      validator = V.boolean;
-      optional = true;
-      default = _: false;
-    };
-
-    readTheDocsSiteRoot = {
-      validator = V.path-exists;
-      optional = true;
-      default = _: null;
-    };
-
-    readTheDocsHaddockPrologue = {
-      validator = V.string;
-      optional = true;
-      default = _: "";
-    };
-
-    readTheDocsExtraHaddockPackages = {
-      validator = V.function;
-      optional = true;
-      default = _: _: { };
-    };
-  };
+in
+{
+  inherit validators validateConfig matchConfigAgainstSchema;
+}

@@ -6,9 +6,15 @@ let
 
   modularise = import ./modularise.nix { inherit l; };
 
+  libnixschema = import ./libnixschema.nix { inherit l; };
+
+  flakeopts-schema = import ./flakeopts-schema.nix { inherit l libnixschema; };
+
+  flakeopts-schema-tests = import ../tests/flakeopts-schema-tests.nix { inherit l libnixschema flakeopts-schema; };
+
   mkFlake = unvalidated-flakeopts:
     let
-      flakeopts = import ./validate-flakeopts.nix { inherit unvalidated-flakeopts l; };
+      flakeopts = libnixschema.validateConfig unvalidated-flakeopts flakeopts-schema;
 
       merged-inputs = import ./merge-inputs.nix {
         inherit iogx-inputs flakeopts l;
@@ -32,6 +38,6 @@ let
     );
 
 in
-{ inherit mkFlake l modularise; }
+{ inherit mkFlake l libnixschema modularise flakeopts-schema; }
 
 

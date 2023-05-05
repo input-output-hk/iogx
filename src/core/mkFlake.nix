@@ -45,7 +45,7 @@ let
   # The returned flake has already been renamed (see renameFlakeOutputs).
   mkFlakeFor = { ghc, cross, profiled }:
     let
-      project' = flakeopts.haskellProjectFile {
+      project' = import flakeopts.haskellProjectFile {
         # NOTE: using flakeopts
         inherit inputs systemized-inputs flakeopts pkgs ghc;
         deferPluginErrors = false;
@@ -94,7 +94,7 @@ let
   # TODO detect collisions.
   addUserPerSystemOutputs = flake:
     let
-      flake' = flakeopts.perSystemOutputs # NOTE: using flakeopts 
+      flake' = import flakeopts.perSystemOutputs # NOTE: using flakeopts 
         { inherit inputs systemized-inputs flakeopts pkgs; };
     in
     l.recursiveUpdate flake flake';

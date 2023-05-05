@@ -72,6 +72,9 @@ let
       "\\033[${boldBit};${colorBit}m${text}\\033[0m";
 
 
+    ansiBold = text: ansiColor text "white" "bold";
+
+
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 
     #   rights = ["longlonglong" "short"]; 

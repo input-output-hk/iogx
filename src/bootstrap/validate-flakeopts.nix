@@ -2,12 +2,12 @@
 
 let
   optionalFile = path:
-    if l.pathExists path then import path else _: { };
+    if l.pathExists path then path else null;
 
 
   validateOptions =
     { inputs ? { }
-    , debug ? false
+    , debug ? true
     , flakeOutputsPrefix ? ""
     , systems ? [ "x86_64-linux" "x86_64-darwin" ]
     , repoRoot

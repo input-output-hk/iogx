@@ -58,7 +58,7 @@ let
       base-module = iogx.core.mkDevShell.mkBaseModule
         { inherit shell; };
 
-      user-module = flakeopts.shellModule # NOTE: using flakeopts
+      user-module = import flakeopts.shellModule # NOTE: using flakeopts
         {
           inherit inputs systemized-inputs flakeopts pkgs;
           haskell-nix-project = shell.project;

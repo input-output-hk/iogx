@@ -346,7 +346,6 @@ let
       default = _: true;
     };
 
-    # TODO rename to haskellProject
     repoRoot = {
       validator = V.dir-with-file "cabal.project";
       optional = false;
@@ -383,7 +382,7 @@ let
     };
 
     # TODO rename to haskellProject
-    haskellProjectFile = {
+    haskellProject = {
       validator = V.path-exists;
       optional = true;
       default = spec: spec.repoRoot + "/nix/haskell-project.nix";
@@ -405,6 +404,12 @@ let
       validator = V.nonempty-string;
       optional = true;
       default = spec: "\n\\[\\033[1;32m\\][${spec.shellName}:\\w]\\$\\[\\033[0m\\] ";
+    };
+
+    shellWelcomeMessage = {
+      validator = V.nonempty-string;
+      optional = true;
+      default = spec: "🤟 \\033[1;31mWelcome to ${spec.shellName}\\033[0m 🤟";
     };
 
     shellModule = {

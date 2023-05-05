@@ -16,14 +16,112 @@ let
     partitioned;
 
 
+  flake-prefix =
+    if flakeopts.flakeOutputsPrefix == ""
+    then ""
+    else "${flakeopts.flakeOutputsPrefix}.";
+
+
+  # TODO this does not take into account the 
+  formatFlakeOutputs = group: command:
+    if group == "devShells" then
+      let
+        fromGhc = ghc: l.concatStringsSep "\n" [
+          "nix develop .#${flake-prefix}${ghc}-default"
+          "nix develop .#${flake-prefix}${ghc}-default-profiled"
+        ];
+
+        default =
+          if flake-prefix == ""
+          then "nix develop"
+          else "nix develop .#${flake-prefix}default";
+
+        all-shells = [ default ] ++ map fromGhc flakeopts.haskellCompilers;
+      in
+      l.concatStringsSep "\n" all-shells
+    else
+      let fromName = name: _: "nix ${command} .#${flake-prefix}${name}";
+
+      in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
+
+
+  # TODO take into account
+  # excludeProfiledHaskellFromHydraJobs 
+  # blacklistedHydraJobs 
+  # enableHydraPreCommitCheck 
+  list-hydra-jobs =
+    let
+      formatSimple = system:
+        let nix-build = "nix build .#hydraJobs.${system}.";
+        in name: "${nix-build}${flake-prefix}${l.ansiBold name}";
+
+      formatGroup = system: group:
+        let
+          nix-build = "nix build .#hydraJobs.${system}.";
+          formatOne = name: _: "${nix-build}${flake-prefix}${group}.${l.ansiBold name}";
+          strings = l.mapAttrsToList formatOne flake.hydraJobs.${group};
+        in
+        l.concatStringsSep "\n" strings;
+
+      formatSystem = system:
+        let
+          content = l.concatStringsSep "\n" [
+            (formatGroup system "packages")
+            (formatGroup system "checks")
+            (formatGroup system "devShells")
+            (formatSimple system "pre-commit-check")
+            (formatSimple system "roots")
+            (formatSimple system "coverage")
+            (formatSimple system "plan-nix")
+            (formatSimple system "required")
+          ];
+        in
+        ''
+          ${l.ansiColor system "yellow" "bold"}
+
+          ${content}
+        '';
+
+      formatted-hydra-jobs =
+        l.concatStringsSep "\n" (map formatSystem flakeopts.systems);
+
+      script = {
+        group = "iogx";
+        description = "List everything that can be built by CI";
+        exec = ''
+          echo
+          printf "${formatted-hydra-jobs}"
+          echo
+        '';
+      };
+    in
+    script;
+
+
   list-haskell-outputs =
     let
+      formatDevShells =
+        let
+          fromGhc = ghc: l.concatStringsSep "\n" [
+            "nix develop .#${flake-prefix}${l.ansiBold "${ghc}-default"}"
+            "nix develop .#${flake-prefix}${l.ansiBold "${ghc}-default-profiled"}"
+          ];
+          default =
+            if flake-prefix == ""
+            then "nix develop"
+            else "nix develop .#${flake-prefix}${l.ansiBold "default"}";
+          all-shells = [ default ] ++ map fromGhc flakeopts.haskellCompilers;
+        in
+        l.concatStringsSep "\n" all-shells;
+
       formatGroup = group: command:
         if group == "devShells" then
-          let fromGhc = ghc: "nix develop .#${ghc}\nnix develop .#${ghc}-profiled";
-          in l.concatStringsSep "\n" (map fromGhc flakeopts.haskellCompilers)
+          formatDevShells
         else
-          let fromName = name: _: "nix ${command} .#${name}";
+          let fromName = name: _: "nix ${command} .#${flake-prefix}${l.ansiBold name}";
+            # NOTE: at this point the flakeOutputsPrefix has not been added to the 
+            # flake, that's why we can do flake.${group} and not 
+            # flake.${group}.formatFlakeOutputs
           in l.concatStringsSep "\n" (l.mapAttrsToList fromName flake.${group});
 
       formatted-outputs = l.concatStringsSep "\n\n" [
@@ -55,14 +153,14 @@ let
           filterDisabled = l.filterAttrs (_: { enabled ? true, ... }: enabled);
           getModuleScripts = mod: filterDisabled (l.getAttrWithDefault "scripts" { } mod);
           mods-scripts = l.recursiveUpdateMany (map getModuleScripts core-modules);
-          extra-scripts = { inherit info list-haskell-outputs; };
+          extra-scripts = { inherit info list-haskell-outputs list-hydra-jobs; };
         in
         mods-scripts // extra-scripts;
 
       formatGroup = group: scripts:
         let
           formatScript = name: script: ''
-            — ${l.ansiColor name "white" "bold"} ∷ ${script.description or ""}
+            — ${l.ansiBold name} ∷ ${script.description or ""}
           '';
           formatted-group = l.concatStrings (l.mapAttrsToList formatScript scripts);
         in
@@ -81,7 +179,7 @@ let
           merged-env = l.recursiveUpdateMany (map getEnv core-modules);
           final-env = removeAttrs merged-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" ];
           formatVar = var: val: ''
-            — ${l.ansiColor var "white" "bold"} ∷ ${val}
+            — ${l.ansiBold var} ∷ ${val}
           '';
           content = l.concatStrings (l.mapAttrsToList formatVar final-env);
         in
@@ -104,7 +202,7 @@ let
 
 
   utility-module = {
-    scripts = { inherit list-haskell-outputs info; };
+    scripts = { inherit list-haskell-outputs list-hydra-jobs info; };
     env.PS1 = flakeopts.shellPrompt;
     enterShell = "info";
   };

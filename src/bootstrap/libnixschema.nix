@@ -51,72 +51,39 @@ let
 
   validators = # { [validator-name] -> FieldValidator }
     {
-      path = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "path" then
+      # String -> Field -> Value -> FieldValidationResult
+      simple-type = type: field: value:
+        if l.typeOf value == type then
           success field value
-        else {
-          status = "failure";
-          tag = "simple-type-mismatch";
-          expected-type = "path";
-          actual-type = l.typeOf value;
-          inherit field value;
-        };
+        else
+          {
+            status = "failure";
+            tag = "simple-type-mismatch";
+            expected-type = type;
+            actual-type = l.typeOf value;
+            inherit field value;
+          };
 
-      function = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "function" then
-          success field value
-        else {
-          status = "failure";
-          tag = "simple-type-mismatch";
-          expected-type = "function";
-          actual-type = l.typeOf value;
-          inherit field value;
-        };
+      path = V.simple-type "path"; # Field -> Value -> FieldValidationResult
 
-      attrset = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "attrset" then
-          success field value
-        else {
-          status = "failure";
-          tag = "simple-type-mismatch";
-          expected-type = "attrset";
-          actual-type = l.typeOf value;
-          inherit field value;
-        };
+      function = V.simple-type "function"; # Field -> Value -> FieldValidationResult
 
-      boolean = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "bool" then
-          success field value
-        else {
-          status = "failure";
-          tag = "simple-type-mismatch";
-          expected-type = "bool";
-          actual-type = l.typeOf value;
-          inherit field value;
-        };
+      attrset = V.simple-type "attrset"; # Field -> Value -> FieldValidationResult
 
-      string = field: value: # Field -> Value -> FieldValidationResult
-        if l.typeOf value == "string" then
-          success field value
-        else {
-          status = "failure";
-          tag = "simple-type-mismatch";
-          expected-type = "string";
-          actual-type = l.typeOf value;
-          inherit field value;
-        };
+      bool = V.simple-type "bool"; # Field -> Value -> FieldValidationResult
+
+      string = V.simple-type "string"; # Field -> Value -> FieldValidationResult
 
       nonempty-string = field: value: # Field -> Value -> FieldValidationResult
-        let
-          result = V.string field value;
-        in
+        let result = V.string field value; in
         if result.status == "failure" then
           result
-        else if value == "" then {
-          status = "failure";
-          tag = "empty-string";
-          inherit field value;
-        }
+        else if value == "" then
+          {
+            status = "failure";
+            tag = "empty-string";
+            inherit field value;
+          }
         else
           success field value;
 
@@ -129,55 +96,48 @@ let
 
       # FieldValidator -> [Value] -> Field -> Value -> FieldValidationResult
       enum = validator: gammut: field: value:
-        let
-          result = validator field value;
-        in
+        let result = validator field value; in
         if result.status == "failure" then
           result
-        else if !l.elem value gammut then {
-          status = "failure";
-          tag = "unknown-enum";
-          inherit gammut field value;
-        }
+        else if !l.elem value gammut then
+          {
+            status = "failure";
+            tag = "unknown-enum";
+            inherit gammut field value;
+          }
         else
           success field value;
 
       # FieldValidator -> [Value] -> Field -> [Value] -> FieldValidationResult
       enum-list = validator: gammut: field: list:
-        let
-          isFailure = value: (validator field value).status == "failure";
-          result = l.findFirst isFailure (success field list) list;
-        in
+        let result = V.list validator field list; in
         if result.status == "failure" then
           result
         else
-          let
-            unknowns = l.subtractLists gammut list;
-          in
+          let unknowns = l.subtractLists gammut list; in
           if l.length unknowns == 0 then
             success field list
-          else {
-            status = "failure";
-            tag = "many-unknown-enums";
-            value = list;
-            unknown-values = unknowns;
-            inherit gammut field;
-          };
+          else
+            {
+              status = "failure";
+              tag = "many-unknown-enums";
+              value = list;
+              inherit gammut field unknowns;
+            };
 
       # TODO Field -> [Value] -> FieldValidationResult === FieldValidator
       # FieldValidator -> [Value] -> Field -> [Value] -> FieldValidationResult
       nonempty-enum-list = validator: gammut: field: list:
-        let
-          result = V.enum-list validator gammut field list;
-        in
+        let result = V.enum-list validator gammut field list; in
         if result.status == "failure" then
           result
-        else if l.length list == 0 then {
-          status = "failure";
-          tag = "empty-enum-list";
-          value = list;
-          inherit gammut field;
-        }
+        else if l.length list == 0 then
+          {
+            status = "failure";
+            tag = "empty-enum-list";
+            value = list;
+            inherit gammut field;
+          }
         else
           success field list;
 
@@ -198,34 +158,28 @@ let
           result
         else if l.pathExists path then
           success field path
-        else {
-          status = "failure";
-          tag = "path-does-not-exist";
-          value = path;
-          inherit field;
-        };
+        else
+          {
+            status = "failure";
+            tag = "path-does-not-exist";
+            value = path;
+            inherit field;
+          };
 
       # Field -> Value -> Value -> FieldValidationResult
       dir-with-file = field: file: dir:
-        let
-          result = V.path-exists field dir;
-        in
+        let result = V.path-exists field dir; in
         if result.status == "failure" then
           result
-        else
-        # TODO why is readFileType missing?
-          let
-            contents = l.readDir dir;
-            cabal-project = l.getAttrWithDefault file "" contents;
-          in
-          if cabal-project != "regular" then {
+        else if !l.pathExists (dir + "/${file}") then
+          {
             status = "failure";
             tag = "dir-does-not-have-file";
             value = dir;
             inherit field file;
           }
-          else
-            success field dir;
+        else
+          success field dir;
     };
 
 
@@ -233,15 +187,11 @@ let
 
 
   # Config -> Config -> Field -> FieldSchema -> FieldValidationResult
-  validateField = final: config: field: schema:
+  validateField = config: field: validator:
     if l.hasAttr field config then
-      schema.validator field config.${field}
+      validator field config.${field}
     else
-      if schema.optional then {
-        status = "success";
-        value = schema.default final;
-      }
-      else {
+      {
         status = "failure";
         tag = "missing-required-field";
         inherit field;
@@ -268,7 +218,7 @@ let
         map toUnknownFieldResult unknown-fields;
 
       known-fields-results = # [FieldValidationResult]
-        l.mapAttrsToList (validateField __finalconfig__ config) schema;
+        l.mapAttrsToList (validateField config) schema;
 
       all-results = # [FieldValidationResult]
         unknown-fields-results ++ known-fields-results;
@@ -279,18 +229,21 @@ let
       config-is-valid = # Bool
         l.all (result: result.status == "success") all-results;
 
-      __finalconfig__ = # Config 
+      final-config = # Config 
         let mkNameVal = result: { ${result.field} = result.value; };
         in l.recursiveUpdateMany (map mkNameVal all-results);
 
       schema-result = # SchemaValidationResult
-        if config-is-valid then {
-          status = "success";
-          config = __finalconfig__;
-        } else {
-          status = "failure";
-          results = failed-results;
-        };
+        if config-is-valid then
+          {
+            status = "success";
+            config = final-config;
+          }
+        else
+          {
+            status = "failure";
+            results = failed-results;
+          };
     in
     schema-result;
 
@@ -337,22 +290,19 @@ let
     ''
     else if result.tag == "unknown-field" then ''
       Unknown field: `${result.field}`
-    '' else '' 
+    ''
+    else '' 
       Internal error, please report this as a bug.
       ${toString result}
     '';
 
   # Schema -> Config -> Config | error 
   validateConfig = schema: config:
-    let
-      result = matchConfigAgainstSchema schema config; # SchemaValidationResult
-    in
+    let result = matchConfigAgainstSchema schema config; in    # SchemaValidationResult
     if result.status == "success" then
       result.config
     else
-      let
-        errors = map resultToErrorString result.errors;
-      in
+      let errors = map resultToErrorString result.errors; in
       l.throw ''
         Your configuration has errors:
         ${l.concatStringsSep "\n\n" errors}

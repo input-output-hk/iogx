@@ -24,6 +24,8 @@ let
       iogx.toolchain.nixpkgs-fmt
       iogx.toolchain.cabal-fmt
 
+      iogx.haskell-toolchain.haskell-language-sever
+
       pkgs.nodePackages.prettier
       pkgs.curl
       pkgs.ghcid

@@ -45,7 +45,7 @@ let
   # The returned flake has already been renamed (see renameFlakeOutputs).
   mkFlakeFor = { ghc, cross, profiled }:
     let
-      project' = import flakeopts.haskellProject {
+      project' = import flakeopts.haskellProjectFile {
         # NOTE: using flakeopts
         inherit inputs systemized-inputs flakeopts pkgs ghc;
         deferPluginErrors = false;
@@ -94,10 +94,10 @@ let
   # TODO detect collisions.
   addUserPerSystemOutputs = flake:
     let
-      flake' = import flakeopts.perSystemOutputs # NOTE: using flakeopts 
+      flake' = import flakeopts.perSystemOutputsFile # NOTE: using flakeopts 
         { inherit inputs systemized-inputs flakeopts pkgs; };
     in
-    if flakeopts.perSystemOutputs == null then
+    if flakeopts.perSystemOutputsFile == null then
       flake
     else
       l.recursiveUpdate flake flake';
@@ -127,14 +127,11 @@ let
 
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
     in
-    if flakeopts.includeDevShells then
-      l.composeManyLeft [
-        addPrefixedDevShells
-        addDefaultDevShell
-        removeLegacyDevShell
-      ]
-        flake'
-    else
+    l.composeManyLeft [
+      addPrefixedDevShells
+      addDefaultDevShell
+      removeLegacyDevShell
+    ]
       flake';
 
 

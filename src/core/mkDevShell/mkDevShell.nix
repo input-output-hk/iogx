@@ -59,8 +59,8 @@ let
         { inherit shell; };
 
       user-module =
-        if flakeopts.shellModule != null then
-          import flakeopts.shellModule
+        if flakeopts.shellModuleFile != null then
+          import flakeopts.shellModuleFile
             {
               # NOTE: using flakeopts
               inherit inputs systemized-inputs flakeopts pkgs;

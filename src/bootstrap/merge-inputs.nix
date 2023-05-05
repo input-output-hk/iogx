@@ -3,7 +3,7 @@
 let
   common-inputs = l.intersect (l.attrNames user-inputs) (l.attrNames iogx-inputs);
 
-  num-common-inputs = l.lengthList common-inputs;
+  num-common-inputs = l.listLength common-inputs;
 
   pretty-common-inputs = l.concatStringsSep "\n  " common-inputs;
 

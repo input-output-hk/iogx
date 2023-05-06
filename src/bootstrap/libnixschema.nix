@@ -9,14 +9,13 @@ let
   # type Value = any nix value 
   #
   # type ErrorTag 
-  #   = "simple-type-mismatch"
+  #   = "type-mismatch"
   #   | "empty-string"
   #   | "unknown-enum"
-  #   | "many-unknown-enums"
-  #   | "empty-enum-list"
+  #   | "empty-list"
   #   | "path-does-not-exist"
   #   | "dir-does-not-have-file"
-  #   | "missing-required-field"
+  #   | "missing-field"
   #   | "unknown-field"
   #
   # type FieldValidationResult 
@@ -27,12 +26,7 @@ let
   #   = Field -> Value -> FieldValidationResult
   # 
   # type Schema 
-  #   = { [field-name] :: [FieldSchema] }
-  #
-  # type FieldSchema 
-  #   = { validator :: FieldValidator
-  #     , optional :: Bool
-  #     , default :: Config -> Value }
+  #   = { [field-name] :: FieldValidator }
   #
   # type SchemaValidationResult 
   #   = { status = "success", config :: Config }
@@ -42,6 +36,10 @@ let
   #   = { [field-name] :: Value }
 
 
+  resultIsFailure = result: result.status == "failure";
+  resultIsSuccess = result: result.status == "success";
+
+
   success = field: value: # Field -> Value -> FieldValidationResult
     {
       status = "success";
@@ -49,7 +47,7 @@ let
     };
 
 
-  validators = # { [validator-name] -> FieldValidator }
+  validators =
     {
       # String -> Field -> Value -> FieldValidationResult
       simple-type = type: field: value:
@@ -58,7 +56,7 @@ let
         else
           {
             status = "failure";
-            tag = "simple-type-mismatch";
+            tag = "type-mismatch";
             expected-type = type;
             actual-type = l.typeOf value;
             inherit field value;
@@ -66,26 +64,25 @@ let
 
       path = V.simple-type "path"; # Field -> Value -> FieldValidationResult
 
-      function = V.simple-type "function"; # Field -> Value -> FieldValidationResult
+      function = V.simple-type "lambda"; # Field -> Value -> FieldValidationResult
 
-      attrset = V.simple-type "attrset"; # Field -> Value -> FieldValidationResult
+      attrset = V.simple-type "set"; # Field -> Value -> FieldValidationResult
 
       bool = V.simple-type "bool"; # Field -> Value -> FieldValidationResult
 
       string = V.simple-type "string"; # Field -> Value -> FieldValidationResult
 
+      list = V.simple-type "list"; # Field -> [Value] -> FieldValidationResult
+
       nonempty-string = field: value: # Field -> Value -> FieldValidationResult
-        let result = V.string field value; in
-        if result.status == "failure" then
-          result
-        else if value == "" then
+        if value == "" then
           {
             status = "failure";
             tag = "empty-string";
             inherit field value;
           }
         else
-          success field value;
+          V.string field value;
 
       # FieldValidator -> Field -> Value -> FieldValidationResult
       null-or = validator: field: value:
@@ -94,12 +91,9 @@ let
         else
           validator field value;
 
-      # FieldValidator -> [Value] -> Field -> Value -> FieldValidationResult
-      enum = validator: gammut: field: value:
-        let result = validator field value; in
-        if result.status == "failure" then
-          result
-        else if !l.elem value gammut then
+      # [Value] -> Field -> Value -> FieldValidationResult
+      enum = gammut: field: value:
+        if !l.elem value gammut then
           {
             status = "failure";
             tag = "unknown-enum";
@@ -108,49 +102,33 @@ let
         else
           success field value;
 
-      # FieldValidator -> [Value] -> Field -> [Value] -> FieldValidationResult
-      enum-list = validator: gammut: field: list:
-        let result = V.list validator field list; in
-        if result.status == "failure" then
-          result
-        else
-          let unknowns = l.subtractLists gammut list; in
-          if l.length unknowns == 0 then
-            success field list
-          else
-            {
-              status = "failure";
-              tag = "many-unknown-enums";
-              value = list;
-              inherit gammut field unknowns;
-            };
+      # [Value] -> Field -> [Value] -> FieldValidationResult
+      enum-list = gammut: field: list:
+        V.list-of (V.enum gammut) field list;
 
-      # TODO Field -> [Value] -> FieldValidationResult === FieldValidator
-      # FieldValidator -> [Value] -> Field -> [Value] -> FieldValidationResult
-      nonempty-enum-list = validator: gammut: field: list:
-        let result = V.enum-list validator gammut field list; in
-        if result.status == "failure" then
+      # [Value] -> Field -> [Value] -> FieldValidationResult
+      nonempty-enum-list = gammut: field: list:
+        let result = V.enum-list gammut field list; in
+        if resultIsFailure result then
           result
         else if l.length list == 0 then
           {
             status = "failure";
-            tag = "empty-enum-list";
+            tag = "empty-list";
             value = list;
-            inherit gammut field;
+            inherit field;
           }
         else
           success field list;
 
       # FieldValidator -> Field -> [Value] -> FieldValidationResult
-      list = validator: field: list:
-        let
-          isFailure = value: (validator field value).status == "failure";
-          result = l.findFirst isFailure (success field list) list;
-        in
-        if result.status == "failure" then
+      list-of = validator: field: list:
+        let result = V.list field list; in
+        if resultIsFailure result then
           result
         else
-          success field list;
+          let results = map (validator field) list; in
+          l.findFirst resultIsFailure (success field list) results;
 
       path-exists = field: path: # Field -> Value -> FieldValidationResult
         let result = V.path field path; in
@@ -166,8 +144,8 @@ let
             inherit field;
           };
 
-      # Field -> Value -> Value -> FieldValidationResult
-      dir-with-file = field: file: dir:
+      # Value -> Field -> Value -> FieldValidationResult
+      dir-with-file = file: field: dir:
         let result = V.path-exists field dir; in
         if result.status == "failure" then
           result
@@ -186,14 +164,14 @@ let
   V = validators;
 
 
-  # Config -> Config -> Field -> FieldSchema -> FieldValidationResult
+  # Config -> Field -> FieldValidator -> FieldValidationResult
   validateField = config: field: validator:
     if l.hasAttr field config then
       validator field config.${field}
     else
       {
         status = "failure";
-        tag = "missing-required-field";
+        tag = "missing-field";
         inherit field;
       };
 
@@ -207,12 +185,12 @@ let
 
       unknown-fields = l.subtractLists schema-fields config-fields; # [String]
 
-      toUnknownFieldResult = field: {
-        # Field -> FieldValidationResult
-        status = "failure";
-        tag = "unknown-field";
-        inherit field;
-      };
+      toUnknownFieldResult = field: # Field -> FieldValidationResult
+        {
+          status = "failure";
+          tag = "unknown-field";
+          inherit field;
+        };
 
       unknown-fields-results = # [FieldValidationResult]
         map toUnknownFieldResult unknown-fields;
@@ -224,10 +202,10 @@ let
         unknown-fields-results ++ known-fields-results;
 
       failed-results = # [FieldValidationResult]
-        l.filter (result: result.status == "failure") all-results;
+        l.filter resultIsFailure all-results;
 
       config-is-valid = # Bool
-        l.all (result: result.status == "success") all-results;
+        l.all resultIsSuccess all-results;
 
       final-config = # Config 
         let mkNameVal = result: { ${result.field} = result.value; };
@@ -249,7 +227,7 @@ let
 
 
   resultToErrorString = result: # FieldValidationResult -> String 
-    if result.tag == "simple-type-mismatch" then ''
+    if result.tag == "type-mismatch" then ''
       Type mismatch for field: `${result.field}`
       With value: `${toString result.value}`
       Expecting type: `${result.expected-type}`
@@ -265,12 +243,7 @@ let
       With value: `${toString result.value}`
       It must be one of: `${l.concatStringsSep "` - `" result.gammut}
     ''
-    else if result.tag == "many-unknown-enums" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
-      Available values: `${l.concatStringsSep "` - `" result.gammut}
-    ''
-    else if result.tag == "empty-enum-list" then ''
+    else if result.tag == "empty-list" then ''
       Invalid field: `${result.field}`
       With value: `${toString result.value}`
       This field cannot be the empty string.
@@ -285,8 +258,8 @@ let
       With value: `${toString result.value}`
       The directory does not contain the expected file `${result.file}`
     ''
-    else if result.tag == "missing-required-field" then ''
-      Missing required field: `${result.field}`
+    else if result.tag == "missing-field" then ''
+      Missing field: `${result.field}`
     ''
     else if result.tag == "unknown-field" then ''
       Unknown field: `${result.field}`

@@ -56,6 +56,8 @@
   outputs = iogx-inputs:
     let
       iogx = import ./src/bootstrap/main.nix { inherit iogx-inputs; };
+
+      flakeopts-schema-tests = import ./tests/flakeopts-schema-tests.nix { inherit iogx; };
     in
     rec {
       inherit (iogx) mkFlake l modularise flakeopts-schema libnixschema;
@@ -69,9 +71,7 @@
         '';
       };
 
-      checks.flakeopts-schema-tests = iogx-inputs.nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
-        name = import ./tests/flakeopts-schema-tests.nix { inherit l libnixschema flakeopts-schema; };
-      };
+      checks.x86_64-linux.flakeopts-schema-tests = flakeopts-schema-tests;
     };
 
   nixConfig = {

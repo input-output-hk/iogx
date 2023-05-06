@@ -18,6 +18,20 @@ let
 
     maximumBy = f: l.foldl' (x: max: if f x > f max then x else max);
 
+    traceId = x: l.trace (l.deepSeq x x) x;
+
+    allEquals = xs:
+      if l.length xs > 0 then
+        let
+          ts = map l.typeOf xs;
+          ht = l.head ts;
+          hx = l.head xs;
+        in
+        l.all (t: t == ht) ts && l.all (x: x == hx) ts
+      else
+        true;
+
+
     # TODO is this in the stdlib?
     getAttrWithDefault = name: def: set:
       if l.hasAttr name set then

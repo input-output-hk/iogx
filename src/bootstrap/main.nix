@@ -12,7 +12,7 @@ let
 
   mkFlake = unvalidated-flakeopts:
     let
-      flakeopts = unvalidated-flakeopts; # TODO libnixschema.validateConfig unvalidated-flakeopts flakeopts-schema;
+      flakeopts = libnixschema.validateConfig unvalidated-flakeopts flakeopts-schema;
 
       merged-inputs = import ./merge-inputs.nix {
         inherit iogx-inputs flakeopts l;
@@ -36,6 +36,6 @@ let
     );
 
 in
-{ inherit mkFlake l libnixschema modularise flakeopts-schema; }
+{ inherit mkFlake l libnixschema modularise flakeopts-schema iogx-inputs; }
 
 

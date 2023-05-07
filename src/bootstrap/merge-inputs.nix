@@ -24,6 +24,8 @@ let
     } 
     The clashing inputs are: 
     - ${pretty-common-inputs}
+
+    You can ignore this warning if you are migrating to IOGX and keeping both the old and flake.
     ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️
   '';
 

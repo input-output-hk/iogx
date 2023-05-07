@@ -20,6 +20,8 @@ let
 
     traceId = x: l.trace (l.deepSeq x x) x;
 
+    listToString = xs: "[${l.concatStringsSep ", " (map toString xs)}]";
+
     allEquals = xs:
       if l.length xs > 0 then
         let

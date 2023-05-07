@@ -17,7 +17,8 @@ let
   #   | "dir-does-not-have-file"
   #   | "missing-field"
   #   | "unknown-field"
-  #
+  #   | "invalid-list-elem"
+  # 
   # type FieldValidationResult 
   #   = { status = "success", field :: Field, value :: Value; }
   #   | { status = "failure", field :: Field, tag :: ErrorTag, [tag-specific-fields] }
@@ -30,7 +31,7 @@ let
   #
   # type SchemaValidationResult 
   #   = { status = "success", config :: Config }
-  #   | { status = "failure", results :: [FieldValidationResult] }
+  #   | { status = "failure", errors :: [FieldValidationResult] }
   #
   # type Config 
   #   = { [field-name] :: Value }
@@ -127,8 +128,20 @@ let
         if resultIsFailure result then
           result
         else
-          let results = map (validator field) list; in
-          l.findFirst resultIsFailure (success field list) results;
+          let
+            results = map (validator field) list;
+            first = l.findFirst resultIsFailure (success field list) results;
+          in
+          if resultIsSuccess first then
+            success field list
+          else
+            {
+              status = "failure";
+              tag = "invalid-list-elem";
+              inner = first;
+              value = list;
+              inherit field;
+            };
 
       path-exists = field: path: # Field -> Value -> FieldValidationResult
         let result = V.path field path; in
@@ -220,7 +233,7 @@ let
         else
           {
             status = "failure";
-            results = failed-results;
+            errors = failed-results;
           };
     in
     schema-result;
@@ -228,41 +241,57 @@ let
 
   resultToErrorString = result: # FieldValidationResult -> String 
     if result.tag == "type-mismatch" then ''
-      Type mismatch for field: `${result.field}`
-      With value: `${toString result.value}`
-      Expecting type: `${result.expected-type}`
-      Actual type: `${result.actual-type}`
+      Invalid field: ${result.field}
+      With value: ${toString result.value}
+      Expecting type: ${result.expected-type}
+      Actual type: ${result.actual-type}
     ''
     else if result.tag == "empty-string" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
-      This field cannot be the empty string.
+      Invalid field: ${result.field}
+      With value: ""
+      This field cannot be the empty string
     ''
     else if result.tag == "unknown-enum" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
-      It must be one of: `${l.concatStringsSep "` - `" result.gammut}
+      Invalid field: ${result.field}
+      With value: ${toString result.value}
+      It must be one of: ${l.listToString result.gammut}
     ''
     else if result.tag == "empty-list" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
+      Invalid field: ${result.field}
+      With value: ${toString result.value}
       This field cannot be the empty string.
     ''
     else if result.tag == "path-does-not-exist" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
+      Invalid field: ${result.field}
+      With value: ${toString result.value}
       This path does not exist.
     ''
+    else if result.tag == "invalid-list-elem" then
+      let
+        # A little hacky but gets the job done
+        formatInner = l.composeManyLeft [
+          resultToErrorString
+          (l.splitString "\n")
+          (l.drop 2) # Remove the first two lines of the inner error
+          (l.concatStringsSep "\n")
+        ];
+      in
+      '' 
+          Invalid field: ${result.field}
+          With value: ${l.listToString result.value}
+          The list contains at least one invalid value: ${toString result.inner.value}
+          ${formatInner result.inner}
+        ''
     else if result.tag == "dir-does-not-have-file" then ''
-      Invalid field: `${result.field}`
-      With value: `${toString result.value}`
-      The directory does not contain the expected file `${result.file}`
+      Invalid field: ${result.field}
+      With value: ${toString result.value}
+      The directory does not contain the expected file ${result.file}
     ''
     else if result.tag == "missing-field" then ''
-      Missing field: `${result.field}`
+      Missing field: ${result.field}
     ''
     else if result.tag == "unknown-field" then ''
-      Unknown field: `${result.field}`
+      Unknown field: ${result.field}
     ''
     else '' 
       Internal error, please report this as a bug.

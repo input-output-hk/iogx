@@ -50,7 +50,7 @@ let
         Expected failure: ${error-field} ∷ ${error-tag}
       ''
     else
-      let first = l.head result.results; in
+      let first = l.head result.errors; in
       if first.tag == error-tag && first.field == error-field then
         true
       else
@@ -73,14 +73,14 @@ let
     (expect-invalid-field "flakeOutputsPrefix" "type-mismatch" 1)
     (expect-missing-field "systems")
     (expect-invalid-field "systems" "type-mismatch" { })
-    (expect-invalid-field "systems" "unknown-enum" [ "x86_64-darwin" true ])
+    (expect-invalid-field "systems" "invalid-list-elem" [ "x86_64-darwin" true ])
     (expect-invalid-field "systems" "empty-list" [ ])
-    (expect-invalid-field "systems" "unknown-enum" [ "x" "y" ])
+    (expect-invalid-field "systems" "invalid-list-elem" [ "x" "y" ])
     (expect-missing-field "haskellCompilers")
     (expect-invalid-field "haskellCompilers" "type-mismatch" 1)
-    (expect-invalid-field "haskellCompilers" "unknown-enum" [ "ghc8107" "ghcXXX" ])
+    (expect-invalid-field "haskellCompilers" "invalid-list-elem" [ "ghc8107" "ghcXXX" ])
     (expect-invalid-field "haskellCompilers" "empty-list" [ ])
-    (expect-invalid-field "haskellCompilers" "unknown-enum" [ 1 "x" "y" ])
+    (expect-invalid-field "haskellCompilers" "invalid-list-elem" [ 1 "x" "y" ])
     (expect-missing-field "haskellProjectFile")
     (expect-invalid-field "haskellProjectFile" "type-mismatch" true)
     (expect-invalid-field "haskellProjectFile" "path-does-not-exist" ./__unknown.nix)

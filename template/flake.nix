@@ -13,6 +13,7 @@
 #   4. Run `nix develop` and read the available commands
 #   5. Run `cabal test all` to ensure that everything is working
 #   6. Delete this comment
+
 {
   description = "";
 

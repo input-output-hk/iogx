@@ -1,4 +1,4 @@
-{ iogx }:
+{ iogx, pkgs }:
 
 let
   inherit (iogx) l libnixschema flakeopts-schema iogx-inputs;
@@ -122,7 +122,7 @@ let
   evaluated-testsuite = l.deepSeq testsuite "success";
 
 
-  run = iogx-inputs.nixpkgs.legacyPackages.x86_64-linux.writeScript "flakeopts-schema-tests" ''
+  run = pkgs.writeScript "flakeopts-schema-tests" ''
     echo "Evaluating ./tests/flakeopts-schema-tests.nix ... ${evaluated-testsuite}"
   '';
 in

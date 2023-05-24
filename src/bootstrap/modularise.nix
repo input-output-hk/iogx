@@ -11,9 +11,8 @@ let
       in
       l.nameValuePair name value
     else
+      # TODO thorw instead if path is not a nix file
       l.nameValuePair path null;
-  # TODO 
-  # l.throw "[modularise] ${path} is not a nix file.";
 
   dirToModule = dir: path:
     let

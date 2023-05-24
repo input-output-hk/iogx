@@ -8,7 +8,7 @@ your CI.
 
 To get started run: 
 ```
-nix flake init --template github:zeme-iohk/iogx
+nix flake init --template github:zeme-wana/iogx
 ```
 Then open the generated `./flake.nix` for documentation.
 

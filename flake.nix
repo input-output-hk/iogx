@@ -53,16 +53,12 @@
     tullia.url = "github:input-output-hk/tullia/e1e9fb1648174b802976f6499a50fbc9c486b234";
   };
 
+
   outputs = iogx-inputs:
     let
       iogx = import ./src/bootstrap/main.nix { inherit iogx-inputs; };
 
-      flakeopts-schema-tests = import ./tests/flakeopts-schema-tests.nix { inherit iogx; };
-    in
-    rec {
-      inherit (iogx) mkFlake l modularise flakeopts-schema libnixschema;
-
-      templates.default = {
+      template = {
         path = ./template;
         description = "IOGX - Standard flake for IOG projects";
         welcomeText = ''
@@ -71,8 +67,22 @@
         '';
       };
 
-      checks.x86_64-linux.flakeopts-schema-tests = flakeopts-schema-tests;
-    };
+      global-outputs = {
+        inherit (iogx) mkFlake l modularise flakeopts-schema libnixschema;
+        templates.default = template;
+      };
+
+      per-system-outputs = iogx-inputs.flake-utils.lib.eachDefaultSystem (system:
+        { 
+          checks.flakeopts-schema-tests = import ./tests/flakeopts-schema-tests.nix { 
+            inherit iogx;
+            pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};  
+          };
+        }
+      );
+    in
+     global-outputs // per-system-outputs;
+
 
   nixConfig = {
     extra-substituters = [

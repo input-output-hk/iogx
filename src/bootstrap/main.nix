@@ -8,7 +8,7 @@ let
 
   libnixschema = import ./libnixschema.nix { inherit l; };
 
-  flakeopts-schema = import ./flakeopts-schema.nix { inherit l libnixschema; };
+  flakeopts-schema = import ./flakeopts-schema.nix { inherit libnixschema; };
 
   mkFlake = unvalidated-flakeopts:
     let

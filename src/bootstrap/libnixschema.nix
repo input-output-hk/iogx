@@ -277,11 +277,11 @@ let
         ];
       in
       '' 
-          Invalid field: ${result.field}
-          With value: ${l.listToString result.value}
-          The list contains at least one invalid value: ${toString result.inner.value}
-          ${formatInner result.inner}
-        ''
+        Invalid field: ${result.field}
+        With value: ${l.listToString result.value}
+        The list contains at least one invalid value: ${toString result.inner.value}
+        ${formatInner result.inner}
+      ''
     else if result.tag == "dir-does-not-have-file" then ''
       Invalid field: ${result.field}
       With value: ${toString result.value}
@@ -300,7 +300,7 @@ let
 
   # Schema -> Config -> Config | error 
   validateConfig = schema: config:
-    let result = matchConfigAgainstSchema schema config; in    # SchemaValidationResult
+    let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
     if result.status == "success" then
       result.config
     else

@@ -143,5 +143,3 @@ let
 in
 
 utils // l
-
-# builtins.trace ("\n" + outputs.ext.marlowe-cardano.l.x86_64-darwin.prettyTwoColumnsLayout { lefts = ["a" "ccc"]; rights = ["longlonglong" "short"]; max-width = 16; sep-char = "."; gap-width = 3; ellipse = "***"; }) ""

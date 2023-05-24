@@ -1,4 +1,4 @@
-{ l, libnixschema }:
+{ libnixschema }:
 
 let
   V = libnixschema.validators;

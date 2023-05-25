@@ -52,7 +52,7 @@ pkgs.haskell-nix.cabalProject' (_: {
 
   # Reccomended, otherwise you'll have to build haddock for the entire haskell
   # dependecy tree.
-  shell.withHoolge = false;
+  shell.withHoogle = false;
 
   inputMap = {
     "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;

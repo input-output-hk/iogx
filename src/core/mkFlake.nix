@@ -55,10 +55,9 @@ let
       project = if cross then project'.projectCross.mingwW64 else project';
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake project {
-        # TODO remove withHoogle = false; and set it manually to all projects.
         # NOTE: we append the ghc & project to the shell so that we can retrieve 
         # them later when making the devShell.
-        devShell = project.shellFor { withHoogle = false; } // { inherit ghc project; };
+        devShell = project.shell // { inherit ghc project; };
       };
     in
     renameFlakeOutputs { inherit ghc cross profiled flake; };

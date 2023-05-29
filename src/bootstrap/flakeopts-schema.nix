@@ -14,7 +14,6 @@ let
     haskellCrossSystem = V.null-or (V.enum [ "x86_64-linux" "x86_64-darwin" ]);
     haskellProjectFile = V.path-exists;
     perSystemOutputsFile = V.null-or V.path-exists;
-    shellName = V.nonempty-string;
     shellPrompt = V.nonempty-string;
     shellWelcomeMessage = V.nonempty-string;
     shellModuleFile = V.null-or V.path-exists;

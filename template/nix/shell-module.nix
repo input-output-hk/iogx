@@ -29,7 +29,7 @@
   #   haskell-nix-project.hsPkgs.cardano-cli.components.exes.cardano-cli
   #   haskell-nix-project.hsPkgs.cardano-node.components.exes.cardano-node
   # ];
-  # Be careful not to refence the project's own haskell packages.
+  # Be careful not to reference the project's own haskell packages.
 , haskell-nix-project
 }:
 

@@ -15,7 +15,6 @@ let
     haskellCrossSystem = null;
     haskellProjectFile = ./nix/haskell-project.nix;
     perSystemOutputsFile = ./nix/per-system-outputs.nix;
-    shellName = "[TODO]";
     shellPrompt = "\n\\[\\033[1;32m\\][TODO:\\w]\\$\\[\\033[0m\\] ";
     shellWelcomeMessage = "🤟 \\033[1;31mWelcome to TODO\\033[0m 🤟";
     shellModuleFile = ./nix/shell-module.nix;
@@ -87,9 +86,6 @@ let
     (expect-missing-field "perSystemOutputsFile")
     (expect-invalid-field "perSystemOutputsFile" "type-mismatch" true)
     (expect-invalid-field "perSystemOutputsFile" "path-does-not-exist" ./__unknown.nix)
-    (expect-missing-field "shellName")
-    (expect-invalid-field "shellName" "type-mismatch" true)
-    (expect-invalid-field "shellName" "empty-string" "")
     (expect-missing-field "shellPrompt")
     (expect-invalid-field "shellPrompt" "type-mismatch" true)
     (expect-invalid-field "shellPrompt" "empty-string" "")

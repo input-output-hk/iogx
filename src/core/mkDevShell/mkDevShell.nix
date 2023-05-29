@@ -47,7 +47,7 @@ let
 
   moduleToShell = mod:
     pkgs.mkShell {
-      name = "${flakeopts.shellName}-shell";
+      name = "iogx-shell";
       buildInputs = mod.packages ++ scriptsToShellApps mod.scripts;
       shellHook = mod.enterShell + "\n" + envToShellHook mod.env;
     };

@@ -6,8 +6,8 @@ let
   schema = {
     inputs = V.attrset;
     debug = V.bool;
-    repoRoot = V.dir-with-file "cabal.project";
     flakeOutputsPrefix = V.string;
+    repoRoot = V.dir-with-file "cabal.project";
     systems = V.nonempty-enum-list [ "x86_64-linux" "x86_64-darwin" ];
     haskellCompilers = V.nonempty-enum-list [ "ghc8107" "ghc927" ];
     defaultHaskellCompiler = V.enum [ "ghc8107" "ghc927" ];
@@ -21,7 +21,6 @@ let
     excludeProfiledHaskellFromHydraJobs = V.bool;
     blacklistedHydraJobs = V.list-of V.string;
     enableHydraPreCommitCheck = V.bool;
-    includeReadTheDocsSite = V.bool;
     readTheDocsSiteDir = V.null-or V.path-exists;
     readTheDocsHaddockPrologue = V.string;
     readTheDocsExtraHaddockPackages = V.null-or V.function;

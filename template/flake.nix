@@ -35,7 +35,7 @@
     # foobar.url = "github:foo/bar";
   };
 
-  outputs = inputs: iogx.mkFlake {
+  outputs = inputs: inputs.iogx.mkFlake {
     
     # Boilerplate: simply pass your unmodified inputs here.
     inherit inputs;
@@ -158,7 +158,7 @@
     #       plutus-ledger-api quickcheck-contractmodel
     #   }
     # A value of null means: do not add extra packages.
-    readTheDocsExtraHaddockPackages = _: { };
+    readTheDocsExtraHaddockPackages = null;
   };
 
 

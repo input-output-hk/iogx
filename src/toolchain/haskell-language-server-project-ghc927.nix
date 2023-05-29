@@ -19,7 +19,7 @@ pkgs.haskell-nix.cabalProject' {
 
   src = inputs.haskell-language-server-1_9_0_0;
 
-  compiler-nix-name = "ghc925";
+  compiler-nix-name = "ghc927";
 
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line

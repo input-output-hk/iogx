@@ -6,7 +6,7 @@ inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
 
   tools = {
     shellcheck = pkgs.shellcheck;
-    stylish-haskell = iogx.toolchain.haskell-toolchain-ghc925.stylish-haskell;
+    stylish-haskell = iogx.toolchain.haskell-toolchain-ghc927.stylish-haskell;
     nixpkgs-fmt = iogx.toolchain.nixpkgs-fmt;
     cabal-fmt = iogx.toolchain.cabal-fmt;
   };

@@ -74,7 +74,7 @@
         # This field is optional, but it cannot be the empty list.
         # This field defaults to [ "ghc8107" ]
         # Available compilers are: 
-        #   ghc8107 ghc925
+        #   ghc8107 ghc927
         haskellCompilers = [ "ghc8107" ];
 
         # The default GHC compiler.

@@ -60,7 +60,7 @@ let
 
   # We want to build the read-the-docs sites in CI.
   addReadTheDocsPackages = jobs:
-    if flakeopts.includeReadTheDocsSite then
+    if flakeopts.readTheDocsSiteDir != null then
       l.recursiveUpdate jobs { packages.readthedocs = flake.packages.readthedocs; }
     else
       jobs;

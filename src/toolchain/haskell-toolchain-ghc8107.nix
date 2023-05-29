@@ -7,4 +7,5 @@
   hlint = iogx.toolchain.hlint-ghc8107;
   stylish-haskell = iogx.toolchain.stylish-haskell-ghc8107;
   pre-commit-check = iogx.toolchain.pre-commit-check-ghc8107;
+  fourmolu = iogx.toolchain.fourmolu-ghc8107;
 }

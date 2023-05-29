@@ -89,6 +89,11 @@ in
       description = "Haskell source code suggestions";
       group = "packages";
     };
+    fourmolu = {
+      exec = l.pkgToExec haskell-toolchain.fourmolu;
+      description = "Haskell code formatter";
+      group = "packages";
+    };
     stylish-haskell = {
       exec = l.pkgToExec haskell-toolchain.stylish-haskell;
       description = "Haskell code prettifier";

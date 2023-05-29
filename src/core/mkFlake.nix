@@ -104,7 +104,7 @@ let
 
   # If required, we add the read-the-docs sites to the packages outputs.
   addReadTheDocsPackages = flake:
-    if flakeopts.includeReadTheDocsSite then
+    if flakeopts.readTheDocsSiteDir != null then
       l.recursiveUpdate flake { packages.readthedocs = iogx.readthedocs.sites; }
     else
       flake;

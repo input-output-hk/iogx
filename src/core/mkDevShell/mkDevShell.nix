@@ -70,7 +70,7 @@ let
           { };
 
       readthedocs-module =
-        l.optionalAttrs flakeopts.includeReadTheDocsSite iogx.readthedocs.devenv-module;
+        l.optionalAttrs (flakeopts.readTheDocsSiteDir != null) iogx.readthedocs.devenv-module;
 
       utility-module = iogx.core.mkDevShell.mkUtilityModule {
         inherit flake;

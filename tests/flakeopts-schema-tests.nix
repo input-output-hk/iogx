@@ -22,7 +22,6 @@ let
     excludeProfiledHaskellFromHydraJobs = true;
     blacklistedHydraJobs = [ ];
     enableHydraPreCommitCheck = true;
-    includeReadTheDocsSite = true;
     readTheDocsSiteDir = ./doc/read-the-docs-site;
     readTheDocsHaddockPrologue = "";
     readTheDocsExtraHaddockPackages = null;
@@ -103,8 +102,6 @@ let
     (expect-invalid-field "blacklistedHydraJobs" "type-mismatch" 1)
     (expect-missing-field "enableHydraPreCommitCheck")
     (expect-invalid-field "enableHydraPreCommitCheck" "type-mismatch" 1)
-    (expect-missing-field "includeReadTheDocsSite")
-    (expect-invalid-field "includeReadTheDocsSite" "type-mismatch" 1)
     (expect-missing-field "readTheDocsSiteDir")
     (expect-invalid-field "readTheDocsSiteDir" "type-mismatch" true)
     (expect-invalid-field "readTheDocsSiteDir" "path-does-not-exist" ./__unknown.nix)

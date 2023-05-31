@@ -159,6 +159,16 @@
     #   }
     # A value of null means: do not add extra packages.
     readTheDocsExtraHaddockPackages = null;
+
+    # Override the `hooks` attrset passed to `pre-commit-hooks-nix.run`.
+    # See https://github.com/cachix/pre-commit-hooks.nix#nix
+    # The following hooks are configured and enabled by default:
+    #   stylish-haskell, nixpkgs-fmt, cabal-fmt, shellcheck,
+    #   editorconfig-checker, png-optimization, prettier
+    # For example if you want to disable stylish-haskell:
+    #   preCommitCheckHooks = { stylish-haskell.enable = false; }
+    # A value of {} means: do not change the default hooks.
+    preCommitCheckHooks = {};
   };
 
 

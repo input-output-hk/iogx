@@ -1,4 +1,4 @@
-{ inputs, pkgs, iogx, flakeopts, ... }:
+{ inputs, pkgs, iogx, flakeopts, l, ... }:
 
 inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
 
@@ -11,7 +11,8 @@ inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
     cabal-fmt = iogx.toolchain.cabal-fmt;
   };
 
-  hooks = {
+  hooks = l.flip l.recursiveUpdate flakeopts.preCommitCheckHooks {
+    
     stylish-haskell.enable = true;
     cabal-fmt.enable = true;
     shellcheck.enable = true;
@@ -22,7 +23,7 @@ inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
     };
 
     editorconfig-checker = pkgs.lib.mkForce {
-      enable = false; # TODO [devx] enable
+      enable = true; 
       entry = "${pkgs.editorconfig-checker}/bin/editorconfig-checker";
     };
 

@@ -25,6 +25,7 @@ let
     readTheDocsSiteDir = ./doc/read-the-docs-site;
     readTheDocsHaddockPrologue = "";
     readTheDocsExtraHaddockPackages = null;
+    preCommitCheckHooks = {};
   };
 
 
@@ -109,6 +110,9 @@ let
     (expect-invalid-field "readTheDocsHaddockPrologue" "type-mismatch" true)
     (expect-missing-field "readTheDocsExtraHaddockPackages")
     (expect-invalid-field "readTheDocsExtraHaddockPackages" "type-mismatch" true)
+    (expect-missing-field "preCommitCheckHooks")
+    (expect-invalid-field "preCommitCheckHooks" "type-mismatch" true)
+    (expect-invalid-field "preCommitCheckHooks" "type-mismatch" null)
   ];
 
 

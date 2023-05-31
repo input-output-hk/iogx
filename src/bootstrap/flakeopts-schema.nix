@@ -24,6 +24,7 @@ let
     readTheDocsSiteDir = V.null-or V.path-exists;
     readTheDocsHaddockPrologue = V.string;
     readTheDocsExtraHaddockPackages = V.null-or V.function;
+    preCommitCheckHooks = V.null-or V.attrset;
   };
 in
 schema

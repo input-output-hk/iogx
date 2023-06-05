@@ -10,6 +10,7 @@ import iogx-inputs.nixpkgs {
   config = iogx-inputs.haskell-nix.config;
   overlays =
     iohk-nix.overlays.iohkNix ++
+    iohk-nix.overlays.haskell-nix-extra ++
     [
       iogx-inputs.haskell-nix.overlay
       libsodium-vrf-overlay

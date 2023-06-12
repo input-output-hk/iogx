@@ -40,7 +40,7 @@
     };
 
     haskell-language-server-1_8_0_0 = {
-      url = "github:haskell/haskell-language-server?ref=1.8.0.0";
+      url = "github:haskell/haskell-language-server/855a88238279b795634fa6144a4c0e8acc7e9644";
       flake = false;
     };
 

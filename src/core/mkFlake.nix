@@ -119,7 +119,7 @@ let
         in l.recursiveUpdate flake { projects.default = flake.devShells.${ghc}; };
 
       addPrefixedProjects = flake:
-        let getProject = _: shell: shell.project;
+        let getProject = _: shell: shell.project.project;
         in l.recursiveUpdate flake { projects = l.mapAttrs getProject flake.devShells; };
     in
     l.composeManyLeft [

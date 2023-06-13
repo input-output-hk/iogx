@@ -64,7 +64,7 @@ let
             {
               # NOTE: using flakeopts
               inherit inputs systemized-inputs flakeopts pkgs;
-              haskell-nix-project = shell.project;
+              inherit (shell) project;
             }
         else
           { };

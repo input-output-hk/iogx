@@ -29,6 +29,8 @@
   # Desystemized legacy nix packages configured against `haskell.nix`.
   # NEVER use the `nixpkgs` coming from `inputs` or `systemized-inputs`!
 , pkgs
+
+, projects
 }:
 
 let

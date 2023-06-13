@@ -116,10 +116,10 @@ let
     let
       addDefaultProject = flake:
         let ghc = "${flakeopts.defaultHaskellCompiler}-default";
-        in l.recursiveUpdate flake { projects.default = flake.devShells.${ghc}; };
+        in l.recursiveUpdate flake { projects.default = flake.devShells.${ghc}.project; };
 
       addPrefixedProjects = flake:
-        let getProject = _: shell: shell.project.project;
+        let getProject = _: shell: shell.project;
         in l.recursiveUpdate flake { projects = l.mapAttrs getProject flake.devShells; };
     in
     l.composeManyLeft [

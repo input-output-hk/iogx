@@ -25,7 +25,7 @@
 
     iohk-nix = {
       url = "github:input-output-hk/iohk-nix";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     sphinxcontrib-haddock = {

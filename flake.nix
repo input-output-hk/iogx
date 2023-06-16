@@ -11,7 +11,8 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     haskell-nix = {
-      url = "github:input-output-hk/haskell.nix/56a471cfce2c61031e193bdef527bbd6e646454e"; # 3 May 2023
+      # 3 May 2023: This revision is currently the newest that doesn't break.
+      url = "github:input-output-hk/haskell.nix/56a471cfce2c61031e193bdef527bbd6e646454e"; 
       inputs.hackage.follows = "hackage";
     };
 
@@ -35,11 +36,13 @@
     pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
 
     haskell-language-server-1_9_0_0 = {
+      # This revision is the newest working 1.9.0.0 available.
       url = "github:haskell/haskell-language-server/1916b5782d9f3204d25a1d8f94da4cfd83ae2607";
       flake = false;
     };
 
     haskell-language-server-1_8_0_0 = {
+      # This revision is the newest 1.8.0.0 which includes a patch for the stan plugin.
       url = "github:haskell/haskell-language-server/855a88238279b795634fa6144a4c0e8acc7e9644";
       flake = false;
     };

@@ -1,18 +1,18 @@
 { inputs, inputs', iogx-config, pkgs, l, src, ... }:
 
-{ flake' }:
+{ flake }:
 
 let
 
-  mkDefaultJobset = flake: { inherit (flake) packages devShells checks; };
+  default-jobs = { inherit (flake) packages devShells checks; };
 
 
   # TODO make hydraJobsFile schema and validate
-  mkUserJobs = flake: 
+  user-jobs = 
     if iogx-config.hydraJobsFile != null then
       import iogx-config.hydraJobsFile { inherit inputs inputs' pkgs flake; }
     else
-      mkDefaultJobset flake;
+      default-jobs;
 
 
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
@@ -32,11 +32,10 @@ let
 
   hydra-jobs =
     l.composeManyLeft [
-      mkUserJobs
       cleanJobs
       addRequiredJob
     ] 
-      flake';
+      user-jobs;
 
 in
 

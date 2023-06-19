@@ -18,6 +18,7 @@ let
     overlays =
       [
         iohk-nix.overlays.crypto
+        iohk-nix.overlays.cardano-lib
         iogx-inputs.haskell-nix.overlay
         iohk-nix.overlays.haskell-nix-crypto
         iohk-nix.overlays.haskell-nix-extra

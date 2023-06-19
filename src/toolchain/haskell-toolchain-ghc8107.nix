@@ -1,7 +1,6 @@
 { src, ... }:
 {
   cabal-install = src.toolchain.cabal-install-ghc8107;
-  fix-stylish-haskell = src.toolchain.fix-stylish-haskell-ghc8107;
   haskell-language-server = src.toolchain.haskell-language-server-ghc8107;
   haskell-language-server-wrapper = src.toolchain.haskell-language-server-wrapper-ghc8107;
   hlint = src.toolchain.hlint-ghc8107;

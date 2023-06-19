@@ -1,7 +1,6 @@
 { src, ... }:
 {
   cabal-install = src.toolchain.cabal-install-ghc927;
-  fix-stylish-haskell = src.toolchain.fix-stylish-haskell-ghc927;
   haskell-language-server = src.toolchain.haskell-language-server-ghc927;
   haskell-language-server-wrapper = src.toolchain.haskell-language-server-wrapper-ghc927;
   hlint = src.toolchain.hlint-ghc927;

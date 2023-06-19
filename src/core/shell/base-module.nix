@@ -59,31 +59,6 @@ let
 
 
   scripts = {
-    fix-cabal-fmt = {
-      exec = l.pkgToExec src.toolchain.fix-cabal-fmt;
-      description = "Format all cabal files";
-      group = "formatters";
-    };
-    fix-png-optimization = {
-      exec = l.pkgToExec src.toolchain.fix-png-optimization;
-      description = "Optimize all png files";
-      group = "formatters";
-    };
-    fix-prettier = {
-      exec = l.pkgToExec src.toolchain.fix-prettier;
-      description = "Format all js, ts, html and css files";
-      group = "formatters";
-    };
-    fix-stylish-haskell = {
-      exec = l.pkgToExec haskell-toolchain.fix-stylish-haskell;
-      description = "Format all haskell files";
-      group = "formatters";
-    };
-    fix-nixpkgs-fmt = {
-      exec = l.pkgToExec src.toolchain.fix-nixpkgs-fmt;
-      description = "Format all nix files";
-      group = "formatters";
-    };
     cabal = {
       exec = l.pkgToExec haskell-toolchain.cabal-install;
       description = "The command-line interface for Cabal and Hackage";

@@ -4,15 +4,27 @@
 
 let
 
-  default-jobs = { inherit (flake) packages devShells checks; };
+  
+  default-spec = { 
+    excludedPaths = [];
+    extraJobs = {};
+  };
 
 
   # TODO make hydraJobsFile schema and validate
-  user-jobs = 
+  user-spec = 
     if iogx-config.hydraJobsFile != null then
       import iogx-config.hydraJobsFile { inherit inputs inputs' pkgs flake; }
     else
-      default-jobs;
+      default-spec;
+
+
+  # TODO use hasAttrByPath to validate
+  removeExcludedPaths = jobs: l.deleteManyAttrsByPathString jobs user-spec.excludedPaths;
+
+
+  # TODO check collisions
+  addExtraJobs = jobs: l.recursiveUpdate jobs user-spec.extraJobs;
 
 
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
@@ -32,10 +44,12 @@ let
 
   hydra-jobs =
     l.composeManyLeft [
+      removeExcludedPaths
+      addExtraJobs
       cleanJobs
       addRequiredJob
     ] 
-      user-jobs;
+      flake;
 
 in
 

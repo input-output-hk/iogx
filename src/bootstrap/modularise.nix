@@ -3,6 +3,7 @@
 { root, module, args }:
 
 let
+
   fileToModule = dir: path:
     if l.hasSuffix ".nix" path then
       let
@@ -11,8 +12,9 @@ let
       in
       l.nameValuePair name value
     else
-      # TODO thorw instead if path is not a nix file
+      # TODO throw instead if path is not a nix file
       l.nameValuePair path null;
+
 
   dirToModule = dir: path:
     let
@@ -20,6 +22,7 @@ let
       value = l.mapAttrs' (pathToModule "${dir}/${path}") (l.readDir "${dir}/${path}");
     in
     l.nameValuePair name value;
+
 
   pathToModule = dir: path: type:
     if type == "directory" then
@@ -29,12 +32,16 @@ let
     else
       l.throw "[modularise] unexpected file ${dir}/${path} of type ${type}.";
 
+
   mkModule = path:
     if !l.pathExists path then
       l.throw "[modularise] path ${path} does not exist."
     else
       (dirToModule "" path).value;
 
+
   __module__ = mkModule (l.toPath root);
+
 in
+
 __module__

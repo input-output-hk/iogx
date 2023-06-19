@@ -305,11 +305,15 @@ let
       result.config
     else
       let errors = map resultToErrorString result.errors; in
+      # TODO make this text red
       l.throw ''
-        Your configuration has errors:
-        ${l.concatStringsSep "\n\n" errors}
+      Your configuration has errors:
+
+      ${l.concatStringsSep "\n" errors}
       '';
+      
 in
+
 {
   inherit validators validateConfig matchConfigAgainstSchema;
 }

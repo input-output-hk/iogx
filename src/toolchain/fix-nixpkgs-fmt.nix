@@ -1,11 +1,11 @@
-{ pkgs, iogx, ... }:
+{ pkgs, src, ... }:
 
 pkgs.writeShellApplication {
 
   name = "fix-nixpkgs-fmt";
 
   runtimeInputs = [
-    iogx.toolchain.nixpkgs-fmt
+    src.toolchain.nixpkgs-fmt
   ];
 
   text = ''

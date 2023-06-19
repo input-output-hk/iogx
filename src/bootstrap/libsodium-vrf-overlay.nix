@@ -1,4 +1,5 @@
 let
+
   libsodium-vrf = { stdenv, lib, fetchFromGitHub, autoreconfHook }:
 
     stdenv.mkDerivation rec {
@@ -34,6 +35,7 @@ let
     };
 
 in
+
 final: prev: {
   libsodium-vrf = final.callPackage libsodium-vrf { };
 }

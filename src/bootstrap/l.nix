@@ -1,26 +1,36 @@
 { iogx-inputs }:
 
 let
+
   l = iogx-inputs.nixpkgs.lib // builtins;
+
 
   utils = rec {
 
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
 
+
     mergePrefixFlakes = flake1: flake2: prefix:
       l.recursiveUpdate flake1 (l.mapAttrs (_: value: nestAttrs value [ prefix ]) flake2);
 
+
     nestAttrs = l.foldr (prefix: l.mapAttrs (_: value: { ${prefix} = value; }));
+
 
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
+
     unwords = l.concatStringsSep " ";
+
 
     maximumBy = f: l.foldl' (x: max: if f x > f max then x else max);
 
+
     traceId = x: l.trace (l.deepSeq x x) x;
 
+
     listToString = xs: "[${l.concatStringsSep ", " (map toString xs)}]";
+
 
     allEquals = xs:
       if l.length xs > 0 then
@@ -41,11 +51,15 @@ let
       else
         def;
 
+
     validPathOrNull = path: if l.pathExists path then path else null;
+
 
     deleteManyAttrsByPathString = l.foldl' (l.flip deleteAttrByPathString);
 
+
     deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);
+
 
     # TODO is this in the stdlib?
     deleteAttrByPath = path: set:
@@ -97,6 +111,7 @@ let
       ${l.getExe pkg} "$@"
     '';
 
+
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 
     #   rights = ["longlonglong" "short"]; 
@@ -137,7 +152,6 @@ let
         final-str = l.concatStringsSep "\n" lines;
       in
       final-str;
-
   };
 
 in

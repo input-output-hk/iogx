@@ -1,11 +1,12 @@
-{ inputs, systemized-inputs, flakeopts, pkgs, l, iogx, ... }:
+{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
 
-{ shell, flake }:
+{ project }:
 
 let
-  mergeModules = mod1: mod2:
+
+  mergeModules = mod1: mod2: mod1 // mod2 // 
     {
-      packages =
+      packages = # TODO check collisions
         l.getAttrWithDefault "packages" [ ] mod1 ++
         l.getAttrWithDefault "packages" [ ] mod2;
 
@@ -45,46 +46,47 @@ let
     l.concatStringsSep "\n" (l.mapAttrsToList exportVar env);
 
 
-  moduleToShell = mod:
+  pre-commit-check = src.core.pre-commit-check { inherit project; };
+
+
+  shellToNixShell = shell: 
     pkgs.mkShell {
-      name = "iogx-shell";
-      buildInputs = mod.packages ++ scriptsToShellApps mod.scripts;
-      shellHook = mod.enterShell + "\n" + envToShellHook mod.env;
+      name = shell.derivationName;
+      buildInputs = shell.packages ++ scriptsToShellApps shell.scripts;
+      shellHook = ''
+        ${shell.enterShell}
+        ${envToShellHook shell.env}
+        ${pre-commit-check.shellHook}
+        export PS1="${shell.prompt}"
+        info 
+      '';
     };
 
 
-  devShell =
+  shell =
     let
-      base-module = iogx.core.mkDevShell.mkBaseModule
-        { inherit shell; };
+      base-module = src.core.shell.base-module { inherit project; };
 
-      user-module =
-        if flakeopts.shellModuleFile != null then
-          import flakeopts.shellModuleFile
-            {
-              # NOTE: using flakeopts
-              inherit inputs systemized-inputs flakeopts pkgs;
-              inherit (shell) project;
-            }
+      user-shell =
+        if iogx-config.shellFile != null then
+          import iogx-config.shellFile { inherit inputs inputs' pkgs project; }
         else
           { };
 
-      readthedocs-module =
-        l.optionalAttrs (flakeopts.readTheDocsSiteDir != null) iogx.readthedocs.devenv-module;
+      readthedocs-module = {}; # TODO
 
-      utility-module = iogx.core.mkDevShell.mkUtilityModule {
-        inherit flake;
-        core-modules = [ base-module user-module readthedocs-module ];
-      };
+      utility-module = src.core.shell.utility-module { shell = __shell__; };
 
-      merged-module = mergeManyModules [
+      __shell__ = mergeManyModules [
         base-module
-        user-module
         readthedocs-module
         utility-module
+        user-shell # TODO comment shell/module difference
       ];
     in
-    moduleToShell merged-module;
+    shellToNixShell __shell__;
+
 in
-devShell
+
+shell
 

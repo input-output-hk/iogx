@@ -1,4 +1,4 @@
-{ pkgs, iogx, ... }:
+{ pkgs, src, ... }:
 
 pkgs.writeShellApplication {
 
@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
 
   runtimeInputs = [
     pkgs.fd
-    iogx.toolchain.stylish-haskell-ghc8107
+    src.toolchain.stylish-haskell-ghc8107
   ];
 
   text = ''

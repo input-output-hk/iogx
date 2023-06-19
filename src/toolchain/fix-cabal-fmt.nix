@@ -1,4 +1,4 @@
-{ pkgs, iogx, ... }:
+{ pkgs, src, ... }:
 
 pkgs.writeShellApplication {
 
@@ -6,7 +6,7 @@ pkgs.writeShellApplication {
 
   runtimeInputs = [
     pkgs.fd
-    iogx.toolchain.cabal-fmt
+    src.toolchain.cabal-fmt
   ];
 
   text = ''

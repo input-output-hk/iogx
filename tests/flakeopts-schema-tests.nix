@@ -1,7 +1,7 @@
-{ iogx, pkgs }:
+{ src, pkgs }:
 
 let
-  inherit (iogx) l libnixschema flakeopts-schema iogx-inputs;
+  inherit (iogx) l libnixschema iogx-config-schema iogx-inputs;
 
 
   valid-config = {
@@ -40,11 +40,11 @@ let
   expect-failure = error-field: error-tag: remove-fields: update-fields:
     let
       config = removeAttrs valid-config remove-fields // update-fields;
-      result = libnixschema.matchConfigAgainstSchema flakeopts-schema config;
+      result = libnixschema.matchConfigAgainstSchema iogx-config-schema config;
     in
     if result.status != "failure" then
       l.throw ''
-        flakeopts-schema-tests.nix:
+        iogx-config-schema-tests.nix:
         Test was successful
         Expected failure: ${error-field} ∷ ${error-tag}
       ''
@@ -54,7 +54,7 @@ let
         true
       else
         l.throw ''
-          flakeopts-schema-tests.nix:
+          iogx-config-schema-tests.nix:
           Expected failure: ${error-field} ∷ ${error-tag}
           Actual failure: ${first.field} ∷ ${first.tag}
         '';
@@ -119,8 +119,8 @@ let
   evaluated-testsuite = l.deepSeq testsuite "success";
 
 
-  run = pkgs.writeScript "flakeopts-schema-tests" ''
-    echo "Evaluating ./tests/flakeopts-schema-tests.nix ... ${evaluated-testsuite}"
+  run = pkgs.writeScript "iogx-config-schema-tests" ''
+    echo "Evaluating ./tests/iogx-config-schema-tests.nix ... ${evaluated-testsuite}"
   '';
 in
 

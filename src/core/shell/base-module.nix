@@ -1,28 +1,35 @@
-{ inputs, pkgs, flakeopts, iogx, l, ... }:
+{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
 
-{ shell }:
+{ project }:
 
-let
-  haskell-toolchain = iogx.toolchain."haskell-toolchain-${shell.ghc}";
+let 
+
+  shell = project.shell;
+
+
+  haskell-toolchain = src.toolchain."haskell-toolchain-${project.meta.haskellCompiler}";
+
 
   optional-env = l.optionalAttrs (shell ? CABAL_CONFIG) {
     CABAL_CONFIG = shell.CABAL_CONFIG;
   };
+
 
   env = optional-env // {
     PKG_CONFIG_PATH = l.makeSearchPath "lib/pkgconfig" shell.buildInputs;
     NIX_GHC_LIBDIR = shell.NIX_GHC_LIBDIR;
   };
 
-  shellPackages =
+
+  all-packages =
     shell.buildInputs ++
     shell.nativeBuildInputs ++
     shell.stdenv.defaultNativeBuildInputs ++
     [
       shell.stdenv.cc.bintools
 
-      iogx.toolchain.nixpkgs-fmt
-      iogx.toolchain.cabal-fmt
+      src.toolchain.nixpkgs-fmt
+      src.toolchain.cabal-fmt
 
       haskell-toolchain.haskell-language-server
 
@@ -46,25 +53,24 @@ let
       pkgs.secp256k1
       pkgs.zlib
     ];
-in
-{
-  packages = l.filter l.isDerivation shellPackages;
 
-  inherit env;
+
+  packages = l.filter l.isDerivation all-packages;
+
 
   scripts = {
     fix-cabal-fmt = {
-      exec = l.pkgToExec iogx.toolchain.fix-cabal-fmt;
+      exec = l.pkgToExec src.toolchain.fix-cabal-fmt;
       description = "Format all cabal files";
       group = "formatters";
     };
     fix-png-optimization = {
-      exec = l.pkgToExec iogx.toolchain.fix-png-optimization;
+      exec = l.pkgToExec src.toolchain.fix-png-optimization;
       description = "Optimize all png files";
       group = "formatters";
     };
     fix-prettier = {
-      exec = l.pkgToExec iogx.toolchain.fix-prettier;
+      exec = l.pkgToExec src.toolchain.fix-prettier;
       description = "Format all js, ts, html and css files";
       group = "formatters";
     };
@@ -74,11 +80,10 @@ in
       group = "formatters";
     };
     fix-nixpkgs-fmt = {
-      exec = l.pkgToExec iogx.toolchain.fix-nixpkgs-fmt;
+      exec = l.pkgToExec src.toolchain.fix-nixpkgs-fmt;
       description = "Format all nix files";
       group = "formatters";
     };
-
     cabal = {
       exec = l.pkgToExec haskell-toolchain.cabal-install;
       description = "The command-line interface for Cabal and Hackage";
@@ -105,7 +110,7 @@ in
       group = "packages";
     };
     scriv = {
-      exec = l.pkgToExec iogx.toolchain.scriv;
+      exec = l.pkgToExec src.toolchain.scriv;
       description = "Maintain useful changelogs";
       group = "packages";
     };
@@ -114,10 +119,26 @@ in
       description = "Shell script analysis tool";
       group = "packages";
     };
+    hindent = {
+      exec = l.pkgToExec haskell-toolchain.hindent;
+      description = "Extensible Haskell pretty printer";
+      group = "packages";
+    };
+    editorconfig-checker = {
+      exec = l.pkgToExec pkgs.editorconfig-checker;
+      description = "Check if your files consider your .editorconfig rules";
+      group = "packages";
+    };
   };
+
 
   enterShell = ''
     ${shell.shellHook}
-    ${haskell-toolchain.pre-commit-check.shellHook}
   '';
-}
+
+
+  base-module = { inherit packages env scripts enterShell; };
+
+in
+
+base-module 

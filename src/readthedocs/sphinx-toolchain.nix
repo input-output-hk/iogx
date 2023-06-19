@@ -1,12 +1,12 @@
-{ pkgs, iogx, ... }:
+{ pkgs, src, ... }:
 
 pkgs.python3.withPackages (py: [
 
-  iogx.readthedocs.sphinxcontrib-haddock.sphinxcontrib-haddock
-  iogx.readthedocs.sphinxcontrib-haddock.sphinxcontrib-domaintools
-  iogx.readthedocs.sphinxcontrib-bibtex
-  iogx.readthedocs.sphinx-markdown-tables
-  iogx.readthedocs.sphinxemoji
+  src.readthedocs.sphinxcontrib-haddock.sphinxcontrib-haddock
+  src.readthedocs.sphinxcontrib-haddock.sphinxcontrib-domaintools
+  src.readthedocs.sphinxcontrib-bibtex
+  src.readthedocs.sphinx-markdown-tables
+  src.readthedocs.sphinxemoji
 
   py.sphinxcontrib_plantuml
   py.sphinx-autobuild

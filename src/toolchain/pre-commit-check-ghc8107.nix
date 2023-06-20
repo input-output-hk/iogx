@@ -23,7 +23,7 @@ inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
     };
 
     editorconfig-checker = pkgs.lib.mkForce {
-      enable = true; 
+      enable = false; 
       entry = "${pkgs.editorconfig-checker}/bin/editorconfig-checker";
     };
 

@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, pkgs, l, src, interface-files, iogx-schemas, ... }:
 
 { project }:
 
@@ -67,11 +67,10 @@ let
     let
       base-module = src.core.shell.base-module { inherit project; };
 
-      user-shell =
-        if iogx-config.shellFile != null then
-          import iogx-config.shellFile { inherit inputs inputs' pkgs project; }
-        else
-          { };
+      shell-file = interface-files.read-shell { inherit inputs inputs' pkgs project; };
+      
+      user-shell = libnixschema.validateConfig shell-file iogx-schemas.shell ''
+      '';
 
       readthedocs-module = {}; # TODO
 

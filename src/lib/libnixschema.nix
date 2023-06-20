@@ -37,7 +37,7 @@ let
   #
   # type SchemaValidationResult 
   #   = { status = "success", config :: Config }
-  #   | { status = "failure", errors :: [FieldValidationResult] }
+  #   | { status = "failure", errors :: [FieldValidationResult], errmsg :: String }
   #
   # type Config 
   #   = { [field-name] :: Value }
@@ -294,6 +294,7 @@ let
           {
             status = "failure";
             errors = failed-results;
+            errmsg = l.concatStringsSep "\n" (map resultToErrorString failed-results);
           };
     in
     schema-result;
@@ -304,7 +305,7 @@ let
     l.composeManyLeft [
       resultToErrorString
       (l.splitString "\n")
-      (l.drop drop) # Remove the first two lines of the inner error
+      (l.drop drop) # Remove the first n lines of the inner error
       (l.concatStringsSep "\n")
     ];
 
@@ -373,26 +374,24 @@ let
     '';
 
 
-  # String -> Schema -> Config -> Config | error 
+  # Schema -> Config -> Config | error 
   validateConfig = schema: config: errmsg:
     let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
     if resultIsSuccess result then
       result.config
     else
-      let errors = map resultToErrorString result.errors; in
-      l.throw ''
-      
+      l.pthrow '' 
         ${errmsg}
-        ${l.concatStringsSep "\n" errors}
+        ${result.errmsg}
       '';
-
+      
 
   # Path -> String -> Value | error 
   demandFile = file: errmsg:
     if l.pathExists file then 
       import file
     else 
-      l.throw "\n\n${errmsg}";
+      l.pthrow errmsg;
           
 in
 

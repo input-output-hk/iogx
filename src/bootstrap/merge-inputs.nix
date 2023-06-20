@@ -14,32 +14,17 @@ let
   num-common-inputs = l.length common-inputs;
 
 
-  inlined-common-inputs = l.concatStringsSep "\n  - " common-inputs;
-
-
-  fst-common-input = l.head common-inputs;
+  inlined-common-inputs = l.concatStringsSep "\n- " common-inputs;
 
 
   debug-message = ''
-    
-    ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️
-    Your flake has ${l.toString num-common-inputs} unexpected inputs.
-    The inputs listed below are already managed by the IOGX flake.
-    You should not need to duplicate them in your flake.
-    Instead, you should override them like this:
+    IOGX: Your flake.nix has ${l.toString num-common-inputs} unexpected inputs
+    DOCS: http://www.github.com/input-output-hk/iogx/README.md#iogx-config
 
-      inputs = {
-        ${fst-common-input} = {
-          url = "github:input-output-hk/${fst-common-input}";
-        };
-        iogx.url = "github:input-output-hk/iogx";
-        iogx.inputs.${fst-common-input}.follows = "${fst-common-input}";
-      }
-
-    The clashing inputs are: 
-      - ${inlined-common-inputs}
-    ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️
-  ''; # TODO turn into error
+    These inputs are already managed by the IOGX flake.
+    Do not duplicate them but override them if needed.
+    - ${inlined-common-inputs}
+  '';
 
 
   should-throw = num-common-inputs > 0;
@@ -49,5 +34,5 @@ let
 
 in
 
-l.throwIf should-throw debug-message final-inputs
+l.pthrowIf should-throw debug-message final-inputs
 

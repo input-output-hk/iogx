@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, pkgs, l, src, interface-files, ... }:
 
 # TODO check collisions whenever we use // or l.recursiveUpdate or l.recursiveUpdateMany
 
@@ -86,15 +86,12 @@ let
 
   # TODO throw error if user outputs contain hydraJobs or ciJobs or devShells?
   addUserPerSystemOutputs = flake:
-    if iogx-config.perSystemOutputsFile != null then
-      let 
-        projects = flake.__projects;
-        outputs = import iogx-config.perSystemOutputsFile { inherit inputs inputs' pkgs projects; };
-        final-flake = l.recursiveUpdate outputs flake; 
-      in 
-        final-flake
-    else
-      flake;
+    let 
+      projects = flake.__projects;
+      per-system-outputs = interface-files.read-per-system-outputs { inherit inputs inputs' pkgs projects; };
+      final-flake = l.recursiveUpdate per-system-outputs flake; 
+    in 
+      final-flake;
 
 
   final-outputs =

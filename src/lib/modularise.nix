@@ -30,12 +30,12 @@ let
     else if type == "regular" then
       fileToModule dir path
     else
-      l.throw "[modularise] unexpected file ${dir}/${path} of type ${type}.";
+      l.pthrow "[modularise] unexpected file ${dir}/${path} of type ${type}.";
 
 
   mkModule = path:
     if !l.pathExists path then
-      l.throw "[modularise] path ${path} does not exist."
+      l.pthrow "[modularise] path ${path} does not exist."
     else
       (dirToModule "" path).value;
 

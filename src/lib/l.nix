@@ -122,7 +122,13 @@ let
       "\\033[${boldBit};${colorBit}m${text}\\033[0m";
 
 
+    shellEscape = s: (l.replaceStrings [ "\\" ] [ "\\\\" ] s);
+
+
     ansiBold = text: ansiColor text "white" "bold";
+
+
+    ansiColorEscaped = text: fg: style: shellEscape (ansiColor text fg style);
 
 
     pkgToExec = pkg: ''
@@ -137,13 +143,12 @@ let
         def; 
 
 
-    prettyErrorMessage = header: text: 
-      l.throw ''
+    pthrowIf = cond: msg: if cond then pthrow msg else x: x;
 
-        ${ansiColor "* * * * * * ${header} * * * * * *" "red" ""}
-        ${text}
-        ${ansiColor "* * * * * * ${header} * * * * * *" "red" ""}
-      '';
+
+    pthrow = text: 
+      l.throw "\n${text}";
+
 
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 

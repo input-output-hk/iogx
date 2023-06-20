@@ -28,8 +28,20 @@ let
 
     traceId = x: l.trace (l.deepSeq x x) x;
 
-
-    listToString = xs: "[${l.concatStringsSep ", " (map toString xs)}]";
+    
+    valueToString = x: 
+      if l.typeOf x == "set" then 
+        "{${l.concatStringsSep " " (l.mapAttrsToList (k: v: "${k}=${valueToString v};") x)}}"
+      else if l.typeOf x == "list" then 
+        "[${l.concatStringsSep " " (map valueToString x)}]"
+      else if l.typeOf x == "string" then
+        ''"${x}"''
+      else if l.typeOf x == "bool" then 
+        if x then "true" else "false"
+      else if l.typeOf x == "lambda" then 
+        "<LAMBDA>" 
+      else 
+        toString x;
 
 
     allEquals = xs:
@@ -59,6 +71,12 @@ let
 
 
     deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);
+
+
+    hasAttrByPathString = path: l.hasAttrByPath (l.splitString "." path);
+
+
+    getAttrByPathString = path: l.getAttrByPath (l.splitString "." path);
 
 
     # TODO is this in the stdlib?
@@ -111,6 +129,21 @@ let
       ${l.getExe pkg} "$@"
     '';
 
+
+    importFileWithDefault = def: path: args:
+      if l.pathExists path then 
+        import path args 
+      else 
+        def; 
+
+
+    prettyErrorMessage = header: text: 
+      l.throw ''
+
+        ${ansiColor "* * * * * * ${header} * * * * * *" "red" ""}
+        ${text}
+        ${ansiColor "* * * * * * ${header} * * * * * *" "red" ""}
+      '';
 
     # prettyTwoColumnsLayout { 
     #   lefts = ["a" "ccc"]; 

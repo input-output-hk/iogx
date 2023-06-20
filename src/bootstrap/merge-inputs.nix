@@ -39,15 +39,15 @@ let
     The clashing inputs are: 
       - ${inlined-common-inputs}
     ❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️❗️
-  '';
+  ''; # TODO turn into error
 
 
-  should-trace = iogx-config.debug && num-common-inputs > 0;
+  should-throw = num-common-inputs > 0;
 
 
   final-inputs = user-inputs // iogx-inputs-without-self;
 
 in
 
-l.warnIf should-trace debug-message final-inputs
+l.throwIf should-throw debug-message final-inputs
 

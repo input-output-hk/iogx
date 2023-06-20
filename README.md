@@ -3,7 +3,7 @@
 IOGX is a flake template that facilitates the development of Haskell projects at IOG.
 
 To get started run: 
-```
+```bash
 nix flake init --template github:input-output-hk/iogx
 ```
 
@@ -13,23 +13,23 @@ You will fill the stubs while leaving your [`flake.nix`](./template/flake.nix) l
 
 IOGX will populate your [`flake.nix`](./template/flake.nix) outputs based on the contents of the [`nix`](./template/nix) folder.
 
-## Documentation
+# Documentation
 
 Documentation is found in the [`MANUAL.md`](./MANUAL.md).
 
-## Features
+# Features
 
 ### Support for Multiple GHCs 
 
-  You can declare a set of supported GHC versions. You will get a `devShell` for each with a complete haskell toolchain. Your `packages` will include all your haskell project's components prefixed by the compiler name. Similary your `apps` will contain the executables, testsuites and benchmarks. Your `hydraJobs` will build your project against each compiler. Finally, a profiled version will also be avaialble for each component.
+  Define a set of desired GHC versions and get a `devShell` for each that comes with a complete haskell toolchain. Your `packages` will include all your project's components, nested by compiler name. Similarly your `apps` will contain the executables, testsuites and benchmarks. Your `hydraJobs` will build your project against each compiler. A version built with profiling enabled is avaialble for each component out of the box.
 
 ### Development Shells
   
-  Each `devShell` comes with a complete haskell toolchain. Upon entering the shell you will be presented with a menu of available commands, which includes a couple of useful scripts to list your project's nix derivations and CI jobs. It's trivial to extend the shell with new packages and custom scripts, env vars and hooks.
+  Each `devShell` comes with a complete haskell toolchain. Upon entering the shell you will be presented with a menu of available tools and commands, which include a couple of useful scripts to list your project's nix derivations and CI jobs. It's trivial to extend the shell with new packages and custom scripts, environment variables and hooks.
 
 ### Hydra Jobset
     
-  Your `hydraJobs` will include every haskell component in your project, and CI will run your testsuites. You can exclude certain jobs, disabled profiled builds, or select which components are built by which compilers. The jobset can be easily extended with additional derivations.
+  Your `hydraJobs` will include every haskell component in your project, and CI will run your testsuites. You can easily exclude certain jobs, disable profiled builds, or select which components are built by which compilers.
 
 ### Formatters
  
@@ -39,11 +39,7 @@ Documentation is found in the [`MANUAL.md`](./MANUAL.md).
 
   If you project needs a [Read The Docs](https://readthedocs.org) site then IOGX will include the necessary tools and scripts, and add the relevant derivations to CI.
 
-### Custom Outputs
-  
-  It's easy to define additional flake outputs and include them in your `hydraJobs`. Your outputs will be merged with the outputs produced by IOGX, and a warning will be issued in case of a name clash. 
-
-## Future Work
+# Future Work
 
 In the future we plan to develop the following features:
 

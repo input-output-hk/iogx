@@ -3,11 +3,11 @@
 
 
   inputs = {
-    src.url = "github:zeme-iohk/iogx";
+    iogx.url = "github:zeme-iohk/iogx";
   };
 
 
-  outputs = inputs: inputs.src.lib.mkFlake inputs;
+  outputs = inputs: inputs.iogx.lib.mkFlake inputs ./.;
 
 
   nixConfig = {

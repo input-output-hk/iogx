@@ -6,7 +6,7 @@ let
   # 
   # type Field = String 
   #
-  # type Value = any nix value 
+  # type Value = Any Nix Value 
   #
   # type ErrorTag 
   #   = "type-mismatch"
@@ -15,16 +15,22 @@ let
   #   | "empty-list"
   #   | "path-does-not-exist"
   #   | "dir-does-not-have-file"
-  #   | "missing-field"
+  #   | "missing-requred-field"
   #   | "unknown-field"
   #   | "invalid-list-elem"
+  #   | "invalid-attr-elem"
+  #   | "inner-schema-failure";
   # 
   # type FieldValidationResult 
   #   = { status = "success", field :: Field, value :: Value; }
   #   | { status = "failure", field :: Field, tag :: ErrorTag, [tag-specific-fields] }
   #
+  # type TypecheckFunc = Field -> Value -> FieldValidationResult
+  # 
   # type FieldValidator 
-  #   = Field -> Value -> FieldValidationResult
+  #   = { type :: TypecheckFunc }
+  #   | { type :: TypecheckFunc, default :: Config -> Value }
+  #   | { type :: TypecheckFunc, default :: Value }
   # 
   # type Schema 
   #   = { [field-name] :: FieldValidator }
@@ -35,13 +41,20 @@ let
   #
   # type Config 
   #   = { [field-name] :: Value }
+  # 
+  # type FinalConfig = Config 
 
 
+  # SchemaValidationResult -> Bool
   resultIsFailure = result: result.status == "failure";
+
+
+  # SchemaValidationResult -> Bool
   resultIsSuccess = result: result.status == "success";
 
 
-  success = field: value: # Field -> Value -> FieldValidationResult
+  # Field -> Value -> FieldValidationResult === TypecheckFunc
+  success = field: value: 
     {
       status = "success";
       inherit field value;
@@ -75,7 +88,10 @@ let
 
       list = V.simple-type "list"; # Field -> [Value] -> FieldValidationResult
 
-      nonempty-string = field: value: # Field -> Value -> FieldValidationResult
+      drv = V.simple-type "derivation"; # Field -> Value -> FieldValidationResult
+
+      # Field -> Value -> FieldValidationResult
+      nonempty-string = field: value: 
         if value == "" then
           {
             status = "failure";
@@ -85,12 +101,12 @@ let
         else
           V.string field value;
 
-      # FieldValidator -> Field -> Value -> FieldValidationResult
-      null-or = validator: field: value:
+      # TypecheckFunc -> Field -> Value -> FieldValidationResult
+      null-or = check: field: value:
         if value == null then
           success field value
         else
-          validator field value;
+          check field value;
 
       # [Value] -> Field -> Value -> FieldValidationResult
       enum = gammut: field: value:
@@ -122,30 +138,52 @@ let
         else
           success field list;
 
-      # FieldValidator -> Field -> [Value] -> FieldValidationResult
-      list-of = validator: field: list:
+      # TypecheckFunc -> Field -> [Value] -> FieldValidationResult
+      list-of = check: field: list:
         let result = V.list field list; in
         if resultIsFailure result then
           result
         else
           let
-            results = map (validator field) list;
-            first = l.findFirst resultIsFailure (success field list) results;
+            results = map (check field) list;
+            firstFailure = l.findFirst resultIsFailure (success field list) results;
           in
-          if resultIsSuccess first then
+          if resultIsSuccess firstFailure then
             success field list
           else
             {
               status = "failure";
               tag = "invalid-list-elem";
-              inner = first;
+              inner = firstFailure;
               value = list;
               inherit field;
             };
 
-      path-exists = field: path: # Field -> Value -> FieldValidationResult
+      # TypecheckFunc -> Field -> AttrSet -> FieldValidationResult
+      attrset-of = check: field: set:
+        let result = V.attrset field set; in
+        if resultIsFailure result then
+          result
+        else
+          let
+            results = l.mapAttrsToList check set;
+            firstFailure = l.findFirst resultIsFailure (success field set) results;
+          in
+          if resultIsSuccess firstFailure then
+            success field set
+          else
+            {
+              status = "failure";
+              tag = "invalid-attr-elem";
+              inner = firstFailure;
+              value = set;
+              inherit field;
+            };
+
+      # Field -> Value -> FieldValidationResult
+      path-exists = field: path: 
         let result = V.path field path; in
-        if result.status == "failure" then
+        if resultIsFailure result then
           result
         else if l.pathExists path then
           success field path
@@ -160,7 +198,7 @@ let
       # Value -> Field -> Value -> FieldValidationResult
       dir-with-file = file: field: dir:
         let result = V.path-exists field dir; in
-        if result.status == "failure" then
+        if resultIsFailure result then
           result
         else if !l.pathExists (dir + "/${file}") then
           {
@@ -171,20 +209,40 @@ let
           }
         else
           success field dir;
+
+      # Schema -> Field -> Value -> FieldValidationResult
+      schema = schema': field: config: 
+        let result = matchConfigAgainstSchema schema' config; in 
+        if resultIsFailure result then
+          {
+            status = "failure";
+            tag = "inner-schema-failure"; 
+            value = config;
+            inner = l.head result.errors;
+            inherit field;
+          }
+        else 
+          success field config;
     };
 
 
   V = validators;
 
 
-  # Config -> Field -> FieldValidator -> FieldValidationResult
-  validateField = config: field: validator:
+  # FinalConfig -> Config -> Field -> FieldValidator -> FieldValidationResult
+  validateField = __config__: config: field: validator: 
     if l.hasAttr field config then
-      validator field config.${field}
-    else
+      validator.type field config.${field}
+    else if validator ? default then 
+      # FIXME it's ambiguous whether it's a function value or a (Config -> Value)
+      if l.typeOf validator.default == "lambda" then 
+        success field (validator.default __config__)
+      else
+        success field validator.default
+    else 
       {
         status = "failure";
-        tag = "missing-field";
+        tag = "missing-requred-field"; # TODO rename missing-required field
         inherit field;
       };
 
@@ -209,7 +267,9 @@ let
         map toUnknownFieldResult unknown-fields;
 
       known-fields-results = # [FieldValidationResult]
-        l.mapAttrsToList (validateField config) schema;
+        l.mapAttrsToList (validateField __config__ config) schema;
+        #                               ^^^^^^^^^^ 
+        # Threading the FinalConfig "before" it's defined: Laziness + Recursion == Magic
 
       all-results = # [FieldValidationResult]
         unknown-fields-results ++ known-fields-results;
@@ -220,7 +280,7 @@ let
       config-is-valid = # Bool
         l.all resultIsSuccess all-results;
 
-      final-config = # Config 
+      __config__ = # Config 
         let mkNameVal = result: { ${result.field} = result.value; };
         in l.recursiveUpdateMany (map mkNameVal all-results);
 
@@ -228,7 +288,7 @@ let
         if config-is-valid then
           {
             status = "success";
-            config = final-config;
+            config = __config__;
           }
         else
           {
@@ -239,10 +299,21 @@ let
     schema-result;
 
 
-  resultToErrorString = result: # FieldValidationResult -> String 
+  # Int -> FieldValidationResult -> String 
+  truncateInnerResult = drop: # A little hacky but gets the job done
+    l.composeManyLeft [
+      resultToErrorString
+      (l.splitString "\n")
+      (l.drop drop) # Remove the first two lines of the inner error
+      (l.concatStringsSep "\n")
+    ];
+
+
+  # FieldValidationResult -> String 
+  resultToErrorString = result: 
     if result.tag == "type-mismatch" then ''
       Invalid field: ${result.field}
-      With value: ${toString result.value}
+      With value: ${l.valueToString result.value}
       Expecting type: ${result.expected-type}
       Actual type: ${result.actual-type}
     ''
@@ -253,67 +324,83 @@ let
     ''
     else if result.tag == "unknown-enum" then ''
       Invalid field: ${result.field}
-      With value: ${toString result.value}
-      It must be one of: ${l.listToString result.gammut}
+      With value: ${l.valueToString result.value}
+      It must be one of: ${l.valueToString result.gammut}
     ''
     else if result.tag == "empty-list" then ''
       Invalid field: ${result.field}
-      With value: ${toString result.value}
+      With value: ${l.valueToString result.value}
       This field cannot be the empty string.
     ''
     else if result.tag == "path-does-not-exist" then ''
       Invalid field: ${result.field}
-      With value: ${toString result.value}
+      With value: ${l.valueToString result.value}
       This path does not exist.
     ''
-    else if result.tag == "invalid-list-elem" then
-      let
-        # A little hacky but gets the job done
-        formatInner = l.composeManyLeft [
-          resultToErrorString
-          (l.splitString "\n")
-          (l.drop 2) # Remove the first two lines of the inner error
-          (l.concatStringsSep "\n")
-        ];
-      in
-      '' 
-        Invalid field: ${result.field}
-        With value: ${l.listToString result.value}
-        The list contains at least one invalid value: ${toString result.inner.value}
-        ${formatInner result.inner}
-      ''
+    else if result.tag == "inner-schema-failure" then '' 
+      Invalid field: ${result.field}
+      With value: ${l.valueToString result.value}
+      Inner schema error:
+      ${truncateInnerResult 0 result.inner}
+    ''
+    else if result.tag == "invalid-list-elem" then '' 
+      Invalid field: ${result.field}
+      With value: ${l.valueToString result.value}
+      The list contains an invalid value: ${l.valueToString result.inner.value}
+      ${truncateInnerResult 2 result.inner}
+    ''
+    else if result.tag == "invalid-attr-elem" then '' 
+      Invalid field: ${result.field}
+      With value: ${l.valueToString result.value}
+      The attrset contains the invalid key: ${result.inner.field}
+      With value: ${l.valueToString result.inner.value}
+      ${truncateInnerResult 2 result.inner}
+    ''
     else if result.tag == "dir-does-not-have-file" then ''
       Invalid field: ${result.field}
-      With value: ${toString result.value}
+      With value: ${l.valueToString result.value}
       The directory does not contain the expected file ${result.file}
     ''
-    else if result.tag == "missing-field" then ''
-      Missing field: ${result.field}
+    else if result.tag == "missing-requred-field" then ''
+      Missing required field: ${result.field}
     ''
     else if result.tag == "unknown-field" then ''
       Unknown field: ${result.field}
     ''
     else '' 
       Internal error, please report this as a bug.
-      ${toString result}
+      ${l.valueToString result}
     '';
 
-  # Schema -> Config -> Config | error 
-  validateConfig = schema: config:
+
+  # String -> Schema -> Config -> Config | error 
+  validateConfig = schema: config: errmsg:
     let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
-    if result.status == "success" then
+    if resultIsSuccess result then
       result.config
     else
       let errors = map resultToErrorString result.errors; in
-      # TODO make this text red
       l.throw ''
-      Your configuration has errors:
-
-      ${l.concatStringsSep "\n" errors}
-      '';
       
+        ${errmsg}
+        ${l.concatStringsSep "\n" errors}
+      '';
+
+
+  # Path -> String -> Value | error 
+  demandFile = file: errmsg:
+    if l.pathExists file then 
+      import file
+    else 
+      l.throw "\n\n${errmsg}";
+          
 in
 
 {
-  inherit validators validateConfig matchConfigAgainstSchema;
+  inherit 
+    validators 
+    validateConfig 
+    demandFile
+    matchConfigAgainstSchema 
+    resultToErrorString;
 }

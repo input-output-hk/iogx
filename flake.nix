@@ -73,8 +73,7 @@
           pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};
         in 
         { 
-          checks.iogx-config-schema-tests = import ./tests/iogx-config-schema-tests.nix 
-            { inherit iogx pkgs; };
+          checks.main = import ./tests/main.nix { inherit iogx pkgs; };
 
           devShells.default = pkgs.stdenv.mkDerivation {
             name = "devshell";

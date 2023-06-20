@@ -2,24 +2,43 @@
 
 let
 
-  l = import ./l.nix { inherit iogx-inputs; };
+  l = import ../lib/l.nix { inherit iogx-inputs; };
 
 
-  modularise = import ./modularise.nix { inherit l; };
+  modularise = import ../lib/modularise.nix { inherit l; };
 
 
-  libnixschema = import ./libnixschema.nix { inherit l; };
+  libnixschema = import ../lib/libnixschema.nix { inherit l; };
+
+  
+  iogx-schemas = {
+
+    haskell-project = import ../schema/haskell-project.nix { inherit libnixschema l; };
+
+    hydra-jobs = import ../schema/hydra-jobs.nix { inherit libnixschema l; };
+
+    iogx-config = import ../schema/iogx-config.nix { inherit libnixschema l; };
+
+    pre-commit-check = import ../schema/pre-commit-check.nix { inherit libnixschema l; };
+
+    shell = import ../schema/shell.nix { inherit libnixschema l; };
+  };
 
 
   mkFlake = user-inputs: repo-root:
-    let
-      iogx-config-schema = import ./iogx-config-schema.nix { inherit libnixschema; };
-
-      # TODO check file exist and return better error message
+    let 
       # TODO fix infinite recursion problem using user-inputs.self
-      unvalidated-iogx-config = import (repo-root + "/nix/iogx-config.nix");
+      unvalidated-iogx-config = libnixschema.demandFile "${repo-root}/nix/iogx-config.nix" ''
+        IOGX: Please create the file ./nix/iogx-config.nix in the repository.
+        DOCS: http://www.github.com/input-output-hk/iogx/README.md#iogx-config
+      '';
 
-      iogx-config = libnixschema.validateConfig iogx-config-schema unvalidated-iogx-config;
+      iogx-config = 
+        let result = libnixschema.validateConfig iogx-schemas.iogx-config unvalidated-iogx-config; in 
+        if result.status == "success" then result.config else l.throw ''
+          IOGX: Your ./nix/iogx-config.nix has errors:
+          ${l.valueToString result.errors}
+        '';
 
       merged-inputs = import ./merge-inputs.nix { inherit iogx-inputs user-inputs iogx-config l; };
 
@@ -37,10 +56,7 @@ let
       );
 
       top-level-outputs = 
-        if iogx-config.topLevelOutputsFile != null then 
-          import iogx-config.topLevelOutputsFile { inputs' = merged-inputs; }
-        else 
-          {};
+        l.importFileWithDefault {} "${repo-root}/nix/top-level-outputs.nix" { inputs' = merged-inputs; };
 
       # TODO check collisions 
       final-outputs = top-level-outputs // systemized-outputs;
@@ -48,7 +64,7 @@ let
       final-outputs;
 
   
-  lib = { inherit l modularise libnixschema mkFlake; };
+  lib = { inherit l modularise libnixschema mkFlake iogx-schemas; };
 
 
   out = { inherit lib; };

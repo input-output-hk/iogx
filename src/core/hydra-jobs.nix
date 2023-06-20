@@ -49,7 +49,7 @@ let
       cleanJobs
       addRequiredJob
     ] 
-      flake;
+      flake; # TODO use inputs.self instead of flake?
 
 in
 

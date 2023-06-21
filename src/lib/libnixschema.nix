@@ -76,6 +76,8 @@ let
             inherit field value;
           };
 
+      any = success;
+
       path = V.simple-type "path"; # Field -> Value -> FieldValidationResult
 
       function = V.simple-type "lambda"; # Field -> Value -> FieldValidationResult
@@ -88,6 +90,7 @@ let
 
       list = V.simple-type "list"; # Field -> [Value] -> FieldValidationResult
 
+      # TODO this segfaults
       drv = V.simple-type "derivation"; # Field -> Value -> FieldValidationResult
 
       # Field -> Value -> FieldValidationResult
@@ -231,7 +234,9 @@ let
 
   # FinalConfig -> Config -> Field -> FieldValidator -> FieldValidationResult
   validateField = __config__: config: field: validator: 
-    if l.hasAttr field config then
+    if validator ? precheck && !validator.precheck __config__ then 
+      success field null # TODO instead of null a lazy error 
+    else if l.hasAttr field config then
       validator.type field config.${field}
     else if validator ? default then 
       # FIXME it's ambiguous whether it's a function value or a (Config -> Value)

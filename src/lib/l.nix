@@ -30,7 +30,9 @@ let
 
     
     valueToString = x: 
-      if l.typeOf x == "set" then 
+      if x == null then 
+        "null"
+      else if l.typeOf x == "set" then 
         "{${l.concatStringsSep " " (l.mapAttrsToList (k: v: "${k}=${valueToString v};") x)}}"
       else if l.typeOf x == "list" then 
         "[${l.concatStringsSep " " (map valueToString x)}]"

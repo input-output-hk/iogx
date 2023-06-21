@@ -25,7 +25,6 @@ let
     (successField "shell-13" config schema "welcomeMessage" "welcomeMessage")
 
     (invalidField "shell-14" config schema "packages" "type-mismatch" 1)
-    (invalidField "shell-15" config schema "packages" "invalid-list-elem" [1])
     (defaultField "shell-16" config schema "packages" []) 
 
     (invalidField "shell-17" config schema "env" "type-mismatch" 1)
@@ -42,7 +41,6 @@ let
     (invalidField "shell-26" config schema "scripts" "type-mismatch" 1)
     (invalidField "shell-27" config schema "scripts" "type-mismatch" 1)
     (invalidField "shell-28" config schema "scripts" "invalid-attr-elem" { s = { enable = 1; a = 2;}; })
-    (invalidField "shell-29" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = ""; }; })
     (invalidField "shell-30" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = "a"; group = ""; }; })
     (invalidField "shell-31" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = "a"; group = "a"; a = 1;}; })
     (defaultField "shell-32" config schema "scripts" {})

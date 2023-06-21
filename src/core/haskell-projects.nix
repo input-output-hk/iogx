@@ -4,7 +4,7 @@ let
 
   mkHaskellProject = meta@{ haskellCompiler, enableCross, enableHaddock, enableProfiling }: 
     let
-      project-parts = import iogx-interface.load-haskell-project { inherit inputs inputs' pkgs meta; };
+      project-parts = iogx-interface.load-haskell-project { inherit inputs inputs' pkgs meta; };
 
       prof-module = pkgs.lib.optional enableProfiling { enableProfiling = true; };
 

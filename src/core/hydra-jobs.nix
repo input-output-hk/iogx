@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-interface, pkgs, l, src, ... }:
 
 { flake }:
 
@@ -35,16 +35,14 @@ let
 
 
   hydra-jobs =
-    # l.composeManyLeft [
-    #   # addIncludedPaths
-    #   # removeExcludedPaths
-    #   # addExtraJobs
-    #   # cleanJobs
-    #   # addRequiredJob
-    # ] 
-      # flake; # TODO use inputs.self instead of flake?
-      # { packages.entrypoints.testnet-dev.node = pkgs.stdenv.mkDerivation { name="asd"; }; }; # TODO use inputs.self instead of flake?
-      { what = pkgs.stdenv.mkDerivation { name="asd"; }; }; # TODO use inputs.self instead of flake?
+    l.composeManyLeft [
+      addIncludedPaths
+      removeExcludedPaths
+      addExtraJobs
+      cleanJobs
+      addRequiredJob
+    ] 
+      flake; # TODO use inputs.self instead of flake?
 
 in
 

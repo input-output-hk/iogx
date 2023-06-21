@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', pkgs, l, src, ... }:
 
 { shell }:
 
@@ -21,7 +21,7 @@ let
     let
       all-scripts =
         let
-          filterDisabled = l.filterAttrs (_: { enabled ? true, ... }: enabled);
+          filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } shell);
           extra-scripts = { inherit info; };
         in

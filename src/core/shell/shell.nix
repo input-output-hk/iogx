@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, interface-files, iogx-schemas, ... }:
+{ inputs, inputs', pkgs, l, src, iogx-interface, ... }:
 
 { project }:
 
@@ -34,7 +34,7 @@ let
 
   scriptsToShellApps = scripts:
     let
-      filterDisabled = l.filterAttrs (_: { enabled ? true, ... }: enabled);
+      filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
     in
     l.mapAttrsToList scriptToShellApp (filterDisabled scripts);
 
@@ -51,7 +51,7 @@ let
 
   shellToNixShell = shell: 
     pkgs.mkShell {
-      name = shell.derivationName;
+      name = shell.name;
       buildInputs = shell.packages ++ scriptsToShellApps shell.scripts;
       shellHook = ''
         ${shell.enterShell}
@@ -67,10 +67,7 @@ let
     let
       base-module = src.core.shell.base-module { inherit project; };
 
-      shell-file = interface-files.read-shell { inherit inputs inputs' pkgs project; };
-      
-      user-shell = libnixschema.validateConfig shell-file iogx-schemas.shell ''
-      '';
+      user-shell = iogx-interface.load-shell { inherit inputs inputs' pkgs project; };
 
       readthedocs-module = {}; # TODO
 

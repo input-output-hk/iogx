@@ -96,13 +96,11 @@ let
 
   final-outputs =
     l.composeManyLeft [
-      # addHaskellProjects
-      # addHaskellProjectsFlakes
-      # addDefaultDevShell
-      # addUserPerSystemOutputs
-      (_: { packages.what = pkgs.hello; })
-      # (_: { packages.what = pkgs.stdenv.mkDerivation { name = "a";}; })
-      # addHydraJobs
+      addHaskellProjects
+      addHaskellProjectsFlakes
+      addDefaultDevShell
+      addUserPerSystemOutputs
+      addHydraJobs
     ]
       { };
 

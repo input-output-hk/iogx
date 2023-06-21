@@ -1,5 +1,3 @@
-{ ... }:
-
 final: prev: {
 
   # The haskell inline-r package depends on internals of the R

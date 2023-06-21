@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', pkgs, l, src, ... }:
 
 { project }:
 

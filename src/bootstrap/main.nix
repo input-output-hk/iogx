@@ -37,7 +37,7 @@ let
 
       iogx-config = iogx-interface.load-iogx-config {}; 
       
-      merged-inputs = iogx-inputs; # import ./merge-inputs.nix { inherit iogx-inputs user-inputs iogx-config l; };
+      merged-inputs = import ./merge-inputs.nix { inherit iogx-inputs user-inputs iogx-config l; };
 
       systemized-outputs = iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
         let

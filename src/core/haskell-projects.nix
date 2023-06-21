@@ -1,10 +1,10 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
 
 let
 
   mkHaskellProject = meta@{ haskellCompiler, enableCross, enableHaddock, enableProfiling }: 
     let
-      project-parts = import iogx-config.haskellProjectFile { inherit inputs inputs' pkgs meta; };
+      project-parts = import iogx-interface.load-haskell-project { inherit inputs inputs' pkgs meta; };
 
       prof-module = pkgs.lib.optional enableProfiling { enableProfiling = true; };
 

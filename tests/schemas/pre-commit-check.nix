@@ -1,13 +1,12 @@
-{ missingField, invalidField, defaultField, successField, iogx-schemas }:
+{ missingField, invalidField, defaultField, successField }:
+
+schema: 
 
 let 
 
   config = {};
 
   
-  schema = iogx-schemas.pre-commit-check;
-
-
   testsuite = [
     (invalidField "pre-commit-check-01" config schema "cabal-fmt" "inner-schema-failure" { enable = 1; })
     (invalidField "pre-commit-check-02" config schema "cabal-fmt" "inner-schema-failure" { enable = true; extraOptions = 1; })

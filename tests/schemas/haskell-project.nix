@@ -1,13 +1,11 @@
-{ missingField, invalidField, defaultField, successField, iogx-schemas }:
+{ missingField, invalidField, defaultField, successField }:
+
+schema:
 
 let 
 
   config = {};
 
-  
-  schema = iogx-schemas.haskell-project;
-
-  
 
   testsuite = [
     (invalidField "haskell-project-01" config schema "cabalProjectLocal" "type-mismatch" 1)

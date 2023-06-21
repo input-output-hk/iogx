@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, interface-files, ... }:
+{ inputs, inputs', iogx-config, pkgs, l, src, iogx-interface, ... }:
 
 # TODO check collisions whenever we use // or l.recursiveUpdate or l.recursiveUpdateMany
 
@@ -88,7 +88,7 @@ let
   addUserPerSystemOutputs = flake:
     let 
       projects = flake.__projects;
-      per-system-outputs = interface-files.read-per-system-outputs { inherit inputs inputs' pkgs projects; };
+      per-system-outputs = iogx-interface.load-per-system-outputs { inherit inputs inputs' pkgs projects; };
       final-flake = l.recursiveUpdate per-system-outputs flake; 
     in 
       final-flake;
@@ -96,11 +96,13 @@ let
 
   final-outputs =
     l.composeManyLeft [
-      addHaskellProjects
-      addHaskellProjectsFlakes
-      addDefaultDevShell
-      addUserPerSystemOutputs
-      addHydraJobs
+      # addHaskellProjects
+      # addHaskellProjectsFlakes
+      # addDefaultDevShell
+      # addUserPerSystemOutputs
+      (_: { packages.what = pkgs.hello; })
+      # (_: { packages.what = pkgs.stdenv.mkDerivation { name = "a";}; })
+      # addHydraJobs
     ]
       { };
 

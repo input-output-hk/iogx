@@ -70,15 +70,18 @@ let
         '';
 
 
-  lib = { inherit missingField invalidField defaultField successField iogx-schemas; };
+  lib = { inherit missingField invalidField defaultField successField; };
 
 
   testsuite = [
-    (import ./schemas/haskell-project.nix lib)
-    (import ./schemas/hydra-jobs.nix lib)
-    (import ./schemas/iogx-config.nix lib)
-    (import ./schemas/pre-commit-check.nix lib)
-    (import ./schemas/shell.nix lib)
+    (import ./schemas/haskell-project.nix lib iogx-schemas.haskell-project)
+    (import ./schemas/hydra-jobs.nix lib iogx-schemas.hydra-jobs)
+    (import ./schemas/iogx-config.nix lib iogx-schemas.iogx-config)
+    (import ./schemas/pre-commit-check.nix lib iogx-schemas.pre-commit-check)
+    (import ./schemas/shell.nix lib iogx-schemas.shell)
+    (import ./schemas/per-system-outputs.nix lib iogx-schemas.per-system-outputs)
+    (import ./schemas/top-level-outputs.nix lib iogx-schemas.top-level-outputs)
+    (import ./schemas/read-the-docs.nix lib iogx-schemas.read-the-docs)
   ];
 
 

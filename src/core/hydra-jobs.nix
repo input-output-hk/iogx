@@ -1,30 +1,22 @@
-{ inputs, inputs', iogx-config, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
 
 { flake }:
 
 let
 
-  
-  default-spec = { 
-    excludedPaths = [];
-    extraJobs = {};
-  };
-
-
-  # TODO make hydraJobsFile schema and validate
-  user-spec = 
-    if iogx-config.hydraJobsFile != null then
-      import iogx-config.hydraJobsFile { inherit inputs inputs' pkgs flake; }
-    else
-      default-spec;
+  user-hydra = iogx-interface.load-hydra-jobs { inherit inputs inputs' pkgs; };
 
 
   # TODO use hasAttrByPath to validate
-  removeExcludedPaths = jobs: l.deleteManyAttrsByPathString jobs user-spec.excludedPaths;
+  addIncludedPaths = l.restrictManyAttrsByPathString user-hydra.includedPaths;
+
+
+  # TODO use hasAttrByPath to validate
+  removeExcludedPaths = l.deleteManyAttrsByPathString user-hydra.excludedPaths;
 
 
   # TODO check collisions
-  addExtraJobs = jobs: l.recursiveUpdate jobs user-spec.extraJobs;
+  addExtraJobs = l.recursiveUpdate user-hydra.extraJobs;
 
 
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
@@ -43,13 +35,16 @@ let
 
 
   hydra-jobs =
-    l.composeManyLeft [
-      removeExcludedPaths
-      addExtraJobs
-      cleanJobs
-      addRequiredJob
-    ] 
-      flake; # TODO use inputs.self instead of flake?
+    # l.composeManyLeft [
+    #   # addIncludedPaths
+    #   # removeExcludedPaths
+    #   # addExtraJobs
+    #   # cleanJobs
+    #   # addRequiredJob
+    # ] 
+      # flake; # TODO use inputs.self instead of flake?
+      # { packages.entrypoints.testnet-dev.node = pkgs.stdenv.mkDerivation { name="asd"; }; }; # TODO use inputs.self instead of flake?
+      { what = pkgs.stdenv.mkDerivation { name="asd"; }; }; # TODO use inputs.self instead of flake?
 
 in
 

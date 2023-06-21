@@ -67,16 +67,28 @@ let
     validPathOrNull = path: if l.pathExists path then path else null;
 
 
-    deleteManyAttrsByPathString = l.foldl' (l.flip deleteAttrByPathString);
+    # TODO probably this function is very inefficient 
+    restrictManyAttrsByPathString = paths: set: 
+      let 
+        parts = map (l.flip restrictAttrByPathString set) paths;
+      in 
+        recursiveUpdateMany parts;
+
+
+    restrictAttrByPath = path: set:
+      if l.hasAttrByPath path set then 
+        l.setAttrByPath path (l.getAttrFromPath path set)
+      else 
+        {};
+
+
+    restrictAttrByPathString = path: restrictAttrByPath (l.splitString "." path);
+
+
+    deleteManyAttrsByPathString = paths: set: l.foldl' (l.flip deleteAttrByPathString) set paths;
 
 
     deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);
-
-
-    hasAttrByPathString = path: l.hasAttrByPath (l.splitString "." path);
-
-
-    getAttrByPathString = path: l.getAttrByPath (l.splitString "." path);
 
 
     # TODO is this in the stdlib?

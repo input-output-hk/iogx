@@ -1,52 +1,19 @@
-{ libnixschema, l }:
+{ libnixschema }:
 
 {
-  haskell-project = import ./haskell-project.nix { inherit libnixschema l; };
+  haskell-project = import ./haskell-project.nix { inherit libnixschema; };
 
-  hydra-jobs = import ./hydra-jobs.nix { inherit libnixschema l; };
+  hydra-jobs = import ./hydra-jobs.nix { inherit libnixschema; };
 
-  iogx-config = import ./iogx-config.nix { inherit libnixschema l; };
+  iogx-config = import ./iogx-config.nix { inherit libnixschema; };
 
-  pre-commit-check = import ./pre-commit-check.nix { inherit libnixschema l; };
+  pre-commit-check = import ./pre-commit-check.nix { inherit libnixschema; };
 
-  shell = import ./shell.nix { inherit libnixschema l; };
+  shell = import ./shell.nix { inherit libnixschema; };
+
+  per-system-outputs = import ./per-system-outputs.nix { inherit libnixschema; };
+
+  top-level-outputs = import ./top-level-outputs.nix { inherit libnixschema; };
+
+  read-the-docs = import ./read-the-docs.nix { inherit libnixschema; };
 }
-
-# {
-  
-
-# }
-#     importSchema = file: import (. + "/${file}.nix") { inherit libnixschema l; };
-#       mkPair name = { ${file} = importSchema file };
-#       l.recursiveUpdateMany (map importSchema )
-#       files ="haskell-
-#     in 
-#       l.recursiveUpdateMany (map mkOne )
-#     {
-
-
-
-
-#   interface-files = [
-#     "haskell-project"
-#     "hydra-jobs"
-#     "iogx-config"
-#     "pre-commit-check"
-#     "shell"
-#     "read-the-docs"
-#     "per-system-outputs"
-#     "top-level-outputs"
-#   ];
-
-  
-#   iogx-schema = 
-  
-#   iogx-schemas = 
-#     let 
-#       importSchema = file: import (. + "/${file}.nix") { inherit libnixschema l; };
-#       mkPair name = { ${file} = importSchema file };
-#       l.recursiveUpdateMany (map importSchema )
-#       files ="haskell-
-#     in 
-#       l.recursiveUpdateMany (map mkOne )
-#     {

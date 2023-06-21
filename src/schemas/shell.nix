@@ -1,4 +1,4 @@
-{ libnixschema, l }:
+{ libnixschema }:
 
 let
 

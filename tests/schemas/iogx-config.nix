@@ -1,4 +1,6 @@
-{ missingField, invalidField, defaultField, successField, iogx-schemas }:
+{ missingField, invalidField, defaultField, successField }:
+
+schema: 
 
 let 
 
@@ -7,9 +9,6 @@ let
     systems = [ "x86_64-darwin" "x86_64-linux" ];
     haskellCompilers = [ "ghc8107" ];
   };
-
-  
-  schema = iogx-schemas.iogx-config;
 
 
   testsuite = [

@@ -285,7 +285,12 @@ let
         in l.recursiveUpdateMany (map mkNameVal all-results);
 
       schema-result = # SchemaValidationResult
-        if config-is-valid then
+        if schema ? __passthrough then # TODO revisit this __passthrough business
+          {
+            status = "success";
+            config = config;
+          }
+        else if config-is-valid then
           {
             status = "success";
             config = __config__;

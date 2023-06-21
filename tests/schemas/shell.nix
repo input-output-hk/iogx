@@ -1,12 +1,11 @@
-{ missingField, invalidField, defaultField, successField, iogx-schemas }:
+{ missingField, invalidField, defaultField, successField }:
+
+schema:
 
 let 
 
   config = {};
   
-
-  schema = iogx-schemas.shell;
-
 
   testsuite = [
     (invalidField "shell-01" config schema "name" "type-mismatch" 1)

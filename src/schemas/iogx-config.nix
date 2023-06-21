@@ -1,4 +1,4 @@
-{ libnixschema, l }:
+{ libnixschema }:
 
 let
 
@@ -13,7 +13,7 @@ let
     haskellCompilers.type = V.nonempty-enum-list [ "ghc8107" "ghc927" ];
    
     defaultHaskellCompiler.type = V.enum [ "ghc8107" "ghc927" ];
-    defaultHaskellCompiler.default = conf: l.head conf.haskellCompilers; 
+    defaultHaskellCompiler.default = conf: builtins.head conf.haskellCompilers; 
    
     shouldCrossCompile.type = V.bool;
     shouldCrossCompile.default = true;

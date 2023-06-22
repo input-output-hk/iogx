@@ -1,12 +1,12 @@
 { inputs, inputs', pkgs, l, src, iogx-interface, ... }:
 
-{ project }:
+{ project, __flake__}:
 
 let
 
   mergeModules = mod1: mod2: mod1 // mod2 // 
     {
-      packages = # TODO check collisions
+      packages = 
         l.getAttrWithDefault "packages" [ ] mod1 ++
         l.getAttrWithDefault "packages" [ ] mod2;
 
@@ -16,13 +16,33 @@ let
           (l.getAttrWithDefault "enterShell" "" mod2)
         ];
 
-      scripts = # TODO check collisions
-        l.getAttrWithDefault "scripts" { } mod1 //
-        l.getAttrWithDefault "scripts" { } mod2;
+      scripts = 
+        let 
+          scripts1 = l.getAttrWithDefault "scripts" { } mod1;
+          scripts2 = l.getAttrWithDefault "scripts" { } mod2;
+          mkErrmsg = { n, duplicates }: l.iogxError "shell" ''
+            Your ./nix/shell.nix contains ${toString n} invalid ${l.plural n "script"}:
 
-      env = # TODO check collisions
-        l.getAttrWithDefault "env" { } mod1 //
-        l.getAttrWithDefault "env" { } mod2;
+              ${l.concatStringsSep ", " duplicates}
+            
+            IOGX already defines scripts with the same name.
+          '';
+        in 
+          l.mergeDisjointAttrsOrThrow scripts1 scripts2 mkErrmsg;
+
+      env = 
+        let 
+          env1 = l.getAttrWithDefault "env" { } mod1;
+          env2 = l.getAttrWithDefault "env" { } mod2;
+          mkErrmsg = { n, duplicates }: l.iogxError "shell" ''
+            Your ./nix/shell.nix contains ${toString n} invalid environment ${l.plural n "variable"}:
+
+              ${l.concatStringsSep ", " duplicates}
+            
+            IOGX already defines environment variables with the same name.
+          '';
+        in 
+          l.mergeDisjointAttrsOrThrow env1 env2 mkErrmsg;
     };
 
 
@@ -69,9 +89,9 @@ let
 
       user-shell = iogx-interface.load-shell { inherit inputs inputs' pkgs project; };
 
-      readthedocs-module = {}; # TODO
+      readthedocs-module = {};
 
-      utility-module = src.core.shell.utility-module { shell = __shell__; };
+      utility-module = src.core.shell.utility-module { inherit __shell__ __flake__; };
 
       __shell__ = mergeManyModules [
         base-module

@@ -12,7 +12,7 @@ let
       in
       l.nameValuePair name value
     else
-      # TODO throw instead if path is not a nix file
+      # TODO throw or warn instead if path is not a nix file
       l.nameValuePair path null;
 
 

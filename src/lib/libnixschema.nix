@@ -90,7 +90,6 @@ let
 
       list = V.simple-type "list"; # Field -> [Value] -> FieldValidationResult
 
-      # TODO this segfaults
       drv = V.simple-type "derivation"; # Field -> Value -> FieldValidationResult
 
       # Field -> Value -> FieldValidationResult
@@ -234,9 +233,7 @@ let
 
   # FinalConfig -> Config -> Field -> FieldValidator -> FieldValidationResult
   validateField = __config__: config: field: validator: 
-    if validator ? precheck && !validator.precheck __config__ then 
-      success field null # TODO instead of null a lazy error 
-    else if l.hasAttr field config then
+    if l.hasAttr field config then
       validator.type field config.${field}
     else if validator ? default then 
       # FIXME it's ambiguous whether it's a function value or a (Config -> Value)
@@ -247,7 +244,7 @@ let
     else 
       {
         status = "failure";
-        tag = "missing-requred-field"; # TODO rename missing-required field
+        tag = "missing-requred-field"; 
         inherit field;
       };
 
@@ -326,74 +323,70 @@ let
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
       Expecting type: ${result.expected-type}
-      Actual type: ${result.actual-type}
-    ''
+      Actual type: ${result.actual-type}''
+
     else if result.tag == "empty-string" then ''
       Invalid field: ${result.field}
       With value: ""
-      This field cannot be the empty string
-    ''
+      This field cannot be the empty string''
+
     else if result.tag == "unknown-enum" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
-      It must be one of: ${l.valueToString result.gammut}
-    ''
+      It must be one of: ${l.valueToString result.gammut}''
+
     else if result.tag == "empty-list" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
-      This field cannot be the empty string.
-    ''
+      This field cannot be the empty string.''
+
     else if result.tag == "path-does-not-exist" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
-      This path does not exist.
-    ''
+      This path does not exist.''
+
     else if result.tag == "inner-schema-failure" then '' 
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
       Inner schema error:
-      ${truncateInnerResult 0 result.inner}
-    ''
+      ${truncateInnerResult 0 result.inner}''
+
     else if result.tag == "invalid-list-elem" then '' 
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
       The list contains an invalid value: ${l.valueToString result.inner.value}
-      ${truncateInnerResult 2 result.inner}
-    ''
+      ${truncateInnerResult 2 result.inner}''
+
     else if result.tag == "invalid-attr-elem" then '' 
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
       The attrset contains the invalid key: ${result.inner.field}
       With value: ${l.valueToString result.inner.value}
-      ${truncateInnerResult 2 result.inner}
-    ''
+      ${truncateInnerResult 2 result.inner}''
+
     else if result.tag == "dir-does-not-have-file" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
-      The directory does not contain the expected file ${result.file}
-    ''
+      The directory does not contain the expected file ${result.file}''
+
     else if result.tag == "missing-requred-field" then ''
-      Missing required field: ${result.field}
-    ''
+      Missing required field: ${result.field}''
+
     else if result.tag == "unknown-field" then ''
-      Unknown field: ${result.field}
-    ''
+      Unknown field: ${result.field}''
+
     else '' 
       Internal error, please report this as a bug.
-      ${l.valueToString result}
-    '';
+      ${l.valueToString result}'';
 
 
   # Schema -> Config -> Config | error 
-  validateConfig = schema: config: errmsg:
+  validateConfigOrThrow = schema: config: mkErrmsg:
     let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
     if resultIsSuccess result then
       result.config
     else
-      l.pthrow '' 
-        ${errmsg}
-        ${result.errmsg}
-      '';
+      l.pthrow (mkErrmsg { inherit result; });
       
 
   # Path -> String -> Value | error 
@@ -408,8 +401,7 @@ in
 {
   inherit 
     validators 
-    validateConfig 
+    validateConfigOrThrow 
     demandFile
-    matchConfigAgainstSchema 
-    resultToErrorString;
+    matchConfigAgainstSchema;
 }

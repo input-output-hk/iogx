@@ -1,8 +1,8 @@
 { inputs, inputs', pkgs, project }:
 { 
-  # name = "TODO";
+  # name = "devShell";
   # prompt = "$ ";
-  # welcomeMessage = "TODO";
+  # welcomeMessage = "devShell";
 
   # packages = [ ];
   # scripts = { };

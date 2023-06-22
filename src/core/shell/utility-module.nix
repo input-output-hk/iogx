@@ -1,6 +1,6 @@
-{ inputs, inputs', pkgs, l, src, ... }:
+{ inputs, inputs', pkgs, iogx-config, l, src, ... }:
 
-{ shell }:
+{ __shell__, __flake__ }:
 
 let
 
@@ -22,8 +22,8 @@ let
       all-scripts =
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
-          shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } shell);
-          extra-scripts = { inherit info; };
+          shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
+          extra-scripts = { inherit info list-haskell-outputs; };
         in
         shell-scripts // extra-scripts;
 
@@ -45,7 +45,7 @@ let
 
       formatted-env =
         let
-          shell-env = l.getAttrWithDefault "env" { } shell;
+          shell-env = l.getAttrWithDefault "env" { } __shell__;
           final-env = removeAttrs shell-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" ];
           formatVar = var: val: ''
             — ${l.ansiBold var} ∷ ${val}
@@ -61,7 +61,7 @@ let
         group = "iogx";
         description = "Print this message";
         exec = ''
-          printf "\n${shell.welcomeMessage}\n\n"
+          printf "\n${__shell__.welcomeMessage}\n\n"
           printf "${formatted-env}"
           printf "${formatted-script-groups}"
         '';

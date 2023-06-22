@@ -1,7 +1,5 @@
 { inputs, inputs', iogx-config, pkgs, l, src, iogx-interface, ... }:
 
-# TODO check collisions whenever we use // or l.recursiveUpdate or l.recursiveUpdateMany
-
 let
 
   # marlowe:runtime-web:lib:server
@@ -43,7 +41,7 @@ let
   haskellProjectToFlake = project:
     let 
       mkBaseFlake = _: 
-        let devShell = src.core.shell.shell { inherit project; };
+        let devShell = src.core.shell.shell { inherit project __flake__; };
         in pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
 
       renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
@@ -84,17 +82,55 @@ let
       flake // l.recursiveUpdateMany flakes;
 
 
-  # TODO throw error if user outputs contain hydraJobs or ciJobs or devShells?
   addUserPerSystemOutputs = flake:
     let 
       projects = flake.__projects;
+
       per-system-outputs = iogx-interface.load-per-system-outputs { inherit inputs inputs' pkgs projects; };
-      final-flake = l.recursiveUpdate per-system-outputs flake; 
+      
+      mkInvalidOutputsError = field: errmsg: l.iogxError "per-system-outputs" ''
+        Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
+
+        ${errmsg}
+      '';
+
+      validated-per-system-outputs = 
+        if per-system-outputs ? devShells then 
+          mkInvalidOutputsError "devShells" "Define your shells in ./nix/shell.nix instead."
+        else if per-system-outputs ? hydraJobs then 
+          mkInvalidOutputsError "hydraJobs" "Define your CI jobset in ./nix/hydra-jobs.nix instead."
+        else if per-system-outputs ? ciJobs then 
+          mkInvalidOutputsError "ciJobs" "This field has been obsoleted and replaced by hydraJobs."
+        else if per-system-outputs ? __projects then 
+          mkInvalidOutputsError "__projects" "This field is reserved for IOGX."
+        else 
+          per-system-outputs;   
+
+      mkCollisionError = field: { n, duplicates }: l.iogxError "per-system-outputs" ''
+        Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
+
+        It contains ${toString n} ${l.plural n "attribute"} that are reserved for IOGX: 
+
+          ${l.concatStringsSep ", " duplicates}
+      '';
+
+      checkCollisionsIn = field: 
+        l.mergeDisjointAttrsOrThrow 
+          flake.${field} 
+          (l.getAttrWithDefault field {} per-system-outputs) 
+          (mkCollisionError field);
+
+      final-flake = validated-per-system-outputs // {
+        packages = checkCollisionsIn "packages";
+        apps = checkCollisionsIn "apps";
+        checks = checkCollisionsIn "checks";
+        inherit (flake) __projects devShells;
+      };
     in 
       final-flake;
 
 
-  final-outputs =
+  __flake__ =
     l.composeManyLeft [
       addHaskellProjects
       addHaskellProjectsFlakes
@@ -106,4 +142,4 @@ let
 
 in
 
-final-outputs
+__flake__

@@ -2,8 +2,6 @@
 
 { project }:
 
-# TODO check collisions whenever we use // or l.recursiveUpdate or l.recursiveUpdateMany
-
 let 
 
   haskell-toolchain = src.toolchain."haskell-toolchain-${project.meta.haskellCompiler}";
@@ -74,7 +72,7 @@ let
       include = ["hs" "lhs"];
     };
 
-    # TODO Breaks with -XExplicitNamespaces type (:<|>)
+    # FIXME Breaks with -XExplicitNamespaces type (:<|>)
     hindent = {
       enable = false;
       command = l.getExe haskell-toolchain.hindent;

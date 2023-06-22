@@ -8,7 +8,7 @@
 
 ### Support for Multiple GHCs 
 
-  Define a set of desired GHC versions and get a `devShell` for each that comes with a complete haskell toolchain. Your `packages` will include all your project's components, nested by compiler name. Similarly your `apps` will contain the executables, testsuites and benchmarks. Your `hydraJobs` will build your project against each compiler. A version built with profiling enabled is avaialble for each component out of the box.
+  Define a set of GHC versions and get a `devShell` for each that comes with a complete haskell toolchain. Your `packages` will include all your project's components, grouped by compiler name. Similarly your `apps` will contain the executables, testsuites and benchmarks. Your `hydraJobs` will build your project against each compiler. A version built with profiling enabled is available for each component out of the box.
 
 ### Development Shells
   
@@ -270,9 +270,9 @@ See
 ```nix
 { inputs, inputs', pkgs, project@{ meta, hsPkgs, shell, ... } }:
 { 
-  derivationName = "TODO";
+  derivationName = "devShell";
   prompt = "$ ";
-  welcomeMessage = "TODO";
+  welcomeMessage = "devShell";
 
   packages = [ ];
   scripts = { };

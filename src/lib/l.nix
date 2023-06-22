@@ -17,6 +17,7 @@ let
     nestAttrs = l.foldr (prefix: l.mapAttrs (_: value: { ${prefix} = value; }));
 
 
+    # FIXME ensure that recursion stops when encountering values of type Derivation
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
 
@@ -44,6 +45,52 @@ let
         "<LAMBDA>" 
       else 
         toString x;
+    
+
+    findCommonAttributePathsWithDepth = depth': s1: s2: 
+      let
+        go = depth: { path, v1, v2 }:
+          let 
+            value-clash = 
+              let 
+                v1-term = l.isAttrs v1 && !l.isDerivation v1;
+                v2-term = l.isAttrs v2 && !l.isDerivation v2;
+              in 
+                !v1-term || !v2-term;
+
+            mkPair = name: 
+              { 
+                path = if path == "" then name else "${path}.${name}"; 
+                v1 = l.getAttr name v1; 
+                v2 = l.getAttr name v2; 
+              };
+          in
+            if depth == 0 then 
+              []
+            else if value-clash then 
+              [{ ${path} = { left = v1; right = v2; }; }]
+            else 
+              let
+                common-names = l.intersectLists (l.attrNames v1) (l.attrNames v2);
+                pairs = map mkPair common-names;
+              in 
+                l.concatMap (go (depth - 1)) pairs;
+      in 
+        go depth' { path = ""; v1 = s1; v2 = s2; };
+
+
+    findCommonAttributePaths = findCommonAttributePathsWithDepth (-1);
+
+
+    mergeDisjointAttrsOrThrow = s1: s2: mkErrmsg:
+      let 
+        duplicates = l.intersectLists (l.attrNames s1) (l.attrNames s2);
+        n = l.length duplicates;
+      in 
+        if n > 0 then 
+          pthrow (mkErrmsg { inherit n duplicates; })
+        else 
+          s1 // s2; 
 
 
     allEquals = xs:
@@ -57,8 +104,16 @@ let
       else
         true;
 
+    
+    # TODO this function does not belong here 
+    mkGhcPrefixMatrix = l.concatMap (ghc: [
+      ghc 
+      "${ghc}-profiled" 
+      "${ghc}-mingwW64" 
+      "${ghc}-mingwW64-profiled"
+    ]);
 
-    # TODO is this in the stdlib?
+
     getAttrWithDefault = name: def: set:
       if l.hasAttr name set then
         l.getAttr name set
@@ -69,7 +124,7 @@ let
     validPathOrNull = path: if l.pathExists path then path else null;
 
 
-    # TODO probably this function is very inefficient 
+    # FIXME Probably this function is very inefficient 
     restrictManyAttrsByPathString = paths: set: 
       let 
         parts = map (l.flip restrictAttrByPathString set) paths;
@@ -93,7 +148,6 @@ let
     deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);
 
 
-    # TODO is this in the stdlib?
     deleteAttrByPath = path: set:
       if l.length path == 0 then
         set
@@ -150,6 +204,8 @@ let
     '';
 
 
+    plural = n: s: if n == -1 || n == 1 then s else "${s}s";
+
     importFileWithDefault = def: path: args:
       if l.pathExists path then 
         import path args 
@@ -162,6 +218,17 @@ let
 
     pthrow = text: 
       l.throw "\n${text}";
+
+
+    iogxError = anchor: text: 
+      l.throw ''
+        
+        ------------------------------------ IOGX --------------------------------------
+        ${text}
+        Follow this link for documentation:
+        http://www.github.com/input-output-hk/iogx/README.md#${anchor}
+        --------------------------------------------------------------------------------
+      '';
 
 
     # prettyTwoColumnsLayout { 
@@ -178,7 +245,6 @@ let
     prettyTwoColumnsLayout =
       { lefts, rights, max-width ? 80, sep-char ? " ", gap-width ? 2, ellipse ? "..", indent ? "" }:
       let
-        # TODO are some of these in the stdlib?
         replicate = n: elem: l.genList (_: elem) n;
 
         padRight = max: str: l.concatStrings (replicate (max - l.stringLength str) sep-char);

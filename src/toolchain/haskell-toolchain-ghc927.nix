@@ -1,4 +1,4 @@
-{ src, ... }:
+{ src, pkgs, ... }:
 {
   cabal-install = src.toolchain.cabal-install-ghc927;
   haskell-language-server = src.toolchain.haskell-language-server-ghc927;

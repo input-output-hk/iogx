@@ -64,15 +64,21 @@
       };
 
       global-outputs = {
-        inherit (iogx) mkFlake l modularise flakeopts-schema libnixschema;
+        inherit (iogx) lib;
         templates.default = template;
       };
 
       per-system-outputs = iogx-inputs.flake-utils.lib.eachDefaultSystem (system:
+        let 
+          pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};
+        in 
         { 
-          checks.flakeopts-schema-tests = import ./tests/flakeopts-schema-tests.nix { 
-            inherit iogx;
-            pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};  
+          checks.main = import ./tests/main.nix { inherit iogx pkgs; };
+
+          devShells.default = pkgs.stdenv.mkDerivation {
+            name = "devshell";
+            buildInputs = [ pkgs.github-cli ];
+            shellHook = ''export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "'';
           };
         }
       );
@@ -83,11 +89,9 @@
   nixConfig = {
     extra-substituters = [
       "https://cache.iog.io"
-      "https://cache.zw3rk.com"
     ];
     extra-trusted-public-keys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-      "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="
     ];
     allow-import-from-derivation = true;
   };

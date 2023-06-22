@@ -1,11 +1,11 @@
-{ iogx, ... }:
+{ src, ... }:
 {
-  cabal-install = iogx.toolchain.cabal-install-ghc927;
-  fix-stylish-haskell = iogx.toolchain.fix-stylish-haskell-ghc927;
-  haskell-language-server = iogx.toolchain.haskell-language-server-ghc927;
-  haskell-language-server-wrapper = iogx.toolchain.haskell-language-server-wrapper-ghc927;
-  hlint = iogx.toolchain.hlint-ghc927;
-  stylish-haskell = iogx.toolchain.stylish-haskell-ghc927;
-  pre-commit-check = iogx.toolchain.pre-commit-check-ghc927;
-  fourmolu = iogx.toolchain.fourmolu-ghc927;
+  cabal-install = src.toolchain.cabal-install-ghc927;
+  haskell-language-server = src.toolchain.haskell-language-server-ghc927;
+  haskell-language-server-wrapper = src.toolchain.haskell-language-server-wrapper-ghc927;
+  hlint = src.toolchain.hlint-ghc927;
+  hindent = src.toolchain.hindent-ghc927;
+  stylish-haskell = src.toolchain.stylish-haskell-ghc927;
+  pre-commit-check = src.toolchain.pre-commit-check-ghc927;
+  fourmolu = src.toolchain.fourmolu-ghc927;
 }

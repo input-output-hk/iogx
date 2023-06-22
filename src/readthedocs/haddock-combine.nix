@@ -74,7 +74,7 @@ pkgs.runCommand "combine-haddock"
       interfaceOpts+=("--read-interface=$docdir,$interfaceFile")
       # Jam this in here for now
       pushd $out/share/doc
-      ${iogx.toolchain.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
+      ${src.toolchain.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
       popd
     done
     popd

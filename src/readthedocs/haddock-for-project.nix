@@ -1,12 +1,12 @@
-{ inputs, systemized-inputs, pkgs, flakeopts, iogx, ... }:
+{ inputs, inputs', pkgs, iogx-config, src, ... }:
 
 ghc:
 
 let
   haskell-lib = pkgs.haskell-nix.haskellLib;
 
-  project-with-haddock = flakeopts.haskellProjectFile {
-    inherit inputs systemized-inputs flakeopts pkgs ghc;
+  project-with-haddock = iogx-config.haskellProjectFile {
+    inherit inputs inputs' iogx-config pkgs ghc;
     enableProfiling = false;
     deferPluginErrors = true;
   };
@@ -16,15 +16,15 @@ let
   toHaddock =
     haskell-lib.collectComponents' "library" (
       haskell-lib.selectProjectPackages hsPkgs //
-      (flakeopts.readTheDocs.haddockExtraProjectPackages hsPkgs)
+      (iogx-config.readTheDocs.haddockExtraProjectPackages hsPkgs)
     );
 
-  combined-haddock = iogx.readthedocs.haddock-combine {
+  combined-haddock = src.readthedocs.haddock-combine {
     ghc = project-with-haddock.pkg-set.config.ghc.package;
     hspkgs = builtins.attrValues toHaddock;
     prologue = pkgs.writeTextFile {
       name = "prologue";
-      text = flakeopts.readTheDocs.haddockPrologue;
+      text = iogx-config.readTheDocs.haddockPrologue;
     };
   };
 in

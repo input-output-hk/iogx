@@ -1,41 +1,108 @@
-# Given the iogx flake inputs, 
 { iogx-inputs }:
 
 let
-  l = import ./l.nix { inherit iogx-inputs; };
 
-  modularise = import ./modularise.nix { inherit l; };
+  l = import ../lib/l.nix { inherit iogx-inputs; };
 
-  libnixschema = import ./libnixschema.nix { inherit l; };
 
-  flakeopts-schema = import ./flakeopts-schema.nix { inherit libnixschema; };
+  modularise = import ../lib/modularise.nix { inherit l; };
 
-  mkFlake = unvalidated-flakeopts:
+
+  libnixschema = import ../lib/libnixschema.nix { inherit l; };
+
+  
+  iogx-schemas = import ../schemas { inherit libnixschema; };
+
+
+  mkIogxInterface = { repo-root }: 
+    let 
+      mkErrmsg = file: { result }: l.iogxError file ''
+        Your ./nix/${file}.nix has errors:
+
+        ${result.errmsg}
+      '';
+
+      mkConfig = file: args: 
+        l.importFileWithDefault {} "${repo-root}/nix/${file}.nix" args;
+
+      mkInterfaceFile = file: schema: args:
+        libnixschema.validateConfigOrThrow schema (mkConfig file args) (mkErrmsg file);
+
+      mkNameValuePair = file: schema: 
+        l.nameValuePair "load-${file}" (mkInterfaceFile file schema);
+    in 
+      l.mapAttrs' mkNameValuePair iogx-schemas;
+
+
+  mkMergedInputs = { user-inputs }:
     let
-      flakeopts = libnixschema.validateConfig flakeopts-schema unvalidated-flakeopts;
+      iogx-inputs-without-self = removeAttrs iogx-inputs [ "self" ];
 
-      merged-inputs = import ./merge-inputs.nix {
-        inherit iogx-inputs flakeopts l;
-        user-inputs = flakeopts.inputs;
-      };
-    in
-    iogx-inputs.flake-utils.lib.eachSystem flakeopts.systems (system:
+      mkErrmsg = { n, duplicates }: l.iogxError "flake.nix" ''
+        Your ./flake.nix has ${l.toString n} unexpected ${l.plural n "input"}:
+
+          ${l.concatStringsSep ", " duplicates}
+
+        Those inputs are already managed by the IOGX flake.
+        Do not duplicate them but override them if needed.
+      '';
+    in 
+      l.mergeDisjointAttrsOrThrow user-inputs iogx-inputs-without-self mkErrmsg;
+
+
+  mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs }:
+    iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
       let
-        iogx = modularise {
-          root = ../.;
-          module = "iogx";
-          args = {
-            inherit flakeopts l;
-            inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
-            systemized-inputs = merged-inputs;
-            pkgs = import ./pkgs.nix { inherit iogx-inputs system; };
-          };
-        };
+        inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
+        inputs' = merged-inputs;
+        pkgs = import ./pkgs.nix { inherit iogx-inputs system; };
+        root = ../.;
+        module = "src";
+        args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };
+        src = modularise { inherit root module args; };
       in
-      iogx.core.mkFlake
+      src.core.flake
     );
 
-in
-{ inherit mkFlake l libnixschema modularise flakeopts-schema iogx-inputs; }
 
+  mkFinalOutputs = { per-system-outputs, top-level-outputs }:
+    let 
+      mkErrmsg = { n, duplicates }: l.iogxError "top-level-outputs" ''
+        Your ./nix/top-level-outputs.nix has ${toString n} invalid ${l.plural n "attribute"}:
+
+          ${l.concatStringsSep ", " duplicates}
+
+        Those attribute names are not acceptable because they are either:
+        - Standard flake outputs such as: packages, devShells, apps, ...
+        - Nonstandard flake outputs already defined in your ./nix/per-system-outputs.nix 
+      '';
+    in 
+      l.mergeDisjointAttrsOrThrow top-level-outputs per-system-outputs mkErrmsg;
+
+
+  mkFlake = user-inputs: repo-root:
+    let 
+      iogx-interface = mkIogxInterface { inherit repo-root; };
+
+      iogx-config = iogx-interface.load-iogx-config {}; 
+      
+      merged-inputs = mkMergedInputs { inherit user-inputs; }; 
+
+      per-system-outputs = mkPerSystemOutputs { inherit iogx-config iogx-interface merged-inputs; };
+
+      top-level-outputs = iogx-interface.load-top-level-outputs { inputs' = merged-inputs; };
+
+      final-outputs = mkFinalOutputs { inherit per-system-outputs top-level-outputs; };
+    in  
+      final-outputs;
+
+  
+  lib = { inherit l modularise libnixschema mkFlake iogx-schemas; };
+
+
+  out = { inherit lib; };
+
+in
+
+  out 
 

@@ -1,27 +1,27 @@
-{ inputs, pkgs, flakeopts, iogx, ... }:
+{ inputs, pkgs, iogx-config, src, ... }:
 
 let
   l = pkgs.lib;
 in
 {
   packages = [
-    iogx.readthedocs.sphinx-toolchain
+    src.readthedocs.sphinx-toolchain
     pkgs.nix
     pkgs.python3
   ];
 
   scripts.rtd-autobuild = {
-    description = "live develop read-the-docs site in ${flakeopts.readTheDocsFolder}/_build";
+    description = "live develop read-the-docs site in ${iogx-config.readTheDocsFolder}/_build";
     text = ''
-      doc="${flakeopts.readTheDocsFolder}"
+      doc="${iogx-config.readTheDocsFolder}"
       sphinx-autobuild -j 4 -n "$doc" "$doc/_build"
     '';
   };
 
   scripts.rtd-build = {
-    description = "build read-the-docs site in ${flakeopts.readTheDocsFolder}/_build";
+    description = "build read-the-docs site in ${iogx-config.readTheDocsFolder}/_build";
     text = ''
-      doc="${flakeopts.readTheDocsFolder}"
+      doc="${iogx-config.readTheDocsFolder}"
       sphinx-build -j 4 -n "$doc" "$doc/_build"
     '';
   };

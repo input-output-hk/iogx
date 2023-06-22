@@ -1,0 +1,5 @@
+{ libnixschema }:
+
+{
+  __passthrough = true;
+}

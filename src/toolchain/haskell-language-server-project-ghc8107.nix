@@ -21,8 +21,6 @@ pkgs.haskell-nix.cabalProject' {
 
   compiler-nix-name = "ghc8107";
 
-  # index-state = "2022-12-19T19:08:33Z";
-
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line
   };

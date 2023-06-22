@@ -7,5 +7,5 @@
   hindent = src.toolchain.hindent-ghc8107;
   stylish-haskell = src.toolchain.stylish-haskell-ghc8107;
   pre-commit-check = src.toolchain.pre-commit-check-ghc8107;
-  fourmolu = pkgs.haskellPackages.fourmolu; # The version provided by HLS is way too old
+  fourmolu = src.toolchain.fourmolu;
 }

@@ -23,7 +23,7 @@ let
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
-          extra-scripts = { inherit info list-haskell-outputs; };
+          extra-scripts = { inherit info; };
         in
         shell-scripts // extra-scripts;
 

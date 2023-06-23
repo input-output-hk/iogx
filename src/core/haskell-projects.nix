@@ -8,14 +8,16 @@ let
 
       prof-module = pkgs.lib.optional enableProfiling { enableProfiling = true; };
 
-      cabal-project' = pkgs.haskell-nix.cabalProject' (_: {
+      cabal-project'' = pkgs.haskell-nix.cabalProject' (_: {
         compiler-nix-name = haskellCompiler;
         src = iogx-config.repoRoot;
         shell.withHoogle = project-parts.shellWithHoogle;
         inherit (project-parts) cabalProjectLocal sha256map;
         inputMap = { "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP; };
-        modules = [(_: { inherit (project-parts) packages; })] ++ prof-module;
+        modules = project-parts.modules ++ prof-module;
       });
+
+      cabal-project' = cabal-project''.appendOverlays project-parts.overlays;
 
       cabal-project = if enableCross then cabal-project'.projectCross.mingwW64 else cabal-project';
 

@@ -15,8 +15,11 @@ let
     shellWithHoogle.type = V.bool; 
     shellWithHoogle.default = false;
 
-    packages.type = V.attrset;
-    packages.default = {}; 
+    modules.type = V.list;
+    modules.default = []; 
+
+    overlays.type = V.list;
+    overlays.default = [];
   };
 
 in

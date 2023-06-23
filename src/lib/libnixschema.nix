@@ -388,20 +388,12 @@ let
     else
       l.pthrow (mkErrmsg { inherit result; });
       
-
-  # Path -> String -> Value | error 
-  demandFile = file: errmsg:
-    if l.pathExists file then 
-      import file
-    else 
-      l.pthrow errmsg;
-          
 in
 
 {
   inherit 
     validators 
     validateConfigOrThrow 
-    demandFile
+    resultToErrorString
     matchConfigAgainstSchema;
 }

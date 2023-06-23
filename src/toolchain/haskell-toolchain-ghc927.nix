@@ -1,4 +1,4 @@
-{ src, ... }:
+{ src, pkgs, ... }:
 {
   cabal-install = src.toolchain.cabal-install-ghc927;
   haskell-language-server = src.toolchain.haskell-language-server-ghc927;
@@ -7,5 +7,5 @@
   hindent = src.toolchain.hindent-ghc927;
   stylish-haskell = src.toolchain.stylish-haskell-ghc927;
   pre-commit-check = src.toolchain.pre-commit-check-ghc927;
-  fourmolu = src.toolchain.fourmolu-ghc927;
+  fourmolu = src.toolchain.fourmolu;
 }

@@ -1,8 +1,8 @@
 { inputs, inputs', pkgs, project }:
 { 
-  # name = "devShell";
+  # name = "nix-shell";
   # prompt = "$ ";
-  # welcomeMessage = "devShell";
+  # welcomeMessage = "nix-shell";
 
   # packages = [ ];
   # scripts = { };

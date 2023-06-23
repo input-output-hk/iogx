@@ -26,7 +26,7 @@ let
 
   schema = {
     name.type = V.nonempty-string;
-    name.default = "devShell";
+    name.default = "nix-shell";
 
     prompt.type = V.nonempty-string;
     prompt.default = conf: "\n\\[\\033[1;32m\\][${conf.name}:\\w]\\$\\[\\033[0m\\] ";

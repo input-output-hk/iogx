@@ -10,18 +10,18 @@ let
   testsuite = [
     (invalidField "shell-01" config schema "name" "type-mismatch" 1)
     (invalidField "shell-02" config schema "name" "empty-string" "")
-    (defaultField "shell-03" config schema "name" "devShell")
-    (successField "shell-04" config schema "name" "devShell")
+    (defaultField "shell-03" config schema "name" "nix-shell")
+    (successField "shell-04" config schema "name" "nix-shell")
     (successField "shell-05" config schema "name" "myshell")
 
     (invalidField "shell-06" config schema "prompt" "type-mismatch" 1)
     (invalidField "shell-07" config schema "prompt" "empty-string" "")
-    (defaultField "shell-08" config schema "prompt" "\n\\[\\033[1;32m\\][devShell:\\w]\\$\\[\\033[0m\\] ")
+    (defaultField "shell-08" config schema "prompt" "\n\\[\\033[1;32m\\][nix-shell:\\w]\\$\\[\\033[0m\\] ")
     (successField "shell-09" config schema "prompt" "prompt")
 
     (invalidField "shell-10" config schema "welcomeMessage" "type-mismatch" 1)
     (invalidField "shell-11" config schema "welcomeMessage" "empty-string" "")
-    (defaultField "shell-12" config schema "welcomeMessage" "🤟 \\033[1;31mWelcome to devShell\\033[0m 🤟")
+    (defaultField "shell-12" config schema "welcomeMessage" "🤟 \\033[1;31mWelcome to nix-shell\\033[0m 🤟")
     (successField "shell-13" config schema "welcomeMessage" "welcomeMessage")
 
     (invalidField "shell-14" config schema "packages" "type-mismatch" 1)

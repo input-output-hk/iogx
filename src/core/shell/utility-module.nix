@@ -50,20 +50,24 @@ let
           formatVar = var: val: ''
             — ${l.ansiBold var} ∷ ${val}
           '';
-          content = l.concatStrings (l.mapAttrsToList formatVar final-env);
+          body = l.concatStrings (l.mapAttrsToList formatVar final-env);
+          content = if body == "" then "" else ''
+            ${l.ansiColor "λ environment" "purple" "bold"}
+            ${body}
+          '';
         in
-        ''
-          ${l.ansiColor "λ environment" "purple" "bold"}
-          ${content}
-        '';
+          content;
+
+      content = 
+        "\n${__shell__.welcomeMessage}\n\n" + 
+        l.optionalString (formatted-env != "") formatted-env + 
+        "\n${formatted-script-groups}";
 
       script = {
         group = "iogx";
         description = "Print this message";
         exec = ''
-          printf "\n${__shell__.welcomeMessage}\n\n"
-          printf "${formatted-env}"
-          printf "${formatted-script-groups}"
+          printf ${content}
         '';
       };
     in

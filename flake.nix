@@ -11,8 +11,7 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     haskell-nix = {
-      # 3 May 2023: This revision is currently the newest that doesn't break.
-      url = "github:input-output-hk/haskell.nix/56a471cfce2c61031e193bdef527bbd6e646454e"; 
+      url = "github:input-output-hk/haskell.nix/56a471cfce2c61031e193bdef527bbd6e646454e"; # 3 May 2023
       inputs.hackage.follows = "hackage";
     };
 

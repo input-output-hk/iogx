@@ -60,14 +60,14 @@ let
 
       content = 
         "\n${__shell__.welcomeMessage}\n\n" + 
-        l.optionalString (formatted-env != "") formatted-env + 
-        "\n${formatted-script-groups}";
+        l.optionalString (formatted-env != "") formatted-env +
+        "${formatted-script-groups}";
 
       script = {
         group = "iogx";
         description = "Print this message";
         exec = ''
-          printf ${content}
+          printf "${content}"
         '';
       };
     in

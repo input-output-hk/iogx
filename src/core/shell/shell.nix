@@ -1,6 +1,6 @@
 { inputs, inputs', pkgs, l, src, iogx-interface, ... }:
 
-{ project, __flake__}:
+{ project, __flake__ }:
 
 let
 
@@ -66,7 +66,7 @@ let
     l.concatStringsSep "\n" (l.mapAttrsToList exportVar env);
 
 
-  pre-commit-check = src.core.pre-commit-check { inherit project; };
+  pre-commit-check = __flake__.packages."pre-commit-check-${project.meta.haskellCompiler}";
 
 
   shellToNixShell = shell: 

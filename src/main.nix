@@ -2,28 +2,35 @@
 
 let
 
-  l = import ../lib/l.nix { inherit iogx-inputs; };
+  l = import ./lib/l.nix { inherit iogx-inputs; };
 
 
-  modularise = import ../lib/modularise.nix { inherit l; };
+  modularise = import ./lib/modularise.nix { inherit l; };
 
 
-  libnixschema = import ../lib/libnixschema.nix { inherit l; };
+  libnixschema = import ./lib/libnixschema.nix { inherit l; };
 
   
-  iogx-schemas = import ../schemas { inherit libnixschema; };
+  iogx-schemas = import ./schemas { inherit libnixschema; };
 
 
   mkIogxInterface = { repo-root }: 
     let 
       mkErrmsg = file: { result }: l.iogxError file ''
-        Your ./nix/${file}.nix has errors:
+        Your nix/${file}.nix has errors:
 
         ${result.errmsg}
       '';
 
       mkConfig = file: args: 
-        l.importFileWithDefault {} "${repo-root}/nix/${file}.nix" args;
+        let path = "${repo-root}/nix/${file}.nix"; 
+        in if l.pathExists path then 
+          if args == null then 
+            import path # Some interface files take no inputs
+          else 
+            import path args 
+        else
+          {};
 
       mkInterfaceFile = file: schema: args:
         libnixschema.validateConfigOrThrow schema (mkConfig file args) (mkErrmsg file);
@@ -38,8 +45,8 @@ let
     let
       iogx-inputs-without-self = removeAttrs iogx-inputs [ "self" ];
 
-      mkErrmsg = { n, duplicates }: l.iogxError "flake.nix" ''
-        Your ./flake.nix has ${l.toString n} unexpected ${l.plural n "input"}:
+      mkErrmsg = { n, duplicates }: l.iogxError "flake" ''
+        Your flake.nix has ${l.toString n} unexpected ${l.plural n "input"}:
 
           ${l.concatStringsSep ", " duplicates}
 
@@ -50,13 +57,28 @@ let
       l.mergeDisjointAttrsOrThrow user-inputs iogx-inputs-without-self mkErrmsg;
 
 
+  mkPkgs = { iogx-inputs, system }:
+    import iogx-inputs.nixpkgs {
+      inherit system;
+      config = iogx-inputs.haskell-nix.config;
+      overlays =
+        [
+          iogx-inputs.iohk-nix.overlays.crypto
+          iogx-inputs.iohk-nix.overlays.cardano-lib
+          iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
+          iogx-inputs.iohk-nix.overlays.haskell-nix-extra
+          iogx-inputs.haskell-nix.overlay
+        ];
+    };
+
+
   mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs }:
     iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
       let
         inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
         inputs' = merged-inputs;
-        pkgs = import ./pkgs.nix { inherit iogx-inputs system; };
-        root = ../.;
+        pkgs = mkPkgs { inherit iogx-inputs system; };
+        root = ./.;
         module = "src";
         args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };
         src = modularise { inherit root module args; };
@@ -68,7 +90,7 @@ let
   mkFinalOutputs = { per-system-outputs, top-level-outputs }:
     let 
       mkErrmsg = { n, duplicates }: l.iogxError "top-level-outputs" ''
-        Your ./nix/top-level-outputs.nix has ${toString n} invalid ${l.plural n "attribute"}:
+        Your nix/top-level-outputs.nix has ${toString n} invalid ${l.plural n "attribute"}:
 
           ${l.concatStringsSep ", " duplicates}
 
@@ -84,7 +106,7 @@ let
     let 
       iogx-interface = mkIogxInterface { inherit repo-root; };
 
-      iogx-config = iogx-interface.load-iogx-config {}; 
+      iogx-config = iogx-interface.load-iogx-config null; 
       
       merged-inputs = mkMergedInputs { inherit user-inputs; }; 
 

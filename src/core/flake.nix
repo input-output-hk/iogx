@@ -3,36 +3,36 @@
 let
 
   # marlowe:runtime-web:lib:server
-  # 1.                   ghc8107.marlowe-runtime-web-lib-server
-  # 2.          ghc8107-profiled.marlowe-runtime-web-lib-server
-  # 3. ghc8107-mingwW64-profiled.marlowe-runtime-web-lib-server
-  # 4.          ghc8107-mingwW64.marlowe-runtime-web-lib-server
+  # 1.                   ghc8107-marlowe-runtime-web-lib-server
+  # 2.          ghc8107-profiled-marlowe-runtime-web-lib-server
+  # 3.          ghc8107-xwindows-marlowe-runtime-web-lib-server
+  # 4. ghc8107-xwindows-profiled-marlowe-runtime-web-lib-server
   renameHaskellProjectFlakeOutputs = { flake, project }:
     let
       replaceCons = l.replaceStrings [ ":" ] [ "-" ];
 
-      renameComponent = name: l.nameValuePair (replaceCons name);
+      mkPair = name: l.nameValuePair (renameComponent name);
 
-      namespace =
+      renameComponent = name:
         let
-          ghc = project.meta.haskellCompiler;
-          cross' = l.optionalString project.meta.enableCross "-mingwW64";
+          ghc = "-${project.meta.haskellCompiler}";
+          name' = replaceCons name;
+          cross' = l.optionalString project.meta.enableCross "-xwindows";
           profiled' = l.optionalString project.meta.enableProfiling "-profiled";
         in
-        "${ghc}${cross'}${profiled'}";
+        "${name'}${ghc}${cross'}${profiled'}";
 
       extra-packages = {
         project-roots = flake.hydraJobs.roots;
         project-plan-nix = flake.hydraJobs.plan-nix;
         project-coverage = flake.hydraJobs.coverage;
-        pre-commit-check = src.core.pre-commit-check { inherit project; }; # TODO evaluated twice, retrieve from shell
       };
 
       renamed-flake = rec {
-        devShells.${namespace} = flake.devShells.default;
-        apps.${namespace} = l.mapAttrs' renameComponent flake.apps;
-        checks.${namespace} = l.mapAttrs' renameComponent flake.checks;
-        packages.${namespace} = l.mapAttrs' renameComponent flake.packages // extra-packages;
+        devShells.${renameComponent "default"} = flake.devShells.default;
+        apps = l.mapAttrs' mkPair flake.apps;
+        checks = l.mapAttrs' mkPair flake.checks;
+        packages = l.mapAttrs' mkPair (flake.packages // extra-packages);
       };
     in
     renamed-flake;
@@ -56,86 +56,67 @@ let
       project;
 
 
+  # This adds the following flake outputs:
+  #   packages.$ghc-pre-commit-check
+  # For each $ghc in iogx-config.haskellCompilers.
+  addPreCommitChecks = {}: 
+    let 
+      mkValue = ghc: src.core.pre-commit-check { haskellCompiler = ghc; };
+      mkPair = ghc: { packages."pre-commit-check-${ghc}" = mkValue ghc; };
+      pre-commit-checks = l.recursiveUpdateMany (map mkPair iogx-config.haskellCompilers);
+      final-flake = pre-commit-checks;
+    in 
+      final-flake;
+
+
+  # This adds the following flake outputs:
+  #   __projects__.{$ghc,$ghc-profiled,$ghc-xwindows,$ghc-xwindows-profiled}
+  # For each $ghc in iogx-config.haskellCompilers.
+  addHaskellProjects = flake: 
+    flake // { __projects__ = src.core.haskell-projects; };
+
+
+  # This adds the following flake outputs:
+  #   {packages,apps,checks,devShells}.{$ghc,$ghc-profiled,$ghc-xwindows,$ghc-xwindows-profiled}.$comp
+  # For each $ghc in iogx-config.haskellCompilers, and for each $comp in all cabal packages.
+  addHaskellProjectsFlakes = flake: 
+    let 
+      project-flakes = l.mapAttrsToList (_: haskellProjectToFlake) flake.__projects__;
+      projects-flake = l.recursiveUpdateMany project-flakes;
+      final-flake = l.recursiveUpdate flake projects-flake;
+    in 
+      final-flake;
+
+
+  # This adds the following flake outputs:
+  #   devShells.default 
+  #   devShells.profiled 
   addDefaultDevShell = flake:
     let 
       final-flake = l.recursiveUpdate flake { 
-        devShells.default = flake.devShells."${iogx-config.defaultHaskellCompiler}";
+        devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
+        devShells.profiled = flake.devShells."default-${iogx-config.defaultHaskellCompiler}-profiled";
       };
     in 
       final-flake;
 
 
-  addHydraJobs = flake: 
-    flake // { 
-      hydraJobs = src.core.hydra-jobs { inherit flake; };
-    };
+  # This adds the flake outputs defined by the user in ./nix/per-system-outputs.nix
+  addPerSystemOutputs = flake: src.core.per-system-outputs { inherit flake; };
 
 
-  addHaskellProjects = flake: flake // { __projects = src.core.haskell-projects; };
+  # This adds the following flake outputs:
+  #   hydraJobs
+  addHydraJobs = flake: flake // { hydraJobs = src.core.hydra-jobs { inherit flake; }; };
 
-
-  # At this point, flake has the __projects attr.
-  addHaskellProjectsFlakes = flake: 
-    let 
-      flakes = l.mapAttrsToList (_: haskellProjectToFlake) flake.__projects;
-    in 
-      flake // l.recursiveUpdateMany flakes;
-
-
-  addUserPerSystemOutputs = flake:
-    let 
-      projects = flake.__projects;
-
-      per-system-outputs = iogx-interface.load-per-system-outputs { inherit inputs inputs' pkgs projects; };
-      
-      mkInvalidOutputsError = field: errmsg: l.iogxError "per-system-outputs" ''
-        Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
-
-        ${errmsg}
-      '';
-
-      validated-per-system-outputs = 
-        if per-system-outputs ? devShells then 
-          mkInvalidOutputsError "devShells" "Define your shells in ./nix/shell.nix instead."
-        else if per-system-outputs ? hydraJobs then 
-          mkInvalidOutputsError "hydraJobs" "Define your CI jobset in ./nix/hydra-jobs.nix instead."
-        else if per-system-outputs ? ciJobs then 
-          mkInvalidOutputsError "ciJobs" "This field has been obsoleted and replaced by hydraJobs."
-        else if per-system-outputs ? __projects then 
-          mkInvalidOutputsError "__projects" "This field is reserved for IOGX."
-        else 
-          per-system-outputs;   
-
-      mkCollisionError = field: { n, duplicates }: l.iogxError "per-system-outputs" ''
-        Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
-
-        It contains ${toString n} ${l.plural n "attribute"} that are reserved for IOGX: 
-
-          ${l.concatStringsSep ", " duplicates}
-      '';
-
-      checkCollisionsIn = field: 
-        l.mergeDisjointAttrsOrThrow 
-          flake.${field} 
-          (l.getAttrWithDefault field {} per-system-outputs) 
-          (mkCollisionError field);
-
-      final-flake = validated-per-system-outputs // {
-        packages = checkCollisionsIn "packages";
-        apps = checkCollisionsIn "apps";
-        checks = checkCollisionsIn "checks";
-        inherit (flake) __projects devShells;
-      };
-    in 
-      final-flake;
-
-
+  
   __flake__ =
     l.composeManyLeft [
+      addPreCommitChecks
       addHaskellProjects
       addHaskellProjectsFlakes
       addDefaultDevShell
-      addUserPerSystemOutputs
+      addPerSystemOutputs
       addHydraJobs
     ]
       { };

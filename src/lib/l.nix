@@ -109,8 +109,15 @@ let
     mkGhcPrefixMatrix = l.concatMap (ghc: [
       ghc 
       "${ghc}-profiled" 
-      "${ghc}-mingwW64" 
-      "${ghc}-mingwW64-profiled"
+      "${ghc}-xwindows" 
+      "${ghc}-xwindows-profiled"
+    ]);
+
+
+    # TODO this function does not belong here 
+    mkProfiledGhcPrefixMatrix = l.concatMap (ghc: [
+      "${ghc}-profiled" 
+      "${ghc}-xwindows-profiled"
     ]);
 
 
@@ -220,13 +227,16 @@ let
       l.throw "\n${text}";
 
 
-    iogxError = anchor: text: 
+    iogxError = file: text: 
+      let 
+        readme-anchor = file: if file == "flake" then "flakenix" else "nix${file}nix";
+      in 
       l.throw ''
         
         ------------------------------------ IOGX --------------------------------------
         ${text}
         Follow this link for documentation:
-        http://www.github.com/input-output-hk/iogx/README.md#${anchor}
+        https://www.github.com/input-output-hk/iogx#${readme-anchor}
         --------------------------------------------------------------------------------
       '';
 

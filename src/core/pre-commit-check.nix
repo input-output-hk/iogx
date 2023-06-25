@@ -1,13 +1,13 @@
 { inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
 
-{ project }:
+{ haskellCompiler }:
 
 let 
 
-  haskell-toolchain = src.toolchain."haskell-toolchain-${project.meta.haskellCompiler}";
+  haskell-toolchain = src.toolchain."haskell-toolchain-${haskellCompiler}";
 
 
-  user-hooks = iogx-interface.load-pre-commit-check { inherit inputs inputs' pkgs project; };
+  user-hooks = iogx-interface.load-pre-commit-check null;
 
 
   default-hooks = {

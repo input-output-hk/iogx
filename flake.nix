@@ -1,5 +1,6 @@
 {
-  description = "Development Environemnt for IOG Projects";
+  description = "Flake Template for Haskell Projects at IOG";
+
 
   inputs = {
 
@@ -49,22 +50,18 @@
     nosys.url = "github:divnix/nosys";
   };
 
+
   outputs = iogx-inputs:
     let
-      iogx = import ./src/bootstrap/main.nix { inherit iogx-inputs; };
+      iogx = import ./src/main.nix { inherit iogx-inputs; };
 
       template = {
         path = ./template;
-        description = "IOGX - Standard flake for IOG projects";
+        description = "Flake Template for Haskell Projects at IOG";
         welcomeText = ''
-          # IOGX - Standard flake for IOG projects
+          # Flake Template for Haskell Projects at IOG
           Open ./flake.nix to get started.
         '';
-      };
-
-      global-outputs = {
-        inherit (iogx) lib;
-        templates.default = template;
       };
 
       per-system-outputs = iogx-inputs.flake-utils.lib.eachDefaultSystem (system:
@@ -81,6 +78,13 @@
           };
         }
       );
+
+      global-outputs = {
+        inherit (iogx) lib;
+        templates.default = template;
+        hydraJobs.main.x86_64-linux = per-system-outputs.checks.x86_64-linux.main;
+      };
+
     in
      global-outputs // per-system-outputs;
 

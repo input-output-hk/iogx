@@ -17,13 +17,68 @@ let
     partitioned;
 
 
+  list-haskell-outputs =
+    let
+      # formatDevShells =
+      #   let
+      #     fromGhc = ghc: l.concatStringsSep "\n" [
+      #       "nix develop .#${l.ansiBold "${ghc}"}"
+      #       "nix develop .#${l.ansiBold "${ghc}-profiled"}"
+      #     ];
+      #     default =
+      #       "nix develop";
+      #     all-shells = [ default ] ++ map fromGhc iogx-config.haskellCompilers;
+      #   in
+      #   l.concatStringsSep "\n" all-shells;
+
+      formatGhc = group: command: ghc:
+        if l.hasAttr __flake__.${group} ghc then
+          if group == "devShells" then
+            []
+          else
+            let fromName = name: _: "nix ${command} .#${l.ansiBold name}";
+            in l.mapAttrsToList fromName __flake__.${group}.${ghc}
+        else 
+          [];
+
+      formatGroup = group: command: 
+        let 
+          ghcs = l.mkGhcPrefixMatrix iogx-config.haskellCompilers;
+          lists = l.concatMap (formatGroup group command) ghcs;
+        in 
+          l.concatStringsSep "\n" lists;
+
+      formatted-outputs = l.concatStringsSep "\n\n" [
+        (l.ansiColor "Haskell Packages" "yellow" "bold")
+        (formatGroup "packages" "build")
+        (l.ansiColor "Haskell Apps" "yellow" "bold")
+        (formatGroup "apps" "run")
+        (l.ansiColor "Haskell Checks" "yellow" "bold")
+        (formatGroup "checks" "run")
+        (l.ansiColor "Development Shells" "yellow" "bold")
+        (formatGroup "devShells" "develop")
+      ];
+
+      script = {
+        group = "iogx";
+        description = "List the Haskell outputs (including hydraJobs) buildable by nix";
+        exec = ''
+          echo
+          printf "${formatted-outputs}"
+          echo
+        '';
+      };
+    in
+    script;
+
+
   info =
     let
       all-scripts =
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
-          extra-scripts = { inherit info; };
+          extra-scripts = { inherit info list-haskell-outputs; };
         in
         shell-scripts // extra-scripts;
 
@@ -75,7 +130,9 @@ let
 
 
   utility-module = {
-    scripts = { inherit info; };
+    scripts = { 
+      inherit info;# list-haskell-outputs; 
+    };
   };
 
 in

@@ -41,13 +41,13 @@ let
         enableCross = false; 
         enableHaddock = false;
       };
-      "${ghc}-mingwW64" = mkHaskellProject { 
+      "${ghc}-xwindows" = mkHaskellProject { 
         haskellCompiler = ghc;
         enableProfiling = false; 
         enableCross = true; 
         enableHaddock = false;
       };
-      "${ghc}-mingwW64-profiled" = mkHaskellProject { 
+      "${ghc}-xwindows-profiled" = mkHaskellProject { 
         haskellCompiler = ghc;
         enableProfiling = true; 
         enableCross = true; 
@@ -57,8 +57,8 @@ let
 
   
   enforceCrossCompileOnLinux = projects:
-    if !pkgs.stdenv.hostPlatform.isLinux then
-      l.filterAttrs (name: _: !l.hasInfix "-mingwW64" name) projects
+    if pkgs.stdenv.system != "x86_64-linux" then
+      l.filterAttrs (name: _: !l.hasInfix "xwindows" name) projects
     else
       projects; 
   

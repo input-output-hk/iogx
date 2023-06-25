@@ -1,22 +1,47 @@
-{ inputs, inputs', iogx-interface, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-interface, iogx-config, pkgs, l, src, ... }:
 
 { flake }:
 
-let
+let 
 
-  user-hydra = iogx-interface.load-hydra-jobs { inherit inputs inputs' pkgs; };
+  initial-jobset = { inherit (flake) packages checks devShells; };
 
+
+  user-hydra = iogx-interface.load-hydra-jobs null; 
+  
 
   # TODO use hasAttrByPath to validate
-  addIncludedPaths = l.restrictManyAttrsByPathString user-hydra.includedPaths;
+  addIncludedPaths = 
+    l.recursiveUpdate 
+      (l.restrictManyAttrsByPathString user-hydra.includedPaths flake);
+
+
+  addProfiledBuilds = jobs: 
+    let filterProfiled = l.filterAttrs (name: _: !l.hasSuffix "-profiled" name); in 
+    if !user-hydra.includeProfiledBuilds then 
+      {
+        packages = filterProfiled jobs.packages;
+        checks = filterProfiled jobs.checks;
+        devShells = filterProfiled jobs.devShells;
+      }
+    else 
+      jobs;
+
+  
+  addPreCommitChecks = jobs: 
+    let 
+      pre-commit-check-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
+        "packages.pre-commit-check-${ghc}" 
+      ]);
+    in 
+    if !user-hydra.includePreCommitCheck then 
+      l.deleteManyAttrsByPathString pre-commit-check-paths jobs
+    else 
+      jobs;
 
 
   # TODO use hasAttrByPath to validate
   removeExcludedPaths = l.deleteManyAttrsByPathString user-hydra.excludedPaths;
-
-
-  # TODO check collisions
-  addExtraJobs = l.recursiveUpdate user-hydra.extraJobs;
 
 
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
@@ -37,14 +62,21 @@ let
   hydra-jobs =
     l.composeManyLeft [
       addIncludedPaths
+      addProfiledBuilds
+      addPreCommitChecks
       removeExcludedPaths
-      addExtraJobs
       cleanJobs
       addRequiredJob
     ] 
-      flake; # TODO use inputs.self instead of flake?
+      initial-jobset;
+
+
+  is-supported-system = l.elem pkgs.stdenv.system ["x86_64-linux" "x86_64-darwin" "aarch64-darwin"];
+
+
+  final-hydra-jobs = l.optionalAttrs is-supported-system hydra-jobs;
 
 in
 
-hydra-jobs
+final-hydra-jobs
 

@@ -64,11 +64,6 @@
         '';
       };
 
-      global-outputs = {
-        inherit (iogx) lib;
-        templates.default = template;
-      };
-
       per-system-outputs = iogx-inputs.flake-utils.lib.eachDefaultSystem (system:
         let 
           pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};
@@ -83,6 +78,13 @@
           };
         }
       );
+
+      global-outputs = {
+        inherit (iogx) lib;
+        templates.default = template;
+        hydraJobs.main.x86_64-linux = per-system-outputs.checks.x86_64-linux.main;
+      };
+
     in
      global-outputs // per-system-outputs;
 

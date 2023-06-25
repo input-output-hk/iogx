@@ -5,6 +5,9 @@ let
   l = import ./lib/l.nix { inherit iogx-inputs; };
 
 
+  modularise = import ./lib/modularise.nix { inherit l; };
+
+
   libnixschema = import ./lib/libnixschema.nix { inherit l; };
 
   
@@ -78,7 +81,6 @@ let
         root = ./.;
         module = "src";
         args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };
-        modularise = import ./lib/modularise.nix { inherit l; };
         src = modularise { inherit root module args; };
       in
       src.core.flake

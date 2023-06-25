@@ -47,13 +47,10 @@
     - [3.8.1. `enable`](#381-enable)
     - [3.8.2. `extraOptions`](#382-extraoptions)
   - [3.9. `nix/hydra-jobs.nix`](#39-nixhydra-jobsnix)
-    - [3.9.1. `inputs`](#391-inputs)
-    - [3.9.2. `inputs'`](#392-inputs)
-    - [3.9.3. `pkgs`](#393-pkgs)
-    - [3.9.4. `includedPaths`](#394-includedpaths)
-    - [3.9.5. `excludedPaths`](#395-excludedpaths)
-    - [3.9.6. `includeProfiledBuilds`](#396-includeprofiledbuilds)
-    - [3.9.7. `includePreCommitCheck`](#397-includeprecommitcheck)
+    - [3.9.1. `includedPaths`](#391-includedpaths)
+    - [3.9.2. `excludedPaths`](#392-excludedpaths)
+    - [3.9.3. `includeProfiledBuilds`](#393-includeprofiledbuilds)
+    - [3.9.4. `includePreCommitCheck`](#394-includeprecommitcheck)
   - [3.10. Flake Outputs Format](#310-flake-outputs-format)
     - [3.10.1. Grammar for Haskell Packages](#3101-grammar-for-haskell-packages)
     - [3.10.2. Extra Packages](#3102-extra-packages)
@@ -120,7 +117,7 @@ Click on the file name to jump to its reference section.
 ## 3.1. `flake.nix`
 
 ```nix
-# flake.nix
+# Default flake.nix
 {
   description = "Change the description field in ./flake.nix";
 
@@ -807,7 +804,6 @@ For example:
 
 ```nix
 # Default nix/hydra-jobs.nix
-{ inputs, inputs', pkgs }:
 { 
   includedPaths = [];
 
@@ -819,24 +815,12 @@ For example:
 }
 ```
 
-
 Configuration for the jobset (`hydraJobs`) to run in CI.
 
 By default all Haskell components (excluding profiled builds) are added to `hydraJobs`, as well as all custom derivations nested under `packages` and `checks` that you may have added in you [`per-system-outputs.nix`](#35-nixper-system-outputsnix), as well as derivations that run the formatters as configured in your [`pre-commit-check.nix`](#38-nixpre-commit-checknix) (one for each compiler in [`haskellCompilers`](#323-haskellcompilers)).
 
-### 3.9.1. `inputs`
 
-See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
-
-### 3.9.2. `inputs'`
-
-See [`inputs'`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
-
-### 3.9.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
-
-### 3.9.4. `includedPaths`
+### 3.9.1. `includedPaths`
 
 This is a list of *strings*, representing attribute *paths* in the final flake outputs (i.e. paths in `inputs.self`).
 
@@ -887,7 +871,7 @@ hydraJobs = {
 }
 ```
 
-### 3.9.5. `excludedPaths`
+### 3.9.2. `excludedPaths`
 
 After populating `hydraJobs` with [`includedPaths`](#includedpaths), the paths listed in `excludedPaths` will be *removed* from the final `hydraJobs`. 
 
@@ -930,27 +914,15 @@ You could have this setup:
 }
 ```
 
-### 3.9.6. `includeProfiledBuilds` 
+### 3.9.3. `includeProfiledBuilds` 
 
 Whether to include derivations of profiled builds of the Haskell components.
 
 This field is optional and defaults to `false`.
 
-For example, with a configuration with a single GHC, setting this field to `true` is equivalent to appending the following list to `includedPaths`:
-```nix
-[
-  "packages.ghc8107-profiled"
-  "packages.ghc8107-windows-profiled"
+If this field is set to `true`, you will effectively double the number of jobs in CI.
 
-  "devShells.ghc8107-profiled"
-  "devShells.ghc8107-windows-profiled"
-
-  "checks.ghc8107-profiled"
-  "checks.ghc8107-windows-profiled"
-]
-```
-
-### 3.9.7. `includePreCommitCheck`
+### 3.9.4. `includePreCommitCheck`
 
 Whether to run the hooks in [`pre-commit-check.nix`](#38-nixpre-commit-checknix).
 
@@ -958,13 +930,7 @@ If set to `true` then CI will fail if you've skipped the checks when committing 
 
 This field is optional and defaults to `true`.
 
-For example, with a configuration with two GHCs, setting this field to `false` is equivalent to appending the following list to `excludedPaths`:
-```nix
-[
-  "packages.ghc8107-pre-commit-check"
-  "packages.ghc927-pre-commit-check"
-]
-```
+The formatters are run once for each compiler in [`haskellCompilers`](#323-haskellcompilers).
 
 ## 3.10. Flake Outputs Format 
 
@@ -986,23 +952,23 @@ Your `cabal.project` and `*.cabal` files also contribute to naming the flake fra
 
 **hscomp** ::= any component name in any `*.cabal` file 
 
-**packages** ::= `"packages."` **system** `"."` **ghc** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp**
+**packages** ::= `"packages."` **system** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp** `"-"` **ghc**
 
-**apps** ::= `"apps."` **system** `"."` **ghc** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp**
+**apps** ::= `"apps."` **system** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp** `"-"` **ghc**
 
-**checks** ::= `"checks."` **system** `"."` **ghc** `"."` **hspkg** `"-test-"` **hscomp**
+**checks** ::= `"checks."` **system** `"."` **hspkg** `"-test-"` **hscomp** `"-"` **ghc**
 
-**devShells** ::= `"devShells."` (`"default"` | **compiler**)
+**devShells** ::= `"devShells."` (`"default"` | `"profiled"` | `"default-"` **ghc** | `"profiled-"` **ghc**)
 
 **hydraJobs** ::= defined in [`hydra-jobs.nix`](#39-nixhydra-jobsnix)
 
 ### 3.10.2. Extra Packages 
 
-`"packages."` **system** `"."` **compiler** `".pre-commit-check"`
+`"packages."` **system** `".pre-commit-check-"` **compiler**
 
-`"packages."` **system** `"."` **compiler** `".project-roots"`
+`"packages."` **system** `".project-roots-"` **compiler**
 
-`"packages."` **system** `"."` **compiler** `".project-nix-plan"`
+`"packages."` **system** `".project-nix-plan-"` **compiler**
 
 ### 3.10.3. Example 
 
@@ -1018,60 +984,62 @@ Given the [`iogx-config.nix`](#32-nixiogx-confignix) below:
 ```
 And given a fictitious `.cabal` project with one package named `p1` containing one library named `l1` one executable named `e1` and one test suite named `t1`, then the following commands are available:
 ```
-nix build .#ghc8107.p1-lib-l1
-nix build .#ghc8107.p1-exe-e1
-nix build .#ghc8107.p1-test-t1
-nix build .#ghc8107-profiled.p1-lib-l1
-nix build .#ghc8107-profiled.p1-exe-e1
-nix build .#ghc8107-profiled.p1-test-t1
-nix build .#ghc8107-windows.p1-lib-l1
-nix build .#ghc8107-windows.p1-exe-e1
-nix build .#ghc8107-windows.p1-test-t1
-nix build .#ghc8107-windows-profiled.p1-lib-l1
-nix build .#ghc8107-windows-profiled.p1-exe-e1
-nix build .#ghc8107-windows-profiled.p1-test-t1
-nix build .#ghc927.p1-lib-l1
-nix build .#ghc927.p1-exe-e1
-nix build .#ghc927.p1-test-t1
-nix build .#ghc927-profiled.p1-lib-l1
-nix build .#ghc927-profiled.p1-exe-e1
-nix build .#ghc927-profiled.p1-test-t1
-nix build .#ghc927-windows.p1-lib-l1
-nix build .#ghc927-windows.p1-exe-e1
-nix build .#ghc927-windows.p1-test-t1
-nix build .#ghc927-windows-profiled.p1-lib-l1
-nix build .#ghc927-windows-profiled.p1-exe-e1
-nix build .#ghc927-windows-profiled.p1-test-t1
+nix build .#p1-lib-l1-ghc8107
+nix build .#p1-exe-e1-ghc8107
+nix build .#p1-test-t1-ghc8107
+nix build .#p1-lib-l1-ghc8107-profiled
+nix build .#p1-exe-e1-ghc8107-profiled
+nix build .#p1-test-t1-ghc8107-profiled
+nix build .#p1-lib-l1-ghc8107-windows
+nix build .#p1-exe-e1-ghc8107-windows
+nix build .#p1-test-t1-ghc8107-windows
+nix build .#p1-lib-l1-ghc8107-windows-profiled
+nix build .#p1-exe-e1-ghc8107-windows-profiled
+nix build .#p1-test-t1-ghc8107-windows-profiled
+nix build .#p1-lib-l1-ghc927
+nix build .#p1-exe-e1-ghc927
+nix build .#p1-test-t1-ghc927
+nix build .#p1-lib-l1-ghc927-profiled
+nix build .#p1-exe-e1-ghc927-profiled
+nix build .#p1-test-t1-ghc927-profiled
+nix build .#p1-lib-l1-ghc927-windows
+nix build .#p1-exe-e1-ghc927-windows
+nix build .#p1-test-t1-ghc927-windows
+nix build .#p1-lib-l1-ghc927-windows-profiled
+nix build .#p1-exe-e1-ghc927-windows-profiled
+nix build .#p1-test-t1-ghc927-windows-profiled
 
-nix build .#ghc8107.pre-commit-check
-nix build .#ghc927.pre-commit-check
+nix build .#pre-commit-check-ghc8107
+nix build .#pre-commit-check-ghc927
 
-nix run .#ghc8107.p1-exe-e1
-nix run .#ghc8107.p1-test-t1
-nix run .#ghc8107-profiled.p1-exe-e1
-nix run .#ghc8107-profiled.p1-test-t1
-nix run .#ghc8107-windows.p1-exe-e1
-nix run .#ghc8107-windows.p1-test-t1
-nix run .#ghc8107-windows-profiled.p1-exe-e1
-nix run .#ghc8107-windows-profiled.p1-test-t1
-nix run .#ghc927.p1-exe-e1
-nix run .#ghc927.p1-test-t1
-nix run .#ghc927-profiled.p1-exe-e1
-nix run .#ghc927-profiled.p1-test-t1
-nix run .#ghc927-windows.p1-exe-e1
-nix run .#ghc927-windows.p1-test-t1
-nix run .#ghc927-windows-profiled.p1-exe-e1
-nix run .#ghc927-windows-profiled.p1-test-t1
+nix run .#p1-exe-e1-ghc8107
+nix run .#p1-test-t1-ghc8107
+nix run .#p1-exe-e1-ghc8107-profiled
+nix run .#p1-test-t1-ghc8107-profiled
+nix run .#p1-exe-e1-ghc8107-windows
+nix run .#p1-test-t1-ghc8107-windows
+nix run .#p1-exe-e1-ghc8107-windows-profiled
+nix run .#p1-test-t1-ghc8107-windows-profiled
+nix run .#p1-exe-e1-ghc927
+nix run .#p1-test-t1-ghc927
+nix run .#p1-exe-e1-ghc927-profiled
+nix run .#p1-test-t1-ghc927-profiled
+nix run .#p1-exe-e1-ghc927-windows
+nix run .#p1-test-t1-ghc927-windows
+nix run .#p1-exe-e1-ghc927-windows-profiled
+nix run .#p1-test-t1-ghc927-windows-profiled
 
-nix develop  
-nix develop .#ghc8107
-nix develop .#ghc8107-profiled
-nix develop .#ghc8107-windows
-nix develop .#ghc8107-windows-profiled
-nix develop .#ghc927
-nix develop .#ghc927-profiled
-nix develop .#ghc927-windows
-nix develop .#ghc927-windows-profiled
+nix develop 
+nix develop .#default
+nix develop .#profiled
+nix develop .#default-ghc8107
+nix develop .#default-ghc8107-profiled
+nix develop .#default-ghc8107-windows
+nix develop .#default-ghc8107-windows-profiled
+nix develop .#default-ghc927
+nix develop .#default-ghc927-profiled
+nix develop .#default-ghc927-windows
+nix develop .#default-ghc927-windows-profiled
 ```
 # 4. Future Work
 

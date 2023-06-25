@@ -229,7 +229,17 @@ let
 
     iogxError = file: text: 
       let 
-        readme-anchor = file: if file == "flake" then "flakenix" else "nix${file}nix";
+        readme-anchor = {
+          flake = "31-flakenix";
+          iogx-config = "32-nixiogx-confignix";
+          haskell-project = "33-nixhaskell-projectnix";
+          shell = "34-nixshellnix";
+          per-system-outputs = "35-nixper-system-outputsnix";
+          top-level-outputs = "36-nixtop-level-outputsnix";
+          read-the-docs = "37-nixread-the-docsnix";
+          pre-commit-check = "38-nixpre-commit-checknix";
+          hydra-jobs = "39-nixhydra-jobsnix";
+        }.${file};
       in 
       l.throw ''
         

@@ -16,12 +16,7 @@ let
 
   mkIogxInterface = { repo-root }: 
     let 
-      mkReadmeAnchor = file: 
-        if file == "flake" 
-        then "flakenix" 
-        else "nix${file}nix";
-
-      mkErrmsg = file: { result }: l.iogxError (mkReadmeAnchor file) ''
+      mkErrmsg = file: { result }: l.iogxError file ''
         Your ./nix/${file}.nix has errors:
 
         ${result.errmsg}

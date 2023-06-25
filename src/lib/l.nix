@@ -227,13 +227,16 @@ let
       l.throw "\n${text}";
 
 
-    iogxError = anchor: text: 
+    iogxError = file: text: 
+      let 
+        readme-anchor = file: if file == "flake" then "flakenix" else "nix${file}nix"
+      in 
       l.throw ''
         
         ------------------------------------ IOGX --------------------------------------
         ${text}
         Follow this link for documentation:
-        https://www.github.com/input-output-hk/iogx#${anchor}
+        https://www.github.com/input-output-hk/iogx#${readme-anchor}
         --------------------------------------------------------------------------------
       '';
 

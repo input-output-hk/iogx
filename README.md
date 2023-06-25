@@ -1,9 +1,5 @@
 # IOGX — Flake Template for Haskell Projects at IOG <!-- omit in toc -->
 
-nix -> Nix 
-IOGX -> `IOGX` 
-haskell -> Haskell 
-
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
 - [3. API Reference](#3-api-reference)
@@ -62,8 +58,10 @@ haskell -> Haskell
     - [3.9.5. `excludedPaths`](#395-excludedpaths)
     - [3.9.6. `includeProfiledBuilds`](#396-includeprofiledbuilds)
     - [3.9.7. `includePreCommitCheck`](#397-includeprecommitcheck)
-    - [3.9.8. `extraJobs`](#398-extrajobs)
   - [3.10. Flake Outputs Format](#310-flake-outputs-format)
+    - [3.10.1. Grammar for Haskell Packages](#3101-grammar-for-haskell-packages)
+    - [3.10.2. Grammar for Extra Packages](#3102-grammar-for-extra-packages)
+    - [3.10.3. Example](#3103-example)
 - [4. Future Work](#4-future-work)
 
 # 1. Introduction 
@@ -99,11 +97,11 @@ Each `devShell` comes with a complete Haskell toolchain, and it can be easily ex
 
 ## Automatic Hydra Jobset <!-- omit in toc -->
     
-By default your `hydraJobs` will include every haskell component in your project, and your test suites will be run in CI. Derivations can be declaratively included or excluded from the final jobset.
+By default your `hydraJobs` will include every Haskell component in your project, and your test suites will be run in CI. Derivations can be declaratively included or excluded from the final jobset.
 
 ## Easy Code Formatting <!-- omit in toc -->
  
-IOGX uses [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix) to format your source tree: hooks can be easily configured and are automatically run in CI, unless explicitly disabled.
+`IOGX` uses [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix) to format your source tree: hooks can be easily configured and are automatically run in CI, unless explicitly disabled.
 
 ## Read The Docs Support <!-- omit in toc -->
 
@@ -114,7 +112,7 @@ If you project needs a [Read The Docs](https://readthedocs.org) site then IOGX w
 Click on the file name to jump to its reference section: 
 
 - [`flake.nix`](#flakenix) — Standard flake, mostly boilerplate 
-- [`nix/iogx-config.nix`](#nixiogx-confignix) — Entrypoint configuration for IOGX 
+- [`nix/iogx-config.nix`](#nixiogx-confignix) — Entrypoint configuration for `IOGX` 
 - [`nix/haskell-project.nix`](#nixhaskell-projectnix) — Definition of the [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project
 - [`nix/shell.nix`](#nixshellnix) — Development environment shell
 - [`nix/hydra-jobs.nix`](#nixhydra-jobsnix) — Jobset to be run on IOG's Hydra CI
@@ -186,7 +184,7 @@ inputs = {
 };
 ```
 
-It is of course possible to add other inputs (not already managed by IOGX) in the normal way. 
+It is of course possible to add other inputs (not already managed by `IOGX`) in the normal way. 
 
 For example, to add `nix2container` and `cardano-world`:
 
@@ -197,7 +195,7 @@ inputs = {
   cardano-world.url = "github:input-output-hk/cardano-world";
 };
 ```
-Note that IOGX will merge (union) its implicit inputs and the new inputs (`n2c`, `cardano-world`) into a single attrset, which will simply be called `inputs` in the API, and will be available to you as a function parameter.
+Note that `IOGX` will merge (union) its implicit inputs and the new inputs (`n2c`, `cardano-world`) into a single attrset, which will simply be called `inputs` in the API, and will be available to you as a function parameter.
 
 In conclusion, the `inputs` parameter will contain both IOGX inputs and yours.
 
@@ -205,9 +203,9 @@ In conclusion, the `inputs` parameter will contain both IOGX inputs and yours.
 
 This line is boilerplate and should not be changed. 
 
-IOGX hosts its main `mkFlake` function in the `lib` top-level attribute. 
+`IOGX` hosts its main `mkFlake` function in the `lib` top-level attribute. 
 
-There are other functions in `lib`, but they are not needed to use IOGX and will be documented later.
+There are other functions in `lib`, but they are not needed to use `IOGX` and will be documented later.
 
 Note that the call to `mkFlake` must take a second argument (`./.`), but this restriction will be lifted soon.
 
@@ -267,7 +265,7 @@ This field is required.
 
 The non-empty list of GHC versions that can build your project. 
 
-Currently two GHC versions are supported and provided by IOGX: `ghc8107` and `ghc927`.
+Currently two GHC versions are supported and provided by `IOGX`: `ghc8107` and `ghc927`.
 
 This field affects your final [flake outputs format](#310-flake-outputs-format).
 
@@ -371,7 +369,7 @@ You may reference `pkgs` freely to get to the legacy packages or functions from 
 
 ### 3.3.4. `meta`
 
-IOGX will call `haskell.nix.cabalProject'` for each of your configured [`haskellCompilers`](#323-haskellcompilers), with/without cross-compiling according to [`shouldCrossCompile`](#325-shouldcrosscompile), and with and without profiling enabled.
+`IOGX` will call `haskell.nix.cabalProject'` for each of your configured [`haskellCompilers`](#323-haskellcompilers), with/without cross-compiling according to [`shouldCrossCompile`](#325-shouldcrosscompile), and with and without profiling enabled.
 
 The `meta` field contains that information: `haskellCompiler` tells you the current compiler, `enableProfiling` tells you whether Haskell library and executable profiling will be enabled, `enableCross` tells you whether cross compilation is available, while `enableHaddock` is currently always set to `false` (but this will change in future versions). 
 
@@ -529,7 +527,7 @@ packages = [
 ];
 ```
 
-Be careful not to reference your project's own haskell packages via `hsPkgs`. 
+Be careful not to reference your project's own Haskell packages via `hsPkgs`. 
 
 If you do, then `nix develop` will build your project every time you enter the shell, and it will fail to do so if there are Haskell compiler errors.
 
@@ -624,7 +622,7 @@ inputs.self.nomadTasks.marlowe-chain-indexer
 inputs'.self.nomadTasks.x86_64-linux.marlowe-chain-indexer
 ```
 
-These outputs will be merged with the ones generated by IOGX, and an error will be thrown in case of a name clash.
+These outputs will be merged with the ones generated by `IOGX`, and an error will be thrown in case of a name clash.
 
 You must *not* define `hydraJobs`, `ciJobs` nor `devShells` here.
 
@@ -768,7 +766,7 @@ Configuration for code formatters and linters.
 
 These are fed to [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix), which is run whenever you `git commit`.
 
-The `pre-commit` executable is also available in your shell.
+The `pre-commit` executable is also available in the shell.
 
 Currently 10 tools are available, and they are all disabled by default.
 
@@ -780,7 +778,7 @@ See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectn
 
 ### 3.8.2. `inputs'`
 
-See [`inputs`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+See [`inputs'`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
 
 ### 3.8.3. `pkgs`
 
@@ -794,7 +792,7 @@ See [`project`](#344-project) from [`shell.nix`](#34-nixshellnix).
 
 It is sufficient to set the `enable` flag to `true` to make the tool active.
 
-When enabled, some tools expect to find a configuration file in the root of the repository, and may fail otherwise:
+When enabled, some tools expect to find a configuration file in the root of the repository:
 
 | Tool Name | Config File | 
 | --------- | ----------- |
@@ -804,9 +802,9 @@ When enabled, some tools expect to find a configuration file in the root of the 
 | `hlint` | `.hlint.yaml` |
 | `hindent` | `.hindent.yaml` |
 
-Currently there is no way to change the location nor the name of these configuration files.
+Currently there is no way to change the location of the configuration files.
 
-Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place, if possible.
+Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
 
 ### 3.8.6. `extraOptions` 
 
@@ -830,18 +828,18 @@ For example:
 
 ```nix
 { inputs, inputs', pkgs }:
-{
+{ 
   includedPaths = [];
 
-  excludedPaths = []
+  excludedPaths = [];
 
   includeProfiledBuilds = false;
   
-  includePreCommitCheck = false;
-
-  extraJobs = {};
+  includePreCommitCheck = true;
 }
 ```
+
+Configuration for the jobset (`hydraJobs`) to run in CI: by default, no jobs are run.
 
 ### 3.9.1. `inputs`
 
@@ -857,13 +855,11 @@ See [`pkgs`](#333-pkgs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
 
 ### 3.9.4. `includedPaths`
 
-This is a list of *strings*, representing attribute *paths* in your final flake outputs (i.e. paths in `inputs.self`).
-
-These paths will populate `hydraJobs`.
+This is a list of *strings*, representing attribute *paths* in the final flake outputs (i.e. paths in `inputs.self`).
 
 Read the [flake outputs format](#310-flake-outputs-format) to learn which paths are available.
 
-In general, you will want to include `packages`, `devShells` and `apps` here, together with any non-standard sets of derivations defined in your [`per-system-outputs.nix`](#35-nixper-system-outputsnix).
+In general you want to include `packages`, `devShells` and `checks` here, together with any non-standard derivation defined in your [`per-system-outputs.nix`](#35-nixper-system-outputsnix).
 
 This is a good starting point:
 ```nix
@@ -876,9 +872,9 @@ includedPaths =
   "foobar.nested.package-baz"
 ]
 ```
-Behind the scenes, this will produce a `hydraJobs` like so:
+Behind the scenes, this will populate `hydraJobs` like so:
 ```nix
-{
+hydraJobs = {
   packages = inputs.self.packages;
   devShells = inputs.self.devShells;
   checks = inputs.self.checks;
@@ -895,20 +891,21 @@ Behind the scenes, this will produce a `hydraJobs` like so:
 
 After populating `hydraJobs` with [`includedPaths`](#includedpaths), the paths listed in `excludedPaths` will be *removed* from the final `hydraJobs`. 
 
-This is a good place to exclude derivations or entire attrsets of derivations based on the current system.
+This is a good place to exclude derivations based on the current system.
 
-Suppose that you have this [`per-system-outputs.nix`](#35-nixper-system-outputsnix):
+For example if you have this [`per-system-outputs.nix`](#35-nixper-system-outputsnix):
 ```nix
-{
-  packages.baz = {
-    foo = {
-      broken = null;
-      broken-on-linux = null;
-    }
-    bar = {
-      working = null;
-      broken-on-darwin = null;
-    };
+{ 
+  packages.broken = {
+    pkg1 = null;
+    pkg2 = null;
+  };
+
+  packages.ok = {
+    pkg3 = null;
+    pkg4 = null;
+    broken-on-linux = null;
+    broken-on-darwin = null;
   };
 };
 ```
@@ -916,30 +913,32 @@ You could have this setup:
 ```nix
 {
   includedPaths = [
-    "packages"
+    "packages" # This includes packages.ok.pkg3 and package.ok.pkg4
+    "devShells"
+    "checks"
   ];
 
   excludedPaths = [
-    "packages.baz.foo.broken"
+    "packages.broken"
   ] 
   ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux 
   [
-    "packages.baz.foo.broken-on-darwin"
+    "packages.ok.broken-on-darwin"
   ] 
   ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isDarwin 
   [
-    "packages.baz.foo.broken-on-linux"
+    "packages.ok.broken-on-linux"
   ];
 }
 ```
 
 ### 3.9.6. `includeProfiledBuilds` 
 
-This is a shortcut in include or exclude profiled builds in `hydraJobs`.
+Whether to include derivations of profiled builds of the Haskell components.
 
 This field is optional and defaults to `false`.
 
-If set to `true`, the following list will be appended to `includedPaths`, otherwise it will appended to `excludedPaths`:
+For example, with a configuration with a single GHC, setting this field to `false` is equivalent to appending the following list to `excludedPaths`:
 ```nix
 [
   "packages.ghc8107-profiled"
@@ -955,44 +954,123 @@ If set to `true`, the following list will be appended to `includedPaths`, otherw
 
 ### 3.9.7. `includePreCommitCheck`
 
+Whether to run the hooks [`pre-commit-check.nix`](#38-nixpre-commit-checknix).
 
-### 3.9.8. `extraJobs`
+If set to `true` then CI will fail if you've skipped the check when committing to `git`.
 
-extra-jobs can be used to incldue top-level derivations like so:
+This field is optional and defaults to `false`.
+
+For example, with a configuration with two GHCs, setting this field to `false` is equivalent to appending the following list to `excludedPaths`:
 ```nix
-extraJobs.top-level-buildable = inputs.self.custom-group.my-derivation;
+[
+  "packages.ghc8107-pre-commit-check"
+  "packages.ghc927-pre-commit-check"
+]
 ```
-This field is optional and defaults to the empty set `{}`, which means: do not add any extra job.
 
 ## 3.10. Flake Outputs Format 
 
-Given `haskellCompilers = [ghc8107 ghc927]`
+The contents of your [`iogx-config.nix`](#32-nixiogx-confignix) decide what your final flake outputs look like. 
 
+Your `cabal.project` and `*.cabal` files also contribute to naming the flake fragments.
+
+### 3.10.1. Grammar for Haskell Packages 
+
+**compiler** ::= one of [`haskellCompilers`](#323-haskellcompilers)
+
+**system** ::= one of [`systems`](#322-systems)
+
+**ghc** ::= **compiler** | **compiler** `"-profiled"` | **compiler** `"-windows"` | **compiler** `"-windows-profiled"`
+
+**hspkg** ::= any package name in `cabal.project`
+
+**hstag** ::= `"exe"` | `"test"` | `"lib"` | `"sublib"` 
+
+**hscomp** ::= any component name in any `*.cabal` file 
+
+**packages** ::= `"packages."` **system** `"."` **ghc** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp**
+
+**apps** ::= `"apps."` **system** `"."` **ghc** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp**
+
+**checks** ::= `"checks."` **system** `"."` **ghc** `"."` **hspkg** `"-test-"` **hscomp**
+
+**devShells** ::= `"devShells."` (`"default"` | **compiler**)
+
+**hydraJobs** ::= defined in [`hydra-jobs.nix`](#39-nixhydra-jobsnix)
+
+### 3.10.2. Grammar for Extra Packages 
+
+**packages** ::= `"packages."` **system** `"."` **compiler** `".pre-commit-check"`
+
+### 3.10.3. Example 
+
+Given an [`iogx-config.nix`](#32-nixiogx-confignix) like the one below, and a fictitious `.cabal` project with one package named `p1` with one library named `l1` one executable component named `e1` and one test suite named `t1`:
+```nix 
+# nix/iogx-config.nix
+{ 
+  repoRoot = ../.;
+  systems = [ "x86_64-linux" "x86_64-darwin" ];
+  haskellCompilers = [ "ghc8107" "ghc927" ];
+  shouldCrossCompile = true;
+}
 ```
-ghc ::= one of nix/iogx-config.nix:haskellCompilers
+The following output can also be obtained by running `list-haskell-outputs` in your shell:
+```bash
+nix build .#ghc8107.p1-lib-l1
+nix build .#ghc8107.p1-exe-e1
+nix build .#ghc8107.p1-test-t1
+nix build .#ghc8107-profiled.p1-lib-l1
+nix build .#ghc8107-profiled.p1-exe-e1
+nix build .#ghc8107-profiled.p1-test-t1
+nix build .#ghc8107-windows.p1-lib-l1
+nix build .#ghc8107-windows.p1-exe-e1
+nix build .#ghc8107-windows.p1-test-t1
+nix build .#ghc8107-windows-profiled.p1-lib-l1
+nix build .#ghc8107-windows-profiled.p1-exe-e1
+nix build .#ghc8107-windows-profiled.p1-test-t1
+nix build .#ghc927.p1-lib-l1
+nix build .#ghc927.p1-exe-e1
+nix build .#ghc927.p1-test-t1
+nix build .#ghc927-profiled.p1-lib-l1
+nix build .#ghc927-profiled.p1-exe-e1
+nix build .#ghc927-profiled.p1-test-t1
+nix build .#ghc927-windows.p1-lib-l1
+nix build .#ghc927-windows.p1-exe-e1
+nix build .#ghc927-windows.p1-test-t1
+nix build .#ghc927-windows-profiled.p1-lib-l1
+nix build .#ghc927-windows-profiled.p1-exe-e1
+nix build .#ghc927-windows-profiled.p1-test-t1
 
-system ::= one of nix/iogx-config.nix:systems
+nix build .#ghc8107.pre-commit-check
+nix build .#ghc927.pre-commit-check
 
-compiler ::= ghc | ghc "-profiled" | ghc "-windows" | ghc "-windows-profiled"
+nix run .#ghc8107.p1-exe-e1
+nix run .#ghc8107.p1-test-t1
+nix run .#ghc8107-profiled.p1-exe-e1
+nix run .#ghc8107-profiled.p1-test-t1
+nix run .#ghc8107-windows.p1-exe-e1
+nix run .#ghc8107-windows.p1-test-t1
+nix run .#ghc8107-windows-profiled.p1-exe-e1
+nix run .#ghc8107-windows-profiled.p1-test-t1
+nix run .#ghc927.p1-exe-e1
+nix run .#ghc927.p1-test-t1
+nix run .#ghc927-profiled.p1-exe-e1
+nix run .#ghc927-profiled.p1-test-t1
+nix run .#ghc927-windows.p1-exe-e1
+nix run .#ghc927-windows.p1-test-t1
+nix run .#ghc927-windows-profiled.p1-exe-e1
+nix run .#ghc927-windows-profiled.p1-test-t1
 
-cabalpkg ::= one of the packages in cabal.project 
-
-compname ::= "exe" | "test" | "lib" | "sublib" 
-
-pkgcomp ::= any component in a .cabal file 
-
-packages ::= "packages." system "." compiler "." cabalpkg "-" compname "-" pkgcomp
-
-apps ::= "apps." system "." compiler "." cabalpkg "-" ("exe" | "test") "-" pkgcomp
-
-checks ::= "checks." system "." compiler "." cabalpkg "-test-" pkgcomp
-
-devShells ::= 
-
-hydraJobs ::= "hydraJobs."
-
+nix develop # == nix develop .#default == nix develop .#ghc8107
+nix develop .#ghc8107
+nix develop .#ghc8107-profiled
+nix develop .#ghc8107-windows
+nix develop .#ghc8107-windows-profiled
+nix develop .#ghc927
+nix develop .#ghc927-profiled
+nix develop .#ghc927-windows
+nix develop .#ghc927-windows-profiled
 ```
-
 # 4. Future Work
 
 In the future we plan to develop the following features:

@@ -23,6 +23,7 @@
     - [3.3.6. `sha256map`](#336-sha256map)
     - [3.3.7. `shellWithHoogle`](#337-shellwithhoogle)
     - [3.3.8. `modules`](#338-modules)
+    - [3.3.9. `overlays`](#339-overlays)
   - [3.4. `nix/shell.nix`](#34-nixshellnix)
     - [3.4.1. `inputs`](#341-inputs)
     - [3.4.2. `inputs'`](#342-inputs)
@@ -61,18 +62,18 @@
 
 IOGX is a flake template that facilitates the development of Haskell projects at IOG.
 
-_The vision is to provide a JSON-like, declarative interface to Nix, so that developers unfamiliar with the language may independently maintain and add to the Nix sources with minimal effort and maximum pleasure._
+_The vision is to provide a JSON-like, declarative interface to Nix, so that developers unfamiliar with the language may independently maintain and add to the Nix sources with minimum effort and maximum pleasure._
 
 To get started run: 
 ```bash
 nix flake init --template github:input-output-hk/iogx
 ```
 
-This will generates a [`flake.nix`](./template/flake.nix) as well as a [`nix` folder](./template/nix) containing a number of file templates.
+This will generates a [`flake.nix`](./template/flake.nix) as well as a [`nix`](./template/nix) folder containing a number of file templates.
 
 These files constitute IOGX's *filesystem-based* API.
 
-You will fill in the templates in the [`nix` folder](./template/nix) while leaving [`flake.nix`](./template/flake.nix) largely untouched.
+You will fill in the templates in the [`nix`](./template/nix) folder while leaving [`flake.nix`](./template/flake.nix) largely untouched.
 
 **IOGX will populate your [flake outputs](#310-flake-outputs-format) based on the contents of the nix folder.**
 
@@ -224,8 +225,6 @@ sudo launchctl start org.nixos.nix-daemon
 ```
 Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work correctly.
 
----
-
 ## 3.2. `nix/iogx-config.nix`
 
 ```nix
@@ -302,9 +301,10 @@ This field is optional and defaults to `true`.
 }:
 {
   cabalProjectLocal = ""; 
-  sha256map = {}; 
+  sha256map = { }; 
   shellWithHoogle = false; 
-  modules = []; 
+  modules = [ ]; 
+  overlays = [ ];
 }
 ```
 
@@ -400,7 +400,15 @@ TODO link to haskell.nix docs.
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
-This field is optional and defaults to the empty list, but realistically it should have a value.
+This field is optional and defaults to the empty list.
+
+TODO link to haskell.nix docs.
+
+### 3.3.9. `overlays` 
+
+This field will be passed as argument to `appendOverlays`.
+
+This field is optional and defaults to the empty list
 
 TODO link to haskell.nix docs.
 

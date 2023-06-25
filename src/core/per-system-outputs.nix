@@ -10,7 +10,7 @@ let
 
 
   mkInvalidOutputsError = field: errmsg: l.iogxError "per-system-outputs" ''
-    Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
+    Your nix/per-system-outputs.nix contains an invalid field: ${field}
 
     ${errmsg}
   '';
@@ -18,9 +18,9 @@ let
 
   validated-per-system-outputs = 
     if per-system-outputs ? devShells then 
-      mkInvalidOutputsError "devShells" "Define your shells in ./nix/shell.nix instead."
+      mkInvalidOutputsError "devShells" "Define your shells in nix/shell.nix instead."
     else if per-system-outputs ? hydraJobs then 
-      mkInvalidOutputsError "hydraJobs" "Define your CI jobset in ./nix/hydra-jobs.nix instead."
+      mkInvalidOutputsError "hydraJobs" "Define your CI jobset in nix/hydra-jobs.nix instead."
     else if per-system-outputs ? ciJobs then 
       mkInvalidOutputsError "ciJobs" "This field has been obsoleted and replaced by hydraJobs."
     else if per-system-outputs ? __projects__ then 

@@ -2,22 +2,22 @@
 
 let
 
-  l = import ../lib/l.nix { inherit iogx-inputs; };
+  l = import ./lib/l.nix { inherit iogx-inputs; };
 
 
-  modularise = import ../lib/modularise.nix { inherit l; };
+  modularise = import ./lib/modularise.nix { inherit l; };
 
 
-  libnixschema = import ../lib/libnixschema.nix { inherit l; };
+  libnixschema = import ./lib/libnixschema.nix { inherit l; };
 
   
-  iogx-schemas = import ../schemas { inherit libnixschema; };
+  iogx-schemas = import ./schemas { inherit libnixschema; };
 
 
   mkIogxInterface = { repo-root }: 
     let 
       mkErrmsg = file: { result }: l.iogxError file ''
-        Your ./nix/${file}.nix has errors:
+        Your nix/${file}.nix has errors:
 
         ${result.errmsg}
       '';
@@ -45,8 +45,8 @@ let
     let
       iogx-inputs-without-self = removeAttrs iogx-inputs [ "self" ];
 
-      mkErrmsg = { n, duplicates }: l.iogxError "flake.nix" ''
-        Your ./flake.nix has ${l.toString n} unexpected ${l.plural n "input"}:
+      mkErrmsg = { n, duplicates }: l.iogxError "flake" ''
+        Your flake.nix has ${l.toString n} unexpected ${l.plural n "input"}:
 
           ${l.concatStringsSep ", " duplicates}
 
@@ -90,7 +90,7 @@ let
   mkFinalOutputs = { per-system-outputs, top-level-outputs }:
     let 
       mkErrmsg = { n, duplicates }: l.iogxError "top-level-outputs" ''
-        Your ./nix/top-level-outputs.nix has ${toString n} invalid ${l.plural n "attribute"}:
+        Your nix/top-level-outputs.nix has ${toString n} invalid ${l.plural n "attribute"}:
 
           ${l.concatStringsSep ", " duplicates}
 

@@ -5,9 +5,6 @@ let
   l = import ./lib/l.nix { inherit iogx-inputs; };
 
 
-  modularise = import ./lib/modularise.nix { inherit l; };
-
-
   libnixschema = import ./lib/libnixschema.nix { inherit l; };
 
   
@@ -78,9 +75,10 @@ let
         inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
         inputs' = merged-inputs;
         pkgs = mkPkgs { inherit iogx-inputs system; };
-        root = ../.;
+        root = ./.;
         module = "src";
         args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };
+        modularise = import ./lib/modularise.nix { inherit l; };
         src = modularise { inherit root module args; };
       in
       src.core.flake

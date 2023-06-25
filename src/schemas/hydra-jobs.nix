@@ -12,8 +12,11 @@ let
     includedPaths.type = V.list-of V.string;
     includedPaths.default = []; 
 
-    extraJobs.type = V.attrset;
-    extraJobs.default = {};
+    includeProfiledBuilds.type = V.bool;
+    includeProfiledBuilds.default = false;
+
+    includePreCommitCheck.type = V.bool;
+    includePreCommitCheck.default = true;
   };
 
 in

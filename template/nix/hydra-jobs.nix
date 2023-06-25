@@ -1,7 +1,7 @@
-{ inputs, inputs', pkgs }:
 { 
   # includedPaths = [];
   # excludedPaths = [];
-  # extraJobs = {};
+  # includeProfiledBuilds = false;
+  # includePreCommitCheck = true;
 }
 

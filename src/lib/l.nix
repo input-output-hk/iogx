@@ -109,8 +109,15 @@ let
     mkGhcPrefixMatrix = l.concatMap (ghc: [
       ghc 
       "${ghc}-profiled" 
-      "${ghc}-mingwW64" 
-      "${ghc}-mingwW64-profiled"
+      "${ghc}-xwindows" 
+      "${ghc}-xwindows-profiled"
+    ]);
+
+
+    # TODO this function does not belong here 
+    mkProfiledGhcPrefixMatrix = l.concatMap (ghc: [
+      "${ghc}-profiled" 
+      "${ghc}-xwindows-profiled"
     ]);
 
 

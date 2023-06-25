@@ -22,13 +22,15 @@ let
     (successField "hydra-jobs-11" config schema "includedPaths" ["a"])
     (successField "hydra-jobs-12" config schema "includedPaths" ["a.b" "c.d.e"])
 
-    (invalidField "hydra-jobs-13" config schema "extraJobs" "type-mismatch" 1)
-    (defaultField "hydra-jobs-14" config schema "extraJobs" {})
-    (successField "hydra-jobs-15" config schema "extraJobs" {})
-    (successField "hydra-jobs-16" config schema "extraJobs" { a = 1; })
-    (successField "hydra-jobs-17" config schema "extraJobs" { a.b.c = {}; })
+    (invalidField "hydra-jobs-13" config schema "includeProfiledBuilds" "type-mismatch" 1)
+    (defaultField "hydra-jobs-14" config schema "includeProfiledBuilds" false)
+    (successField "hydra-jobs-15" config schema "includeProfiledBuilds" true)
 
-    (invalidField "hydra-jobs-18" config schema "__unknown" "unknown-field" 1)
+    (invalidField "hydra-jobs-16" config schema "includePreCommitCheck" {})
+    (defaultField "hydra-jobs-17" config schema "includePreCommitCheck" true)
+    (successField "hydra-jobs-18" config schema "includePreCommitCheck" false)
+
+    (invalidField "hydra-jobs-19" config schema "__unknown" "unknown-field" 1)
   ];
 
 in 

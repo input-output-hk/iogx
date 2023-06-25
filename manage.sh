@@ -19,6 +19,7 @@ bump-repo() {
     gh pr edit --add-label "No Changelog Required"
   fi
   gh pr merge --auto --squash
+  git stash pop
 }
 
 bump-antaeus() {

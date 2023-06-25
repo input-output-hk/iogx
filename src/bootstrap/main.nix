@@ -23,7 +23,14 @@ let
       '';
 
       mkConfig = file: args: 
-        l.importFileWithDefault {} "${repo-root}/nix/${file}.nix" args;
+        let path = "${repo-root}/nix/${file}.nix"; 
+        in if l.pathExists path then 
+          if args == null then 
+            import path # Some interface files take no inputs
+          else 
+            import path args 
+        else
+          {};
 
       mkInterfaceFile = file: schema: args:
         libnixschema.validateConfigOrThrow schema (mkConfig file args) (mkErrmsg file);
@@ -84,7 +91,7 @@ let
     let 
       iogx-interface = mkIogxInterface { inherit repo-root; };
 
-      iogx-config = iogx-interface.load-iogx-config {}; 
+      iogx-config = iogx-interface.load-iogx-config null; 
       
       merged-inputs = mkMergedInputs { inherit user-inputs; }; 
 

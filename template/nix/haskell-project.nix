@@ -3,7 +3,8 @@
   # cabalProjectLocal = "";
   # sha256map = {};
   # shellWithHoogle = false; 
-  # packages = {};
+  # modules = {};
+  # overlays = [];
 }
 
 

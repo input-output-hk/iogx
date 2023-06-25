@@ -1,22 +1,52 @@
-{ inputs, inputs', iogx-interface, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-interface, iogx-config, pkgs, l, src, ... }:
 
 { flake }:
 
-let
+let 
 
-  user-hydra = iogx-interface.load-hydra-jobs { inherit inputs inputs' pkgs; };
+  initial-jobset = { inherit (flake) packages checks devShells; };
 
+
+  user-hydra = iogx-interface.load-hydra-jobs null; 
+  
 
   # TODO use hasAttrByPath to validate
   addIncludedPaths = l.restrictManyAttrsByPathString user-hydra.includedPaths;
 
 
+  addProfiledBuilds = jobs: 
+    let 
+      profiled-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
+        "packages.${ghc}-profiled" 
+        "packages.${ghc}-xwindows-profiled"
+        "apps.${ghc}-profiled" 
+        "apps.${ghc}-xwindows-profiled"
+        "checks.${ghc}-profiled" 
+        "checks.${ghc}-xwindows-profiled"
+        "devShells.${ghc}-profiled" 
+        "devShells.${ghc}-xwindows-profiled"
+      ]);
+    in 
+    if !user-hydra.includeProfiledBuilds then 
+      l.deleteManyAttrsByPathString profiled-paths jobs;
+    else 
+      jobs;
+
+  
+  addPreCommitCheck = jobs: 
+    let 
+      pre-commit-check-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
+        "packages.${ghc}.pre-commit-check" 
+      ]);
+    in 
+    if !user-hydra.includePreCommitCheck then 
+      l.deleteManyAttrsByPathString pre-commit-check-paths jobs;
+    else 
+      jobs;
+
+
   # TODO use hasAttrByPath to validate
   removeExcludedPaths = l.deleteManyAttrsByPathString user-hydra.excludedPaths;
-
-
-  # TODO check collisions
-  addExtraJobs = l.recursiveUpdate user-hydra.extraJobs;
 
 
   # Hydra doesn't like these attributes hanging around in "jobsets": it thinks they're jobs!
@@ -37,12 +67,13 @@ let
   hydra-jobs =
     l.composeManyLeft [
       addIncludedPaths
+      addProfiledBuilds
+      addPreCommitCheck
       removeExcludedPaths
-      addExtraJobs
       cleanJobs
       addRequiredJob
     ] 
-      flake; # TODO use inputs.self instead of flake?
+      initial-jobset;
 
 in
 

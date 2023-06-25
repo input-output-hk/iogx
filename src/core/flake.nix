@@ -3,23 +3,24 @@
 let
 
   # marlowe:runtime-web:lib:server
-  # 1.                   ghc8107.marlowe-runtime-web-lib-server
-  # 2.          ghc8107-profiled.marlowe-runtime-web-lib-server
-  # 3. ghc8107-xwindows-profiled.marlowe-runtime-web-lib-server
-  # 4.          ghc8107-xwindows.marlowe-runtime-web-lib-server
+  # 1.                   ghc8107-marlowe-runtime-web-lib-server
+  # 2.          ghc8107-profiled-marlowe-runtime-web-lib-server
+  # 3.          ghc8107-xwindows-marlowe-runtime-web-lib-server
+  # 4. ghc8107-xwindows-profiled-marlowe-runtime-web-lib-server
   renameHaskellProjectFlakeOutputs = { flake, project }:
     let
       replaceCons = l.replaceStrings [ ":" ] [ "-" ];
 
-      renameComponent = name: l.nameValuePair (replaceCons name);
+      mkPair = name: l.nameValuePair (renameComponent name);
 
-      namespace =
+      renameComponent = name:
         let
-          ghc = project.meta.haskellCompiler;
-          cross' = l.optionalString project.meta.enableCross "-windows";
+          ghc = "-${project.meta.haskellCompiler}";
+          name' = replaceCons name;
+          cross' = l.optionalString project.meta.enableCross "-xwindows";
           profiled' = l.optionalString project.meta.enableProfiling "-profiled";
         in
-        "${ghc}${cross'}${profiled'}";
+        "${name'}${ghc}${cross'}${profiled'}";
 
       extra-packages = {
         project-roots = flake.hydraJobs.roots;
@@ -28,10 +29,10 @@ let
       };
 
       renamed-flake = rec {
-        devShells.${namespace} = flake.devShells.default;
-        apps.${namespace} = l.mapAttrs' renameComponent flake.apps;
-        checks.${namespace} = l.mapAttrs' renameComponent flake.checks;
-        packages.${namespace} = l.mapAttrs' renameComponent flake.packages // extra-packages;
+        devShells.${renameComponent "default"} = flake.devShells.default;
+        apps = l.mapAttrs' mkPair flake.apps;
+        checks = l.mapAttrs' mkPair flake.checks;
+        packages = l.mapAttrs' mkPair (flake.packages // extra-packages);
       };
     in
     renamed-flake;
@@ -56,12 +57,12 @@ let
 
 
   # This adds the following flake outputs:
-  #   packages.$ghc.pre-commit-check
+  #   packages.$ghc-pre-commit-check
   # For each $ghc in iogx-config.haskellCompilers.
   addPreCommitChecks = {}: 
     let 
       mkValue = ghc: src.core.pre-commit-check { haskellCompiler = ghc; };
-      mkPair = ghc: { packages.${ghc}.pre-commit-check = mkValue ghc; };
+      mkPair = ghc: { packages."pre-commit-check-${ghc}" = mkValue ghc; };
       pre-commit-checks = l.recursiveUpdateMany (map mkPair iogx-config.haskellCompilers);
       final-flake = pre-commit-checks;
     in 
@@ -89,10 +90,12 @@ let
 
   # This adds the following flake outputs:
   #   devShells.default 
+  #   devShells.profiled 
   addDefaultDevShell = flake:
     let 
       final-flake = l.recursiveUpdate flake { 
-        devShells.default = flake.devShells."${iogx-config.defaultHaskellCompiler}";
+        devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
+        devShells.profiled = flake.devShells."default-${iogx-config.defaultHaskellCompiler}-profiled";
       };
     in 
       final-flake;
@@ -120,4 +123,4 @@ let
 
 in
 
-removeAttrs __flake__ ["apps"] 
+__flake__

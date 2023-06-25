@@ -57,8 +57,8 @@ let
 
   
   enforceCrossCompileOnLinux = projects:
-    if !pkgs.stdenv.hostPlatform.isLinux then
-      l.filterAttrs (name: _: !l.hasInfix "-xwindows" name) projects
+    if pkgs.stdenv.system != "x86_64-linux" then
+      l.filterAttrs (name: _: !l.hasInfix "xwindows" name) projects
     else
       projects; 
   

@@ -16,7 +16,12 @@ let
 
   mkIogxInterface = { repo-root }: 
     let 
-      mkErrmsg = file: { result }: l.iogxError file ''
+      mkReadmeAnchor = file: 
+        if file == "flake" 
+        then "flakenix" 
+        else "nix${file}nix";
+
+      mkErrmsg = file: { result }: l.iogxError (mkReadmeAnchor file) ''
         Your ./nix/${file}.nix has errors:
 
         ${result.errmsg}
@@ -57,12 +62,27 @@ let
       l.mergeDisjointAttrsOrThrow user-inputs iogx-inputs-without-self mkErrmsg;
 
 
+  mkPkgs = { iogx-inputs, system }:
+    import iogx-inputs.nixpkgs {
+      inherit system;
+      config = iogx-inputs.haskell-nix.config;
+      overlays =
+        [
+          iogx-inputs.iohk-nix.overlays.crypto
+          iogx-inputs.iohk-nix.overlays.cardano-lib
+          iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
+          iogx-inputs.iohk-nix.overlays.haskell-nix-extra
+          iogx-inputs.haskell-nix.overlay
+        ];
+    };
+
+
   mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs }:
     iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
       let
         inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
         inputs' = merged-inputs;
-        pkgs = import ./pkgs.nix { inherit iogx-inputs system; };
+        pkgs = mkPkgs { inherit iogx-inputs system; };
         root = ../.;
         module = "src";
         args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };

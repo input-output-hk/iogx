@@ -11,36 +11,31 @@ let
   
 
   # TODO use hasAttrByPath to validate
-  addIncludedPaths = l.restrictManyAttrsByPathString user-hydra.includedPaths;
+  addIncludedPaths = 
+    l.recursiveUpdate 
+      (l.restrictManyAttrsByPathString user-hydra.includedPaths flake);
 
 
   addProfiledBuilds = jobs: 
-    let 
-      profiled-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
-        "packages.${ghc}-profiled" 
-        "packages.${ghc}-xwindows-profiled"
-        "apps.${ghc}-profiled" 
-        "apps.${ghc}-xwindows-profiled"
-        "checks.${ghc}-profiled" 
-        "checks.${ghc}-xwindows-profiled"
-        "devShells.${ghc}-profiled" 
-        "devShells.${ghc}-xwindows-profiled"
-      ]);
-    in 
+    let filterProfiled = l.filterAttrs (name: _: !l.hasSuffix "-profiled" name); in 
     if !user-hydra.includeProfiledBuilds then 
-      l.deleteManyAttrsByPathString profiled-paths jobs;
+      {
+        packages = filterProfiled jobs.packages;
+        checks = filterProfiled jobs.checks;
+        devShells = filterProfiled jobs.devShells;
+      }
     else 
       jobs;
 
   
-  addPreCommitCheck = jobs: 
+  addPreCommitChecks = jobs: 
     let 
       pre-commit-check-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
-        "packages.${ghc}.pre-commit-check" 
+        "packages.pre-commit-check-${ghc}" 
       ]);
     in 
     if !user-hydra.includePreCommitCheck then 
-      l.deleteManyAttrsByPathString pre-commit-check-paths jobs;
+      l.deleteManyAttrsByPathString pre-commit-check-paths jobs
     else 
       jobs;
 
@@ -68,14 +63,20 @@ let
     l.composeManyLeft [
       addIncludedPaths
       addProfiledBuilds
-      addPreCommitCheck
+      addPreCommitChecks
       removeExcludedPaths
       cleanJobs
       addRequiredJob
     ] 
       initial-jobset;
 
+
+  is-supported-system = l.elem pkgs.stdenv.system ["x86_64-linux" "x86_64-darwin" "aarch64-darwin"];
+
+
+  final-hydra-jobs = l.optionalAttrs is-supported-system hydra-jobs;
+
 in
 
-hydra-jobs
+final-hydra-jobs
 

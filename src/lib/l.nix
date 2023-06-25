@@ -233,7 +233,7 @@ let
         ------------------------------------ IOGX --------------------------------------
         ${text}
         Follow this link for documentation:
-        http://www.github.com/input-output-hk/iogx/README.md#${anchor}
+        https://www.github.com/input-output-hk/iogx#${anchor}
         --------------------------------------------------------------------------------
       '';
 

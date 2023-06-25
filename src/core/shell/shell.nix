@@ -66,7 +66,7 @@ let
     l.concatStringsSep "\n" (l.mapAttrsToList exportVar env);
 
 
-  pre-commit-check = __flake__.packages.${project.meta.haskellCompiler}.pre-commit-check;
+  pre-commit-check = __flake__.packages."pre-commit-check-${project.meta.haskellCompiler}";
 
 
   shellToNixShell = shell: 

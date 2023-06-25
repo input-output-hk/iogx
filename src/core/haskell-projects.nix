@@ -56,8 +56,8 @@ let
     };
 
   
-  enforceCrossCompileOnLinux = projects:
-    if pkgs.stdenv.system != "x86_64-linux" then
+  filterCrossCompile = projects:
+    if pkgs.stdenv.system != "x86_64-linux" || !iogx-config.shouldCrossCompile then
       l.filterAttrs (name: _: !l.hasInfix "xwindows" name) projects
     else
       projects; 
@@ -67,7 +67,7 @@ let
     let 
       all-projects = l.recursiveUpdateMany (map mkHaskellProjectsForGhc iogx-config.haskellCompilers);
 
-      final-projects = enforceCrossCompileOnLinux all-projects;
+      final-projects = filterCrossCompile all-projects;
     in 
       final-projects;
 

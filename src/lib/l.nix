@@ -229,7 +229,7 @@ let
 
     iogxError = file: text: 
       let 
-        readme-anchor = file: if file == "flake" then "flakenix" else "nix${file}nix"
+        readme-anchor = file: if file == "flake" then "flakenix" else "nix${file}nix";
       in 
       l.throw ''
         

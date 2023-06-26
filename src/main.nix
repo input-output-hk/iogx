@@ -61,13 +61,13 @@ let
     import iogx-inputs.nixpkgs {
       inherit system;
       config = iogx-inputs.haskell-nix.config;
-      overlays =
+      overlays = # WARNING: The order of these is crucial
         [
           iogx-inputs.iohk-nix.overlays.crypto
           iogx-inputs.iohk-nix.overlays.cardano-lib
+          iogx-inputs.haskell-nix.overlay
           iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-          iogx-inputs.haskell-nix.overlay
         ];
     };
 

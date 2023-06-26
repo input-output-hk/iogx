@@ -27,7 +27,7 @@
   - [3.4. `nix/shell.nix`](#34-nixshellnix)
     - [3.4.1. `inputs`](#341-inputs)
     - [3.4.2. `inputs'`](#342-inputs)
-    - [3.4.3. `pkgs'`](#343-pkgs)
+    - [3.4.3. `pkgs`](#343-pkgs)
     - [3.4.4. `project`](#344-project)
     - [3.4.5. `name`](#345-name)
     - [3.4.6. `prompt`](#346-prompt)
@@ -450,7 +450,7 @@ See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectn
 
 See [`inputs'`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
 
-### 3.4.3. `pkgs'`
+### 3.4.3. `pkgs`
 
 See [`pkgs`](#333-pkgs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
 

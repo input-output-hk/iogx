@@ -60,7 +60,7 @@
         description = "Flake Template for Haskell Projects at IOG";
         welcomeText = ''
           # Flake Template for Haskell Projects at IOG
-          Open ./flake.nix to get started.
+          Open flake.nix to get started.
         '';
       };
 

@@ -89,7 +89,7 @@ let
 
 
   run = pkgs.writeScript "testsuite" ''
-    echo "Evaluating ./tests/main.nix ... ${evaluated-testsuite}"
+    echo "Evaluating tests/main.nix ... ${evaluated-testsuite}"
   '';
 
 in

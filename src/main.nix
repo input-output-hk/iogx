@@ -96,7 +96,7 @@ let
 
         Those attribute names are not acceptable because they are either:
         - Standard flake outputs such as: packages, devShells, apps, ...
-        - Nonstandard flake outputs already defined in your ./nix/per-system-outputs.nix 
+        - Nonstandard flake outputs already defined in your nix/per-system-outputs.nix 
       '';
     in 
       l.mergeDisjointAttrsOrThrow top-level-outputs per-system-outputs mkErrmsg;

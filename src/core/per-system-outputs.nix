@@ -30,7 +30,7 @@ let
 
 
   mkCollisionError = field: { n, duplicates }: l.iogxError "per-system-outputs" ''
-    Your ./nix/per-system-outputs.nix contains an invalid field: ${field}
+    Your nix/per-system-outputs.nix contains an invalid field: ${field}
 
     It has ${toString n} ${l.plural n "attribute"} that are reserved for IOGX: 
 

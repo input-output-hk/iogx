@@ -193,6 +193,12 @@ Note that IOGX will merge (union) its implicit inputs and the new inputs (`n2c`,
 
 In conclusion, the `inputs` parameter will contain both IOGX inputs and yours.
 
+If you need to update IOGX, you can do it the normal way:
+
+```bash
+nix flake lock --update-input iogx 
+```
+
 ### 3.1.3. `outputs`
 
 This line is boilerplate and should not be changed. 
@@ -926,9 +932,16 @@ You could have this setup:
 
 Whether to include derivations of profiled builds of the Haskell components.
 
-This field is optional and defaults to `false`.
+If this field is set to `true`, you will effectively double the number of jobs in CI, so you should be considerate about that.
 
-If this field is set to `true`, you will effectively double the number of jobs in CI.
+In general if you want to run profiled code, it is sufficient to enter the profiled shell and then run `cabal` with the appropriate flags.
+
+```
+nix develop .#profiled
+cabal build all --enable-profiling
+``` 
+
+This field is optional and defaults to `false`.
 
 ### 3.9.4. `includePreCommitCheck`
 

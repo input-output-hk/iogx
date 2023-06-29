@@ -27,7 +27,7 @@ let
     else 
       jobs;
 
-  
+
   addPreCommitChecks = jobs: 
     let 
       pre-commit-check-paths = l.flip l.concatMap iogx-config.haskellCompilers (ghc: [
@@ -38,13 +38,6 @@ let
       l.deleteManyAttrsByPathString pre-commit-check-paths jobs
     else 
       jobs;
-
-
-  addReadTheDocsSite = flake: 
-    if src.read-the-docs.read-the-docs.site == null then 
-      flake 
-    else 
-      l.recursiveUpdate flake { packages.read-the-docs-site = flake.packages.read-the-docs-site; };
 
 
   # TODO use hasAttrByPath to validate
@@ -71,7 +64,6 @@ let
       addIncludedPaths
       addProfiledBuilds
       addPreCommitChecks
-      addReadTheDocsSite
       removeExcludedPaths
       cleanJobs
       addRequiredJob

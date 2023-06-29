@@ -25,7 +25,7 @@ let
       mkInvalidFileErrmsg = file: l.iogxError file ''
         Your nix/${file}.nix has errors:
 
-        Your file must either be an attrset, or a function taking an attrset.
+        This file must either be an attrset, or a function taking an attrset.
       '';
 
       mkConfig = file: args: 

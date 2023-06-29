@@ -6,7 +6,6 @@ let
 
   config = {
     repoRoot = ../demo;
-    systems = [ "x86_64-darwin" "x86_64-linux" ];
     haskellCompilers = [ "ghc8107" ];
   };
 
@@ -16,7 +15,7 @@ let
     (invalidField "iogx-config-02" config schema "repoRoot" "path-does-not-exist" ./__unknown)
     (invalidField "iogx-config-03" config schema "repoRoot" "dir-does-not-have-file" ./.)
 
-    (missingField "iogx-config-04" config schema "systems")
+    (defaultField "iogx-config-04" config schema "systems" [ "x86_64-linux" ])
     (invalidField "iogx-config-05" config schema "systems" "type-mismatch" { })
     (invalidField "iogx-config-06" config schema "systems" "invalid-list-elem" [ "x86_64-darwin" true ])
     (invalidField "iogx-config-07" config schema "systems" "empty-list" [ ])

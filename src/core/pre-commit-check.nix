@@ -7,7 +7,7 @@ let
   haskell-toolchain = src.toolchain."haskell-toolchain-${haskellCompiler}";
 
 
-  user-hooks = iogx-interface.load-pre-commit-check null;
+  user-hooks = iogx-interface.load-pre-commit-check { inherit inputs inputs' pkgs; };
 
 
   default-hooks = {

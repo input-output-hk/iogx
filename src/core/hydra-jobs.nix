@@ -7,7 +7,7 @@ let
   initial-jobset = { inherit (flake) packages checks devShells; };
 
 
-  user-hydra = iogx-interface.load-hydra-jobs null; 
+  user-hydra = iogx-interface.load-hydra-jobs { inherit inputs inputs' pkgs; }; 
   
 
   # TODO use hasAttrByPath to validate

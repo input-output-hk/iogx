@@ -45,13 +45,19 @@
     - [3.6.1. `inputs'`](#361-inputs)
   - [3.7. `nix/read-the-docs.nix`](#37-nixread-the-docsnix)
   - [3.8. `nix/pre-commit-check.nix`](#38-nixpre-commit-checknix)
-    - [3.8.1. `enable`](#381-enable)
-    - [3.8.2. `extraOptions`](#382-extraoptions)
+    - [3.8.1. `inputs`](#381-inputs)
+    - [3.8.2. `inputs'`](#382-inputs)
+    - [3.8.3. `pkgs`](#383-pkgs)
+    - [3.8.4. `enable`](#384-enable)
+    - [3.8.5. `extraOptions`](#385-extraoptions)
   - [3.9. `nix/hydra-jobs.nix`](#39-nixhydra-jobsnix)
-    - [3.9.1. `includedPaths`](#391-includedpaths)
-    - [3.9.2. `excludedPaths`](#392-excludedpaths)
-    - [3.9.3. `includeProfiledBuilds`](#393-includeprofiledbuilds)
-    - [3.9.4. `includePreCommitCheck`](#394-includeprecommitcheck)
+    - [3.9.1. `inputs`](#391-inputs)
+    - [3.9.2. `inputs'`](#392-inputs)
+    - [3.9.3. `pkgs`](#393-pkgs)
+    - [3.9.4. `includedPaths`](#394-includedpaths)
+    - [3.9.5. `excludedPaths`](#395-excludedpaths)
+    - [3.9.6. `includeProfiledBuilds`](#396-includeprofiledbuilds)
+    - [3.9.7. `includePreCommitCheck`](#397-includeprecommitcheck)
   - [3.10. Flake Outputs Format](#310-flake-outputs-format)
     - [3.10.1. Grammar for Haskell Packages](#3101-grammar-for-haskell-packages)
     - [3.10.2. Extra Packages](#3102-extra-packages)
@@ -237,7 +243,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 # Example of a valid nix/iogx-config.nix
 { 
   repoRoot = ../.; 
-  systems = [ "x86_64-linux" "x86_64-darwin" ]; 
+  systems = [ "x86_64-linux" ]; 
   haskellCompilers = [ "ghc8107" ]; 
   defaultHaskellCompiler = "ghc8107"; 
   shouldCrossCompile = true; 
@@ -260,7 +266,7 @@ These are standard Nix values found in `nixpkgs.stdenv.system`.
 
 This field affects your final [flake outputs](#310-flake-outputs-format).
 
-This field is required.
+This field is optional and defaults to `["x86_64-linux"]`.
 
 ### 3.2.3. `haskellCompilers`
 
@@ -314,11 +320,13 @@ This field is optional and defaults to `true`.
 }
 ```
 
-This file describes your Haskell project and will be used internally to call `haskell.nix:cabalProject'`.
+This file returns the arguments that will be used to create a `haskell.nix` project. 
+
+See `haskell.nix`'s [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function for details.
 
 This file will be evaluated once for each element in your GHC build matrix: if your [`haskellCompilers`](#323-haskellcompilers) has 2 elements, and if [`shouldCrossCompile`](#325-shouldcrosscompile) is set to `true`, then this file will be called 8 times (taking into account profiled and non-profiled builds).
 
-If this file does not exist then it will default to an empty project.
+If this file does not exist then a `haskell.nix` project will still be created using default values and common heuristics.
 
 ### 3.3.1. `inputs`
 
@@ -380,7 +388,7 @@ This field will be passed directly to `haskell.nix:cabalProject'`.
 
 This field is optional and defaults to the empty string.
 
-TODO link to haskell.nix docs.
+See [`callCabalProjectToNix`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjectLocal#callcabalprojecttonix) for details.
 
 ### 3.3.6. `sha256map` 
 
@@ -388,7 +396,7 @@ This field will be passed directly to `haskell.nix:cabalProject'`.
 
 This field is optional and defaults to the empty attrset.
 
-TODO link to haskell.nix docs.
+See [`sha256map`](https://input-output-hk.github.io/haskell.nix/tutorials/source-repository-hashes.html?highlight=sha256Map#avoiding-modifying-cabalproject-and-stackyaml) for details.
 
 ### 3.3.7. `shellWithHoogle` 
 
@@ -400,7 +408,7 @@ It is recommended to leave this field to `false`, otherwise the entire Haskell d
 
 This field is optional and defaults to `false`.
 
-TODO link to haskell.nix docs.
+See [`shellFor`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=withHoogle#shellfor) for details.
 
 ### 3.3.8. `modules` 
 
@@ -408,15 +416,15 @@ This field will be passed directly to `haskell.nix:cabalProject'`.
 
 This field is optional and defaults to the empty list.
 
-TODO link to haskell.nix docs.
+See [`modules`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=modules#modules) for details.
 
 ### 3.3.9. `overlays` 
 
-This field will be passed as argument to `appendOverlays`.
+This field will be passed as argument to `appendOverlays` 
 
-This field is optional and defaults to the empty list
+This field is optional and defaults to the empty list.
 
-TODO link to haskell.nix docs.
+See [`appendOverlays`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=appendOverlays#cabalproject) for details.
 
 ## 3.4. `nix/shell.nix`
 
@@ -737,6 +745,7 @@ TODO
 
 ```nix
 # Default nix/pre-commit-check.nix
+{ inputs, inputs', pkgs }:
 {
   cabal-fmt.enable = false;
   cabal-fmt.extraOptions = "";
@@ -780,7 +789,19 @@ Currently 10 tools are available, and they are all disabled by default.
 
 If this file is missing, then no hooks will be run.
 
-### 3.8.1. `enable` 
+### 3.8.1. `inputs`
+
+See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.8.2. `inputs'`
+
+See [`inputs`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.8.3. `pkgs`
+
+See [`pkgs`](#333-pkgs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.8.4. `enable` 
 
 It is sufficient to set the `enable` flag to `true` to make the tool active.
 
@@ -798,7 +819,7 @@ Currently there is no way to change the location of the configuration files.
 
 Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
 
-### 3.8.2. `extraOptions` 
+### 3.8.5. `extraOptions` 
 
 You can *append* additional options to a tool's command by setting the `extraOptions` field.
 
@@ -818,6 +839,7 @@ For example:
 
 ```nix
 # Default nix/hydra-jobs.nix
+{ inputs, inputs', pkgs }:
 { 
   includedPaths = [];
 
@@ -833,8 +855,19 @@ Configuration for the jobset (`hydraJobs`) to run in CI.
 
 By default all Haskell components (excluding profiled builds) are added to `hydraJobs`, as well as all custom derivations nested under `packages` and `checks` that you may have added in you [`per-system-outputs.nix`](#35-nixper-system-outputsnix), as well as derivations that run the formatters as configured in your [`pre-commit-check.nix`](#38-nixpre-commit-checknix) (one for each compiler in [`haskellCompilers`](#323-haskellcompilers)).
 
+### 3.9.1. `inputs`
 
-### 3.9.1. `includedPaths`
+See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.9.2. `inputs'`
+
+See [`inputs`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.9.3. `pkgs`
+
+See [`pkgs`](#333-pkgs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
+
+### 3.9.4. `includedPaths`
 
 This is a list of *strings*, representing attribute *paths* in the final flake outputs (i.e. paths in `inputs.self`).
 
@@ -885,7 +918,7 @@ hydraJobs = {
 }
 ```
 
-### 3.9.2. `excludedPaths`
+### 3.9.5. `excludedPaths`
 
 After populating `hydraJobs` with [`includedPaths`](#includedpaths), the paths listed in `excludedPaths` will be *removed* from the final `hydraJobs`. 
 
@@ -928,7 +961,7 @@ You could have this setup:
 }
 ```
 
-### 3.9.3. `includeProfiledBuilds` 
+### 3.9.6. `includeProfiledBuilds` 
 
 Whether to include derivations of profiled builds of the Haskell components.
 
@@ -943,7 +976,7 @@ cabal build all --enable-profiling
 
 This field is optional and defaults to `false`.
 
-### 3.9.4. `includePreCommitCheck`
+### 3.9.7. `includePreCommitCheck`
 
 Whether to run the hooks in [`pre-commit-check.nix`](#38-nixpre-commit-checknix).
 
@@ -1071,3 +1104,4 @@ In the future we plan to develop the following features:
 - Automatic Benchmarking in CI
 - Changelog Management
 - Broken Link Detection 
+- Option to exclude specific jobs from the `required` aggregated job.

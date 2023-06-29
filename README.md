@@ -761,7 +761,7 @@ If no site is required, this file can be omitted.
 
 Your shells will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
 
-In addition, a `read-the-docs-site` derivation will be build in CI.
+In addition, a `read-the-docs-site` derivation will be built in CI.
 
 ### 3.7.1. `siteFolder`
 

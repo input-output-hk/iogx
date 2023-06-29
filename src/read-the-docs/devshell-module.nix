@@ -10,8 +10,8 @@
   ];
 
 
-  scripts.autobuild-rtd-site = {
-    description = "Live develop your site in ${rtd-config.siteFolder}";
+  scripts.develop-rtd-site = {
+    description = "Develop your site live in ${rtd-config.siteFolder}";
     group = "read-the-docs";
     exec = ''
       doc="${rtd-config.siteFolder}"

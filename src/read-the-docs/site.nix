@@ -6,7 +6,7 @@ pkgs.stdenv.mkDerivation {
 
   name = "read-the-docs-site";
 
-  src = l.sourceFilesBySuffices "${user-repo-root}/${rtd-config.siteRoot}"
+  src = l.sourceFilesBySuffices "${user-repo-root}/${rtd-config.siteFolder}"
     [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" "txt" ];
 
   buildInputs = [

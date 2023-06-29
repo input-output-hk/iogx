@@ -44,7 +44,7 @@ let
     if src.read-the-docs.read-the-docs.site == null then 
       flake 
     else 
-      l.recursiveUpdate flake { packages.read-the-docs-site = flake.packages.read-the-docs; };
+      l.recursiveUpdate flake { packages.read-the-docs-site = flake.packages.read-the-docs-site; };
 
 
   # TODO use hasAttrByPath to validate

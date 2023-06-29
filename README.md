@@ -176,9 +176,9 @@ For example, if you need a newer version of `hackage.nix`, you may do the follow
 ```nix 
 inputs = {
   iogx.url = "github:inputs-output-hk/iogx";
-  iogx.inputs.hackage.follows = "hackage";
+  iogx.inputs.hackage-nix.follows = "hackage-nix";
 
-  hackage = {
+  hackage-nix = {
     url = "github:input-output-hk/hackage.nix";
     flake = false;
   };

@@ -21,7 +21,7 @@ let
           scripts1 = l.getAttrWithDefault "scripts" { } mod1;
           scripts2 = l.getAttrWithDefault "scripts" { } mod2;
           mkErrmsg = { n, duplicates }: l.iogxError "shell" ''
-            Your ./nix/shell.nix contains ${toString n} invalid ${l.plural n "script"}:
+            Your nix/shell.nix contains ${toString n} invalid ${l.plural n "script"}:
 
               ${l.concatStringsSep ", " duplicates}
             
@@ -35,7 +35,7 @@ let
           env1 = l.getAttrWithDefault "env" { } mod1;
           env2 = l.getAttrWithDefault "env" { } mod2;
           mkErrmsg = { n, duplicates }: l.iogxError "shell" ''
-            Your ./nix/shell.nix contains ${toString n} invalid environment ${l.plural n "variable"}:
+            Your nix/shell.nix contains ${toString n} invalid environment ${l.plural n "variable"}:
 
               ${l.concatStringsSep ", " duplicates}
             

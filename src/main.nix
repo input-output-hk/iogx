@@ -16,24 +16,33 @@ let
 
   mkIogxInterface = { repo-root }: 
     let 
-      mkErrmsg = file: { result }: l.iogxError file ''
+      mkConfigErrmsg = file: { result }: l.iogxError file ''
         Your nix/${file}.nix has errors:
 
         ${result.errmsg}
       '';
 
+      mkInvalidFileErrmsg = file: l.iogxError file ''
+        Your nix/${file}.nix has errors:
+
+        This file must either be an attrset, or a function taking an attrset.
+      '';
+
       mkConfig = file: args: 
         let path = "${repo-root}/nix/${file}.nix"; 
         in if l.pathExists path then 
-          if args == null then 
-            import path # Some interface files take no inputs
+          let value = import path; 
+          in if l.typeOf value == "set" then 
+            value
+          else if l.typeOf value == "lambda" then 
+            value args 
           else 
-            import path args 
+            mkInvalidFileErrmsg file 
         else
           {};
 
       mkInterfaceFile = file: schema: args:
-        libnixschema.validateConfigOrThrow schema (mkConfig file args) (mkErrmsg file);
+        libnixschema.validateConfigOrThrow schema (mkConfig file args) (mkConfigErrmsg file);
 
       mkNameValuePair = file: schema: 
         l.nameValuePair "load-${file}" (mkInterfaceFile file schema);
@@ -96,7 +105,7 @@ let
 
         Those attribute names are not acceptable because they are either:
         - Standard flake outputs such as: packages, devShells, apps, ...
-        - Nonstandard flake outputs already defined in your ./nix/per-system-outputs.nix 
+        - Nonstandard flake outputs already defined in your nix/per-system-outputs.nix 
       '';
     in 
       l.mergeDisjointAttrsOrThrow top-level-outputs per-system-outputs mkErrmsg;
@@ -105,10 +114,10 @@ let
   mkFlake = user-inputs: repo-root:
     let 
       iogx-interface = mkIogxInterface { inherit repo-root; };
-
-      iogx-config = iogx-interface.load-iogx-config null; 
       
       merged-inputs = mkMergedInputs { inherit user-inputs; }; 
+
+      iogx-config = iogx-interface.load-iogx-config { inputs' = merged-inputs; }; 
 
       per-system-outputs = mkPerSystemOutputs { inherit iogx-config iogx-interface merged-inputs; };
 

@@ -1,3 +1,4 @@
+{ inputs, inputs', pkgs }:
 {
   # cabal-fmt.enable = false;
   # cabal-fmt.extraOptions = "";

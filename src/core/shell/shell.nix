@@ -89,7 +89,7 @@ let
 
       user-shell = iogx-interface.load-shell { inherit inputs inputs' pkgs project; };
 
-      readthedocs-module = {};
+      readthedocs-module = src.read-the-docs.read-the-docs.devshell-module;
 
       utility-module = src.core.shell.utility-module { inherit __shell__ __flake__; };
 

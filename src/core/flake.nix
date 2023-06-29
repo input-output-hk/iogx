@@ -110,9 +110,19 @@ let
   addHydraJobs = flake: flake // { hydraJobs = src.core.hydra-jobs { inherit flake; }; };
 
   
+  # This adds the following flake outputs:
+  #   packages.read-the-docs-site
+  addReadTheDocsSite = flake: 
+    if src.read-the-docs.read-the-docs.site == null then 
+      flake 
+    else 
+      l.recursiveUpdate flake { packages.read-the-docs-site = src.read-the-docs.read-the-docs.site; };
+
+
   __flake__ =
     l.composeManyLeft [
       addPreCommitChecks
+      addReadTheDocsSite
       addHaskellProjects
       addHaskellProjectsFlakes
       addDefaultDevShell

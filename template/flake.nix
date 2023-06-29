@@ -1,9 +1,12 @@
+# This file is part of the IOGX template and is documented at the link below:
+# https://www.github.com/input-output-hk/iogx#31-flakenix
+
 {
-  description = "Foo";
+  description = "Change the description field in your flake.nix";
 
 
   inputs = {
-    iogx.url = "github:zeme-iohk/iogx";
+    iogx.url = "github:input-output-hk/iogx";
   };
 
 

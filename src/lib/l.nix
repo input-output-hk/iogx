@@ -29,7 +29,15 @@ let
 
     traceId = x: l.trace (l.deepSeq x x) x;
 
-    
+
+    stripStoreFromNixPath = p: 
+      let 
+        s = toString p;
+        t = l.substring 30 (l.stringLength s) s; 
+      in 
+        if t == "" then "./." else "./${t}"; 
+
+
     valueToString = x: 
       if x == null then 
         "null"

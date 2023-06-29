@@ -7,7 +7,7 @@ let
 
   schema = {
     
-    siteFolder.type = V.null-or (V.dir-with-file "conf.py"); 
+    siteFolder.type = V.null-or V.nonempty-string;
     siteFolder.default = null;
 
     haddockPrologue.type = V.string;

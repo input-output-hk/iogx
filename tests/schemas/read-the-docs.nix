@@ -8,9 +8,8 @@ let
 
 
   testsuite = [
-    (invalidField "read-the-docs-01" config schema "siteFolder" "path-does-not-exist" ./__unknown)
-    (invalidField "read-the-docs-02" config schema "siteFolder" "dir-does-not-have-file" ./.)
-    (successField "read-the-docs-03" config schema "siteFolder" ../demo)
+    (invalidField "read-the-docs-01" config schema "type-mismatch" 1)
+    (successField "read-the-docs-03" config schema "siteFolder" "./docs")
     (defaultField "read-the-docs-04" config schema "siteFolder" null)
 
     (invalidField "read-the-docs-05" config schema "haddockPrologue" "type-mismatch" { })

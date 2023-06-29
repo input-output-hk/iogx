@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, user-repo-root, ... }:
 
 let
 
@@ -10,7 +10,7 @@ let
 
       cabal-project'' = pkgs.haskell-nix.cabalProject' (_: {
         compiler-nix-name = haskellCompiler;
-        src = iogx-config.repoRoot;
+        src = user-repo-root;
         shell.withHoogle = project-parts.shellWithHoogle;
         inherit (project-parts) cabalProjectLocal sha256map;
         inputMap = { "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP; };

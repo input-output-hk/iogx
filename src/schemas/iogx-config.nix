@@ -6,8 +6,6 @@ let
 
 
   schema = {
-    repoRoot.type = V.dir-with-file "cabal.project";
-   
     systems.type = V.nonempty-enum-list [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
     systems.default = [ "x86_64-linux" ];
    

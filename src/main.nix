@@ -14,7 +14,22 @@ let
   iogx-schemas = import ./schemas { inherit libnixschema; };
 
 
-  mkIogxInterface = { repo-root }: 
+  ensureRepoRootHasCabalProjectFile = { unvalidate-user-repo-root }: 
+    libnixschema.validateValueOrThrow {
+      validator = libnixschema.validators.dir-with-file "cabal.project";
+      field = "\"repository root\"";
+      value = unvalidate-user-repo-root;
+      error = { result }: l.iogxError "flake" '' 
+        Your flake.nix has errors:
+
+        The second argument to the call to iogx.lib.mkFlake is invalid: 
+
+        The path "${l.stripStoreFromNixPath unvalidate-user-repo-root}" does not exist or does not contain the cabal.project file.
+      '';
+    };
+
+  
+  mkIogxInterface = { user-repo-root }: 
     let 
       mkConfigErrmsg = file: { result }: l.iogxError file ''
         Your nix/${file}.nix has errors:
@@ -29,7 +44,7 @@ let
       '';
 
       mkConfig = file: args: 
-        let path = "${repo-root}/nix/${file}.nix"; 
+        let path = "${user-repo-root}/nix/${file}.nix"; 
         in if l.pathExists path then 
           let value = import path; 
           in if l.typeOf value == "set" then 
@@ -49,6 +64,13 @@ let
     in 
       l.mapAttrs' mkNameValuePair iogx-schemas;
 
+
+  mkIogxConfig = { iogx-interface, merged-inputs }:
+    let 
+      iogx-config = iogx-interface.load-iogx-config { inputs' = merged-inputs; }; 
+    in 
+      iogx-config;
+      
 
   mkMergedInputs = { user-inputs }:
     let
@@ -81,7 +103,7 @@ let
     };
 
 
-  mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs }:
+  mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs, user-repo-root }:
     iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
       let
         inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
@@ -89,7 +111,7 @@ let
         pkgs = mkPkgs { inherit iogx-inputs system; };
         root = ./.;
         module = "src";
-        args = { inherit inputs inputs' pkgs iogx-config l iogx-interface; };
+        args = { inherit inputs inputs' pkgs iogx-config l iogx-interface user-repo-root; };
         src = modularise { inherit root module args; };
       in
       src.core.flake
@@ -111,15 +133,17 @@ let
       l.mergeDisjointAttrsOrThrow top-level-outputs per-system-outputs mkErrmsg;
 
 
-  mkFlake = user-inputs: repo-root:
+  mkFlake = user-inputs: unvalidate-user-repo-root:
     let 
-      iogx-interface = mkIogxInterface { inherit repo-root; };
+      user-repo-root = ensureRepoRootHasCabalProjectFile { inherit unvalidate-user-repo-root; };
+
+      iogx-interface = mkIogxInterface { inherit user-repo-root; };
       
       merged-inputs = mkMergedInputs { inherit user-inputs; }; 
 
-      iogx-config = iogx-interface.load-iogx-config { inputs' = merged-inputs; }; 
+      iogx-config = mkIogxConfig { inherit iogx-interface merged-inputs; };
 
-      per-system-outputs = mkPerSystemOutputs { inherit iogx-config iogx-interface merged-inputs; };
+      per-system-outputs = mkPerSystemOutputs { inherit iogx-config iogx-interface merged-inputs user-repo-root; };
 
       top-level-outputs = iogx-interface.load-top-level-outputs { inputs' = merged-inputs; };
 

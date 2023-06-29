@@ -1,22 +1,20 @@
-{ inputs, inputs', pkgs, src, ... }:
-
-{ flake }:
+{ inputs, inputs', iogx-interface, pkgs, src, ... }:
 
 let 
-
+  
   rtd-config = iogx-interface.load-read-the-docs { inherit inputs inputs' pkgs; };
 
 
-  supports-rtd = readthedoc-config.siteRoot != null;
+  supports-rtd = rtd-config.siteFolder != null;
   
 
-  site = if supports-rtd then src.read-the-docs.site { inherit readthedoc-config; } else null;
+  site = if supports-rtd then src.read-the-docs.site { inherit rtd-config; } else null;
 
 
-  devshell-profile = if supports-rtd then src.read-the-docs.devshell-profile { inherit readthedocs-config; } else {};
+  devshell-module = if supports-rtd then src.read-the-docs.devshell-module { inherit rtd-config; } else {};
 
 
-  out = { inherit site devshell-profile; };
+  out = { inherit site devshell-module; };
 
 in 
 

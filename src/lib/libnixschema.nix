@@ -367,7 +367,7 @@ let
     else if result.tag == "dir-does-not-have-file" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
-      The directory does not contain the expected file ${result.file}''
+      The directory does not contain the expected file: ${result.file}''
 
     else if result.tag == "missing-requred-field" then ''
       Missing required field: ${result.field}''
@@ -381,19 +381,30 @@ let
 
 
   # Schema -> Config -> Config | error 
-  validateConfigOrThrow = schema: config: mkErrmsg:
+  validateConfigOrThrow = schema: config: mkErrmsg: # TODO make into AttrSet
     let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
     if resultIsSuccess result then
       result.config
     else
       l.pthrow (mkErrmsg { inherit result; });
       
+
+  # { TypecheckFunc, Field, Value } -> Value | error 
+  validateValueOrThrow = { validator, field, value, error }: 
+    let result' = validator field value; in
+    if resultIsSuccess result' then 
+      value 
+    else 
+      let result = result' // { errmsg = resultToErrorString result'; }; in
+      l.pthrow (error { inherit result; });
+
 in
 
 {
   inherit 
     validators 
     validateConfigOrThrow 
+    validateValueOrThrow
     resultToErrorString
     matchConfigAgainstSchema;
 }

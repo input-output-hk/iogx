@@ -10,12 +10,17 @@ let
   haskell-toolchain = src.toolchain."haskell-toolchain-${project.meta.haskellCompiler}";
 
 
-  optional-env = l.optionalAttrs (shell ? CABAL_CONFIG) {
+  CABAL_CONFIG = l.optionalAttrs (shell ? CABAL_CONFIG) {
     CABAL_CONFIG = shell.CABAL_CONFIG;
+  };
+  
+  # Useful for users with LANG settings
+  LOCALE_ARCHIVE = l.optionalAttrs (pkgs.stdenv.hostPlatform.libc == "glibc") {
+    LOCALE_ARCHIVE = "${pkgs.glibcLocales}/lib/locale/locale-archive";
   };
 
 
-  env = optional-env // {
+  env = CABAL_CONFIG // LOCALE_ARCHIVE // {
     PKG_CONFIG_PATH = l.makeSearchPath "lib/pkgconfig" shell.buildInputs;
     NIX_GHC_LIBDIR = shell.NIX_GHC_LIBDIR;
   };

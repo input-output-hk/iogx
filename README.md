@@ -10,7 +10,6 @@
     - [3.1.4. `nixConfig`](#314-nixconfig)
   - [3.2. `nix/iogx-config.nix`](#32-nixiogx-confignix)
     - [3.2.1. `inputs'`](#321-inputs)
-    - [3.2.1. `repoRoot`](#321-reporoot)
     - [3.2.2. `systems`](#322-systems)
     - [3.2.3. `haskellCompilers`](#323-haskellcompilers)
     - [3.2.4. `defaultHaskellCompiler`](#324-defaulthaskellcompiler)
@@ -45,6 +44,7 @@
   - [3.6. `nix/top-level-outputs.nix`](#36-nixtop-level-outputsnix)
     - [3.6.1. `inputs'`](#361-inputs)
   - [3.7. `nix/read-the-docs.nix`](#37-nixread-the-docsnix)
+    - [3.7.1. `siteFolder`](#371-sitefolder)
   - [3.8. `nix/pre-commit-check.nix`](#38-nixpre-commit-checknix)
     - [3.8.1. `inputs`](#381-inputs)
     - [3.8.2. `inputs'`](#382-inputs)
@@ -125,7 +125,6 @@ Click on the file name to jump to its reference section.
 ## 3.1. `flake.nix`
 
 ```nix
-# Default flake.nix
 {
   description = "Change the description field in ./flake.nix";
 
@@ -151,6 +150,7 @@ Click on the file name to jump to its reference section.
 ```
 
 This file is mostly boilerplate and should not be changed, unless you need to add new [`inputs`](#312-inputs).
+
 
 ### 3.1.1. `description`
 
@@ -214,7 +214,7 @@ IOGX hosts its main `mkFlake` function in the `lib` top-level attribute.
 
 There are other functions in `lib`, but they are not needed to use IOGX and will be documented later.
 
-Note that the call to `mkFlake` must take a second argument (`./.`), but this restriction will be lifted soon.
+Note that the call to `mkFlake` must take a second argument (`./.`) which must the repository root and contain a `cabal.project` file. 
 
 As stated in the [Introduction](#1-introduction), your final [flake outputs](#310-flake-outputs-format) are generated based on the contents of your [`nix`](./template/nix) folder.
 
@@ -241,10 +241,8 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 ## 3.2. `nix/iogx-config.nix`
 
 ```nix
-# Example of a valid nix/iogx-config.nix
 { inputs' }:
 { 
-  repoRoot = ../.; 
   systems = [ "x86_64-linux" ]; 
   haskellCompilers = [ "ghc8107" ]; 
   defaultHaskellCompiler = "ghc8107"; 
@@ -259,12 +257,6 @@ If none of the function parameters are needed, your can omit them and write an a
 ### 3.2.1. `inputs'` 
 
 See [`inputs'`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
-
-### 3.2.1. `repoRoot` 
-
-A Nix path to an existing folder containing your `cabal.project` file.
-
-In future versions this field will be removed and it will default to the repository top-level directory, but until then it must be explicitly set (usually to `../.`).
 
 ### 3.2.2. `systems`
 
@@ -309,7 +301,6 @@ This field is optional and defaults to `true`.
 ## 3.3. `nix/haskell-project.nix`
 
 ```nix
-# Default nix/haskell-project.nix
 { inputs 
 , inputs' 
 , pkgs 
@@ -439,7 +430,6 @@ See [`appendOverlays`](https://input-output-hk.github.io/haskell.nix/reference/l
 ## 3.4. `nix/shell.nix`
 
 ```nix
-# Default nix/shell.nix
 { inputs
 , inputs'
 , pkgs
@@ -580,7 +570,8 @@ scripts = {
     echo "I don't have a group!"
   '';
 };
-``` 
+```
+
 `scripts` is an attrset where each attribute name is the script name each the attribute value is an attrset.
 
 The attribute names (`foobar` and `waz` in the example above) will be available in your shell as commands under the same name.
@@ -640,7 +631,6 @@ This field is optional and defaults to the empty string.
 ## 3.5. `nix/per-system-outputs.nix`
 
 ```nix
-# Default nix/per-system-outputs.nix
 { inputs, inputs', pkgs, projects }:
 {
   # packages.foo = { };
@@ -709,7 +699,6 @@ projects.ghc927-xwindows-profiled = { meta, hsPkgs, ... };
 ## 3.6. `nix/top-level-outputs.nix`
 
 ```nix 
-# Default nix/top-level-outputs.nix
 { inputs' }:
 {
   # lib = {
@@ -759,12 +748,32 @@ See [`inputs`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectn
 
 ## 3.7. `nix/read-the-docs.nix`
 
-TODO 
+```nix
+{ inputs, inputs', pkgs }:
+{
+  siteFolder = "doc/read-the-docs";
+}
+``` 
+
+Configuration for your [`read-the-docs`](https://readthedocs.org) site. 
+
+If no site is required, this file can be omitted.
+
+Your shells will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
+
+In addition, a `read-the-docs-site` derivation will be build in CI.
+
+### 3.7.1. `siteFolder`
+
+A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
+
+If no site is required you can set this field to `null`, or omit the `read-the-docs.nix` file entirely. 
+
+This field is optional and it defaults to `null`.
 
 ## 3.8. `nix/pre-commit-check.nix`
 
 ```nix
-# Default nix/pre-commit-check.nix
 { inputs, inputs', pkgs }:
 {
   cabal-fmt.enable = false;
@@ -860,7 +869,6 @@ For example:
 ## 3.9. `nix/hydra-jobs.nix`
 
 ```nix
-# Default nix/hydra-jobs.nix
 { inputs, inputs', pkgs }:
 { 
   includedPaths = [];

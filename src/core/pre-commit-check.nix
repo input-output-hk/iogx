@@ -1,4 +1,4 @@
-{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, ... }:
+{ inputs, inputs', iogx-config, iogx-interface, pkgs, l, src, user-repo-root, ... }:
 
 { haskellCompiler }:
 
@@ -103,7 +103,7 @@ let
 
 
   pre-commit-check = inputs.pre-commit-hooks-nix.lib.${pkgs.stdenv.system}.run {
-    src = pkgs.lib.cleanSource iogx-config.repoRoot;
+    src = pkgs.lib.cleanSource user-repo-root;
     hooks = merged-hooks;
   };
 

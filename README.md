@@ -9,6 +9,7 @@
     - [3.1.3. `outputs`](#313-outputs)
     - [3.1.4. `nixConfig`](#314-nixconfig)
   - [3.2. `nix/iogx-config.nix`](#32-nixiogx-confignix)
+    - [3.2.1. `inputs'`](#321-inputs)
     - [3.2.1. `repoRoot`](#321-reporoot)
     - [3.2.2. `systems`](#322-systems)
     - [3.2.3. `haskellCompilers`](#323-haskellcompilers)
@@ -241,6 +242,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 
 ```nix
 # Example of a valid nix/iogx-config.nix
+{ inputs' }:
 { 
   repoRoot = ../.; 
   systems = [ "x86_64-linux" ]; 
@@ -251,6 +253,12 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 ```
 
 This file must exist and it contains the main configuration values for your project.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
+
+### 3.2.1. `inputs'` 
+
+See [`inputs'`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
 
 ### 3.2.1. `repoRoot` 
 
@@ -327,6 +335,8 @@ See `haskell.nix`'s [`cabalProject'`](https://input-output-hk.github.io/haskell.
 This file will be evaluated once for each element in your GHC build matrix: if your [`haskellCompilers`](#323-haskellcompilers) has 2 elements, and if [`shouldCrossCompile`](#325-shouldcrosscompile) is set to `true`, then this file will be called 8 times (taking into account profiled and non-profiled builds).
 
 If this file does not exist then a `haskell.nix` project will still be created using default values and common heuristics.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
 
 ### 3.3.1. `inputs`
 
@@ -455,6 +465,8 @@ Each `haskell.nix` project produced by [haskell-project.nix](#33-nixhaskell-proj
 The function parameters are similar to those in `haskell-project.nix`, but instead of `meta` we have `project`.
 
 If this file does not exist, then the shells will not be customized, but will still be available via `nix develop`.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
 
 ### 3.4.1. `inputs`
 
@@ -657,6 +669,10 @@ You must *not* define `hydraJobs`, `ciJobs` nor `devShells` here.
 
 Contrary to [`shell.nix`](#34-nixshellnix) and [`haskell-project.nix`](#33-nixhaskell-projectnix), which are evaluated several times against a configuration matrix, `per-system-outputs` is only evaluated once.
 
+If this file does not exist then no extra outputs will be added to the flake. 
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
+
 ### 3.5.1. `inputs`
 
 See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
@@ -733,6 +749,10 @@ in
   { };
 ``` 
 
+If this file does not exist then no extra top-level outputs will be added to the flake.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
+
 ### 3.6.1. `inputs'`
 
 See [`inputs`](#332-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
@@ -788,6 +808,8 @@ The `pre-commit` executable is also available in the shell.
 Currently 10 tools are available, and they are all disabled by default.
 
 If this file is missing, then no hooks will be run.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
 
 ### 3.8.1. `inputs`
 
@@ -854,6 +876,10 @@ For example:
 Configuration for the jobset (`hydraJobs`) to run in CI.
 
 By default all Haskell components (excluding profiled builds) are added to `hydraJobs`, as well as all custom derivations nested under `packages` and `checks` that you may have added in you [`per-system-outputs.nix`](#35-nixper-system-outputsnix), as well as derivations that run the formatters as configured in your [`pre-commit-check.nix`](#38-nixpre-commit-checknix) (one for each compiler in [`haskellCompilers`](#323-haskellcompilers)).
+
+If this file does not exit then only the default jobset will be run in CI.
+
+If none of the function parameters are needed, your can omit them and write an attrset only in this file.
 
 ### 3.9.1. `inputs`
 

@@ -17,7 +17,7 @@ in
   ];
 
 
-  scripts.rtd-autobuild = {
+  scripts.autobuild-rtd-site = {
     description = "Live develop your RTD site";
     group = "readthedocs";
     exec = ''
@@ -27,7 +27,7 @@ in
   };
 
 
-  scripts.rtd-build = {
+  scripts.build-rtd-site = {
     description = "Build your RTD site";
     group = "readthedocs";
     exec = ''
@@ -37,7 +37,7 @@ in
   };
 
 
-  scripts.rtd-serve = {
+  scripts.serve-rtd-site = {
     description = "Full nix build + serve RTD site at localhost:8002";
     group = "readthedocs";
     exec = ''

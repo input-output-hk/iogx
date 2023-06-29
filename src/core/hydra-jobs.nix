@@ -40,6 +40,13 @@ let
       jobs;
 
 
+  addReadTheDocsSite = flake: 
+    if src.read-the-docs.read-the-docs.site == null then 
+      flake 
+    else 
+      l.recursiveUpdate flake { packages.read-the-docs-site = flake.packages.read-the-docs; };
+
+
   # TODO use hasAttrByPath to validate
   removeExcludedPaths = l.deleteManyAttrsByPathString user-hydra.excludedPaths;
 
@@ -64,6 +71,7 @@ let
       addIncludedPaths
       addProfiledBuilds
       addPreCommitChecks
+      addReadTheDocsSite
       removeExcludedPaths
       cleanJobs
       addRequiredJob

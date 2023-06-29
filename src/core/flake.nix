@@ -113,11 +113,10 @@ let
   # This adds the following flake outputs:
   #   packages.read-the-docs-site
   addReadTheDocsSite = flake: 
-    let 
-      read-the-docs-site = { packages.read-the-docs-site = src.read-the-docs.site; };
-      final-flake = l.recursiveUpdate flake pre-commit-checks;
-    in 
-      final-flake;
+    if src.read-the-docs.read-the-docs.site == null then 
+      flake 
+    else 
+      l.recursiveUpdate flake { packages.read-the-docs-site = src.read-the-docs.read-the-docs.site; };
 
 
   __flake__ =
@@ -131,9 +130,6 @@ let
       addHydraJobs
     ]
       { };
-
-  
-  addModule = flake: module: l.recursiveUpdate flake module.outputs
 
 in
 

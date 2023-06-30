@@ -3,10 +3,9 @@
 let
 
   # marlowe:runtime-web:lib:server
-  # 1.                   ghc8107-marlowe-runtime-web-lib-server
-  # 2.          ghc8107-profiled-marlowe-runtime-web-lib-server
-  # 3.          ghc8107-xwindows-marlowe-runtime-web-lib-server
-  # 4. ghc8107-xwindows-profiled-marlowe-runtime-web-lib-server
+  # 1.          ghc8107-marlowe-runtime-web-lib-server
+  # 2. ghc8107-profiled-marlowe-runtime-web-lib-server
+  # 3. ghc8107-xwindows-marlowe-runtime-web-lib-server
   renameHaskellProjectFlakeOutputs = { flake, project }:
     let
       replaceCons = l.replaceStrings [ ":" ] [ "-" ];
@@ -70,14 +69,14 @@ let
 
 
   # This adds the following flake outputs:
-  #   __projects__.{$ghc,$ghc-profiled,$ghc-xwindows,$ghc-xwindows-profiled}
+  #   __projects__.{$ghc,$ghc-profiled,$ghc-xwindows}
   # For each $ghc in iogx-config.haskellCompilers.
   addHaskellProjects = flake: 
     flake // { __projects__ = src.core.haskell-projects; };
 
 
   # This adds the following flake outputs:
-  #   {packages,apps,checks,devShells}.{$ghc,$ghc-profiled,$ghc-xwindows,$ghc-xwindows-profiled}.$comp
+  #   {packages,apps,checks,devShells}.{$ghc,$ghc-profiled,$ghc-xwindows}.$comp
   # For each $ghc in iogx-config.haskellCompilers, and for each $comp in all cabal packages.
   addHaskellProjectsFlakes = flake: 
     let 

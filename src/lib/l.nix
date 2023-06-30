@@ -118,14 +118,12 @@ let
       ghc 
       "${ghc}-profiled" 
       "${ghc}-xwindows" 
-      "${ghc}-xwindows-profiled"
     ]);
 
 
     # TODO this function does not belong here 
     mkProfiledGhcPrefixMatrix = l.concatMap (ghc: [
       "${ghc}-profiled" 
-      "${ghc}-xwindows-profiled"
     ]);
 
 

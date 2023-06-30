@@ -689,11 +689,9 @@ For example, in a configuration with two [`haskellCompilers`](#323-haskellcompil
 projects.ghc8107 = { meta, hsPkgs, ... };
 projects.ghc8107-profiled = { meta, hsPkgs, ... };
 projects.ghc8107-xwindows = { meta, hsPkgs, ... };
-projects.ghc8107-xwindows-profiled = { meta, hsPkgs, ... };
 projects.ghc927 = { meta, hsPkgs, ... };
 projects.ghc927-profiled = { meta, hsPkgs, ... };
 projects.ghc927-xwindows = { meta, hsPkgs, ... };
-projects.ghc927-xwindows-profiled = { meta, hsPkgs, ... };
 ```
 
 ## 3.6. `nix/top-level-outputs.nix`
@@ -1032,7 +1030,7 @@ Your `cabal.project` and `*.cabal` files also contribute to naming the flake fra
 
 **system** ::= one of [`systems`](#322-systems)
 
-**ghc** ::= **compiler** | **compiler** `"-profiled"` | **compiler** `"-xwindows"` | **compiler** `"-xwindows-profiled"`
+**ghc** ::= **compiler** | **compiler** `"-profiled"` | **compiler** `"-xwindows"` 
 
 **hspkg** ::= any package name in `cabal.project`
 
@@ -1081,9 +1079,6 @@ nix build .#p1-test-t1-ghc8107-profiled
 nix build .#p1-lib-l1-ghc8107-xwindows
 nix build .#p1-exe-e1-ghc8107-xwindows
 nix build .#p1-test-t1-ghc8107-xwindows
-nix build .#p1-lib-l1-ghc8107-xwindows-profiled
-nix build .#p1-exe-e1-ghc8107-xwindows-profiled
-nix build .#p1-test-t1-ghc8107-xwindows-profiled
 nix build .#p1-lib-l1-ghc927
 nix build .#p1-exe-e1-ghc927
 nix build .#p1-test-t1-ghc927
@@ -1093,9 +1088,6 @@ nix build .#p1-test-t1-ghc927-profiled
 nix build .#p1-lib-l1-ghc927-xwindows
 nix build .#p1-exe-e1-ghc927-xwindows
 nix build .#p1-test-t1-ghc927-xwindows
-nix build .#p1-lib-l1-ghc927-xwindows-profiled
-nix build .#p1-exe-e1-ghc927-xwindows-profiled
-nix build .#p1-test-t1-ghc927-xwindows-profiled
 
 nix build .#pre-commit-check-ghc8107
 nix build .#pre-commit-check-ghc927
@@ -1106,16 +1098,12 @@ nix run .#p1-exe-e1-ghc8107-profiled
 nix run .#p1-test-t1-ghc8107-profiled
 nix run .#p1-exe-e1-ghc8107-xwindows
 nix run .#p1-test-t1-ghc8107-xwindows
-nix run .#p1-exe-e1-ghc8107-xwindows-profiled
-nix run .#p1-test-t1-ghc8107-xwindows-profiled
 nix run .#p1-exe-e1-ghc927
 nix run .#p1-test-t1-ghc927
 nix run .#p1-exe-e1-ghc927-profiled
 nix run .#p1-test-t1-ghc927-profiled
 nix run .#p1-exe-e1-ghc927-xwindows
 nix run .#p1-test-t1-ghc927-xwindows
-nix run .#p1-exe-e1-ghc927-xwindows-profiled
-nix run .#p1-test-t1-ghc927-xwindows-profiled
 
 nix develop 
 nix develop .#default
@@ -1123,11 +1111,9 @@ nix develop .#profiled
 nix develop .#default-ghc8107
 nix develop .#default-ghc8107-profiled
 nix develop .#default-ghc8107-xwindows
-nix develop .#default-ghc8107-xwindows-profiled
 nix develop .#default-ghc927
 nix develop .#default-ghc927-profiled
 nix develop .#default-ghc927-xwindows
-nix develop .#default-ghc927-xwindows-profiled
 ```
 # 4. Future Work
 

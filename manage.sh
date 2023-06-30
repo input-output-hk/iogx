@@ -58,10 +58,4 @@ bump-quickcheck-dynamic() {
 }
 
 
-update-the-template() {
-  local url="https://www.github.com/input-output-hk/iogx/tree/$GITREV_SHORT/MANUAL.md"
-  local needle=""
-}
-
-
 $1

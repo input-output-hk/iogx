@@ -49,7 +49,7 @@ let
       };
       "${ghc}-xwindows-profiled" = mkHaskellProject { 
         haskellCompiler = ghc;
-        enableProfiling = true; 
+        enableProfiling = false; 
         enableCross = true; 
         enableHaddock = false;
       };

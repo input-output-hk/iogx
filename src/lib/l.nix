@@ -296,25 +296,25 @@ let
         final-str = l.concatStringsSep "\n" lines;
       in
       final-str;
-  };
 
 
-  # Stolen from https://github.com/divnix/nosys
-  deSystemize = let
-    iteration = cutoff: system: fragment:
-      if ! (l.isAttrs fragment) || cutoff == 0 then 
-        fragment
-      else 
-        let recursed = l.mapAttrs (_: iteration (cutoff - 1) system) fragment; in 
-        if l.hasAttr "${system}" fragment then
-          if l.isFunction fragment.${system} then 
-            recursed // { __functor = _: fragment.${system} ;}
-          else 
-            recursed // fragment.${system}
+    # Stolen from https://github.com/divnix/nosys
+    deSystemize = let
+      iteration = cutoff: system: fragment:
+        if ! (l.isAttrs fragment) || cutoff == 0 then 
+          fragment
         else 
-          recursed;
-  in
-    iteration 3;
+          let recursed = l.mapAttrs (_: iteration (cutoff - 1) system) fragment; in 
+          if l.hasAttr "${system}" fragment then
+            if l.isFunction fragment.${system} then 
+              recursed // { __functor = _: fragment.${system} ;}
+            else 
+              recursed // fragment.${system}
+          else 
+            recursed;
+    in
+      iteration 3;
+  };
 
 in
 

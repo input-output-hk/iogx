@@ -16,7 +16,7 @@
       inputs.hackage.follows = "hackage";
     };
 
-    nixpkgs.follows = "haskell-nix/nixpkgs-unstable";
+    nixpkgs.follows = "haskell-nix/nixpkgs-2305";
 
     hackage = {
       url = "github:input-output-hk/hackage.nix";
@@ -72,7 +72,9 @@
           devShells.default = pkgs.stdenv.mkDerivation {
             name = "devshell";
             buildInputs = [ pkgs.github-cli ];
-            shellHook = ''export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "'';
+            shellHook = ''
+              export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "
+            '';
           };
         }
       );

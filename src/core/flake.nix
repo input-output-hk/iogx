@@ -43,14 +43,17 @@ let
         let devShell = src.core.shell.shell { inherit project __flake__; };
         in pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
 
-      renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
-
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
+
+      removeXwindowsDevShell = l.deleteAttrByPathString "devShells.default";
+
+      renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
     in  
     l.composeManyLeft [
       mkBaseFlake
-      renameFlake
       removeLegacyDevShell
+      removeXwindowsDevShell
+      renameFlake
     ]
       project;
 
@@ -90,7 +93,7 @@ let
   # This adds the following flake outputs:
   #   devShells.default 
   #   devShells.profiled 
-  addDefaultDevShell = flake:
+  addDefaultDevShells = flake:
     let 
       final-flake = l.recursiveUpdate flake { 
         devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
@@ -124,7 +127,7 @@ let
       addReadTheDocsSite
       addHaskellProjects
       addHaskellProjectsFlakes
-      addDefaultDevShell
+      addDefaultDevShells
       addPerSystemOutputs
       addHydraJobs
     ]

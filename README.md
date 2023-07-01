@@ -323,7 +323,7 @@ This file returns the arguments that will be used to create a `haskell.nix` proj
 
 See `haskell.nix`'s [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function for details.
 
-This file will be evaluated once for each element in your GHC build matrix: if your [`haskellCompilers`](#323-haskellcompilers) has 2 elements, and if [`shouldCrossCompile`](#325-shouldcrosscompile) is set to `true`, then this file will be called 8 times (taking into account profiled and non-profiled builds).
+This file will be evaluated once for each element in your GHC build matrix: if your [`haskellCompilers`](#323-haskellcompilers) has 2 elements, and if [`shouldCrossCompile`](#325-shouldcrosscompile) is set to `true`, then this file will be called 6 times (taking into account a profiled and non-profiled builds).
 
 If this file does not exist then a `haskell.nix` project will still be created using default values and common heuristics.
 

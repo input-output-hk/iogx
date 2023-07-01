@@ -106,7 +106,7 @@ let
   mkPerSystemOutputs = { iogx-config, iogx-interface, merged-inputs, user-repo-root }:
     iogx-inputs.flake-utils.lib.eachSystem iogx-config.systems (system:
       let
-        inputs = merged-inputs.nosys.lib.deSys system merged-inputs;
+        inputs = l.deSystemize system merged-inputs;
         inputs' = merged-inputs;
         pkgs = mkPkgs { inherit iogx-inputs system; };
         root = ./.;

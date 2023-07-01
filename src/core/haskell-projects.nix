@@ -47,12 +47,6 @@ let
         enableCross = true; 
         enableHaddock = false;
       };
-      "${ghc}-xwindows-profiled" = mkHaskellProject { 
-        haskellCompiler = ghc;
-        enableProfiling = true; 
-        enableCross = true; 
-        enableHaddock = false;
-      };
     };
 
   

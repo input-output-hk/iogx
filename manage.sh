@@ -58,4 +58,13 @@ bump-quickcheck-dynamic() {
 }
 
 
+rebump() {
+  git pull --rebase origin main
+  nix flake lock --update-input iogx 
+  git add .
+  git commit -m "Bump IOGX"
+  git push --force-with-lease
+}
+
+
 $1

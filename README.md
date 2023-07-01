@@ -1026,11 +1026,11 @@ Your `cabal.project` and `*.cabal` files also contribute to naming the flake fra
 
 ### 3.10.1. Grammar for Haskell Packages 
 
-**compiler** ::= one of [`haskellCompilers`](#323-haskellcompilers)
+**ghc** ::= one of [`haskellCompilers`](#323-haskellcompilers)
 
 **system** ::= one of [`systems`](#322-systems)
 
-**ghc** ::= **compiler** | **compiler** `"-profiled"` | **compiler** `"-xwindows"` 
+**flavour** ::= **ghc** | **ghc** `"-profiled"` | **ghc** `"-xwindows"` 
 
 **hspkg** ::= any package name in `cabal.project`
 
@@ -1038,11 +1038,11 @@ Your `cabal.project` and `*.cabal` files also contribute to naming the flake fra
 
 **hscomp** ::= any component name in any `*.cabal` file 
 
-**packages** ::= `"packages."` **system** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp** `"-"` **ghc**
+**packages** ::= `"packages."` **system** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp** `"-"` **flavour**
 
-**apps** ::= `"apps."` **system** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp** `"-"` **ghc**
+**apps** ::= `"apps."` **system** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp** `"-"` **flavour**
 
-**checks** ::= `"checks."` **system** `"."` **hspkg** `"-test-"` **hscomp** `"-"` **ghc**
+**checks** ::= `"checks."` **system** `"."` **hspkg** `"-test-"` **hscomp** `"-"` **flavour**
 
 **devShells** ::= `"devShells."` (`"default"` | `"profiled"` | `"default-"` **ghc** | `"profiled-"` **ghc**)
 
@@ -1050,11 +1050,11 @@ Your `cabal.project` and `*.cabal` files also contribute to naming the flake fra
 
 ### 3.10.2. Extra Packages 
 
-`"packages."` **system** `".pre-commit-check-"` **compiler**
+`"packages."` **system** `".pre-commit-check-"` **ghc**
 
-`"packages."` **system** `".project-roots-"` **compiler**
+`"packages."` **system** `".project-roots-"` **ghc**
 
-`"packages."` **system** `".project-nix-plan-"` **compiler**
+`"packages."` **system** `".project-nix-plan-"` **ghc**
 
 ### 3.10.3. Example 
 
@@ -1110,10 +1110,8 @@ nix develop .#default
 nix develop .#profiled
 nix develop .#default-ghc8107
 nix develop .#default-ghc8107-profiled
-nix develop .#default-ghc8107-xwindows
 nix develop .#default-ghc927
 nix develop .#default-ghc927-profiled
-nix develop .#default-ghc927-xwindows
 ```
 # 4. Future Work
 

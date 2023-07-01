@@ -43,17 +43,19 @@ let
         let devShell = src.core.shell.shell { inherit project __flake__; };
         in pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
 
+      renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
+
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
 
-      removeXwindowsDevShell = l.deleteAttrByPathString "devShells.default";
+      removeXwindowsDevShell = 
+        l.deleteAttrByPathString "devShells.default-${project.meta.haskellCompiler}-xwindows";
 
-      renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
     in  
     l.composeManyLeft [
       mkBaseFlake
+      renameFlake
       removeLegacyDevShell
       removeXwindowsDevShell
-      renameFlake
     ]
       project;
 

@@ -47,7 +47,11 @@ let
 
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
 
-      fixupCrossProject = flake: { inherit (flake) packages checks; }; # We don't want devShells nor apps
+      fixupCrossProject = flake: 
+        if project.meta.enableCross then # We don't want devShells nor apps
+          { inherit (flake) packages checks; } 
+        else 
+        flake; 
     in  
     l.composeManyLeft [
       mkBaseFlake
@@ -94,13 +98,13 @@ let
   #   devShells.default 
   #   devShells.profiled 
   addDefaultDevShells = flake:
-    let 
-      final-flake = l.recursiveUpdate flake { 
+    # if flake ? devShells then # Could be the xwindows flake
+      l.recursiveUpdate flake { 
         devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
         devShells.profiled = flake.devShells."default-${iogx-config.defaultHaskellCompiler}-profiled";
       };
-    in 
-      final-flake;
+    # else 
+    #   flake;
 
 
   # This adds the flake outputs defined by the user in ./nix/per-system-outputs.nix

@@ -17,13 +17,15 @@
   - [3.3. `nix/haskell-project.nix`](#33-nixhaskell-projectnix)
     - [3.3.1. `inputs`](#331-inputs)
     - [3.3.2. `inputs'`](#332-inputs)
-    - [3.3.3. `pkgs`](#333-pkgs)
-    - [3.3.4. `meta`](#334-meta)
-    - [3.3.5. `cabalProjectLocal`](#335-cabalprojectlocal)
-    - [3.3.6. `sha256map`](#336-sha256map)
-    - [3.3.7. `shellWithHoogle`](#337-shellwithhoogle)
-    - [3.3.8. `modules`](#338-modules)
-    - [3.3.9. `overlays`](#339-overlays)
+    - [3.3.3. `meta`](#333-meta)
+    - [3.3.4. `pkgs`](#334-pkgs)
+    - [3.3.5. `config`](#335-config)
+    - [3.3.6. `lib`](#336-lib)
+    - [3.3.7. `cabalProjectLocal`](#337-cabalprojectlocal)
+    - [3.3.8. `sha256map`](#338-sha256map)
+    - [3.3.9. `shellWithHoogle`](#339-shellwithhoogle)
+    - [3.3.10. `modules`](#3310-modules)
+    - [3.3.11. `overlays`](#3311-overlays)
   - [3.4. `nix/shell.nix`](#34-nixshellnix)
     - [3.4.1. `inputs`](#341-inputs)
     - [3.4.2. `inputs'`](#342-inputs)
@@ -303,12 +305,14 @@ This field is optional and defaults to `true`.
 ```nix
 { inputs 
 , inputs' 
-, pkgs 
 , { haskellCompiler
   , enableHaddock 
   , enableProfiling 
   , enableCross 
   }@meta 
+, pkgs 
+, config 
+, lib 
 }:
 {
   cabalProjectLocal = ""; 
@@ -367,15 +371,7 @@ Instances of this are rare: in general you want to deal with [`inputs`](#331-inp
 
 The `inputs/inputs'` notation was stolen from [flake-parts](https://flake.parts).
 
-### 3.3.3. `pkgs`
-
-A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your configured [`systems`](#322-systems), and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
-
-A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` or `inputs'.nixpkgs.legacyPackages.${pkgs.stdenv.system}` but those should *not* be used because they don't have the required overlays.
-
-You may reference `pkgs` freely to get to the legacy packages or functions in `pkgs.lib`.
-
-### 3.3.4. `meta`
+### 3.3.3. `meta`
 
 IOGX will call `haskell.nix.cabalProject'` for each of your configured [`haskellCompilers`](#323-haskellcompilers), with/without cross-compiling according to [`shouldCrossCompile`](#325-shouldcrosscompile), and with and without profiling enabled.
 
@@ -383,7 +379,23 @@ The `meta` field contains that information: `haskellCompiler` tells you the curr
 
 With the exception of `enableHaddock`, which is used in some repositories to defer plutus plugin errors, the other `meta` fields are unlikely to be needed, but are exposed anyway.
 
-### 3.3.5. `cabalProjectLocal`
+### 3.3.4. `pkgs`
+
+A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your configured [`systems`](#322-systems), and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+
+A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` or `inputs'.nixpkgs.legacyPackages.${pkgs.stdenv.system}` but those should *not* be used because they don't have the required overlays.
+
+You may reference `pkgs` freely to get to the legacy packages or functions in `pkgs.lib`.
+
+### 3.3.5. `config` 
+
+The `haskell.nix` project configuration attrset as provided by the [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function.
+
+### 3.3.6. `lib` 
+
+Convenient `pkgs.lib` as provided by the [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function.
+
+### 3.3.7. `cabalProjectLocal`
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -391,7 +403,7 @@ This field is optional and defaults to the empty string.
 
 See [`callCabalProjectToNix`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjectLocal#callcabalprojecttonix) for details.
 
-### 3.3.6. `sha256map` 
+### 3.3.8. `sha256map` 
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -399,7 +411,7 @@ This field is optional and defaults to the empty attrset.
 
 See [`sha256map`](https://input-output-hk.github.io/haskell.nix/tutorials/source-repository-hashes.html?highlight=sha256Map#avoiding-modifying-cabalproject-and-stackyaml) for details.
 
-### 3.3.7. `shellWithHoogle` 
+### 3.3.9. `shellWithHoogle` 
 
 Whether to include a Hoogle database in the development shell.
 
@@ -411,7 +423,7 @@ This field is optional and defaults to `false`.
 
 See [`shellFor`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=withHoogle#shellfor) for details.
 
-### 3.3.8. `modules` 
+### 3.3.10. `modules` 
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -419,7 +431,7 @@ This field is optional and defaults to the empty list.
 
 See [`modules`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=modules#modules) for details.
 
-### 3.3.9. `overlays` 
+### 3.3.11. `overlays` 
 
 This field will be passed as argument to `appendOverlays` 
 

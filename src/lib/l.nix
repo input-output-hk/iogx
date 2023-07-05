@@ -29,6 +29,9 @@ let
 
     traceId = x: l.trace (l.deepSeq x x) x;
 
+    
+    traceShow = msg: x: l.trace (msg + valueToString x);
+
 
     stripStoreFromNixPath = p: 
       let 

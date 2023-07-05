@@ -63,6 +63,7 @@ let
 
       final-projects = filterCrossCompile all-projects;
     in 
+      # l.trace (l.valueToString (l.attrNames final-projects)) final-projects;
       final-projects;
 
 in

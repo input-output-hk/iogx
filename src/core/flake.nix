@@ -38,7 +38,7 @@ let
 
       
   haskellProjectToFlake = project:
-    let 
+    let   
       mkBaseFlake = _: 
         let devShell = src.core.shell.shell { inherit project __flake__; };
         in pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
@@ -51,7 +51,7 @@ let
         if project.meta.enableCross then # We don't want devShells nor apps
           { inherit (flake) packages checks; } 
         else 
-        flake; 
+          flake;
     in  
     l.composeManyLeft [
       mkBaseFlake
@@ -59,7 +59,7 @@ let
       removeLegacyDevShell
       fixupCrossProject
     ]
-      project;
+      l.traceShowproject;
 
 
   # This adds the following flake outputs:
@@ -98,13 +98,10 @@ let
   #   devShells.default 
   #   devShells.profiled 
   addDefaultDevShells = flake:
-    # if flake ? devShells then # Could be the xwindows flake
-      l.recursiveUpdate flake { 
-        devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
-        devShells.profiled = flake.devShells."default-${iogx-config.defaultHaskellCompiler}-profiled";
-      };
-    # else 
-    #   flake;
+    l.recursiveUpdate flake { 
+      devShells.default = flake.devShells."default-${iogx-config.defaultHaskellCompiler}";
+      devShells.profiled = flake.devShells."default-${iogx-config.defaultHaskellCompiler}-profiled";
+    };
 
 
   # This adds the flake outputs defined by the user in ./nix/per-system-outputs.nix

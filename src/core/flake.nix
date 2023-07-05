@@ -47,15 +47,13 @@ let
 
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
 
-      removeXwindowsDevShell = 
-        l.deleteAttrByPathString "devShells.default-${project.meta.haskellCompiler}-xwindows";
-
+      fixupCrossProject = flake: { inherit (flake) packages checks; }; # We don't want devShells nor apps
     in  
     l.composeManyLeft [
       mkBaseFlake
       renameFlake
       removeLegacyDevShell
-      removeXwindowsDevShell
+      fixupCrossProject
     ]
       project;
 

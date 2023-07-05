@@ -2,10 +2,11 @@ set -e
 
 
 run() { # Thank you SO 
-  printf %s "IOGX: $* [y/n]" > /dev/tty
+  printf %s "IOGX: $* [*/n] " > /dev/tty
   read answer < /dev/tty
   case $answer in
-    [yY]*) "$@";;
+    [nN]*) ;;
+    *) "$@";;
   esac
 }
 
@@ -17,7 +18,7 @@ bump-repo() {
   local branch_magic="$4"
 
   local bump_branch="zeme-wana/iogx-bump-$branch_magic"
-  echo "IOGX: preparing bump branch '$bump_branch'"
+  echo "IOGX: preparing bump branch '$repo/$bump_branch'"
 
   cd "../$repo"
 
@@ -45,20 +46,21 @@ bump-repo() {
   run git add .
 
   local iogx_remote="$(git ls-remote https://www.github.com/input-output-hk/iogx refs/heads/main)"
-  local iogx_head="${iogx_remote[0]}"
+  local iogx_head="$(echo $iogx_remote | head -n1 | cut -d " " -f1)"
+  local iogx_short_head="${iogx_head:0:6}"
 
-  run git commit -m "Bump IOGX to $iogx_head"
+  run git commit -m "Bump IOGX to $iogx_short_head"
   run git push --force
 
   local pr_state="$(gh pr view --json state --jq .state)"
 
-  if [ "$pr_state" -eq "OPEN" ]; then 
+  if [ "$pr_state" == "OPEN" ]; then 
     echo "IOGX: open PR already exists for '$bump_branch': modifying title and body" 
-    run gh pr edit --body="Bump IOGX to [$iogx_head](https://www.github.com/input-output-hk/iogx/commit/$iogx_head)"
-    run gh pr edit --title="Bump IOGX to $iogx_head"
+    run gh pr edit --body="Bump IOGX to [$iogx_short_head](https://www.github.com/input-output-hk/iogx/commit/$iogx_head)"
+    run gh pr edit --title="Bump IOGX to $iogx_short_head"
   else 
     echo "IOGX: need to create auto-merging PR for '$bump_branch'" 
-    run gh pr create --title="Bump IOGX to $iogx_head" --body="Bump IOGX to [$iogx_head](https://www.github.com/input-output-hk/iogx/commit/$iogx_head)"
+    run gh pr create --title="Bump IOGX to $iogx_short_head" --body="Bump IOGX to [$iogx_short_head](https://www.github.com/input-output-hk/iogx/commit/$iogx_head)"
     if [ "$add_label" != "*" ]; then
       run gh pr edit --add-label "No Changelog Required"
     fi
@@ -105,10 +107,10 @@ bump-marconi() {
 
 bump-all() {
   local branch_magic="$1"
-  bump-antaeus "$branch_magic"
-  bump-marlowe-cardano "$branch_magic"
-  bump-quickcheck-dynamic "$branch_magic"
-  bump-marconi "$branch_magic"
+  run bump-antaeus "$branch_magic"
+  run bump-marlowe-cardano "$branch_magic"
+  run bump-quickcheck-dynamic "$branch_magic"
+  run bump-marconi "$branch_magic"
 }
 
 

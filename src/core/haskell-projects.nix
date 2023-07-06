@@ -46,6 +46,19 @@ let
     augmented-project;
 
 
+  maybeMakeCrossCompiledProjectForGhc = ghc: 
+    l.optionalAttrs 
+      (pkgs.stdenv.system == "x86_64-linux" && iogx-config.shouldCrossCompile)
+      {
+        "${ghc}-xwindows" = mkHaskellProject { 
+          haskellCompiler = ghc;
+          enableProfiling = false; 
+          enableCross = true; 
+          enableHaddock = false;
+        };
+      };
+
+
   # TODO add enableHaddock to matrix
   mkHaskellProjectsForGhc = ghc:
     {
@@ -61,30 +74,11 @@ let
         enableCross = false; 
         enableHaddock = false;
       };
-      "${ghc}-xwindows" = mkHaskellProject { 
-        haskellCompiler = ghc;
-        enableProfiling = false; 
-        enableCross = true; 
-        enableHaddock = false;
-      };
-    };
-
-  
-  filterCrossCompile = projects:
-    if pkgs.stdenv.system != "x86_64-linux" || !iogx-config.shouldCrossCompile then
-      l.filterAttrs (name: _: !l.hasInfix "xwindows" name) projects
-    else
-      projects; 
+    } // maybeMakeCrossCompiledProjectForGhc ghc;
   
 
   all-haskell-projects = 
-    let 
-      all-projects = l.recursiveUpdateMany (map mkHaskellProjectsForGhc iogx-config.haskellCompilers);
-
-      final-projects = filterCrossCompile all-projects;
-    in 
-      # l.trace (l.valueToString (l.attrNames final-projects)) final-projects;
-      final-projects;
+    l.recursiveUpdateMany (map mkHaskellProjectsForGhc iogx-config.haskellCompilers);
 
 in
 

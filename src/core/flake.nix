@@ -2,10 +2,6 @@
 
 let
 
-  # marlowe:runtime-web:lib:server
-  # 1.          ghc8107-marlowe-runtime-web-lib-server
-  # 2. ghc8107-profiled-marlowe-runtime-web-lib-server
-  # 3. ghc8107-xwindows-marlowe-runtime-web-lib-server
   renameHaskellProjectFlakeOutputs = { flake, project }:
     let
       replaceCons = l.replaceStrings [ ":" ] [ "-" ];
@@ -16,10 +12,9 @@ let
         let
           ghc = "-${project.meta.haskellCompiler}";
           name' = replaceCons name;
-          cross' = l.optionalString project.meta.enableCross "-xwindows";
           profiled' = l.optionalString project.meta.enableProfiling "-profiled";
         in
-        "${name'}${ghc}${cross'}${profiled'}";
+        "${name'}${ghc}${profiled'}";
 
       extra-packages = {
         project-roots = flake.hydraJobs.roots;
@@ -46,18 +41,11 @@ let
       renameFlake = flake: renameHaskellProjectFlakeOutputs { inherit flake project; };
 
       removeLegacyDevShell = flake: removeAttrs flake [ "devShell" ];
-
-      fixupCrossProject = flake: 
-        if project.meta.enableCross then # We don't want devShells nor apps
-          { inherit (flake) packages checks; } 
-        else 
-          flake;
     in  
     l.composeManyLeft [
       mkBaseFlake
       renameFlake
       removeLegacyDevShell
-      fixupCrossProject
     ]
       l.traceShowproject;
 

@@ -15,9 +15,9 @@ let
   # FIXME this can be improved but there are tradeoffs:
   # 1. Expose the `{ pkgs, config, lib, ... }` only to the `modules`, but deal with two `pkgs`.
   # 2. Remove `overlays` option
-  mkHaskellProject = meta@{ haskellCompiler, enableCross, enableHaddock, enableProfiling }: 
+  mkHaskellProject = meta@{ haskellCompiler, enableHaddock, enableProfiling }: 
     let
-      cabal-project'' = pkgs.haskell-nix.cabalProject' ({ pkgs, config, lib, ... }: 
+      cabal-project' = pkgs.haskell-nix.cabalProject' ({ pkgs, config, lib, ... }: 
         let 
           prof-module = pkgs.lib.optional enableProfiling { enableProfiling = true; };
 
@@ -35,28 +35,14 @@ let
           project
       );
 
-      project-parts = iogx-interface.load-haskell-project { inherit inputs inputs' meta pkgs; config = {}; lib = pkgs.lib; };
+      project-parts = iogx-interface.load-haskell-project 
+        { inherit inputs inputs' meta pkgs; config = {}; lib = pkgs.lib; };
 
-      cabal-project' = cabal-project''.appendOverlays project-parts.overlays; 
-
-      cabal-project = if enableCross then cabal-project'.projectCross.mingwW64 else cabal-project';
+      cabal-project = cabal-project'.appendOverlays project-parts.overlays; 
 
       augmented-project = cabal-project // { inherit meta; };
     in 
     augmented-project;
-
-
-  maybeMakeCrossCompiledProjectForGhc = ghc: 
-    l.optionalAttrs 
-      (pkgs.stdenv.system == "x86_64-linux" && iogx-config.shouldCrossCompile)
-      {
-        "${ghc}-xwindows" = mkHaskellProject { 
-          haskellCompiler = ghc;
-          enableProfiling = false; 
-          enableCross = true; 
-          enableHaddock = false;
-        };
-      };
 
 
   # TODO add enableHaddock to matrix
@@ -65,16 +51,14 @@ let
       "${ghc}" = mkHaskellProject { 
         haskellCompiler = ghc;
         enableProfiling = false; 
-        enableCross = false; 
         enableHaddock = false;
       };
       "${ghc}-profiled" = mkHaskellProject { 
         haskellCompiler = ghc;
         enableProfiling = true; 
-        enableCross = false; 
         enableHaddock = false;
       };
-    } // maybeMakeCrossCompiledProjectForGhc ghc;
+    };
   
 
   all-haskell-projects = 

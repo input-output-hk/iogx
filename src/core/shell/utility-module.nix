@@ -17,6 +17,44 @@ let
     partitioned;
 
 
+  list-packages =
+    let
+      shell-packages = l.getAttrWithDefault "packages" [] __shell__;
+
+      formatPkg = pkg:
+        let 
+          name = l.getName pkg.name;
+          version = l.getVersion pkg.name;
+          description = l.substring 0 80 (l.getAttrWithDefault "description" "" pkg.meta);
+        in 
+          if l.pathExists "${pkg}/bin" then 
+            let 
+              exes = l.mapAttrsToList (exe: _: exe) (l.readDir "${pkg}/bin"); 
+            in 
+              if l.length exes == 1 then 
+                "— ${l.ansiBold (l.head exes)} ${version} ∷ ${description}"
+              else 
+                "— ${name} ${version} ∷ ${description}\n  " + 
+                l.concatStringsSep "\n  " (map l.ansiBold exes)
+          else 
+            "";
+
+      formatted-outputs = 
+        l.concatStringsSep "\n" (l.filter (s: s != "") (l.sort (a: b: a < b) (map formatPkg shell-packages)));
+
+      script = {
+        group = "iogx";
+        description = "List the packages avaialable in the shell";
+        exec = ''
+          echo
+          printf "${formatted-outputs}"
+          echo
+        '';
+      };
+    in
+    script;
+
+
   list-haskell-outputs =
     let
       # formatDevShells =
@@ -71,14 +109,14 @@ let
     in
     script;
 
-
+  
   info =
     let
       all-scripts =
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
-          extra-scripts = { inherit info; };
+          extra-scripts = { inherit info list-packages; };
         in
         shell-scripts // extra-scripts;
 
@@ -131,7 +169,7 @@ let
 
   utility-module = {
     scripts = { 
-      inherit info;# list-haskell-outputs; 
+      inherit info list-packages;
     };
   };
 

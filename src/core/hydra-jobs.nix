@@ -19,7 +19,7 @@ let
   addProfiledBuilds = jobs: 
     let filterProfiled = l.filterAttrs (name: _: !l.hasSuffix "profiled" name); in 
     if !user-hydra.includeProfiledBuilds then 
-      {
+      jobs // {
         packages = filterProfiled jobs.packages;
         checks = filterProfiled jobs.checks;
         devShells = filterProfiled jobs.devShells;

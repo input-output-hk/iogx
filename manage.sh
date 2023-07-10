@@ -105,12 +105,22 @@ bump-marconi() {
 }
 
 
+bump-stablecoin-plutus() {
+  local branch_magic="$1"
+  local repo="stablecoin-plutus"
+  local main_branch="main"
+  local add_label="*"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
 bump-all() {
   local branch_magic="$1"
   run bump-antaeus "$branch_magic"
   run bump-marlowe-cardano "$branch_magic"
   run bump-quickcheck-dynamic "$branch_magic"
   run bump-marconi "$branch_magic"
+  run bump-stablecoin-plutus "$branch_magic"
 }
 
 

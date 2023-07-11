@@ -54,6 +54,7 @@ let
       pkgs.glibcLocales
       pkgs.libsodium-vrf
       pkgs.lzma
+      pkgs.lzma.dev
       pkgs.openssl_3_0.dev
       pkgs.secp256k1
       pkgs.zlib

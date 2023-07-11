@@ -124,7 +124,6 @@ Click on the file name to jump to its reference section.
 - [`nix/read-the-docs.nix`](#37-nixread-the-docsnix) — Support for a [`read-the-docs`](https://readthedocs.org) site
 - [`nix/pre-commit-check.nix`](#38-nixpre-commit-checknix) — Configurable code formatters 
 
-  repoRoot = ../.;
 ## 3.1. `flake.nix`
 
 ```nix

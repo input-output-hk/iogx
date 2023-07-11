@@ -57,6 +57,7 @@ let
       pkgs.openssl_3_0.dev
       pkgs.secp256k1
       pkgs.zlib
+      pkgs.zlib.dev
     ];
 
 

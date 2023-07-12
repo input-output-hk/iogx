@@ -152,7 +152,7 @@ let
       final-outputs;
 
   
-  lib = { inherit l modularise libnixschema mkFlake iogx-schemas; };
+  lib = { inherit l modularise libnixschema mkFlake iogx-schemas; __mkPkgs__ = mkPkgs; };
 
 
   out = { inherit lib; };

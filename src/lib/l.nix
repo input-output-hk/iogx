@@ -33,6 +33,13 @@ let
     traceShow = msg: x: l.trace (msg + valueToString x);
 
 
+    trimTextRight = s: n: ellipse: 
+      if l.stringLength s <= n then 
+        s 
+      else 
+        l.substring 0 (n - l.stringLength ellipse) s + ellipse; 
+
+
     stripStoreFromNixPath = p: 
       let 
         s = toString p;
@@ -120,7 +127,6 @@ let
     mkGhcPrefixMatrix = l.concatMap (ghc: [
       ghc 
       "${ghc}-profiled" 
-      "${ghc}-xwindows" 
     ]);
 
 

@@ -470,6 +470,8 @@ If this file does not exist, then the shells will not be customized, but will st
 
 If none of the function parameters are needed, your can omit them and write an attrset only in this file.
 
+Once inside a `nix develop` shell, you should run `list-flake-outputs` to see what's available.
+
 ### 3.4.1. `inputs`
 
 See [`inputs`](#331-inputs) from [`haskell-project.nix`](#33-nixhaskell-projectnix).
@@ -1036,37 +1038,39 @@ The contents of your [`iogx-config.nix`](#32-nixiogx-confignix) decide what your
 
 Your `cabal.project` and `*.cabal` files also contribute to naming the flake fragments.
 
+Once inside a `nix develop` shell, you should run `list-flake-outputs` to see what's available.
+
 ### 3.10.1. Grammar for Haskell Packages 
 
 **ghc** ::= one of [`haskellCompilers`](#323-haskellcompilers)
 
 **system** ::= one of [`systems`](#322-systems)
 
-**flavour** ::= **ghc** | **ghc** `"-profiled"` | **ghc** `"-xwindows"` 
+**hs-pkg** ::= any package name in `cabal.project`
 
-**hspkg** ::= any package name in `cabal.project`
+**hs-tag** ::= `"exe"` | `"test"` | `"lib"` | `"sublib"` 
 
-**hstag** ::= `"exe"` | `"test"` | `"lib"` | `"sublib"` 
+**hs-comp** ::= any component name in any `*.cabal` file 
 
-**hscomp** ::= any component name in any `*.cabal` file 
+**packages** ::= `"packages."` **system** `"."` **hs-pkg** `"-"` **hs-tag** `"-"` **hs-comp** `"-"` (**ghc** | **ghc** `"-profiled"`)
 
-**packages** ::= `"packages."` **system** `"."` **hspkg** `"-"` **hstag** `"-"` **hscomp** `"-"` **flavour**
+**apps** ::= `"apps."` **system** `"."` **hs-pkg** `"-"` (`"exe"` | `"test"`) `"-"` **hs-comp** `"-"` (**ghc** | **ghc** `"-profiled"`)
 
-**apps** ::= `"apps."` **system** `"."` **hspkg** `"-"` (`"exe"` | `"test"`) `"-"` **hscomp** `"-"` **flavour**
+**checks** ::= `"checks."` **system** `"."` **hs-pkg** `"-test-"` **hs-comp** `"-"` (**ghc** | **ghc** `"-profiled"`)
 
-**checks** ::= `"checks."` **system** `"."` **hspkg** `"-test-"` **hscomp** `"-"` **flavour**
-
-**devShells** ::= `"devShells."` (`"default"` | `"profiled"` | `"default-"` **ghc** | `"profiled-"` **ghc**)
+**devShells** ::= `"devShells."` (`"default"` | `"profiled"` | `"default-"` **ghc** | `"default-"` **ghc** `"-profiled"`)
 
 **hydraJobs** ::= defined in [`hydra-jobs.nix`](#39-nixhydra-jobsnix)
 
 ### 3.10.2. Extra Packages 
 
-`"packages."` **system** `".pre-commit-check-"` **ghc**
+`"packages."` **system** `".pre-commit-check-"` (**ghc** | **ghc** `"-profiled"`)
 
-`"packages."` **system** `".project-roots-"` **ghc**
+`"packages."` **system** `".project-roots-"` (**ghc** | **ghc** `"-profiled"`)
 
-`"packages."` **system** `".project-nix-plan-"` **ghc**
+`"packages."` **system** `".project-nix-plan-"` (**ghc** | **ghc** `"-profiled"`)
+
+`"packages."` **system** `".project-coverage-"` (**ghc** | **ghc** `"-profiled"`)
 
 ### 3.10.3. Example 
 
@@ -1087,34 +1091,37 @@ nix build .#p1-test-t1-ghc8107
 nix build .#p1-lib-l1-ghc8107-profiled
 nix build .#p1-exe-e1-ghc8107-profiled
 nix build .#p1-test-t1-ghc8107-profiled
-nix build .#p1-lib-l1-ghc8107-xwindows
-nix build .#p1-exe-e1-ghc8107-xwindows
-nix build .#p1-test-t1-ghc8107-xwindows
 nix build .#p1-lib-l1-ghc927
 nix build .#p1-exe-e1-ghc927
 nix build .#p1-test-t1-ghc927
 nix build .#p1-lib-l1-ghc927-profiled
 nix build .#p1-exe-e1-ghc927-profiled
 nix build .#p1-test-t1-ghc927-profiled
-nix build .#p1-lib-l1-ghc927-xwindows
-nix build .#p1-exe-e1-ghc927-xwindows
-nix build .#p1-test-t1-ghc927-xwindows
 
 nix build .#pre-commit-check-ghc8107
 nix build .#pre-commit-check-ghc927
+
+nix build .#project-roots-ghc8107
+nix build .#project-roots-ghc8107-profiled
+nix build .#project-roots-ghc927
+nix build .#project-roots-ghc927-profiled
+nix build .#project-nix-plan-ghc8107
+nix build .#project-nix-plan-ghc8107-profiled
+nix build .#project-nix-plan-ghc927
+nix build .#project-nix-plan-ghc927-profiled
+nix build .#project-coverage-ghc8107
+nix build .#project-coverage-ghc8107-profiled
+nix build .#project-coverage-ghc927
+nix build .#project-coverage-ghc927-profiled
 
 nix run .#p1-exe-e1-ghc8107
 nix run .#p1-test-t1-ghc8107
 nix run .#p1-exe-e1-ghc8107-profiled
 nix run .#p1-test-t1-ghc8107-profiled
-nix run .#p1-exe-e1-ghc8107-xwindows
-nix run .#p1-test-t1-ghc8107-xwindows
 nix run .#p1-exe-e1-ghc927
 nix run .#p1-test-t1-ghc927
 nix run .#p1-exe-e1-ghc927-profiled
 nix run .#p1-test-t1-ghc927-profiled
-nix run .#p1-exe-e1-ghc927-xwindows
-nix run .#p1-test-t1-ghc927-xwindows
 
 nix develop 
 nix develop .#default

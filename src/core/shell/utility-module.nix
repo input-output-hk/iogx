@@ -4,7 +4,6 @@
 
 let
 
-  # { group1 = { name1 = { exec1, group1, description1 } }}
   partitionScriptsByGroup = scripts:
     let
       getGroup = script: l.getAttrWithDefault "group" "ungrouped" script.value;
@@ -17,51 +16,43 @@ let
     partitioned;
 
 
-  list-haskell-outputs =
+  list-binaries =
     let
-      # formatDevShells =
-      #   let
-      #     fromGhc = ghc: l.concatStringsSep "\n" [
-      #       "nix develop .#${l.ansiBold "${ghc}"}"
-      #       "nix develop .#${l.ansiBold "${ghc}-profiled"}"
-      #     ];
-      #     default =
-      #       "nix develop";
-      #     all-shells = [ default ] ++ map fromGhc iogx-config.haskellCompilers;
-      #   in
-      #   l.concatStringsSep "\n" all-shells;
+      shell-packages = l.getAttrWithDefault "packages" [] __shell__;
 
-      formatGhc = group: command: ghc:
-        if l.hasAttr __flake__.${group} ghc then
-          if group == "devShells" then
-            []
-          else
-            let fromName = name: _: "nix ${command} .#${l.ansiBold name}";
-            in l.mapAttrsToList fromName __flake__.${group}.${ghc}
-        else 
-          [];
-
-      formatGroup = group: command: 
+      formatPkg = pkg:
         let 
-          ghcs = l.mkGhcPrefixMatrix iogx-config.haskellCompilers;
-          lists = l.concatMap (formatGroup group command) ghcs;
+          name = l.getName pkg.name;
+          version = l.getVersion pkg.name;
+          description = l.trimTextRight (l.getAttrWithDefault "description" "" pkg.meta) 80 "...";
         in 
-          l.concatStringsSep "\n" lists;
+          if l.pathExists "${pkg}/bin" then 
+            let 
+              exes = l.mapAttrsToList (exe: _: exe) (l.readDir "${pkg}/bin"); 
+            in 
+              if l.length exes == 1 then 
+                "— ${l.ansiBold (l.head exes)} ${l.ansiColor version "purple" ""} ∷ ${description}"
+              else 
+                "— ${l.ansiColor name "yellow" "bold"} ${l.ansiColor version "purple" ""} ∷ ${description}\n  " + 
+                l.concatStringsSep "\n  " (map l.ansiBold exes)
+          else 
+            "";
 
-      formatted-outputs = l.concatStringsSep "\n\n" [
-        (l.ansiColor "Haskell Packages" "yellow" "bold")
-        (formatGroup "packages" "build")
-        (l.ansiColor "Haskell Apps" "yellow" "bold")
-        (formatGroup "apps" "run")
-        (l.ansiColor "Haskell Checks" "yellow" "bold")
-        (formatGroup "checks" "run")
-        (l.ansiColor "Development Shells" "yellow" "bold")
-        (formatGroup "devShells" "develop")
-      ];
+      formatted-outputs = 
+        let  
+          filterEmpty = l.filter (s: s != "");
+          sortAlphabetically = l.sort (a: b: a < b);
+        in 
+          l.composeManyLeft [
+            (map formatPkg)
+            filterEmpty
+            sortAlphabetically
+            (l.concatStringsSep "\n")
+          ] shell-packages;
 
       script = {
         group = "iogx";
-        description = "List the Haskell outputs (including hydraJobs) buildable by nix";
+        description = "List all the binaries avaialable in the shell";
         exec = ''
           echo
           printf "${formatted-outputs}"
@@ -72,13 +63,49 @@ let
     script;
 
 
+  list-flake-outputs =
+    let
+      formatGroup = group: command: 
+        if l.hasAttr group __flake__ then
+          let 
+            mkCommand = name: _: "nix ${command} .#${l.ansiBold name}";
+            commands = l.mapAttrsToList mkCommand __flake__.${group};
+          in 
+            l.concatStringsSep "\n" commands
+        else 
+          ""; 
+
+      formatted-outputs = l.concatStringsSep "\n\n" [
+        (l.ansiColor "packages" "yellow" "bold")
+        (formatGroup "packages" "build")
+        (l.ansiColor "apps" "yellow" "bold")
+        (formatGroup "apps" "run")
+        (l.ansiColor "checks" "yellow" "bold")
+        (formatGroup "checks" "run")
+        (l.ansiColor "devShells" "yellow" "bold")
+        (formatGroup "devShells" "develop")
+      ];
+
+      script = {
+        group = "iogx";
+        description = "List the flake outputs buildable by nix";
+        exec = ''
+          echo
+          printf "${formatted-outputs}"
+          echo
+        '';
+      };
+    in
+    script;
+
+  
   info =
     let
       all-scripts =
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
-          extra-scripts = { inherit info; };
+          extra-scripts = { inherit info list-binaries list-flake-outputs; };
         in
         shell-scripts // extra-scripts;
 
@@ -101,7 +128,7 @@ let
       formatted-env =
         let
           shell-env = l.getAttrWithDefault "env" { } __shell__;
-          final-env = removeAttrs shell-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" ];
+          final-env = removeAttrs shell-env [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" "CABAL_CONFIG" "LOCALE_ARCHIVE" ];
           formatVar = var: val: ''
             — ${l.ansiBold var} ∷ ${val}
           '';
@@ -131,7 +158,7 @@ let
 
   utility-module = {
     scripts = { 
-      inherit info;# list-haskell-outputs; 
+      inherit info list-binaries list-flake-outputs;
     };
   };
 

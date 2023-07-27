@@ -105,7 +105,7 @@ let
         let
           filterDisabled = l.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (l.getAttrWithDefault "scripts" { } __shell__);
-          extra-scripts = { inherit info list-binaries list-flake-outputs; };
+          extra-scripts = { inherit info list-flake-outputs; };
         in
         shell-scripts // extra-scripts;
 
@@ -158,7 +158,7 @@ let
 
   utility-module = {
     scripts = { 
-      inherit info list-binaries list-flake-outputs;
+      inherit info list-flake-outputs;
     };
   };
 

@@ -4,7 +4,7 @@
 { inputs' }:
 { 
   haskellCompilers = [ "ghc8107" ];
-  # systems = [ "x86_64-linux" "x86-64-darwin" ];
+  # systems = [ "x86_64-linux" "x86_64-darwin" ];
   # defaultHaskellCompiler = "ghc8107";
   # shouldCrossCompile = true;
 }

@@ -12,7 +12,7 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     haskell-nix = {
-      url = "github:input-output-hk/haskell.nix"; 
+      url = "github:input-output-hk/haskell.nix";
       inputs.hackage.follows = "hackage";
     };
 
@@ -51,42 +51,38 @@
 
   outputs = iogx-inputs:
     let
-      iogx = import ./src/main.nix { inherit iogx-inputs; };
-
-      template = {
-        path = ./template;
-        description = "Flake Template for Haskell Projects at IOG";
-        welcomeText = ''
-          # Flake Template for Haskell Projects at IOG
-          Open flake.nix to get started.
-        '';
-      };
-
-      per-system-outputs = iogx-inputs.flake-utils.lib.eachDefaultSystem (system:
-        let 
-          pkgs = iogx-inputs.nixpkgs.legacyPackages.${system};
-        in 
-        { 
-          checks.main = import ./tests/main.nix { inherit iogx pkgs; };
-
-          devShells.default = pkgs.stdenv.mkDerivation {
-            name = "devshell";
-            buildInputs = [ pkgs.github-cli ];
-            shellHook = ''
-              export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "
+      iogx = import ./src/iogx { inherit iogx-inputs; };
+    in
+    iogx.lib.mkFlake {
+      inputs = iogx-inputs;
+      systems = [ "x86_64-darwin" "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+      repoRoot = ./.;
+      config = {
+        formatters = {
+          nixpkgs-fmt.enable = true;
+        };
+        shell = { pkgs, ... }: {
+          name = "iogx";
+          packages = [
+            pkgs.github-cli
+          ];
+        };
+        per-system-outputs = { pkgs, ... }: {
+          checks.testsuite = import ./tests { inherit iogx pkgs; };
+        };
+        top-level-outputs = {
+          inherit (iogx) lib;
+          template.default = {
+            path = ./template;
+            description = "Flake Template for Haskell Projects at IOG";
+            welcomeText = ''
+              # Flake Template for Haskell Projects at IOG
+              Open flake.nix to get started.
             '';
           };
-        }
-      );
-
-      global-outputs = {
-        inherit (iogx) lib;
-        templates.default = template;
-        hydraJobs.main.x86_64-linux = per-system-outputs.checks.x86_64-linux.main;
+        };
       };
-
-    in
-     global-outputs // per-system-outputs;
+    };
 
 
   nixConfig = {

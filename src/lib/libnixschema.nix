@@ -15,7 +15,7 @@ let
   #   | "empty-list"
   #   | "path-does-not-exist"
   #   | "dir-does-not-have-file"
-  #   | "missing-requred-field"
+  #   | "missing-required-field"
   #   | "unknown-field"
   #   | "invalid-list-elem"
   #   | "invalid-attr-elem"
@@ -54,7 +54,7 @@ let
 
 
   # Field -> Value -> FieldValidationResult === TypecheckFunc
-  success = field: value: 
+  success = field: value:
     {
       status = "success";
       inherit field value;
@@ -93,7 +93,7 @@ let
       drv = V.simple-type "derivation"; # Field -> Value -> FieldValidationResult
 
       # Field -> Value -> FieldValidationResult
-      nonempty-string = field: value: 
+      nonempty-string = field: value:
         if value == "" then
           {
             status = "failure";
@@ -183,7 +183,7 @@ let
             };
 
       # Field -> Value -> FieldValidationResult
-      path-exists = field: path: 
+      path-exists = field: path:
         let result = V.path field path; in
         if resultIsFailure result then
           result
@@ -198,7 +198,7 @@ let
           };
 
       # Value -> Field -> Value -> FieldValidationResult
-      dir-with-file = file: field: dir:
+      dir-with-file = file: field: dir: # TODO validate that $file is string and not path
         let result = V.path-exists field dir; in
         if resultIsFailure result then
           result
@@ -213,17 +213,17 @@ let
           success field dir;
 
       # Schema -> Field -> Value -> FieldValidationResult
-      schema = schema': field: config: 
-        let result = matchConfigAgainstSchema schema' config; in 
+      schema = schema': field: config:
+        let result = matchConfigAgainstSchema schema' config; in
         if resultIsFailure result then
           {
             status = "failure";
-            tag = "inner-schema-failure"; 
+            tag = "inner-schema-failure";
             value = config;
             inner = l.head result.errors;
             inherit field;
           }
-        else 
+        else
           success field config;
     };
 
@@ -232,19 +232,19 @@ let
 
 
   # FinalConfig -> Config -> Field -> FieldValidator -> FieldValidationResult
-  validateField = __config__: config: field: validator: 
+  validateField = __config__: config: field: validator:
     if l.hasAttr field config then
       validator.type field config.${field}
-    else if validator ? default then 
-      # FIXME it's ambiguous whether it's a function value or a (Config -> Value)
-      if l.typeOf validator.default == "lambda" then 
+    else if validator ? default then
+    # FIXME it's ambiguous whether it's a function value or a (Config -> Value)
+      if l.typeOf validator.default == "lambda" then
         success field (validator.default __config__)
       else
         success field validator.default
-    else 
+    else
       {
         status = "failure";
-        tag = "missing-requred-field"; 
+        tag = "missing-required-field";
         inherit field;
       };
 
@@ -270,8 +270,8 @@ let
 
       known-fields-results = # [FieldValidationResult]
         l.mapAttrsToList (validateField __config__ config) schema;
-        #                               ^^^^^^^^^^ 
-        # Threading the FinalConfig "before" it's defined: Laziness + Recursion == Magic
+      #                               ^^^^^^^^^^ 
+      # Threading the FinalConfig "before" it's defined: Laziness + Recursion == Magic
 
       all-results = # [FieldValidationResult]
         unknown-fields-results ++ known-fields-results;
@@ -287,7 +287,7 @@ let
         in l.recursiveUpdateMany (map mkNameVal all-results);
 
       schema-result = # SchemaValidationResult
-        if schema ? __passthrough then # TODO revisit this __passthrough business
+        if schema ? __passthrough__ then # TODO revisit this __passthrough__ business
           {
             status = "success";
             config = config;
@@ -318,7 +318,7 @@ let
 
 
   # FieldValidationResult -> String 
-  resultToErrorString = result: 
+  resultToErrorString = result:
     if result.tag == "type-mismatch" then ''
       Invalid field: ${result.field}
       With value: ${l.valueToString result.value}
@@ -369,7 +369,7 @@ let
       With value: ${l.valueToString result.value}
       The directory does not contain the expected file: ${result.file}''
 
-    else if result.tag == "missing-requred-field" then ''
+    else if result.tag == "missing-required-field" then ''
       Missing required field: ${result.field}''
 
     else if result.tag == "unknown-field" then ''
@@ -380,30 +380,30 @@ let
       ${l.valueToString result}'';
 
 
-  # Schema -> Config -> Config | error 
-  validateConfigOrThrow = schema: config: mkErrmsg: # TODO make into AttrSet
-    let result = matchConfigAgainstSchema schema config; in # SchemaValidationResult
+  # { Schema, Config } -> Config | error 
+  validateConfigOrThrow = { schema, config, error }:
+    let result = matchConfigAgainstSchema schema config; in    # SchemaValidationResult
     if resultIsSuccess result then
       result.config
     else
-      l.pthrow (mkErrmsg { inherit result; });
-      
+      l.pthrow (error { inherit result; });
+
 
   # { TypecheckFunc, Field, Value } -> Value | error 
-  validateValueOrThrow = { validator, field, value, error }: 
+  validateValueOrThrow = { validator, field, value, error }:
     let result' = validator field value; in
-    if resultIsSuccess result' then 
-      value 
-    else 
+    if resultIsSuccess result' then
+      value
+    else
       let result = result' // { errmsg = resultToErrorString result'; }; in
       l.pthrow (error { inherit result; });
 
 in
 
 {
-  inherit 
-    validators 
-    validateConfigOrThrow 
+  inherit
+    validators
+    validateConfigOrThrow
     validateValueOrThrow
     resultToErrorString
     matchConfigAgainstSchema;

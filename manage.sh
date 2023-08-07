@@ -141,15 +141,42 @@ bump-stablecoin-plutus() {
 }
 
 
+bump-quickcheck-contractmodel() {
+  local branch_magic="$1"
+  local repo="quickcheck-contractmodel"
+  local main_branch="main"
+  local add_label="*"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
+bump-dapps-certification() {
+  local branch_magic="$1"
+  local repo="dapps-certification"
+  local main_branch="main"
+  local add_label="*"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
 bump-all() {
   local branch_magic="$1"
   run bump-antaeus "$branch_magic"
   run bump-marlowe-cardano "$branch_magic"
+  run bump-quickcheck-dynamic "$branch_magic"
+  run bump-quickcheck-contractmodel "$branch_magic"
   run bump-marconi "$branch_magic"
   run bump-quickcheck-dynamic "$branch_magic"
   run bump-quickcheck-contractmodel "$branch_magic"
   run bump-stablecoin-plutus "$branch_magic"
   run bump-dapps-certification "$branch_magic"
+}
+
+
+export-aliases() {
+  alias ll="ls -la"
+  alias nixdev="nix develop --system x86_64-darwin --impure --override-input iogx ../iogx"
+  alias bump="nix flake lock --update-input iogx && git add . && git commit -m 'Bump IOGX' && git push"
 }
 
 

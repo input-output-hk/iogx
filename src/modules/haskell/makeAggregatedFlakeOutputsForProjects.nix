@@ -51,14 +51,14 @@ let
       outputs = {
         apps = renameGroup flake.apps // renameGroupShort flake.apps;
         checks = renameGroup flake.checks // renameGroupShort flake.checks;
-        packages = renameGroup packages // renameGroupShort packages;
+        packages = renameGroupShort packages;
       };
     in
     outputs;
 
 
   outputs =
-    let projects-list = l.attrValues projects; # TODO optimize, remove "default" and reuse result
+    let projects-list = l.attrValues (removeAttrs projects [ "default" "profiled" ]);
     in l.recursiveUpdateMany (map makeFlakeOutputsForProject projects-list);
 
 in

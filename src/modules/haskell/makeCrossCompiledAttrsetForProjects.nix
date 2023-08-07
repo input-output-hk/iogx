@@ -31,7 +31,8 @@ let
 
   cross-compiled-projects =
     if should-cross-compile then
-      l.mapAttrValues makeCrossFlakeForProject projects
+      let projects' = l.attrValues (removeAttrs projects [ "default" "profiled" ]);
+      in l.mapAttrValues makeCrossFlakeForProject projects';
     else
       { };
 

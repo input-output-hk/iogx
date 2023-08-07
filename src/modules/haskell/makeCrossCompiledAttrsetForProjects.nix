@@ -31,7 +31,7 @@ let
 
   cross-compiled-projects =
     if should-cross-compile then
-      in { mingwW64 = l.mapAttrValues makeCrossFlakeForProject projects; }
+      { mingwW64 = l.mapAttrValues makeCrossFlakeForProject projects; }
     else
       { };
 

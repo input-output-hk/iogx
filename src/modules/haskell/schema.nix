@@ -7,7 +7,7 @@ validators: with validators;
   defaultCompiler.default = conf: builtins.head conf.supportedCompilers;
 
   enableCrossCompilation.type = bool;
-  enableCrossCompilation.default = true;
+  enableCrossCompilation.default = false;
 
   cabalProjectFolder.type = nonempty-string;
   cabalProjectFolder.default = ".";

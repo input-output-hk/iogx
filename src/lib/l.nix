@@ -7,7 +7,11 @@ let
 
   utils = rec {
 
+
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
+
+
+    updateMany = l.foldl' (acc: x: acc // x) { };
 
 
     mergePrefixFlakes = flake1: flake2: prefix:
@@ -27,88 +31,94 @@ let
     maximumBy = f: l.foldl' (x: max: if f x > f max then x else max);
 
 
-    traceId = x: l.trace (l.deepSeq x x) x;
-
-    
-    traceShow = msg: x: l.trace (msg + valueToString x);
+    ptrace = x: y: l.trace (valueToString x) y;
 
 
-    trimTextRight = s: n: ellipse: 
-      if l.stringLength s <= n then 
-        s 
-      else 
-        l.substring 0 (n - l.stringLength ellipse) s + ellipse; 
+    ptraceShow = x: l.trace (valueToString x) x;
 
 
-    stripStoreFromNixPath = p: 
-      let 
+    ptraceAttrNames = s: l.trace (l.attrNames s) s;
+
+
+    trimTextRight = s: n: ellipse:
+      if l.stringLength s <= n then
+        s
+      else
+        l.substring 0 (n - l.stringLength ellipse) s + ellipse;
+
+
+    hasAttrByPathString = p: s: l.hasAttrByPath (l.splitString "." p) s;
+
+
+    stripStoreFromNixPath = p:
+      let
         s = toString p;
-        t = l.substring 30 (l.stringLength s) s; 
-      in 
-        if t == "" then "./." else "./${t}"; 
+        t = l.substring 30 (l.stringLength s) s;
+      in
+      if t == "" then "./." else "./${t}";
 
 
-    valueToString = x: 
-      if x == null then 
+    valueToString = x:
+      if x == null then
         "null"
-      else if l.typeOf x == "set" then 
+      else if l.typeOf x == "set" then
         "{${l.concatStringsSep " " (l.mapAttrsToList (k: v: "${k}=${valueToString v};") x)}}"
-      else if l.typeOf x == "list" then 
+      else if l.typeOf x == "list" then
         "[${l.concatStringsSep " " (map valueToString x)}]"
       else if l.typeOf x == "string" then
         ''"${x}"''
-      else if l.typeOf x == "bool" then 
+      else if l.typeOf x == "bool" then
         if x then "true" else "false"
-      else if l.typeOf x == "lambda" then 
-        "<LAMBDA>" 
-      else 
+      else if l.typeOf x == "lambda" then
+        "<LAMBDA>"
+      else
         toString x;
-    
 
-    findCommonAttributePathsWithDepth = depth': s1: s2: 
+
+    findCommonAttributePathsWithDepth = depth': s1: s2:
       let
         go = depth: { path, v1, v2 }:
-          let 
-            value-clash = 
-              let 
+          let
+            value-clash =
+              let
                 v1-term = l.isAttrs v1 && !l.isDerivation v1;
                 v2-term = l.isAttrs v2 && !l.isDerivation v2;
-              in 
-                !v1-term || !v2-term;
+              in
+              !v1-term || !v2-term;
 
-            mkPair = name: 
-              { 
-                path = if path == "" then name else "${path}.${name}"; 
-                v1 = l.getAttr name v1; 
-                v2 = l.getAttr name v2; 
+            mkPair = name:
+              {
+                path = if path == "" then name else "${path}.${name}";
+                v1 = l.getAttr name v1;
+                v2 = l.getAttr name v2;
               };
           in
-            if depth == 0 then 
-              []
-            else if value-clash then 
-              [{ ${path} = { left = v1; right = v2; }; }]
-            else 
-              let
-                common-names = l.intersectLists (l.attrNames v1) (l.attrNames v2);
-                pairs = map mkPair common-names;
-              in 
-                l.concatMap (go (depth - 1)) pairs;
-      in 
-        go depth' { path = ""; v1 = s1; v2 = s2; };
+          if depth == 0 then
+            [ ]
+          else if value-clash then
+            [{ ${path} = { left = v1; right = v2; }; }]
+          else
+            let
+              common-names = l.intersectLists (l.attrNames v1) (l.attrNames v2);
+              pairs = map mkPair common-names;
+            in
+            l.concatMap (go (depth - 1)) pairs;
+      in
+      go depth' { path = ""; v1 = s1; v2 = s2; };
 
 
     findCommonAttributePaths = findCommonAttributePathsWithDepth (-1);
 
 
     mergeDisjointAttrsOrThrow = s1: s2: mkErrmsg:
-      let 
+      let
         duplicates = l.intersectLists (l.attrNames s1) (l.attrNames s2);
         n = l.length duplicates;
-      in 
-        if n > 0 then 
-          pthrow (mkErrmsg { inherit n duplicates; })
-        else 
-          s1 // s2; 
+      in
+      if n > 0 then
+        pthrow (mkErrmsg { inherit n duplicates; })
+      else
+        s1 // s2;
 
 
     allEquals = xs:
@@ -122,17 +132,17 @@ let
       else
         true;
 
-    
+
     # TODO this function does not belong here 
     mkGhcPrefixMatrix = l.concatMap (ghc: [
-      ghc 
-      "${ghc}-profiled" 
+      ghc
+      "${ghc}-profiled"
     ]);
 
 
     # TODO this function does not belong here 
     mkProfiledGhcPrefixMatrix = l.concatMap (ghc: [
-      "${ghc}-profiled" 
+      "${ghc}-profiled"
     ]);
 
 
@@ -147,18 +157,18 @@ let
 
 
     # FIXME Probably this function is very inefficient 
-    restrictManyAttrsByPathString = paths: set: 
-      let 
+    restrictManyAttrsByPathString = paths: set:
+      let
         parts = map (l.flip restrictAttrByPathString set) paths;
-      in 
-        recursiveUpdateMany parts;
+      in
+      recursiveUpdateMany parts;
 
 
     restrictAttrByPath = path: set:
-      if l.hasAttrByPath path set then 
+      if l.hasAttrByPath path set then
         l.setAttrByPath path (l.getAttrFromPath path set)
-      else 
-        {};
+      else
+        { };
 
 
     restrictAttrByPathString = path: restrictAttrByPath (l.splitString "." path);
@@ -228,34 +238,42 @@ let
 
     plural = n: s: if n == -1 || n == 1 then s else "${s}s";
 
+
     importFileWithDefault = def: path: args:
-      if l.pathExists path then 
-        import path args 
-      else 
-        def; 
+      if l.pathExists path then
+        import path args
+      else
+        def;
+
+
+    mapAttrValues = f: l.mapAttrs (_: f);
+
+
+    # Odd that this isn't a builtin. 
+    attrsSize = s: l.length (l.attrNames s);
 
 
     pthrowIf = cond: msg: if cond then pthrow msg else x: x;
 
 
-    pthrow = text: 
+    pthrow = text:
       l.throw "\n${text}";
 
 
-    iogxError = file: text: 
-      let 
+    iogxError = file: text:
+      let
         readme-anchor = {
           flake = "31-flakenix";
-          iogx-config = "32-nixiogx-confignix";
-          haskell-project = "33-nixhaskell-projectnix";
+          haskell = "32-nixhaskellnix";
+          cabal-project = "33-nixcabal-projectnix";
           shell = "34-nixshellnix";
           per-system-outputs = "35-nixper-system-outputsnix";
           top-level-outputs = "36-nixtop-level-outputsnix";
           read-the-docs = "37-nixread-the-docsnix";
-          pre-commit-check = "38-nixpre-commit-checknix";
-          hydra-jobs = "39-nixhydra-jobsnix";
+          formatters = "38-nixformattersnix";
+          ci = "39-nixcisnix";
         }.${file};
-      in 
+      in
       l.throw ''
         
         ------------------------------------ IOGX --------------------------------------
@@ -308,21 +326,35 @@ let
 
 
     # Stolen from https://github.com/divnix/nosys
-    deSystemize = let
-      iteration = cutoff: system: fragment:
-        if ! (l.isAttrs fragment) || cutoff == 0 then 
-          fragment
-        else 
-          let recursed = l.mapAttrs (_: iteration (cutoff - 1) system) fragment; in 
-          if l.hasAttr "${system}" fragment then
-            if l.isFunction fragment.${system} then 
-              recursed // { __functor = _: fragment.${system} ;}
-            else 
-              recursed // fragment.${system}
-          else 
-            recursed;
-    in
+    deSystemize =
+      let
+        iteration = cutoff: system: fragment:
+          if ! (l.isAttrs fragment) || cutoff == 0 then
+            fragment
+          else
+            let recursed = l.mapAttrs (_: iteration (cutoff - 1) system) fragment; in
+            if l.hasAttr "${system}" fragment then
+              if l.isFunction fragment.${system} then
+                recursed // { __functor = _: fragment.${system}; }
+              else
+                recursed // fragment.${system}
+            else
+              recursed;
+      in
       iteration 3;
+
+
+    getAttrWithDefaulDesys = field: def: set: system:
+      if l.hasAttr field set then
+        l.getAttr system (l.getAttr field set)
+      else
+        def;
+
+
+    mapMaybe = f: xs: builtins.filter (x: x != null) (map f xs);
+
+
+    filterEmptyStrings = l.filter (x: x != "");
   };
 
 in

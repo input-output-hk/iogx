@@ -1,0 +1,25 @@
+cabal-version: 2.2
+name: foo
+version: 3.1.1
+
+library
+  hs-source-dirs: src
+  build-depends: base   
+  exposed-modules: Lib1
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Test1.hs
+  hs-source-dirs: src
+  build-depends: base  
+
+executable exe
+  hs-source-dirs: src 
+  main-is: Exe1.hs
+  build-depends: base  
+
+benchmark bench
+  type: exitcode-stdio-1.0
+  main-is: Bench.hs
+  hs-source-dirs: src
+  build-depends: base  

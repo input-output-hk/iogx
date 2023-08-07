@@ -10,7 +10,10 @@
   };
 
 
-  outputs = inputs: inputs.iogx.lib.mkFlake inputs ./.;
+  outputs = inputs: inputs.iogx.lib.mkFlake ./. {
+    inherit inputs;
+    # systems = ["x86_64-linux" "x86_64-darwin"];
+  };
 
 
   nixConfig = {

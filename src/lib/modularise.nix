@@ -1,6 +1,6 @@
 { l }:
 
-{ root, module, args }:
+{ root, module, args, debug ? false }:
 
 let
 
@@ -9,10 +9,12 @@ let
       let
         name = l.removeSuffix ".nix" path;
         value = import "${dir}/${path}" (args // { ${module} = __module__; });
+        trace = l.ptrace ("[modularise] importing ${dir}/${path}");
+        value' = if debug then trace value else value;
       in
       l.nameValuePair name value
     else
-      # TODO throw or warn instead if path is not a nix file
+    # TODO throw or warn instead if path is not a nix file
       l.nameValuePair path null;
 
 

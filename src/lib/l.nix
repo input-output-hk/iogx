@@ -25,6 +25,9 @@ let
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
 
+    mapAndRecursiveUpdateMany = xs: f: recursiveUpdateMany (map f xs);
+
+
     unwords = l.concatStringsSep " ";
 
 
@@ -260,7 +263,7 @@ let
       l.throw "\n${text}";
 
 
-    iogxError = file: text:
+    iogxError = file: errmsg:
       let
         readme-anchor = {
           flake = "31-flakenix";
@@ -277,9 +280,17 @@ let
       l.throw ''
         
         ------------------------------------ IOGX --------------------------------------
-        ${text}
+        ${errmsg}
         Follow this link for documentation:
         https://www.github.com/input-output-hk/iogx#${readme-anchor}
+        --------------------------------------------------------------------------------
+      '';
+
+    iogxTrace = errmsg:
+      l.trace ''
+        
+        ------------------------------------ IOGX --------------------------------------
+        ${errmsg}
         --------------------------------------------------------------------------------
       '';
 
@@ -355,6 +366,20 @@ let
 
 
     filterEmptyStrings = l.filter (x: x != "");
+
+
+    injectAttrName = n: l.mapAttrs' (k: v: l.nameValuePair k { ${n} = v; });
+
+
+    findDuplicates = list:
+      map l.head (
+        l.attrValues (
+          l.filterAttrs
+            (k: v: l.length v > 1)
+            (l.groupBy toString list)
+        )
+      );
+
   };
 
 in

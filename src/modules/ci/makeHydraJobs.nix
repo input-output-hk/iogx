@@ -52,4 +52,4 @@ let
 
 in
 
-{ ${pkgs.stdenv.system} = hydraJobs; }
+hydraJobs

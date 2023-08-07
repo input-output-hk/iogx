@@ -54,7 +54,7 @@ let
         else
           mkIogxInterfaceFromConfig config;
 
-      flake = iogx-inputs.flake-utils.lib.eachSystem validated-systems (system:
+      flake = l.mapAndRecursiveUpdateMany validated-systems (system:
         let
           inputs' = l.deSystemize system inputs;
           pkgs = mkPkgs iogx-inputs system;
@@ -64,7 +64,7 @@ let
           src = modularise { inherit root module args; };
           __flake__ = src.iogx.flake-assembler;
         in
-        __flake__
+        l.injectAttrName system __flake__
       );
 
       flake' =

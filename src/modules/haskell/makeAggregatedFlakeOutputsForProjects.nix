@@ -24,7 +24,7 @@ let
       renameComponent = name:
         let
           replaceCons = l.replaceStrings [ ":" ] [ "-" ];
-          ghc = if is-single-ghc then "" else "-${meta.haskellCompiler}";
+          ghc = "-${meta.haskellCompiler}";
           name' = replaceCons name;
           profiled' = l.optionalString meta.enableProfiling "-profiled";
         in
@@ -42,23 +42,46 @@ let
         in
         "${name'}${ghc}${profiled'}";
 
-      packages = {
+      renameGroupShortIfNoDuplicates = group':
+        let
+          duplicates = findDuplicateComponentNames group';
+          group-short = renameGroupShort group';
+          group = renameGroup group';
+        in
+        if l.length duplicates == 0 then
+          group-short
+        else
+          warnDuplicateComponentNames duplicates group;
+
+      warnDuplicateComponentNames = duplicates: l.iogxTrace ''
+        There are multiple executables with the same name across your cabal files:
+
+          ${l.concatStringsSep " " duplicates}
+
+        Therefore I cannot create short flake output aliases for those executables.
+      '';
+
+      findDuplicateComponentNames = group:
+        let names = map renameComponentShort (l.attrNames group);
+        in l.findDuplicates names;
+
+      extra-packages = {
         haskell-nix-project-roots = flake.hydraJobs.roots;
         haskell-nix-project-plan-nix = flake.hydraJobs.plan-nix;
         # haskell-nix-project-coverage = flake.hydraJobs.coverage;
-      } // flake.packages;
+      };
 
       outputs = {
-        apps = renameGroup flake.apps // renameGroupShort flake.apps;
-        checks = renameGroup flake.checks // renameGroupShort flake.checks;
-        packages = renameGroupShort packages;
+        apps = renameGroup flake.apps // renameGroupShortIfNoDuplicates flake.apps;
+        checks = renameGroup flake.checks;
+        packages = renameGroup (flake.packages // extra-packages);
       };
     in
     outputs;
 
 
   outputs =
-    let projects-list = l.attrValues (removeAttrs projects [ "default" "profiled" ]);
+    let projects-list = l.attrValues projects;
     in l.recursiveUpdateMany (map makeFlakeOutputsForProject projects-list);
 
 in

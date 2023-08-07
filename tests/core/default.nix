@@ -223,6 +223,10 @@ let
             "${pkgs.stdenv.system}" = { };
             outputPath = ./repo;
           };
+          nixpkgs = {
+            system = pkgs.stdenv.system;
+            currentSystem = pkgs.stdenv.system;
+          };
         };
         repoRoot = ./repo;
         systems = [ pkgs.stdenv.system ];

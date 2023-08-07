@@ -31,11 +31,10 @@ let
 
   cross-compiled-projects =
     if should-cross-compile then
-      let projects' = l.attrValues (removeAttrs projects [ "default" "profiled" ]);
-      in l.mapAttrValues makeCrossFlakeForProject projects'
+      in { mingwW64 = l.mapAttrValues makeCrossFlakeForProject projects; }
     else
       { };
 
 in
 
-{ x86_64-linux.mingwW64 = cross-compiled-projects; }
+cross-compiled-projects

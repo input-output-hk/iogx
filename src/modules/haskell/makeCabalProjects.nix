@@ -75,13 +75,14 @@ let
           enableHaddock = false;
         });
 
-      prefixed-normals = map mkNormal haskell.supportedCompilers;
-      prefixed-profiled = map mkProfiled haskell.supportedCompilers;
-      prefixed = l.listToAttrs (prefixed-normals ++ prefixed-profiled);
-      default = prefixed.${haskell.defaultCompiler};
-      profiled = prefixed."${haskell.defaultCompiler}-profiled";
+      unprofiled = l.listToAttrs (map mkNormal haskell.supportedCompilers);
+      profiled = l.listToAttrs (map mkProfiled haskell.supportedCompilers);
+      all = unprofiled // profiled;
+      default-prefix = "${haskell.defaultCompiler}";
+      profiled-prefix = "${haskell.defaultCompiler}-profiled";
+      count = l.length haskell.supportedCompilers;
     in
-    prefixed // { inherit default profiled; };
+    { inherit all unprofiled profiled default-prefix profiled-prefix count; };
 
 in
 

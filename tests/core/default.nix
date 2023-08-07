@@ -34,9 +34,9 @@ let
         "devShells.default"
         "per.system"
         "top.level"
-        # "hydraJobs.packages.pre-commit-check"
-        # "hydraJobs.packages.read-the-docs-site"
-        # "hydraJobs.devShells.default"
+        "hydraJobs.packages.pre-commit-check"
+        "hydraJobs.packages.read-the-docs-site"
+        "hydraJobs.devShells.default"
       ];
       unexpected = [ ];
     };
@@ -208,8 +208,8 @@ let
         "hydraJobs.foo.include"
       ];
       unexpected = [
-        # "hydraJobs.packages.bar.exclude"
-        # "hydraJobs.foo.exclude" 
+        "hydraJobs.packages.bar.exclude"
+        "hydraJobs.foo.exclude"
       ];
     };
   };

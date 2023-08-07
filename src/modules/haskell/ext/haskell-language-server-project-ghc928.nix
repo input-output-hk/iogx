@@ -1,8 +1,4 @@
-<<<<<<< HEAD:src/toolchain/haskell-language-server-project-ghc928.nix
-{ inputs, pkgs, ... }:
-=======
 { iogx-inputs, pkgs, ... }:
->>>>>>> 1013700 (Refactoring & Changes to the Interface):src/modules/haskell/ext/haskell-language-server-project-ghc928.nix
 
 pkgs.haskell-nix.cabalProject' {
 
@@ -21,11 +17,7 @@ pkgs.haskell-nix.cabalProject' {
     constraints: stylish-haskell==0.14.2.0, hlint==3.4.1
   '';
 
-<<<<<<< HEAD:src/toolchain/haskell-language-server-project-ghc928.nix
-  src = inputs.haskell-language-server-1_9_0_0;
-=======
   src = iogx-inputs.haskell-language-server-1_9_0_0;
->>>>>>> 1013700 (Refactoring & Changes to the Interface):src/modules/haskell/ext/haskell-language-server-project-ghc928.nix
 
   compiler-nix-name = "ghc928";
 

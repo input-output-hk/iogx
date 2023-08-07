@@ -1,11 +1,7 @@
 { pkgs, ... }:
-<<<<<<< HEAD:src/toolchain/cabal-install-ghc928.nix
-let
-=======
 
 let
 
->>>>>>> 1013700 (Refactoring & Changes to the Interface):src/modules/haskell/ext/cabal-install-ghc928.nix
   project = pkgs.haskell-nix.hackage-project {
     name = "cabal-install";
 
@@ -18,11 +14,7 @@ let
     # The test suite depends on a nonexistent package...
     configureArgs = "--disable-tests";
   };
-<<<<<<< HEAD:src/toolchain/cabal-install-ghc928.nix
-in
-=======
 
 in
 
->>>>>>> 1013700 (Refactoring & Changes to the Interface):src/modules/haskell/ext/cabal-install-ghc928.nix
 project.hsPkgs.cabal-install.components.exes.cabal

@@ -67,9 +67,9 @@ let
         projects;
 
       pre-commit-check-packages =
-        l.mapAttrs'
-          (ghc: l.nameValuePair "pre-commit-check-${ghc}")
-          pre-commit-checks;
+        l.mapAttrs' (ghc: pre-commit-check:
+          l.nameValuePair "pre-commit-check-${ghc}" pre-commit-check.package
+        );
 
       read-the-docs-packages =
         let site = src.modules.read-the-docs.makeReadTheDocsSite;

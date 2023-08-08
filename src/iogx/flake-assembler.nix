@@ -77,11 +77,15 @@ let
               (src.modules.haskell.makeShellProfileForProject project)
             ];
           };
-          shells = l.mapAttrValues mkOne projects.profiled-and-unprofiled;
+
+          shells =
+            l.mapAttrValues mkOne projects.profiled-and-unprofiled;
+
           aliases = {
             default = shells.${projects.default-prefix};
             profiled = shells.${projects.profiled-prefix};
           };
+
           shells-plus-aliases = shells // aliases;
         in
         if projects.count == 1 then aliases else shells-plus-aliases;
@@ -107,7 +111,7 @@ let
 
       flake' =
         src.modules.per-system-outputs.makeFlakeWithPerSystemOutputs {
-          extra-args = { inherit projects; };
+          extra-args = { projects = projects.unprofiled-and-default; };
           inherit flake;
         };
 

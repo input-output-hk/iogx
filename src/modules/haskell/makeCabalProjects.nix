@@ -117,10 +117,16 @@ let
 
       unprofiled-and-xcompiled = unprofiled // xcompiled;
 
+      unprofiled-and-default = unprofiled // { inherit default; };
+
       all = profiled-and-unprofiled // xcompiled // haddocked;
 
+      default = unprofiled.${default-prefix};
+
       default-prefix = "${haskell.defaultCompiler}";
+
       profiled-prefix = "${haskell.defaultCompiler}-profiled";
+
       count = l.length haskell.supportedCompilers;
     };
 

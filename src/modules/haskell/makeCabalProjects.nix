@@ -22,12 +22,10 @@ let
   # FIXME this can be improved but there are tradeoffs:
   # 1. Expose the `{ pkgs, config, lib, ... }` only to the `modules`, but deal with two `pkgs`.
   # 2. Remove `overlays` option
-  makeCabalProjectWith = meta@{ haskellCompiler, enableHaddock, enableProfiling }:
+  makeCabalProjectWith = meta@{ haskellCompiler, enableHaddock, enableProfiling, enableCross }:
     let
       cabal-project = pkgs.haskell-nix.cabalProject' (args@{ pkgs, ... }:
         let
-          # If makeCabalProjectWith has been called then we assume that 
-          # ./nix/cabal-project.nix exists.
           project-parts = iogx-interface."cabal-project.nix".load {
             inherit meta;
             inherit (args) pkgs config lib;
@@ -55,17 +53,25 @@ let
           };
         in
         cabal-project.appendOverlays project-parts.overlays;
+
+      cabal-project'' =
+        if enableCross then
+          cabal-project'.projectCross.mingw64
+        else
+          cabal-project';
+
     in
-    cabal-project' // { inherit meta; };
+    cabal-project'' // { inherit meta; };
 
 
   cabal-projects =
     let
-      mkNormal = ghc:
+      mkUnprofiled = ghc:
         l.nameValuePair ghc (makeCabalProjectWith {
           haskellCompiler = ghc;
           enableProfiling = false;
           enableHaddock = false;
+          enableCross = false;
         });
 
       mkProfiled = ghc:
@@ -73,16 +79,50 @@ let
           haskellCompiler = ghc;
           enableProfiling = true;
           enableHaddock = false;
+          enableCross = false;
         });
 
-      unprofiled = l.listToAttrs (map mkNormal haskell.supportedCompilers);
+      mkXCompiled = ghc:
+        l.nameValuePair "${ghc}-mingw64" (makeCabalProjectWith {
+          haskellCompiler = ghc;
+          enableProfiling = false;
+          enableHaddock = false;
+          enableCross = true;
+        });
+
+      mkHaddocked = ghc:
+        l.nameValuePair "${ghc}-haddock" (makeCabalProjectWith {
+          haskellCompiler = ghc;
+          enableProfiling = false;
+          enableHaddock = true;
+          enableCross = false;
+        });
+
+      should-cross-compile =
+        haskell.enableCrossCompilation && pkgs.stdenv.system == "x86_64-linux";
+
+    in
+    rec {
+      unprofiled = l.listToAttrs (map mkUnprofiled haskell.supportedCompilers);
+
       profiled = l.listToAttrs (map mkProfiled haskell.supportedCompilers);
-      all = unprofiled // profiled;
+
+      haddocked = l.listToAttrs (map mkHaddocked haskell.supportedCompilers);
+
+      xcompiled =
+        let attrs = l.listToAttrs (map mkXCompiled haskell.supportedCompilers);
+        in l.optionalAttrs should-cross-compile attrs;
+
+      profiled-and-unprofiled = profiled // unprofiled;
+
+      unprofiled-and-xcompiled = unprofiled // xcompiled;
+
+      all = profiled-and-unprofiled // xcompiled // haddocked;
+
       default-prefix = "${haskell.defaultCompiler}";
       profiled-prefix = "${haskell.defaultCompiler}-profiled";
       count = l.length haskell.supportedCompilers;
-    in
-    { inherit all unprofiled profiled default-prefix profiled-prefix count; };
+    };
 
 in
 

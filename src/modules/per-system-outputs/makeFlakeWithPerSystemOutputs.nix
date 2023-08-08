@@ -1,6 +1,6 @@
-{ pkgs, l, iogx-interface, inputs, inputs', __flake__, ... }:
+{ pkgs, l, iogx-interface, inputs, inputs', ... }:
 
-{ extra-args ? { } }:
+{ extra-args ? { }, flake }: # Can't use the __flake__ above or inf. rec.
 
 let
 
@@ -38,23 +38,23 @@ let
 
   mergeOutputsOrThrow = field:
     l.mergeDisjointAttrsOrThrow
-      (l.getAttrWithDefault field { } __flake__)
+      (l.getAttrWithDefault field { } flake)
       (l.getAttrWithDefault field { } per-system-outputs)
       (mkCollisionError field);
 
 
-  per-system-outputs' = validated-per-system-outputs;
-  #  // {
-  #   packages = mergeOutputsOrThrow "packages";
-  #   apps = mergeOutputsOrThrow "apps";
-  #   checks = mergeOutputsOrThrow "checks";
-  # };
+  flake' = validated-per-system-outputs // {
+    packages = mergeOutputsOrThrow "packages";
+    apps = mergeOutputsOrThrow "apps";
+    checks = mergeOutputsOrThrow "checks";
+    devShells = mergeOutputsOrThrow "devShells";
+  };
 
   # TODO warn on nonstandard outputs
 
 in
 
-per-system-outputs'
+flake'
 
 
 

@@ -83,7 +83,7 @@ let
             "NIX_GHC_LIBDIR"
             "PKG_CONFIG_PATH"
             "CABAL_CONFIG"
-            "LOCALE_ARCHIVE" # TODO add LOCALE_ARCHIVE to shell
+            "LOCALE_ARCHIVE"
           ];
           shell-env = l.getAttrWithDefault "env" { } shell-profile;
           final-env = removeAttrs shell-env internal-vars;

@@ -27,15 +27,19 @@ let
         {
           devShells.default = devShell;
         }
+      ];
+
+      flake' =
+        src.modules.per-system-outputs.makeFlakeWithPerSystemOutputs {
+          inherit flake;
+        };
+
+      flake'' = flake' //
         {
           hydraJobs = src.modules.ci.makeHydraJobs;
-        }
-        (
-          src.modules.per-system-outputs.makePerSystemOutputsWith { }
-        )
-      ];
+        };
     in
-    flake;
+    flake'';
 
 
   assembleHaskellFlake =
@@ -45,13 +49,23 @@ let
       pre-commit-checks =
         let
           mkOne = ghc: project:
-            let
-              ghc = project.meta.haskellCompiler;
-              value = src.modules.formatters.makePreCommitCheck ghc;
-            in
-            l.nameValuePair ghc value;
+            let value = src.modules.formatters.makePreCommitCheck ghc;
+            in l.nameValuePair ghc value;
         in
         l.mapAttrs' mkOne projects.unprofiled;
+
+      pre-commit-check-packages =
+        let
+          mkOne = ghc: pre-commit-check:
+            l.nameValuePair "pre-commit-check-${ghc}" pre-commit-check.package;
+        in
+        l.mapAttrs' mkOne pre-commit-checks;
+
+      read-the-docs-packages =
+        let
+          site = src.modules.read-the-docs.makeReadTheDocsSite;
+        in
+        l.optionalAttrs (site != null) { read-the-docs-site = site; };
 
       devShells =
         let
@@ -63,36 +77,18 @@ let
               (src.modules.haskell.makeShellProfileForProject project)
             ];
           };
-          all = l.mapAttrValues mkOne projects.all;
-          default = all.${projects.default-prefix};
-          profiled = all.${projects.profiled-prefix};
+          shells = l.mapAttrValues mkOne projects.profiled-and-unprofiled;
+          aliases = {
+            default = shells.${projects.default-prefix};
+            profiled = shells.${projects.profiled-prefix};
+          };
+          shells-plus-aliases = shells // aliases;
         in
-        if projects.count == 1 then
-          { inherit default profiled; }
-        else
-          all // { inherit default profiled; };
+        if projects.count == 1 then aliases else shells-plus-aliases;
 
-      pre-commit-check-packages =
-        l.mapAttrs'
-          (ghc: pre-commit-check:
-            l.nameValuePair "pre-commit-check-${ghc}" pre-commit-check.package
-          )
-          pre-commit-checks;
-
-      read-the-docs-packages =
-        let site = src.modules.read-the-docs.makeReadTheDocsSite;
-        in l.optionalAttrs (site != null) { read-the-docs-site = site; };
-
-      per-system-outputs =
-        src.modules.per-system-outputs.makePerSystemOutputsWith {
-          extra-args = { inherit projects; };
-        };
-
-      haskell-flake-outputs =
-        src.modules.haskell.makeAggregatedFlakeOutputsForProjects projects.all;
-
-      cross-compiled-projects =
-        src.modules.haskell.makeCrossCompiledAttrsetForProjects projects.all;
+      all-haskell-flake-outputs =
+        src.modules.haskell.makeAggregatedFlakeOutputsForProjects
+          projects.unprofiled-and-xcompiled;
 
       flake = l.recursiveUpdateMany [
         {
@@ -104,21 +100,23 @@ let
         {
           inherit devShells;
         }
-        {
-          hydraJobs = src.modules.ci.makeHydraJobs;
-        }
-        {
-          hydraJobs = cross-compiled-projects;
-        }
         (
-          per-system-outputs
-        )
-        (
-          haskell-flake-outputs
+          all-haskell-flake-outputs
         )
       ];
+
+      flake' =
+        src.modules.per-system-outputs.makeFlakeWithPerSystemOutputs {
+          extra-args = { inherit projects; };
+          inherit flake;
+        };
+
+      flake'' = flake' //
+        {
+          hydraJobs = src.modules.ci.makeHydraJobs;
+        };
     in
-    flake;
+    flake'';
 
 in
 

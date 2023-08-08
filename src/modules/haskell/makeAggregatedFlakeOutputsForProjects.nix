@@ -26,9 +26,10 @@ let
           replaceCons = l.replaceStrings [ ":" ] [ "-" ];
           ghc = "-${meta.haskellCompiler}";
           name' = replaceCons name;
+          cross = if meta.enableCross then "-mingwW64" else "";
           profiled' = l.optionalString meta.enableProfiling "-profiled";
         in
-        "${name'}${ghc}${profiled'}";
+        "${name'}${profiled'}${cross}${ghc}";
 
       renameGroupShort = group:
         let mkPair = name: l.nameValuePair (renameComponentShort name);
@@ -38,9 +39,10 @@ let
         let
           ghc = if is-single-ghc then "" else "-${meta.haskellCompiler}";
           name' = l.last (l.splitString ":" name);
+          cross = if meta.enableCross then "-mingwW64" else "";
           profiled' = l.optionalString meta.enableProfiling "-profiled";
         in
-        "${name'}${ghc}${profiled'}";
+        "${name'}${profiled'}${cross}${ghc}";
 
       renameGroupShortIfNoDuplicates = group':
         let

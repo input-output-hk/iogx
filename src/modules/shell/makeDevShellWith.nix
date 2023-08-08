@@ -28,11 +28,20 @@ let
   };
 
 
+  local-archive-shell-profile = {
+    env.LOCALE_ARCHIVE =
+      l.optionalString
+        (pkgs.stdenv.hostPlatform.libc == "glibc")
+        ("${pkgs.glibcLocales}/lib/locale/locale-archive");
+  };
+
+
   base-profile = src.modules.shell.makeMergedShellProfile (
     extra-profiles ++
     [
       name-and-welcome-message-profile
       user-shell-as-shell-profile
+      local-archive-shell-profile
     ]
   );
 

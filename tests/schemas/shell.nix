@@ -2,10 +2,10 @@
 
 schema:
 
-let 
+let
 
-  config = {};
-  
+  config = { };
+
 
   testsuite = [
     (invalidField "shell-01" config schema "name" "type-mismatch" 1)
@@ -25,12 +25,12 @@ let
     (successField "shell-13" config schema "welcomeMessage" "welcomeMessage")
 
     (invalidField "shell-14" config schema "packages" "type-mismatch" 1)
-    (defaultField "shell-16" config schema "packages" []) 
+    (defaultField "shell-16" config schema "packages" [ ])
 
     (invalidField "shell-17" config schema "env" "type-mismatch" 1)
     (invalidField "shell-18" config schema "env" "invalid-attr-elem" { A = 1; })
-    (defaultField "shell-19" config schema "env" {})
-    (successField "shell-20" config schema "env" {})
+    (defaultField "shell-19" config schema "env" { })
+    (successField "shell-20" config schema "env" { })
     (successField "shell-21" config schema "env" { A = "B"; })
 
     (invalidField "shell-22" config schema "enterShell" "type-mismatch" 1)
@@ -40,16 +40,16 @@ let
 
     (invalidField "shell-26" config schema "scripts" "type-mismatch" 1)
     (invalidField "shell-27" config schema "scripts" "type-mismatch" 1)
-    (invalidField "shell-28" config schema "scripts" "invalid-attr-elem" { s = { enable = 1; a = 2;}; })
+    (invalidField "shell-28" config schema "scripts" "invalid-attr-elem" { s = { enable = 1; a = 2; }; })
     (invalidField "shell-30" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = "a"; group = ""; }; })
-    (invalidField "shell-31" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = "a"; group = "a"; a = 1;}; })
-    (defaultField "shell-32" config schema "scripts" {})
-    (successField "shell-33" config schema "scripts" {})
+    (invalidField "shell-31" config schema "scripts" "invalid-attr-elem" { s = { enable = true; exec = "a"; group = "a"; a = 1; }; })
+    (defaultField "shell-32" config schema "scripts" { })
+    (successField "shell-33" config schema "scripts" { })
     (successField "shell-34" config schema "scripts" { s = { enable = true; exec = "a"; group = "a"; }; })
 
     (invalidField "shell-35" config schema "__unknown" "unknown-field" 1)
   ];
 
-in 
+in
 
-  testsuite
+testsuite

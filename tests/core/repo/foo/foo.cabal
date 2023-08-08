@@ -7,18 +7,18 @@ library
   build-depends: base   
   exposed-modules: Lib1
 
-test-suite test
+test-suite test1
   type: exitcode-stdio-1.0
-  main-is: Test1.hs
+  main-is: Test.hs
   hs-source-dirs: src
   build-depends: base  
 
-executable exe
+executable exe1
   hs-source-dirs: src 
-  main-is: Exe1.hs
+  main-is: Exe.hs
   build-depends: base  
 
-benchmark bench
+benchmark bench1
   type: exitcode-stdio-1.0
   main-is: Bench.hs
   hs-source-dirs: src

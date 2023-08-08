@@ -1,10 +1,11 @@
-{ src, iogx-inputs, iogx-interface, inputs, inputs', pkgs, l, ... }:
+{ src, iogx-inputs, nix, iogx-interface, inputs, inputs', pkgs, l, system, ... }:
 
 projects: # The haskell.nix projects with the meta field, prefixed by ghc config
 
 let
 
-  haskell = iogx-interface."haskell.nix".load { inherit inputs inputs' pkgs; };
+  haskell = iogx-interface."haskell.nix".load
+    { inherit nix inputs inputs' pkgs l system; };
 
 
   makeCrossFlakeForProject = project:

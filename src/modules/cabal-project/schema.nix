@@ -10,6 +10,9 @@ validators: with validators;
   shellWithHoogle.type = bool;
   shellWithHoogle.default = false;
 
+  shellBuildInputs.type = list;
+  shellBuildInputs.default = [ ];
+
   modules.type = list;
   modules.default = [ ];
 

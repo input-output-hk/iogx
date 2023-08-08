@@ -1,8 +1,9 @@
-{ l, iogx-interface, inputs, flake, ... }:
+{ l, nix, iogx-interface, inputs, flake, ... }:
 
 let
 
-  top-level-outputs = iogx-interface."top-level-outputs.nix".load { inherit inputs; };
+  top-level-outputs = iogx-interface."top-level-outputs.nix".load
+    { inherit nix inputs l; };
 
 
   mkErrmsg = { n, duplicates }: l.iogxError "top-level-outputs" ''
@@ -21,4 +22,3 @@ let
 in
 
 result
-  

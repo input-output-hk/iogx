@@ -1,4 +1,4 @@
-{ src, iogx-inputs, iogx-interface, inputs, inputs', pkgs, l, __flake__, ... }:
+{ src, iogx-inputs, inputs, inputs', pkgs, l, __flake__, ... }:
 
 shell-profile: # The target shell-profile
 

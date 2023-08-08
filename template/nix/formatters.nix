@@ -1,7 +1,7 @@
 # This file is part of the IOGX template and is documented at the link below:
 # https://www.github.com/input-output-hk/iogx#38-nixformattersnix
 
-{ inputs, inputs', pkgs, ... }:
+{ nix, inputs, inputs', pkgs, system, l, ... }:
 {
   # cabal-fmt.enable = false;
   # cabal-fmt.extraOptions = "";

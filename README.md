@@ -2,72 +2,62 @@
 
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
-- [3. API Reference](#3-api-reference)
+- [3. Reference](#3-reference)
+    - [3.0.1. `nix`](#301-nix)
+    - [3.0.2. `inputs`](#302-inputs)
+    - [3.0.3. `inputs'`](#303-inputs)
+    - [3.0.4. `pkgs`](#304-pkgs)
+    - [3.0.5. `system`](#305-system)
+    - [3.0.6. `l`](#306-l)
   - [3.1. `flake.nix`](#31-flakenix)
     - [3.1.1. `description`](#311-description)
     - [3.1.2. `inputs`](#312-inputs)
     - [3.1.3. `outputs`](#313-outputs)
     - [3.1.4. `nixConfig`](#314-nixconfig)
   - [3.2. `nix/haskell.nix`](#32-nixhaskellnix)
-    - [3.2.1. `inputs`](#321-inputs)
-    - [3.2.2. `inputs'`](#322-inputs)
-    - [3.2.3. `pkgs`](#323-pkgs)
-    - [3.2.4. `supportedCompilers`](#324-supportedcompilers)
-    - [3.2.5. `defaultCompiler`](#325-defaultcompiler)
-    - [3.2.6. `enableCrossCompilation`](#326-enablecrosscompilation)
-    - [3.2.7. `defaultChangelogPackages`](#327-defaultchangelogpackages)
+    - [3.2.1. `supportedCompilers`](#321-supportedcompilers)
+    - [3.2.2. `defaultCompiler`](#322-defaultcompiler)
+    - [3.2.3. `enableCrossCompilation`](#323-enablecrosscompilation)
+    - [3.2.4. `defaultChangelogPackages`](#324-defaultchangelogpackages)
   - [3.3. `nix/cabal-project.nix`](#33-nixcabal-projectnix)
-    - [3.3.1. `inputs`](#331-inputs)
-    - [3.3.2. `inputs'`](#332-inputs)
-    - [3.3.3. `meta`](#333-meta)
-    - [3.3.4. `pkgs`](#334-pkgs)
-    - [3.3.5. `config`](#335-config)
-    - [3.3.6. `lib`](#336-lib)
-    - [3.3.7. `cabalProjectLocal`](#337-cabalprojectlocal)
-    - [3.3.8. `sha256map`](#338-sha256map)
-    - [3.3.9. `shellWithHoogle`](#339-shellwithhoogle)
-    - [3.3.10. `modules`](#3310-modules)
-    - [3.3.11. `overlays`](#3311-overlays)
+    - [3.3.1. `meta`](#331-meta)
+    - [3.3.2. `config`](#332-config)
+    - [3.3.3. `cabalProjectLocal`](#333-cabalprojectlocal)
+    - [3.3.4. `sha256map`](#334-sha256map)
+    - [3.3.5. `shellWithHoogle`](#335-shellwithhoogle)
+    - [3.3.6. `shellBuildInputs`](#336-shellbuildinputs)
+    - [3.3.7. `modules`](#337-modules)
+    - [3.3.8. `overlays`](#338-overlays)
   - [3.4. `nix/shell.nix`](#34-nixshellnix)
-    - [3.4.1. `inputs`](#341-inputs)
-    - [3.4.2. `inputs'`](#342-inputs)
-    - [3.4.3. `pkgs`](#343-pkgs)
-    - [3.4.4. `project`](#344-project)
-    - [3.4.5. `name`](#345-name)
-    - [3.4.6. `prompt`](#346-prompt)
-    - [3.4.7. `welcomeMessage`](#347-welcomemessage)
-    - [3.4.8. `packages`](#348-packages)
-    - [3.4.9. `scripts`](#349-scripts)
-    - [3.4.10. `env`](#3410-env)
-    - [3.4.11. `enterShell`](#3411-entershell)
+    - [3.4.1. `project`](#341-project)
+    - [3.4.2. `name`](#342-name)
+    - [3.4.3. `prompt`](#343-prompt)
+    - [3.4.4. `welcomeMessage`](#344-welcomemessage)
+    - [3.4.5. `packages`](#345-packages)
+    - [3.4.6. `scripts`](#346-scripts)
+    - [3.4.7. `env`](#347-env)
+    - [3.4.8. `enterShell`](#348-entershell)
   - [3.5. `nix/per-system-outputs.nix`](#35-nixper-system-outputsnix)
-    - [3.5.1. `inputs`](#351-inputs)
-    - [3.5.2. `inputs'`](#352-inputs)
-    - [3.5.3. `pkgs`](#353-pkgs)
-    - [3.5.4. `projects`](#354-projects)
+    - [3.5.1. `projects`](#351-projects)
   - [3.6. `nix/top-level-outputs.nix`](#36-nixtop-level-outputsnix)
-    - [3.6.1. `inputs`](#361-inputs)
   - [3.7. `nix/read-the-docs.nix`](#37-nixread-the-docsnix)
     - [3.7.1. `siteFolder`](#371-sitefolder)
   - [3.8. `nix/formatters.nix`](#38-nixformattersnix)
-    - [3.8.1. `inputs`](#381-inputs)
-    - [3.8.2. `inputs'`](#382-inputs)
-    - [3.8.3. `pkgs`](#383-pkgs)
-    - [3.8.4. `enable`](#384-enable)
-    - [3.8.5. `extraOptions`](#385-extraoptions)
+    - [3.8.1. `enable`](#381-enable)
+    - [3.8.2. `extraOptions`](#382-extraoptions)
   - [3.9. `nix/ci.nix`](#39-nixcinix)
-    - [3.9.1. `inputs`](#391-inputs)
-    - [3.9.2. `inputs'`](#392-inputs)
-    - [3.9.3. `pkgs`](#393-pkgs)
-    - [3.9.4. `includedPaths`](#394-includedpaths)
-    - [3.9.5. `excludedPaths`](#395-excludedpaths)
+    - [includeDefaultOutputs](#includedefaultoutputs)
+    - [3.9.1. `includedPaths`](#391-includedpaths)
+    - [3.9.2. `excludedPaths`](#392-excludedpaths)
 - [4. Future Work](#4-future-work)
 
 # 1. Introduction 
 
 IOGX is a flake template that provides a skeleton for your Nix code and comes with a number of common DevX facilities to develop your project.
 
-_The vision is to provide a JSON-like and declarative interface to Nix, so that developers unfamiliar with the language may independently maintain and add to the Nix code with minimum effort and maximum pleasure._
+It also implements an optional "module system" for Nix that replaces the `import` keyword.
+
+_The vision is to provide a JSON-like declarative interface to Nix, so that developers unfamiliar with the language may independently maintain and add to the Nix code with minimum effort and maximum pleasure._
 
 To get started run: 
 ```bash
@@ -108,11 +98,11 @@ IOGX uses [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix) t
 
 If you project needs a [Read The Docs](https://readthedocs.org) site then IOGX will include the necessary tools and scripts, and will add the relevant derivations to CI.
 
-# 3. API Reference
+# 3. Reference 
 
-Click on the file name to jump to its reference section.
+The following files are parte of the interface:
 
-- [`flake.nix`](#31-flakenix) — Standard flake, from where you will call [`iogx.lib.mkFlake`] 
+- [`flake.nix`](#31-flakenix) — Standard flake, from where you will call `iogx.lib.mkFlake` 
 - [`nix/haskell.nix`](#32-nixhaskellnix) — Basic configuration values for a Haskell project
 - [`nix/cabal-project.nix`](#33-nixcabal-projectnix) — How to build your [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) cabal project
 - [`nix/shell.nix`](#34-nixshellnix) — Development environment
@@ -121,6 +111,163 @@ Click on the file name to jump to its reference section.
 - [`nix/top-level-outputs.nix`](#36-nixtop-level-outputsnix) — Custom system-independent flake outputs
 - [`nix/read-the-docs.nix`](#37-nixread-the-docsnix) — Support for a [`read-the-docs`](https://readthedocs.org) site
 - [`nix/formatters.nix`](#38-nixformattersnix) — Configurable code formatters 
+
+All the interface files managed by IOGX will have this format:
+
+```nix
+{ nix, inputs, inputs', pkgs, system, l, ... }:
+
+{ }
+```
+
+The input arguments will be fed by IOGX, while you must return an attrset with the attributes required by that file.
+
+Each of these files will be called once for each of your supported systems.
+
+It is recommended to include the ellipse (`...`) in the attribute list, to make future versions of IOGX backward compatible in case new arguments are added.
+
+Some of the files may have additional arguments to the ones in the example above, but those six are standard and passed to every file.
+
+If you don't need *any* of the input arguments, you may omit the parameter altogether. This is common in `./nix/formatters.nix`:
+
+```nix
+# ./nix/formatters.nix
+{ 
+  cabal-fmt.enable = true;
+  stylish-haskell.enable = true;
+}
+```
+
+Documentation for each of the standard arguments is provided below:
+
+### 3.0.1. `nix`
+
+As explained in the introduction, IOGX expects to find certain files in the `./nix` folder.
+
+These form the *file-system* based API and will be used to populate your final flake outputs.
+
+However you will inevitably be creating additional Nix files, which you will want to place in the `./nix` folder as well.
+
+Ordinarily you would use the `import` keyword to import those files, but you can opt for using the `nix` argument instead.
+
+This is an attrset that can be used to reference the contents of your `./nix` folder instead of using the `import` keyword.
+
+It is a pretend module system for Nix.
+
+For example, if this is your `./nix` folder:
+```nix
+- per-system-outputs.nix
+- alpha.nix
+* bravo
+  - charlie.nix 
+  - india.nix
+  - hotel.json
+  * delta 
+    - echo.nix
+    - golf.txt
+```
+
+Then this is how you can use the `nix` attrset:
+```nix
+# ./nix/alpha.nix
+{ ... }:
+"alpha"
+
+# ./nix/bravo/charlie.nix
+{ nix, ... }:
+nix.bravo."hotel.json"
+
+# ./nix/bravo/india.nix
+{ pkgs, ... }:
+pkgs.hello
+
+# ./nix/bravo/delta/echo.nix
+{ nix, l, ... }:
+arg1:
+{ arg2 ? null }:
+l.someFunction arg1 arg2 nix.bravo.delta."golf.txt"
+
+# ./nix/per-system-outputs.nix
+{ nix, inputs, inputs', pkgs, system, l, ... }:
+{ 
+  packages.example = 
+    let 
+      a = nix.alpha;
+      c = nix.bravo.charlie;
+      e = nix.bravo.delta.echo "arg1" {};
+      f = nix.bravo.delta."golf.txt";
+    in
+      42; 
+}
+```
+
+Note that the nix files do not need the `".nix"` suffix, while files with any other extension (e.g. `golf.txt`) must include the full name to be referenced.
+
+In the case of non-nix files, internally IOGX calls `builtins.readFile` is called to read the contents of that file.
+
+Not just the template files, but any other file will also receive the standard arguments `nix`, `inputs`, `inputs'`, `pkgs`, `system`, `l`.
+
+Unlike the interface files, other files cannot omit the input parameter (see `alpha.nix` in the example above). You can use `{ ... }:` or `_:` in that case. 
+
+Using the `nix` argument is optional, and you can also mix and match.
+
+The advantage is that you don't have to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
+
+One thing you cannot do is reference the template files either directly using the `import` keyword or using the `nix` module.
+
+### 3.0.2. `inputs`
+
+Your ordinary flake `inputs` as defined in your `flake.nix`.
+
+You will also find the `self` attribute here (`inputs.self`).
+
+Note that, in contrast to `inputs'` below (note the prime `'` sign), these inputs have *not* been de-systemized. 
+
+This means that you must always specify the system, as in the following example:    
+```nix
+inputs.n2c.packages.x86_64-darwin.nix2container
+```
+
+You may want to use this in case you need a Nix value (including a derivation) which is only available in one system, but which can be used safely in the context of another system. 
+
+Instances of this are rare: in general you want to deal with [`inputs'`](#303-inputs).
+
+### 3.0.3. `inputs'`
+
+Your flake `inputs` de-systemized against the current system.
+
+This means that you can use the following syntax:
+```nix
+inputs'.n2c.packages.nix2container
+inputs'.self.packages.foo
+```
+As opposed to:
+```nix 
+inputs.n2c.packages.x86_64-linux.nix2container
+inputs'.self.packages.foo
+```
+
+In general, you don't want to deal with `system` explicitly, but if you must, you can use [`inputs`](#302-inputs) instead (note the absence of the prime `'` sign).
+
+The `inputs/inputs'` notation was stolen from [flake-parts](https://flake.parts).
+
+### 3.0.4. `pkgs`
+
+A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your supported systems, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+
+A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` or `inputs'.nixpkgs.legacyPackages.${pkgs.stdenv.system}` but those should *not* be used because they don't have the required overlays.
+
+You may reference `pkgs` freely to get to the legacy packages.
+
+### 3.0.5. `system`
+
+This is just `pkgs.stdenv.system`, which is likely to be used often.
+
+### 3.0.6. `l`
+
+This is just `pkgs.lib // builtins`, plus some additional functions which are used internally by IOGX.
+
+It can be used instead of `pkgs.lib` to save 7 precious keystrokes.
 
 ## 3.1. `flake.nix`
 
@@ -312,7 +459,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 ## 3.2. `nix/haskell.nix`
 
 ```nix
-{ inputs, inputs', pkgs, ... }:
+{ nix, inputs, inputs', pkgs, system, l, ... }:
 { 
   supportedCompilers = [ "ghc8107" ]; 
   defaultHaskellCompiler = "ghc8107"; 
@@ -323,21 +470,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 
 This file is optional and contains fundamental configuration values for your Haskell project.
 
-If none of the function parameters are needed (i.e. `inputs`, `inputs'`, `pkgs`, `...`), your can omit them altogether and just define the attrset (this applies to all files inside the `./nix` folder, and the attributes inside the `config` passed to `mkFlake`, if used).
-
-### 3.2.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.2.2. `inputs'`
-
-See [`inputs'`](#332-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.2.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.2.4. `supportedCompilers`
+### 3.2.1. `supportedCompilers`
 
 The non-empty list of GHC versions that can build your project. 
 
@@ -345,7 +478,7 @@ Currently three GHC versions are supported and provided by IOGX: `ghc8107`, `ghc
 
 This field is required.
 
-### 3.2.5. `defaultCompiler`
+### 3.2.2. `defaultCompiler`
 
 Only one compiler at a time can be visible in the `$PATH` in the shell.
 
@@ -355,7 +488,7 @@ You you want to enter a shell with a different compiler, run `list-flake-outputs
 
 This field is optional and defaults to the first (leftmost) compiler in `supportedCompilers`.
 
-### 3.2.6. `enableCrossCompilation`
+### 3.2.3. `enableCrossCompilation`
 
 Cross-compilation on Windows is available via `mingwW64` on `x86_64-linux` only. 
 
@@ -363,7 +496,7 @@ If enabled, cross-compiled packages for you haskell project will be built in CI.
 
 This field is optional and defaults to `false`.
 
-### 3.2.7. `defaultChangelogPackages`
+### 3.2.4. `defaultChangelogPackages`
 
 You can use `scriv` to manage changelogs for your Haskell project.
 
@@ -387,21 +520,21 @@ This field is optional and defaults to the empty list `[]`.
 ## 3.3. `nix/cabal-project.nix`
 
 ```nix
-{ inputs 
+{ nix
+, inputs 
 , inputs' 
-, { haskellCompiler
-  , enableHaddock 
-  , enableProfiling 
-  }@meta 
 , pkgs 
+, system
+, l
+, { haskellCompiler, enableHaddock, enableProfiling, ... }@meta 
 , config 
-, lib 
 , ...
 }:
 {
   cabalProjectLocal = ""; 
   sha256map = { }; 
   shellWithHoogle = false; 
+  shellBuildInputs = [];
   modules = [ ]; 
   overlays = [ ];
 }
@@ -411,71 +544,25 @@ This file is only used if `./nix/haskell.nix` exists, and returns the arguments 
 
 See `haskell.nix`'s [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function for details.
 
-This file will be evaluated once for each element in your GHC build matrix: if your [`supportedCompilers`](#324-supportedcompilers) has 2 elements, then `./nix/cabal-project.nix` will be called 4 times (taking into account profiled and non-profiled builds).
+This file will be evaluated once for each element in your GHC build matrix: if your [`supportedCompilers`](#321-supportedcompilers) has 2 elements, then `./nix/cabal-project.nix` will be called 4 times (taking into account profiled and non-profiled builds).
 
 This will largely affect what your final flake outputs look like. You should run `list-flake-outputs` while inside a `nix develop` shell to see what's available.
 
 If this file does not exist then a `haskell.nix` project will still be created using default values and common heuristics.
 
-### 3.3.1. `inputs`
+### 3.3.1. `meta`
 
-Your ordinary flake [`inputs`](#312-inputs) as defined in your `flake.nix`.
-
-You will also find the `self` attribute here (`inputs.self`).
-
-Note that, in contrast to [`inputs'`](#332-inputs) below, these inputs have *not* been de-systemized. 
-
-This means that you must always specify the system, as in the following example:    
-```nix
-inputs.n2c.packages.x86_64-darwin.nix2container
-```
-
-You may want to use this in case you need a Nix value (including a derivation) which is only available in one system, but which can be used safely in the context of another system. 
-
-Instances of this are rare: in general you want to deal with [`inputs'`](#332-inputs).
-
-### 3.3.2. `inputs'`
-
-The [`inputs`](#331-inputs) de-systemized against the current system.
-
-This means that you can use the following syntax:
-```nix
-inputs'.n2c.packages.nix2container
-```
-As opposed to:
-```nix 
-inputs.n2c.packages.x86_64-linux.nix2container
-```
-
-In general, you don't want to deal with `system` explicitly, but if you must, you can use [`inputs`](#331-inputs) instead (note the absence of prime `'` sign).
-
-The `inputs/inputs'` notation was stolen from [flake-parts](https://flake.parts).
-
-### 3.3.3. `meta`
-
-IOGX will call `haskell.nix:cabalProject'` for each of your configured [`supportedCompilers`](#324-supportedcompilers), and with and without profiling enabled.
+IOGX will call `haskell.nix:cabalProject'` for each of your configured [`supportedCompilers`](#321-supportedcompilers), and with and without profiling enabled.
 
 The `meta` field contains that information: `haskellCompiler` tells you the current compiler, `enableProfiling` tells you whether Haskell library and executable profiling is enabled, while `enableHaddock` is currently always set to `false` (but this attribute will eventually be removed). 
 
 With the exception of `enableHaddock`, which is used in some repositories to defer plutus plugin errors, the other `meta` fields are unlikely to be needed, but are exposed anyway.
 
-### 3.3.4. `pkgs`
-
-A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your supported [`systems`], and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
-
-A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` or `inputs'.nixpkgs.legacyPackages.${pkgs.stdenv.system}` but those should *not* be used because they don't have the required overlays.
-
-You may reference `pkgs` freely to get to the legacy packages or functions in `pkgs.lib`.
-
-### 3.3.5. `config` 
+### 3.3.2. `config` 
 
 The `haskell.nix` project configuration attrset as provided by the [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function.
 
-### 3.3.6. `lib` 
-
-Convenient `pkgs.lib` as provided by the [`cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html#cabalproject) function.
-
-### 3.3.7. `cabalProjectLocal`
+### 3.3.3. `cabalProjectLocal`
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -483,7 +570,7 @@ This field is optional and defaults to the empty string.
 
 See [`callCabalProjectToNix`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjectLocal#callcabalprojecttonix) for details.
 
-### 3.3.8. `sha256map` 
+### 3.3.4. `sha256map` 
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -491,7 +578,7 @@ This field is optional and defaults to the empty attrset.
 
 See [`sha256map`](https://input-output-hk.github.io/haskell.nix/tutorials/source-repository-hashes.html?highlight=sha256Map#avoiding-modifying-cabalproject-and-stackyaml) for details.
 
-### 3.3.9. `shellWithHoogle` 
+### 3.3.5. `shellWithHoogle` 
 
 Whether to include a Hoogle database in the development shell.
 
@@ -503,7 +590,17 @@ This field is optional and defaults to `false`.
 
 See [`shellFor`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=withHoogle#shellfor) for details.
 
-### 3.3.10. `modules` 
+### 3.3.6. `shellBuildInputs` 
+
+Additional build inputs to add to the shell provided by `haskell.nix`.
+
+This field will be passed directly to `haskell.nix:cabalProject'` as `shell.buildInputs`.
+
+This field is optional and defaults to the empty list `[]`.
+
+See [`shellFor`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=withHoogle#shellfor) for details.
+
+### 3.3.7. `modules` 
 
 This field will be passed directly to `haskell.nix:cabalProject'`. 
 
@@ -511,7 +608,7 @@ This field is optional and defaults to the empty list.
 
 See [`modules`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=modules#modules) for details.
 
-### 3.3.11. `overlays` 
+### 3.3.8. `overlays` 
 
 This field will be passed as argument to `appendOverlays` 
 
@@ -522,13 +619,13 @@ See [`appendOverlays`](https://input-output-hk.github.io/haskell.nix/reference/l
 ## 3.4. `nix/shell.nix`
 
 ```nix
-{ inputs
+{ nix 
+, inputs
 , inputs'
 , pkgs
-, { meta
-  , hsPkgs
-  , ... 
-  }@project ? null
+, system
+, l
+, { meta, hsPkgs, ... }@project ? null
 , ...
 }:
 { 
@@ -551,35 +648,23 @@ If `./nix/haskell.nix` is present, a shell will be generated for each compiler, 
 
 Once inside the default `nix develop` shell, you should run `list-flake-outputs` to see what's available.
 
-### 3.4.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.4.2. `inputs'`
-
-See [`inputs'`](#332-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.4.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.4.4. `project`
+### 3.4.1. `project`
 
 This argument is only present if `./nix/haskell.nix` exists.
 
-This is the very value returned by `haskell.nix:cabalProject'`, which has been augmented with the relevant [`meta`](#334-meta) field as seen in [`cabal-project.nix`](#33-nixcabal-projectnix).
+This is the very value returned by `haskell.nix:cabalProject'`, which has been augmented with the relevant [`meta`](#331-meta) field as seen in `./nix/cabal-project.nix`.
 
-Each `haskell.nix` project produced by [haskell-project.nix](#33-nixcabal-projectnix) will generated a shell that can be configured in this file.
+Each `haskell.nix` project produced by `./nix/cabal-project.nix` will generated a shell that can be configured in this file.
 
 Below your will find an example of how to use `hsPkgs` and `meta`.
 
-### 3.4.5. `name`
+### 3.4.2. `name`
 
-This field will be used as the shell's derivation name and it will also be used to fill in the default values for [`prompt`](#346-prompt) and [`welcomeMessage`](#347-welcomemessage).
+This field will be used as the shell's derivation name and it will also be used to fill in the default values for `prompt` and `welcomeMessage` below.
 
 This field is optional and defaults to `nix-shell`.
 
-### 3.4.6. `prompt`
+### 3.4.3. `prompt`
 
 Terminal prompt, i.e. the value of the `PS1` environment variable. 
 
@@ -605,15 +690,15 @@ prompt =
 ```
 This field is optional and defaults to the familiar green `nix-shell` prompt.
 
-### 3.4.7. `welcomeMessage`
+### 3.4.4. `welcomeMessage`
 
 When entering the shell, this welcome message will be printed.
 
-The same caveat about escaping back slashes in [`prompt`](#346-prompt) applies here.
+The same caveat about escaping back slashes in `prompt` applies here.
 
-This field is optional and defaults to a simple welcome message using the [`name`](#345-name) field.
+This field is optional and defaults to a simple welcome message using the `name` field.
 
-### 3.4.8. `packages`
+### 3.4.5. `packages`
 
 You can add anything you want here, so long as it's a derivation with executables in the `/bin` folder. 
 
@@ -643,7 +728,7 @@ If you do, then `nix develop` will build your project every time you enter the s
 
 This field is optional and defaults to the empty list. 
 
-### 3.4.9. `scripts`
+### 3.4.6. `scripts`
 
 Custom scripts for your shell.
 
@@ -692,7 +777,7 @@ Each shell comes with several useful scripts gathered under the `iogx` group.
 
 This field is optional and defaults to the empty attrset. 
 
-### 3.4.10. `env`
+### 3.4.7. `env`
 
 Custom environment variables. 
 
@@ -712,7 +797,7 @@ export THE_ANSWER="42"
 
 This field is optional and defaults to the empty attrset. 
 
-### 3.4.11. `enterShell`
+### 3.4.8. `enterShell`
 Standard nix `shellHook`, to be executed every time you enter the shell.
 
 ```nix
@@ -727,7 +812,7 @@ This field is optional and defaults to the empty string.
 ## 3.5. `nix/per-system-outputs.nix`
 
 ```nix
-{ inputs, inputs', pkgs, projects ? null, ... }:
+{ nix, inputs, inputs', pkgs, systems, l, projects ? null, ... }:
 {
   packages.foo = { };
   checks.extra = { };
@@ -755,43 +840,27 @@ You must *not* define `hydraJobs`, `ciJobs` nor `devShells` here.
 
 If this file does not exist then no extra outputs will be added to the flake. 
 
-By default CI will only build `packages`, `checks` and `devShells` (see [`includedPaths`](#394-includedpaths) about this).
-
-### 3.5.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.5.2. `inputs'`
-
-See [`inputs`](#332-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.5.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.5.4. `projects`
+### 3.5.1. `projects`
 
 This argument is only present if `./nix/haskell.nix` exists.
 
 The `projects` parameter is an attrset containing all the projects in the build matrix. 
 
-Refer to the [`project`](#344-project) field in [`shell.nix`](#34-nixshellnix) for more information.
+Refer to the [`project`](#341-project) field in [`shell.nix`](#34-nixshellnix) for more information.
 
 Each project has an attribute name which describes the current build configuration.
 
-For example, in a configuration with two [`supportedCompilers`](#324-supportedcompilers), you would have:
+For example, in a configuration with two [`supportedCompilers`](#321-supportedcompilers), you would have:
 
 ```nix
 projects.ghc8107 = { meta, hsPkgs, ... };
-projects.ghc8107-profiled = { meta, hsPkgs, ... };
 projects.ghc927 = { meta, hsPkgs, ... };
-projects.ghc927-profiled = { meta, hsPkgs, ... };
 ```
 
 ## 3.6. `nix/top-level-outputs.nix`
 
 ```nix 
-{ inputs, ... }:
+{ nix, inputs, l, ... }:
 {
   lib = {
     f = _: null;
@@ -810,7 +879,9 @@ This is where you can define library functions or Nix values that are pure or `s
 
 An error is thrown in case of a name clash with existing top-level output groups (e.g. `packages`, `devShells`, `apps`).
 
-Because these are system-independent outputs, you do not have access to the de-systemized `inputs'` nor to `pkgs`.
+Because these are system-independent outputs, you do not have access to the de-systemized `inputs'` nor to `pkgs` or `system`.
+
+Also note that if you want to use the `nix` argument here to access other files, those files will also not have access to `inputs'` nor to `pkgs` or `system`.
 
 Only in this file is it appropriate, if needed, to reach for `nixpkgs` like so:
 ```nix
@@ -831,10 +902,6 @@ in
 ``` 
 
 If this file does not exist then no extra top-level outputs will be added to the flake.
-
-### 3.6.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
 
 ## 3.7. `nix/read-the-docs.nix`
 
@@ -914,19 +981,7 @@ If `./nix/haskell.nix` exists, then one package will be added for each compiler 
 
 Always run `list-flake-outputs` while inside any `nix develop` shell to see what's available.
 
-### 3.8.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.8.2. `inputs'`
-
-See [`inputs'`](#332-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.8.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.8.4. `enable` 
+### 3.8.1. `enable` 
 
 It is sufficient to set the `enable` flag to `true` to make the tool active.
 
@@ -944,7 +999,7 @@ Currently there is no way to change the location of the configuration files.
 
 Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
 
-### 3.8.5. `extraOptions` 
+### 3.8.2. `extraOptions` 
 
 You can *append* additional options to a tool's command by setting the `extraOptions` field.
 
@@ -965,6 +1020,9 @@ For example:
 ```nix
 { inputs, inputs', pkgs, ... }:
 { 
+  
+  includeDefaultOutputs = true;
+
   includedPaths = [];
 
   excludedPaths = [];
@@ -975,33 +1033,17 @@ Configuration for the jobset to run in CI.
 
 This determines what your final `hydraJobs` flake outputs looks like. 
 
-If `haskell.nix` exists, then all Haskell components (excluding profiled builds) are added to `hydraJobs`.
+### includeDefaultOutputs 
 
-All custom derivations nested under `packages` and `checks` that you may have added in you [`per-system-outputs.nix`](#35-nixper-system-outputsnix) will also be added to `hydraJobs`.
+If this is set to `true`, then all `packages`, `checks` and `devShells` (coming from `inputs'.self`) will be added to `hydraJobs`.
 
-If `./nix/read-the-docs` exists, then `packages.read-the-docs-site` will be added. 
+If this is set to `false`, then no outputs will be added to `hydraJobs`, and you will have to populate it explicitly using `includedPaths` and `excludedPaths`.
 
-One or more `packages.pre-commit-check-*` is also added to `hydraJobs`.
-
-If this file does not exit then only the default jobset will be run in CI, which includes all `packages`, `checks` and `devShells` as found in the final `inputs'.self`.
-
-### 3.9.1. `inputs`
-
-See [`inputs`](#331-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.9.2. `inputs'`
-
-See [`inputs`](#332-inputs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.9.3. `pkgs`
-
-See [`pkgs`](#333-pkgs) from [`cabal-project.nix`](#33-nixcabal-projectnix).
-
-### 3.9.4. `includedPaths`
+### 3.9.1. `includedPaths`
 
 This is a list of *strings*, representing attribute *paths* in the final flake outputs (i.e. paths in `inputs'.self`).
 
-This field is where you would add the derivations defined in your [`per-system-outputs.nix`](#35-nixper-system-outputsnix).
+If you have defined non-standard outputs in your [`per-system-outputs.nix`](#35-nixper-system-outputsnix), this is the place to add them.
 
 For example:
 ```nix
@@ -1048,13 +1090,14 @@ hydraJobs = {
 }
 ```
 
-### 3.9.5. `excludedPaths`
+### 3.9.2. `excludedPaths`
 
-After populating `hydraJobs` with [`includedPaths`](#includedpaths), the paths listed in `excludedPaths` will be *removed* from the final `hydraJobs`. 
+After populating `hydraJobs` with `includedPaths`, the paths listed in `excludedPaths` will be *removed* from the final `hydraJobs`. 
 
 This is a good place to exclude derivations based on the current system.
 
-For example if you have this [`per-system-outputs.nix`](#35-nixper-system-outputsnix):
+For example if you have this `./nix/per-system-outputs.nix`.
+
 ```nix
 { 
   packages.broken = {

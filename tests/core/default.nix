@@ -3,9 +3,40 @@
 let
   inherit (iogx.lib) l;
 
+
+  mkTest =
+    { description ? ""
+    , config
+    , expected ? [ ]
+    , unexpected ? [ ]
+    , evaluate ? null
+    }:
+    { inherit description config expected unexpected evaluate; };
+
+
   test-cases = {
 
-    test_1 = {
+    test_7 = mkTest {
+      description = ''
+        The inputs.self and inputs'.self attributes are well behaved.
+      '';
+      config = {
+        haskell = {
+          supportedCompilers = [ "ghc8107" ];
+        };
+        per-system-outputs = { pkgs, inputs', inputs, system, ... }: {
+          # Why doesn't nix build the derivations here? FIXME 
+          test = l.seq ''
+            ${inputs'.self.apps.exe1.program}/bin/exe1
+            ${inputs.self.${system}.apps.exe1.program}/bin/exe1
+          ''
+            { };
+        };
+      };
+      evaluate = "test";
+    };
+
+    test_1 = mkTest {
       description = ''
         Can build a non-haskell flake. Produces all expected outputs.
       '';
@@ -16,9 +47,9 @@ let
         read-the-docs = {
           siteFolder = ".";
         };
-        per-system-outputs = {
+        per-system-outputs = { pkgs, ... }: {
           per = {
-            system = 42;
+            system = pkgs.hello;
           };
         };
         top-level-outputs = {
@@ -38,10 +69,9 @@ let
         "hydraJobs.packages.read-the-docs-site"
         "hydraJobs.devShells.default"
       ];
-      unexpected = [ ];
     };
 
-    test_2 = {
+    test_2 = mkTest {
       description = ''
         Can build a haskell flake with one GHC. Produces all expected outputs.
       '';
@@ -61,24 +91,50 @@ let
         "packages.read-the-docs-site"
         "devShells.default"
         "devShells.profiled"
+        "apps.exe1"
+        "apps.test1"
+        "apps.bench1"
+        "apps.exe2"
+        "apps.test2"
+        "apps.bench2"
+        "apps.foo-exe-exe1-ghc8107"
+        "apps.bar-exe-exe2-ghc8107"
         "packages.foo-lib-foo-ghc8107"
-        # "apps.exe-ghc8107"
-        # "apps.test-ghc8107"
-        # "apps.bench-ghc8107"
-        "packages.foo-exe-exe-ghc8107"
-        "packages.foo-test-test-ghc8107"
-        "packages.foo-bench-bench-ghc8107"
+        "packages.foo-exe-exe1-ghc8107"
+        "packages.foo-test-test1-ghc8107"
+        "packages.foo-bench-bench1-ghc8107"
         "packages.bar-lib-bar-ghc8107"
-        "packages.bar-exe-exe-ghc8107"
-        "packages.bar-test-test-ghc8107"
-        "packages.bar-bench-bench-ghc8107"
+        "packages.bar-exe-exe2-ghc8107"
+        "packages.bar-test-test2-ghc8107"
+        "packages.bar-bench-bench2-ghc8107"
         "packages.haskell-nix-project-roots-ghc8107"
         "packages.haskell-nix-project-plan-nix-ghc8107"
+        "checks.foo-test-test1-ghc8107"
+        "checks.bar-test-test2-ghc8107"
+        "hydraJobs.packages.pre-commit-check-ghc8107"
+        "hydraJobs.packages.read-the-docs-site"
+        "hydraJobs.devShells.default"
+        "hydraJobs.devShells.profiled"
+        "hydraJobs.packages.foo-lib-foo-ghc8107"
+        "hydraJobs.packages.foo-exe-exe1-ghc8107"
+        "hydraJobs.packages.foo-test-test1-ghc8107"
+        "hydraJobs.packages.foo-bench-bench1-ghc8107"
+        "hydraJobs.packages.bar-lib-bar-ghc8107"
+        "hydraJobs.packages.bar-exe-exe2-ghc8107"
+        "hydraJobs.packages.bar-test-test2-ghc8107"
+        "hydraJobs.packages.bar-bench-bench2-ghc8107"
+        "hydraJobs.packages.haskell-nix-project-roots-ghc8107"
+        "hydraJobs.packages.haskell-nix-project-plan-nix-ghc8107"
+        "hydraJobs.checks.foo-test-test1-ghc8107"
+        "hydraJobs.checks.bar-test-test2-ghc8107"
       ];
-      unexpected = [ ];
+      unexpected = [
+        "apps.exe1-ghc8107"
+        "apps.exe1-ghc927"
+      ];
     };
 
-    test_3 = {
+    test_3 = mkTest {
       description = ''
         Can build a haskell flake with two GHCs. Produces all expected outputs.
       '';
@@ -103,38 +159,106 @@ let
         "devShells.ghc8107-profiled"
         "devShells.ghc928"
         "devShells.ghc928-profiled"
+        "apps.exe1-ghc8107"
+        "apps.exe1-ghc928"
+        "apps.test1-ghc8107"
+        "apps.test1-ghc928"
+        "apps.bench1-ghc8107"
+        "apps.bench1-ghc928"
+        "apps.exe2-ghc8107"
+        "apps.exe2-ghc928"
+        "apps.test2-ghc8107"
+        "apps.test2-ghc928"
+        "apps.bench2-ghc8107"
+        "apps.bench2-ghc928"
+        "apps.exe1-ghc8107"
+        "apps.exe1-ghc928"
+        "apps.test1-ghc8107"
+        "apps.test1-ghc928"
+        "apps.bench1-ghc8107"
+        "apps.bench1-ghc928"
+        "apps.exe2-ghc8107"
+        "apps.exe2-ghc928"
+        "apps.test2-ghc8107"
+        "apps.test2-ghc928"
+        "apps.bench2-ghc8107"
+        "apps.bench2-ghc928"
+        "apps.foo-exe-exe1-ghc8107"
+        "apps.foo-exe-exe1-ghc928"
+        "apps.bar-exe-exe2-ghc8107"
+        "apps.bar-exe-exe2-ghc928"
         "packages.foo-lib-foo-ghc8107"
         "packages.foo-lib-foo-ghc928"
-        "packages.foo-exe-exe-ghc8107"
-        "packages.foo-exe-exe-ghc928"
-        "packages.foo-test-test-ghc8107"
-        "packages.foo-test-test-ghc928"
-        "packages.foo-bench-bench-ghc8107"
-        "packages.foo-bench-bench-ghc928"
+        "packages.foo-exe-exe1-ghc8107"
+        "packages.foo-exe-exe1-ghc928"
+        "packages.foo-test-test1-ghc8107"
+        "packages.foo-test-test1-ghc928"
+        "packages.foo-bench-bench1-ghc8107"
+        "packages.foo-bench-bench1-ghc928"
         "packages.bar-lib-bar-ghc8107"
         "packages.bar-lib-bar-ghc928"
-        "packages.bar-exe-exe-ghc8107"
-        "packages.bar-exe-exe-ghc928"
-        "packages.bar-test-test-ghc8107"
-        "packages.bar-test-test-ghc928"
-        "packages.bar-bench-bench-ghc8107"
-        "packages.bar-bench-bench-ghc928"
+        "packages.bar-exe-exe2-ghc8107"
+        "packages.bar-exe-exe2-ghc928"
+        "packages.bar-test-test2-ghc8107"
+        "packages.bar-test-test2-ghc928"
+        "packages.bar-bench-bench2-ghc8107"
+        "packages.bar-bench-bench2-ghc928"
         "packages.haskell-nix-project-roots-ghc8107"
         "packages.haskell-nix-project-roots-ghc928"
         "packages.haskell-nix-project-plan-nix-ghc8107"
         "packages.haskell-nix-project-plan-nix-ghc928"
+        "checks.foo-test-test1-ghc8107"
+        "checks.foo-test-test1-ghc928"
+        "checks.bar-test-test2-ghc8107"
+        "checks.bar-test-test2-ghc928"
+        "hydraJobs.packages.pre-commit-check-ghc8107"
+        "hydraJobs.packages.pre-commit-check-ghc928"
+        "hydraJobs.packages.read-the-docs-site"
+        "hydraJobs.devShells.default"
+        "hydraJobs.devShells.profiled"
+        "hydraJobs.devShells.ghc8107"
+        "hydraJobs.devShells.ghc8107-profiled"
+        "hydraJobs.devShells.ghc928"
+        "hydraJobs.devShells.ghc928-profiled"
+        "hydraJobs.packages.foo-lib-foo-ghc8107"
+        "hydraJobs.packages.foo-lib-foo-ghc928"
+        "hydraJobs.packages.foo-exe-exe1-ghc8107"
+        "hydraJobs.packages.foo-exe-exe1-ghc928"
+        "hydraJobs.packages.foo-test-test1-ghc8107"
+        "hydraJobs.packages.foo-test-test1-ghc928"
+        "hydraJobs.packages.foo-bench-bench1-ghc8107"
+        "hydraJobs.packages.foo-bench-bench1-ghc928"
+        "hydraJobs.packages.bar-lib-bar-ghc8107"
+        "hydraJobs.packages.bar-lib-bar-ghc928"
+        "hydraJobs.packages.bar-exe-exe2-ghc8107"
+        "hydraJobs.packages.bar-exe-exe2-ghc928"
+        "hydraJobs.packages.bar-test-test2-ghc8107"
+        "hydraJobs.packages.bar-test-test2-ghc928"
+        "hydraJobs.packages.bar-bench-bench2-ghc8107"
+        "hydraJobs.packages.bar-bench-bench2-ghc928"
+        "hydraJobs.packages.haskell-nix-project-roots-ghc8107"
+        "hydraJobs.packages.haskell-nix-project-roots-ghc928"
+        "hydraJobs.packages.haskell-nix-project-plan-nix-ghc8107"
+        "hydraJobs.packages.haskell-nix-project-plan-nix-ghc928"
+        "hydraJobs.checks.foo-test-test1-ghc8107"
+        "hydraJobs.checks.foo-test-test1-ghc928"
+        "hydraJobs.checks.bar-test-test2-ghc8107"
+        "hydraJobs.checks.bar-test-test2-ghc928"
       ];
-      unexpected = [ ];
+      unexpected = [
+        "apps.exe1"
+        "apps.exe2"
+      ];
     };
 
-    test_4 = {
+    test_4 = mkTest {
       description = ''
         ci.includedPaths includes extra per-system-outputs paths in hydraJobs.
       '';
       config = {
-        per-system-outputs = {
+        per-system-outputs = { pkgs, ... }: {
           per = {
-            system = { };
+            system = pkgs.hello;
           };
         };
         ci = {
@@ -146,20 +270,19 @@ let
       expected = [
         "hydraJobs.per.system"
       ];
-      unexpected = [ ];
     };
 
-    test_5 = {
+    test_5 = mkTest {
       description = ''
         ci.excludedPaths excludes the desired paths from hydraJobs.
       '';
       config = {
-        per-system-outputs = {
-          packages.bar.include = { };
-          packages.bar.exclude = { };
+        per-system-outputs = { pkgs, ... }: {
+          packages.bar.include = pkgs.hello;
+          packages.bar.exclude = pkgs.hello;
           foo = {
-            include = { };
-            exclude = { };
+            include = pkgs.hello;
+            exclude = pkgs.hello;
           };
         };
         ci = {
@@ -182,50 +305,94 @@ let
         "hydraJobs.foo.exclude"
       ];
     };
+
+    test_6 = mkTest {
+      description = ''
+        The nix module folder works.
+      '';
+      config = {
+        per-system-outputs = { nix, ... }: {
+          packages.hello-world = nix.hello.world;
+        };
+      };
+      expected = [
+        "packages.hello-world"
+      ];
+    };
+
+    test_8 = mkTest {
+      description = ''
+        Test that ci.nix:includeDefaultOutputs behaves.
+      '';
+      config = {
+        haskell = {
+          supportedCompilers = [ "ghc8107" ];
+        };
+        ci = {
+          includeDefaultOutputs = false;
+        };
+        read-the-docs = {
+          siteFolder = "read-the-docs";
+        };
+      };
+      expected = [
+        "packages.read-the-docs-site"
+        "packages.pre-commit-check-ghc8107"
+      ];
+      unexpected = [
+        "hydraJobs.packages.read-the-docs-site"
+        "hydraJobs.packages.pre-commit-check-ghc8107"
+        "hydraJobs.apps.exe1"
+      ];
+    };
   };
 
 
-  runTest = name: test:
+  runTest = test-name: test:
     let
+      system = pkgs.stdenv.system;
+
       flake = iogx.lib.mkFlake {
         inputs = {
           self = {
-            "${pkgs.stdenv.system}" = { };
+            "${system}" = { };
             outputPath = ./repo;
-          };
-          nixpkgs = {
-            system = pkgs.stdenv.system;
-            currentSystem = pkgs.stdenv.system;
           };
         };
         repoRoot = ./repo;
-        systems = [ pkgs.stdenv.system ];
+        systems = [ system ];
         config = test.config;
+        debug = true;
       };
 
-      flake' = l.deSystemize pkgs.stdenv.system flake;
+      flake' = l.deSystemize system flake;
 
       flake'' = iogx.lib.mkFlake {
         inputs = {
           self = {
-            "${pkgs.stdenv.system}" = flake';
+            "${system}" = flake';
             outputPath = ./repo;
           };
         };
         repoRoot = ./repo;
-        systems = [ pkgs.stdenv.system ];
+        systems = [ system ];
         config = test.config;
+        debug = true;
       };
 
-      flake''' = l.deSystemize pkgs.stdenv.system flake'';
+      # Alas, in test code, the magical inputs.self isn't populated with 
+      # the final outputs (contrary to what would happen in a "real" flake).
+      # So if we want to test hydraJobs specifically (which uses `inputs.self`)
+      # We have to call iogx.lib.mkFlake and "mock" the `self` attribute twice. 
+      flake''' = l.deSystemize system flake'';
 
       expected-outputs-checks = map
         (path:
           if l.hasAttrByPathString path flake''' then
-            true
+            l.seq (l.getAttrByPathString path flake''') true
           else
             l.pthrow ''
-              ------ ${name}
+              ------ ${test-name}
               Expected output not found: ${path}
             ''
         )
@@ -237,13 +404,19 @@ let
             true
           else
             l.pthrow ''
-              ------ ${name}
+              ------ ${test-name}
               Unexpected output found: ${path}
             ''
         )
         test.unexpected;
 
-      check-results = expected-outputs-checks ++ unexpected-outputs-checks;
+      evaluate-check =
+        let x = l.getAttrByPathString test.evaluate flake''';
+        in if test.evaluate == null then true else l.seq x true;
+
+      check-results =
+        expected-outputs-checks ++ unexpected-outputs-checks ++ [ evaluate-check ];
+
     in
     check-results;
 

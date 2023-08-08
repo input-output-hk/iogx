@@ -55,7 +55,7 @@
     in
     iogx.lib.mkFlake {
       inputs = iogx-inputs;
-      systems = [ "x86_64-darwin" "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+      systems = [ "x86_64-darwin" "x86_64-linux" ];
       repoRoot = ./.;
       config = {
         formatters = {
@@ -67,8 +67,8 @@
             pkgs.github-cli
           ];
         };
-        per-system-outputs = { pkgs, ... }: {
-          checks.testsuite = import ./tests { inherit iogx pkgs; };
+        per-system-outputs = { pkgs, ... }: rec {
+          packages.testsuite = import ./tests { inherit iogx pkgs; };
         };
         top-level-outputs = {
           inherit (iogx) lib;

@@ -28,7 +28,6 @@ let
         l.nameValuePair name
           (import ../modules/${
           name}/schema.nix libnixschema.validators);
-
     in
     l.listToAttrs (map getSchema modules);
 
@@ -38,6 +37,7 @@ let
     , systems ? [ "x86_64-darwin" "x86_64-linux" ]
     , repoRoot
     , config ? null
+    , debug ? false
     }:
     let
       validated-systems = validateSystems systems;
@@ -58,10 +58,18 @@ let
         let
           inputs' = l.deSystemize system inputs;
           pkgs = mkPkgs iogx-inputs system;
-          args = { inherit iogx-inputs inputs inputs' pkgs l iogx-interface user-repo-root __flake__; };
-          root = ../.;
-          module = "src";
-          src = modularise { inherit root module args; };
+          nix = modularise {
+            root = user-repo-root + "/nix";
+            module = "nix";
+            args = { inherit inputs inputs' pkgs l; };
+            inherit debug;
+          };
+          src = modularise {
+            root = ../.;
+            module = "src";
+            args = { inherit nix iogx-inputs inputs inputs' pkgs l iogx-interface system user-repo-root __flake__; };
+            inherit debug;
+          };
           __flake__ = src.iogx.flake-assembler;
         in
         l.injectAttrName system __flake__
@@ -69,10 +77,16 @@ let
 
       flake' =
         let
-          args = { inherit iogx-inputs inputs l iogx-interface flake; };
-          root = ../.;
-          module = "src";
-          src = modularise { inherit root module args; };
+          nix = modularise {
+            root = user-repo-root + "/nix";
+            module = "nix";
+            args = { inherit inputs l; };
+          };
+          src = modularise {
+            root = ../.;
+            module = "src";
+            args = { inherit nix iogx-inputs inputs l iogx-interface flake; };
+          };
         in
         src.modules.top-level-outputs.makeTopLevelOutputs;
     in

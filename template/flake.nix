@@ -10,8 +10,9 @@
   };
 
 
-  outputs = inputs: inputs.iogx.lib.mkFlake ./. {
+  outputs = inputs: inputs.iogx.lib.mkFlake {
     inherit inputs;
+    repoRoot = ./.;
     # systems = ["x86_64-linux" "x86_64-darwin"];
   };
 

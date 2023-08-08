@@ -5,7 +5,9 @@
 let
 
   fileToModule = dir: path:
-    if l.hasSuffix ".nix" path then
+    if !l.pathExists "${dir}/${path}" then
+      l.pthrow ("[modularise] there is no file/folder named ${path} in directory ${dir}")
+    else if l.hasSuffix ".nix" path then
       let
         name = l.removeSuffix ".nix" path;
         value = import "${dir}/${path}" (args // { ${module} = __module__; });
@@ -14,8 +16,7 @@ let
       in
       l.nameValuePair name value
     else
-    # TODO throw or warn instead if path is not a nix file
-      l.nameValuePair path null;
+      l.nameValuePair path (l.readFile "${dir}/${path}");
 
 
   dirToModule = dir: path:

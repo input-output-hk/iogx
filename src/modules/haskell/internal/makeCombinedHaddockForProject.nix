@@ -1,11 +1,11 @@
-{ src, l, pkgs, ... }:
+{ src, l, nix, iogx-interface, pkgs, system, ... }:
 
 project:
 
 let
 
-  read-the-docs = iogx-interface."read-the-docs.nix".load
-    { inherit inputs inputs' pkgs; };
+  haskell = iogx-interface."haskell.nix".load
+    { inherit nix inputs inputs' pkgs l system; };
 
 
   # Haskell packages to make documentation for. Only those with a "doc" output will be used.
@@ -15,17 +15,17 @@ let
     l.attrValues (
       pkgs.haskell-nix.haskellLib.collectComponents' "library" (
         pkgs.haskell-nix.haskellLib.selectProjectPackages project.hsPkgs // (
-          l.filterAttrs (name: _: l.elem name read-the-docs.projectPackagesWithHaddock)
+          l.filterAttrs (name: _: l.elem name haskell.projectPackagesWithHaddock)
         )
       )
     );
 
 
   # Optionally, a file to be used for the Haddock "--prologue" option.
-  prologue = l.optionalString (read-the-docs.combinedHaddockPrologue != "") (
+  prologue = l.optionalString (haskell.combinedHaddockPrologue != "") (
     pkgs.writeTextFile {
       name = "prologue";
-      text = read-the-docs.combinedHaddockPrologue;
+      text = haskell.combinedHaddockPrologue;
     }
   );
 

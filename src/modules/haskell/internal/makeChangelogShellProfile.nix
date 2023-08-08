@@ -1,8 +1,9 @@
-{ src, iogx-inputs, iogx-interface, user-repo-root, inputs, inputs', pkgs, l, ... }:
+{ src, iogx-inputs, nix, iogx-interface, user-repo-root, inputs, inputs', pkgs, l, system, ... }:
 
 let
 
-  haskell = iogx-interface."haskell.nix".load { inherit inputs inputs' pkgs; };
+  haskell = iogx-interface."haskell.nix".load
+    { inherit nix inputs inputs' pkgs l system; };
 
 
   shell-profile = {

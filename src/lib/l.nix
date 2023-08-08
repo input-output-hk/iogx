@@ -11,16 +11,6 @@ let
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
 
 
-    updateMany = l.foldl' (acc: x: acc // x) { };
-
-
-    mergePrefixFlakes = flake1: flake2: prefix:
-      l.recursiveUpdate flake1 (l.mapAttrs (_: value: nestAttrs value [ prefix ]) flake2);
-
-
-    nestAttrs = l.foldr (prefix: l.mapAttrs (_: value: { ${prefix} = value; }));
-
-
     # FIXME ensure that recursion stops when encountering values of type Derivation
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
@@ -28,37 +18,16 @@ let
     mapAndRecursiveUpdateMany = xs: f: recursiveUpdateMany (map f xs);
 
 
-    unwords = l.concatStringsSep " ";
-
-
-    maximumBy = f: l.foldl' (x: max: if f x > f max then x else max);
-
-
     ptrace = x: y: l.trace (valueToString x) y;
-
-
-    ptraceShow = x: l.trace (valueToString x) x;
 
 
     ptraceAttrNames = s: l.trace (l.attrNames s) s;
 
 
-    trimTextRight = s: n: ellipse:
-      if l.stringLength s <= n then
-        s
-      else
-        l.substring 0 (n - l.stringLength ellipse) s + ellipse;
+    ptraceShow = x: ptrace x x;
 
 
     hasAttrByPathString = p: s: l.hasAttrByPath (l.splitString "." p) s;
-
-
-    stripStoreFromNixPath = p:
-      let
-        s = toString p;
-        t = l.substring 30 (l.stringLength s) s;
-      in
-      if t == "" then "./." else "./${t}";
 
 
     valueToString = x:
@@ -76,41 +45,6 @@ let
         "<LAMBDA>"
       else
         toString x;
-
-
-    findCommonAttributePathsWithDepth = depth': s1: s2:
-      let
-        go = depth: { path, v1, v2 }:
-          let
-            value-clash =
-              let
-                v1-term = l.isAttrs v1 && !l.isDerivation v1;
-                v2-term = l.isAttrs v2 && !l.isDerivation v2;
-              in
-              !v1-term || !v2-term;
-
-            mkPair = name:
-              {
-                path = if path == "" then name else "${path}.${name}";
-                v1 = l.getAttr name v1;
-                v2 = l.getAttr name v2;
-              };
-          in
-          if depth == 0 then
-            [ ]
-          else if value-clash then
-            [{ ${path} = { left = v1; right = v2; }; }]
-          else
-            let
-              common-names = l.intersectLists (l.attrNames v1) (l.attrNames v2);
-              pairs = map mkPair common-names;
-            in
-            l.concatMap (go (depth - 1)) pairs;
-      in
-      go depth' { path = ""; v1 = s1; v2 = s2; };
-
-
-    findCommonAttributePaths = findCommonAttributePathsWithDepth (-1);
 
 
     mergeDisjointAttrsOrThrow = s1: s2: mkErrmsg:
@@ -136,19 +70,7 @@ let
         true;
 
 
-    # TODO this function does not belong here 
-    mkGhcPrefixMatrix = l.concatMap (ghc: [
-      ghc
-      "${ghc}-profiled"
-    ]);
-
-
-    # TODO this function does not belong here 
-    mkProfiledGhcPrefixMatrix = l.concatMap (ghc: [
-      "${ghc}-profiled"
-    ]);
-
-
+    # Is this not in the stdlib?
     getAttrWithDefault = name: def: set:
       if l.hasAttr name set then
         l.getAttr name set
@@ -156,7 +78,7 @@ let
         def;
 
 
-    validPathOrNull = path: if l.pathExists path then path else null;
+    getAttrByPathString = path: l.getAttrFromPath (l.splitString "." path);
 
 
     # FIXME Probably this function is very inefficient 
@@ -242,21 +164,11 @@ let
     plural = n: s: if n == -1 || n == 1 then s else "${s}s";
 
 
-    importFileWithDefault = def: path: args:
-      if l.pathExists path then
-        import path args
-      else
-        def;
-
-
     mapAttrValues = f: l.mapAttrs (_: f);
 
 
     # Odd that this isn't a builtin. 
     attrsSize = s: l.length (l.attrNames s);
-
-
-    pthrowIf = cond: msg: if cond then pthrow msg else x: x;
 
 
     pthrow = text:
@@ -286,6 +198,7 @@ let
         --------------------------------------------------------------------------------
       '';
 
+
     iogxTrace = errmsg:
       l.trace ''
         
@@ -293,47 +206,6 @@ let
         ${errmsg}
         --------------------------------------------------------------------------------
       '';
-
-
-    # prettyTwoColumnsLayout { 
-    #   lefts = ["a" "ccc"]; 
-    #   rights = ["longlonglong" "short"]; 
-    #   max-width = 16; 
-    #   sep-char = "."; 
-    #   gap-width = 3; 
-    #   ellipse = "***"; 
-    # }
-    # -> 
-    # a.....longlon***
-    # ccc...short  
-    prettyTwoColumnsLayout =
-      { lefts, rights, max-width ? 80, sep-char ? " ", gap-width ? 2, ellipse ? "..", indent ? "" }:
-      let
-        replicate = n: elem: l.genList (_: elem) n;
-
-        padRight = max: str: l.concatStrings (replicate (max - l.stringLength str) sep-char);
-
-        cutRight = max: str:
-          if l.stringLength str <= max then
-            str
-          else
-            l.substring 0 (max - l.stringLength ellipse) str + ellipse;
-
-        formatPair = left: right:
-          let
-            lhs = indent + left;
-            padding = padRight (max-lefts + gap-width) left;
-            rhs = cutRight (max-width - max-lefts - gap-width - l.stringLength indent) right;
-          in
-          "${lhs}${padding}${rhs}";
-
-        max-lefts = l.stringLength (maximumBy l.stringLength "" lefts);
-
-        lines = l.zipListsWith formatPair lefts rights;
-
-        final-str = l.concatStringsSep "\n" lines;
-      in
-      final-str;
 
 
     # Stolen from https://github.com/divnix/nosys
@@ -353,13 +225,6 @@ let
               recursed;
       in
       iteration 3;
-
-
-    getAttrWithDefaulDesys = field: def: set: system:
-      if l.hasAttr field set then
-        l.getAttr system (l.getAttr field set)
-      else
-        def;
 
 
     mapMaybe = f: xs: builtins.filter (x: x != null) (map f xs);

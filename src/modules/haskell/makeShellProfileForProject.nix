@@ -1,4 +1,4 @@
-{ src, iogx-inputs, iogx-interface, user-repo-root, inputs, inputs', pkgs, l, ... }:
+{ src, iogx-inputs, user-repo-root, inputs, inputs', pkgs, l, ... }:
 
 project: # The haskell.nix projects with the meta field, prefixed by ghc config
 

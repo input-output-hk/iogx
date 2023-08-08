@@ -56,7 +56,7 @@ let
 
       cabal-project'' =
         if enableCross then
-          cabal-project'.projectCross.mingw64
+          cabal-project'.projectCross.mingwW64
         else
           cabal-project';
 

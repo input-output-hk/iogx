@@ -74,9 +74,16 @@ let
       };
 
       outputs = {
-        apps = renameGroup flake.apps // renameGroupShortIfNoDuplicates flake.apps;
+        apps =
+          renameGroup flake.apps //
+          renameGroupShortIfNoDuplicates flake.apps;
+
         checks = renameGroup flake.checks;
-        packages = renameGroup (flake.packages // extra-packages);
+
+        packages =
+          renameGround extra-packages //
+          renameGroup flake.packages //
+          renameGroupShortIfNoDuplicates flake.packages;
       };
     in
     outputs;

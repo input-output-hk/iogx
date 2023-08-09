@@ -315,7 +315,7 @@ It can be a short title for your project.
 
 Your flake *must* define `iogx` among its inputs. 
 
-In turn, IOGX manages the following inputs for you: [CHaP](https://github.com/input-output-hk/cardano-haskell-packages), [flake-utils](https://github.com/numtide/flake-utils), [haskell.nix](https://github.com/input-output-hk/haskell.nix), [nixpkgs](https://github.com/NixOS/nixpkgs), [hackage.nix](https://github.com/input-output-hk/hackage.nix), [iohk-nix](https://github.com/input-output-hk/iohk-nix), [sphinxcontrib-haddock](https://github.com/michaelpj/sphinxcontrib-haddock), [pre-commit-hooks-nix](https://github.com/cachix/pre-commit-hooks.nix), [haskell-language-server](https://github.com/haskell/haskell-language-server), [nosys](https://github.com/divnix/nosys). 
+In turn, IOGX manages the following inputs for you: [CHaP](https://github.com/input-output-hk/cardano-haskell-packages), [haskell.nix](https://github.com/input-output-hk/haskell.nix), [nixpkgs](https://github.com/NixOS/nixpkgs), [hackage.nix](https://github.com/input-output-hk/hackage.nix), [iohk-nix](https://github.com/input-output-hk/iohk-nix), [sphinxcontrib-haddock](https://github.com/michaelpj/sphinxcontrib-haddock), [pre-commit-hooks-nix](https://github.com/cachix/pre-commit-hooks.nix), [haskell-language-server](https://github.com/haskell/haskell-language-server), [easy-purescript-nix](https://github.com/justinwoo/easy-purescript-nix). 
 
 You must *not* add these "implicit" inputs again to your `flake.nix`.
 

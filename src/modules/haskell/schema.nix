@@ -1,9 +1,9 @@
 validators: with validators;
 
 {
-  supportedCompilers.type = nonempty-enum-list [ "ghc8107" "ghc927" "ghc928" ];
+  supportedCompilers.type = nonempty-enum-list [ "ghc8107" "ghc927" "ghc928" "ghc961" ];
 
-  defaultCompiler.type = enum [ "ghc8107" "ghc927" "ghc928" ];
+  defaultCompiler.type = enum [ "ghc8107" "ghc927" "ghc928" "ghc961" ];
   defaultCompiler.default = conf: builtins.head conf.supportedCompilers;
 
   enableCrossCompilation.type = bool;
@@ -14,6 +14,9 @@ validators: with validators;
 
   defaultChangelogPackages.type = list-of string;
   defaultChangelogPackages.default = [ ];
+
+  enableCombinedHaddock.type = bool;
+  enableCombinedHaddock.default = false;
 
   projectPackagesWithHaddock.type = list-of string; # TODO add to docs
   projectPackagesWithHaddock.default = [ ];

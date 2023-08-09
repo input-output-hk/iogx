@@ -1,5 +1,7 @@
 { src, pkgs, nix, iogx-interface, user-repo-root, inputs, inputs', l, system, ... }:
 
+{ combined-haddock ? null }:
+
 let
 
   read-the-docs = iogx-interface."read-the-docs.nix".load
@@ -24,9 +26,16 @@ let
 
     dontInstall = true;
 
-    buildPhase = ''
-      sphinx-build -W -n . $out
-    '';
+    buildPhase =
+      if combined-haddock == null then ''
+        sphinx-build -W -n . $out
+      '' else ''
+        cp -aR ${combined-haddock}/share/doc haddock
+        # -n gives warnings on missing link targets, -W makes warnings into errors
+        SPHINX_HADDOCK_DIR=haddock sphinx-build -W -n . $out
+        cp -aR haddock $out
+      '';
+
   };
 
 in

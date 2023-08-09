@@ -62,8 +62,7 @@ let
 
           ${l.concatStringsSep " " duplicates}
 
-        Therefore I cannot create short flake output aliases for those executables.
-      '';
+        Therefore I cannot create short flake output aliases for those executables.'';
 
       findDuplicateComponentNames = group:
         let names = map renameComponentShort (l.attrNames group);

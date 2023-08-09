@@ -2,12 +2,13 @@ set -e
 
 
 run() { # Thank you SO 
-  printf %s "IOGX: $* [*/n] " > /dev/tty
-  read answer < /dev/tty
-  case $answer in
-    [nN]*) ;;
-    *) "$@";;
-  esac
+  # printf %s "IOGX: $* [*/n] " > /dev/tty
+  # read answer < /dev/tty
+  # case $answer in
+  #   [nN]*) ;;
+  #   *) "$@";;
+  # esac
+  exec "$@"
 }
 
 
@@ -159,24 +160,52 @@ bump-dapps-certification() {
 }
 
 
+bump-plutus() {
+  local branch_magic="$1"
+  local repo="plutus"
+  local main_branch="master"
+  local add_label="No Changelog Required"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
+bump-plutus-apps() {
+  local branch_magic="$1"
+  local repo="plutus-apps"
+  local main_branch="main"
+  local add_label="*"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
+bump-marlowe-playground() {
+  local branch_magic="$1"
+  local repo="marlowe-playground"
+  local main_branch="main"
+  local add_label="*"
+  bump-repo "$repo" "$main_branch" "$add_label" "$branch_magic"
+}
+
+
 bump-all() {
   local branch_magic="$1"
   run bump-antaeus "$branch_magic"
   run bump-marlowe-cardano "$branch_magic"
-  run bump-quickcheck-dynamic "$branch_magic"
-  run bump-quickcheck-contractmodel "$branch_magic"
   run bump-marconi "$branch_magic"
   run bump-quickcheck-dynamic "$branch_magic"
   run bump-quickcheck-contractmodel "$branch_magic"
   run bump-stablecoin-plutus "$branch_magic"
   run bump-dapps-certification "$branch_magic"
+  run bump-plutus "$branch_magic"
+  run bump-plutus-apps "$branch_magic"
+  run bump-marlowe-playground "$branch_magic"
 }
 
 
 export-aliases() {
   alias ll="ls -la"
   alias nixdev="nix develop --system x86_64-darwin --impure --override-input iogx ../iogx"
-  alias bump="nix flake lock --update-input iogx && git add . && git commit -m 'Bump IOGX' && git push"
+  alias bump="nix flake lock --update-input iogx \$@ && git add . && git commit -m 'Bump IOGX' && git push"
 }
 
 

@@ -7,7 +7,7 @@ let
       pre-commit-check = src.modules.formatters.makePreCommitCheck "ghc8107";
 
       read-the-docs-packages =
-        let site = src.modules.read-the-docs.makeReadTheDocsSite;
+        let site = src.modules.read-the-docs.makeReadTheDocsSite { };
         in l.optionalAttrs (site != null) { read-the-docs-site = site; };
 
       devShell = src.modules.shell.makeDevShellWith {
@@ -54,16 +54,17 @@ let
         in
         l.mapAttrs' mkOne projects.unprofiled;
 
-      pre-commit-check-packages =
-        let
-          mkOne = ghc: pre-commit-check:
-            l.nameValuePair "pre-commit-check-${ghc}" pre-commit-check.package;
-        in
-        l.mapAttrs' mkOne pre-commit-checks;
+      pre-commit-check-packages = {
+        pre-commit-check =
+          pre-commit-checks.${projects.default.meta.haskellCompiler};
+      };
 
       read-the-docs-packages =
         let
-          site = src.modules.read-the-docs.makeReadTheDocsSite;
+          combined-haddock =
+            src.modules.haskell.makeCombinedHaddockForProject projects.default;
+          site = src.modules.read-the-docs.makeReadTheDocsSite
+            { inherit combined-haddock; };
         in
         l.optionalAttrs (site != null) { read-the-docs-site = site; };
 

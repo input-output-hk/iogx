@@ -301,7 +301,7 @@ let
           {
             status = "failure";
             errors = failed-results;
-            errmsg = l.concatStringsSep "\n" (map resultToErrorString failed-results);
+            errmsg = l.concatStringsSep "\n\n" (map resultToErrorString failed-results);
           };
     in
     schema-result;

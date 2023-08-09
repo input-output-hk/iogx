@@ -87,7 +87,7 @@ let
         };
       };
       expected = [
-        "packages.pre-commit-check-ghc8107"
+        "packages.pre-commit-check"
         "packages.read-the-docs-site"
         "devShells.default"
         "devShells.profiled"
@@ -111,7 +111,7 @@ let
         "packages.haskell-nix-project-plan-nix-ghc8107"
         "checks.foo-test-test1-ghc8107"
         "checks.bar-test-test2-ghc8107"
-        "hydraJobs.packages.pre-commit-check-ghc8107"
+        "hydraJobs.packages.pre-commit-check"
         "hydraJobs.packages.read-the-docs-site"
         "hydraJobs.devShells.default"
         "hydraJobs.devShells.profiled"
@@ -150,8 +150,7 @@ let
         };
       };
       expected = [
-        "packages.pre-commit-check-ghc8107"
-        "packages.pre-commit-check-ghc928"
+        "packages.pre-commit-check"
         "packages.read-the-docs-site"
         "devShells.default"
         "devShells.profiled"
@@ -211,8 +210,7 @@ let
         "checks.foo-test-test1-ghc928"
         "checks.bar-test-test2-ghc8107"
         "checks.bar-test-test2-ghc928"
-        "hydraJobs.packages.pre-commit-check-ghc8107"
-        "hydraJobs.packages.pre-commit-check-ghc928"
+        "hydraJobs.packages.pre-commit-check"
         "hydraJobs.packages.read-the-docs-site"
         "hydraJobs.devShells.default"
         "hydraJobs.devShells.profiled"
@@ -337,11 +335,11 @@ let
       };
       expected = [
         "packages.read-the-docs-site"
-        "packages.pre-commit-check-ghc8107"
+        "packages.pre-commit-check"
       ];
       unexpected = [
         "hydraJobs.packages.read-the-docs-site"
-        "hydraJobs.packages.pre-commit-check-ghc8107"
+        "hydraJobs.packages.pre-commit-check"
         "hydraJobs.apps.exe1"
       ];
     };

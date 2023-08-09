@@ -136,4 +136,4 @@ let
 
 in
 
-combined-haddock
+if haskell.enableCombinedHaddock then combined-haddock else null

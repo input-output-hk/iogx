@@ -68,7 +68,7 @@ This will generates a [`flake.nix`](./template/flake.nix) as well as a [`nix`](.
 
 These files constitute IOGX's *filesystem-based* API.
 
-You will fill in the templates in the [`nix`](./template/nix) folder while leaving [`flake.nix`](./template/flake.nix) largely untouched.
+You will fill in the templates in the `nix` folder while leaving `flake.nix` largely untouched.
 
 **IOGX will populate your flake outputs based on the contents of the nix folder.**
 
@@ -128,7 +128,7 @@ It is recommended to include the ellipse (`...`) in the attribute list, to make 
 
 Some of the files may have additional arguments to the ones in the example above, but those six are standard and passed to every file.
 
-If you don't need *any* of the input arguments, you may omit the parameter altogether. This is common in `./nix/formatters.nix`:
+If you don't need *any* of the input arguments, you may omit the parameter altogether:
 
 ```nix
 # ./nix/formatters.nix
@@ -152,7 +152,7 @@ Ordinarily you would use the `import` keyword to import those files, but you can
 
 This is an attrset that can be used to reference the contents of your `./nix` folder instead of using the `import` keyword.
 
-It is a pretend module system for Nix.
+It is like a module system for Nix.
 
 For example, if this is your `./nix` folder:
 ```nix
@@ -201,9 +201,9 @@ l.someFunction arg1 arg2 nix.bravo.delta."golf.txt"
 }
 ```
 
-Note that the nix files do not need the `".nix"` suffix, while files with any other extension (e.g. `golf.txt`) must include the full name to be referenced.
+Note that the Nix files do not need the `".nix"` suffix, while files with any other extension (e.g. `golf.txt`) must include the full name to be referenced.
 
-In the case of non-nix files, internally IOGX calls `builtins.readFile` is called to read the contents of that file.
+In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
 Not just the template files, but any other file will also receive the standard arguments `nix`, `inputs`, `inputs'`, `pkgs`, `system`, `l`.
 
@@ -212,8 +212,6 @@ Unlike the interface files, other files cannot omit the input parameter (see `al
 Using the `nix` argument is optional, and you can also mix and match.
 
 The advantage is that you don't have to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
-
-One thing you cannot do is reference the template files either directly using the `import` keyword or using the `nix` module.
 
 ### 3.0.2. `inputs`
 
@@ -244,7 +242,7 @@ inputs'.self.packages.foo
 As opposed to:
 ```nix 
 inputs.n2c.packages.x86_64-linux.nix2container
-inputs'.self.packages.foo
+inputs'.self.packages.x86_64-linux.foo
 ```
 
 In general, you don't want to deal with `system` explicitly, but if you must, you can use [`inputs`](#302-inputs) instead (note the absence of the prime `'` sign).
@@ -321,15 +319,17 @@ Keeping IOGX up-to-date implies always having the latest version of these inputs
 
 However you might find that you want to use a different version of some of the implicit inputs, for instance because IOGX has not been updated, or because you need to test against a specific branch.
 
+In that case you must use the `follows` syntax.
+
 For example, to use a newer version of `CHaP` and `hackage.nix`, you may do the following:
 
 ```nix 
 inputs = {
   iogx.url = "github:inputs-output-hk/iogx";
-  iogx.inputs.hackage-nix.follows = "hackage-nix";
+  iogx.inputs.hackage.follows = "hackage";
   iogx.inputs.CHaP.follows = "CHaP";
 
-  hackage-nix = {
+  hackage = {
     url = "github:input-output-hk/hackage.nix";
     flake = false;
   };
@@ -380,6 +380,8 @@ If `config` is `null`, then IOGX expects to find a `./nix` folder inside your `r
 Alternatively, the exact contents of the `./nix` folder may be mirrored using the `config` attribute.
 
 In that case `repoRoot` does not have to contain the `./nix` folder, and will not make any assumption about the location of other nix files.
+
+The `repoRoot` field itself must be set to your repository root, this is always `./.` like in the example above.
 
 The `systems` field tells which systems are supported by your project, it is optional and defaults to `["x86_64-darwin" "x86_64-linux"]`.
 
@@ -474,7 +476,7 @@ This file is optional and contains fundamental configuration values for your Has
 
 The non-empty list of GHC versions that can build your project. 
 
-Currently three GHC versions are supported and provided by IOGX: `ghc8107`, `ghc927` and `ghc928`.
+Currently three GHC versions are supported and provided by IOGX: `ghc8107`, `ghc927`, `ghc928` and `ghc961`.
 
 This field is required.
 

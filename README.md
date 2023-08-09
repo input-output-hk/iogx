@@ -18,7 +18,11 @@
     - [3.2.1. `supportedCompilers`](#321-supportedcompilers)
     - [3.2.2. `defaultCompiler`](#322-defaultcompiler)
     - [3.2.3. `enableCrossCompilation`](#323-enablecrosscompilation)
+    - [3.2.4. `cabalProjectFolder`](#324-cabalprojectfolder)
     - [3.2.4. `defaultChangelogPackages`](#324-defaultchangelogpackages)
+    - [`enableCombinedHaddock`](#enablecombinedhaddock)
+    - [`projectPackagesWithHaddock`](#projectpackageswithhaddock)
+    - [`combinedHaddockPrologue`](#combinedhaddockprologue)
   - [3.3. `nix/cabal-project.nix`](#33-nixcabal-projectnix)
     - [3.3.1. `meta`](#331-meta)
     - [3.3.2. `config`](#332-config)
@@ -498,6 +502,12 @@ If enabled, cross-compiled packages for you haskell project will be built in CI.
 
 This field is optional and defaults to `false`.
 
+### 3.2.4. `cabalProjectFolder`
+
+This is a string representing the path, relative to the `repoRoot`, where the `cabal.project` file is located.
+
+This field is optional and default to `"."`.
+
 ### 3.2.4. `defaultChangelogPackages`
 
 You can use `scriv` to manage changelogs for your Haskell project.
@@ -517,7 +527,37 @@ defaultChangelogPackages = [
 ];
 ```
 
-This field is optional and defaults to the empty list `[]`.
+### `enableCombinedHaddock` 
+
+When enabled, your `./nix/read-the-docs.nix` site will have access to Haddock symbols for your Haskell packages.
+
+Combining haddock artifacts takes a significant amount of time and may slow do CI.
+
+You should enable this only on Linux like this:
+
+```nix
+# ./nix/haskell.nix
+{ system, ... }: 
+{
+  enableCombinedHaddock = system == "x86_64-linux";
+}
+```
+
+When this field is `false` both `projectPackagesWithHaddock` and `combinedHaddockPrologue` fields below will be ignored.
+
+This field is optional and default to `false`.
+
+### `projectPackagesWithHaddock` 
+
+The list of cabal package names to include in the combined Haddock.
+
+This field is optional and default to the empty list `[]`.
+
+### `combinedHaddockPrologue` 
+
+A string acting as prologue for the combined Haddock.
+
+This field is optional and default to the empty string `""`.
 
 ## 3.3. `nix/cabal-project.nix`
 
@@ -962,8 +1002,8 @@ This field is optional and it defaults to `null`.
   hlint.enable = false;
   hlint.extraOptions = "";
 
-  hindent.enable = false;
-  hindent.extraOptions = "";
+  purs-tidy.enable = false;
+  purs-tidy.extraOptions = "";
 }
 ```
 
@@ -978,8 +1018,6 @@ All the tools are disabled by default.
 If this file is missing, then no hooks will be run.
 
 If this file is present, then `packages.pre-commit-check` will be added to the final flake outputs.
-
-If `./nix/haskell.nix` exists, then one package will be added for each compiler instead.
 
 Always run `list-flake-outputs` while inside any `nix develop` shell to see what's available.
 

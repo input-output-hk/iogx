@@ -46,6 +46,11 @@
       url = "github:haskell/haskell-language-server/855a88238279b795634fa6144a4c0e8acc7e9644";
       flake = false;
     };
+
+    easy-purescript-nix = {
+      url = "github:justinwoo/easy-purescript-nix";
+      flake = false;
+    };
   };
 
 

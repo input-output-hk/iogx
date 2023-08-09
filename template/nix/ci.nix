@@ -2,6 +2,7 @@
 # https://www.github.com/input-output-hk/iogx#39-nixcinix
 
 { nix, inputs, inputs', pkgs, system, l, ... }:
+
 {
   # includeDefaultOutputs = true;
   # includedPaths = [];

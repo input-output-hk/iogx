@@ -2,9 +2,13 @@
 # https://www.github.com/input-output-hk/iogx#32-nixhaskellnix
 
 { nix, inputs, inputs', pkgs, system, l, ... }:
+
 {
   supportedCompilers = [ "ghc8107" ];
   # defaultHaskellCompiler = "ghc8107";
   # enableCrossCompilation = false;
   # defaultChangelogPackages = [];
+  # enableCombinedHaddock = false; 
+  # projectPackagesWithHaddock = [];
+  # combinedHaddockPrologue = "";
 }

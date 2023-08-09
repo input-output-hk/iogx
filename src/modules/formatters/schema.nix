@@ -46,6 +46,6 @@ in
   hlint.type = schema hook-schema;
   hlint.default = default-hook;
 
-  hindent.type = schema hook-schema;
-  hindent.default = default-hook;
+  purs-tidy.type = schema hook-schema;
+  purs-tidy.default = default-hook;
 }

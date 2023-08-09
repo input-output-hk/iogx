@@ -2,6 +2,7 @@
 # https://www.github.com/input-output-hk/iogx#34-nixshellnix
 
 { nix, inputs, inputs', pkgs, system, l, project ? null, ... }:
+
 {
   # name = "nix-shell";
   # prompt = "$ ";

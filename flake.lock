@@ -117,6 +117,22 @@
         "type": "github"
       }
     },
+    "easy-purescript-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1689933391,
+        "narHash": "sha256-jUuy2OzmxegEn0KT3u1uf87eGGA33+of9HodIqS3PLY=",
+        "owner": "justinwoo",
+        "repo": "easy-purescript-nix",
+        "rev": "5dcea83eecb56241ed72e3631d47e87bb11e45b9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "justinwoo",
+        "repo": "easy-purescript-nix",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -704,6 +720,7 @@
     "root": {
       "inputs": {
         "CHaP": "CHaP",
+        "easy-purescript-nix": "easy-purescript-nix",
         "flake-utils": "flake-utils",
         "hackage": "hackage",
         "haskell-language-server-1_8_0_0": "haskell-language-server-1_8_0_0",

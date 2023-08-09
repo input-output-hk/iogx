@@ -2,6 +2,7 @@
 # https://www.github.com/input-output-hk/iogx#38-nixformattersnix
 
 { nix, inputs, inputs', pkgs, system, l, ... }:
+
 {
   # cabal-fmt.enable = false;
   # cabal-fmt.extraOptions = "";
@@ -27,9 +28,9 @@
   # fourmolu.enable = false;
   # fourmolu.extraOptions = "";
 
+  # purs-tidy.enable = false;
+  # purs-tidy.extraOptions = "";
+
   # hlint.enable = false;
   # hlint.extraOptions = "";
-
-  # hindent.enable = false;
-  # hindent.extraOptions = "";
 }

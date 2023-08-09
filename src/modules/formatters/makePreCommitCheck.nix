@@ -58,6 +58,7 @@ let
       extraOptions = getExtraOptions "prettier";
       package = pkgs.nodePackages.prettier;
       include = [ "js" "css" "html" ];
+      # types_or = [ "javascript" "css" "html" ]; TODO 
     };
 
     editorconfig-checker = {
@@ -80,6 +81,15 @@ let
       extraOptions = getExtraOptions "png-optimization";
       package = pkgs.optipng;
       include = [ "png" ];
+    };
+
+    purs-tidy = {
+      enable = formatters.purs-tidy.enable;
+      options = "format-in-place";
+      extraOptions = getExtraOptions "purs-tidy";
+      package = src.modules.formatters.ext.purescript;
+      include = [ "purs" ];
+      # language = "system"; # TODO
     };
   };
 

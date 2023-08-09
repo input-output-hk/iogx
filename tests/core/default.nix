@@ -43,11 +43,12 @@ let
       config = {
         formatters = {
           cabal-fmt.enable = true;
+          purs-tidy.enable = true;
         };
         read-the-docs = {
           siteFolder = ".";
         };
-        per-system-outputs = { pkgs, ... }: {
+        per-system-outputs = { pkgs, inputs', ... }: {
           per = {
             system = pkgs.hello;
           };

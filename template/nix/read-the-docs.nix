@@ -2,6 +2,7 @@
 # https://www.github.com/input-output-hk/iogx#37-nixread-the-docsnix
 
 { nix, inputs, inputs', pkgs, system, l, ... }:
+
 {
   # siteFolder = null;
 }

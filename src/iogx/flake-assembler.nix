@@ -56,7 +56,7 @@ let
 
       pre-commit-check-packages = {
         pre-commit-check =
-          pre-commit-checks.${projects.default.meta.haskellCompiler};
+          pre-commit-checks.${projects.default.meta.haskellCompiler}.package;
       };
 
       read-the-docs-packages =

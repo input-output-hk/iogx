@@ -1,4 +1,4 @@
-{ src, l, nix, iogx-interface, pkgs, system, ... }:
+{ src, l, nix, inputs, inputs', iogx-interface, pkgs, system, ... }:
 
 project:
 
@@ -15,19 +15,20 @@ let
     l.attrValues (
       pkgs.haskell-nix.haskellLib.collectComponents' "library" (
         pkgs.haskell-nix.haskellLib.selectProjectPackages project.hsPkgs // (
-          l.filterAttrs (name: _: l.elem name haskell.projectPackagesWithHaddock)
+          l.filterAttrs
+            (name: _: l.elem name haskell.projectPackagesWithHaddock)
+            project.hsPkgs
         )
       )
     );
 
 
   # Optionally, a file to be used for the Haddock "--prologue" option.
-  prologue = l.optionalString (haskell.combinedHaddockPrologue != "") (
-    pkgs.writeTextFile {
-      name = "prologue";
-      text = haskell.combinedHaddockPrologue;
-    }
-  );
+  prologue = if haskell.combinedHaddockPrologue == null then null else
+  pkgs.writeTextFile {
+    name = "prologue";
+    text = haskell.combinedHaddockPrologue;
+  };
 
 
   hsPkgsDocs = map (x: x.doc) (l.filter (x: x ? doc) hsPkgs);
@@ -83,18 +84,18 @@ let
         interfaceOpts+=("--read-interface=$docdir,$interfaceFile")
         # Jam this in here for now
         pushd $out/share/doc
-        ${src.modules.read-the-docs.ext.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
+        ${src.modules.read-the-docs.ext.sphinxcontrib-haddock.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
         popd
       done
       popd
     done
 
     # Generate the contents and index
-    ${project.ghc}/bin/haddock \
+    ${project.pkg-set.config.ghc.package}/bin/haddock \
       --gen-contents \
       --gen-index \
       --quickjump \
-      ${l.optionalString (prologue != "") "--prologue ${prologue}"} \
+      ${l.optionalString (prologue != null) "--prologue ${prologue}"} \
       "''${interfaceOpts[@]}"
 
     # TODO: remove patch when haddock > 2.24.0
@@ -118,17 +119,17 @@ let
   '';
 
 
-  command-args {
-  buildInputs = [ hsPkgsDocs ];
+  command-args = {
+    buildInputs = [ hsPkgsDocs ];
 
-  # For each package in hsdocs, this will create a file `graph-N` (where N is the index in the list)
-  # which contains information about which nix paths are referenced by the package. This will allow
-  # us to resolve hyperlinks to haddocks elsewhere in the store.
-  #
-  # See also https://nixos.org/manual/nix/stable/expressions/advanced-attributes.html#adv-attr-exportReferencesGraph # editorconfig-checker-disable-line
-  exportReferencesGraph =
-    l.concatLists
-      (l.imap0 (i: pkg: [ "graph-${toString i}" pkg ]) hsPkgsDocs);
+    # For each package in hsdocs, this will create a file `graph-N` (where N is the index in the list)
+    # which contains information about which nix paths are referenced by the package. This will allow
+    # us to resolve hyperlinks to haddocks elsewhere in the store.
+    #
+    # See also https://nixos.org/manual/nix/stable/expressions/advanced-attributes.html#adv-attr-exportReferencesGraph # editorconfig-checker-disable-line
+    exportReferencesGraph =
+      l.concatLists
+        (l.imap0 (i: pkg: [ "graph-${toString i}" pkg ]) hsPkgsDocs);
   };
 
 

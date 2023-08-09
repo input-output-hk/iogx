@@ -205,7 +205,7 @@ bump-all() {
 export-aliases() {
   alias ll="ls -la"
   alias nixdev="nix develop --system x86_64-darwin --impure --override-input iogx ../iogx"
-  alias bump="nix flake lock --update-input iogx \$@ && git add . && git commit -m 'Bump IOGX' && git push"
+  alias bump="nix flake lock --update-input iogx && git add . && git commit -m 'Bump IOGX' && git push"
 }
 
 

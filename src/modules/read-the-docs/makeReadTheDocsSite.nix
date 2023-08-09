@@ -35,7 +35,6 @@ let
         SPHINX_HADDOCK_DIR=haddock sphinx-build -W -n . $out
         cp -aR haddock $out
       '';
-
   };
 
 in

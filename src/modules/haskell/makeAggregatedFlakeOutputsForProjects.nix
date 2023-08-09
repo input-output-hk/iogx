@@ -71,7 +71,6 @@ let
       extra-packages = {
         haskell-nix-project-roots = flake.hydraJobs.roots;
         haskell-nix-project-plan-nix = flake.hydraJobs.plan-nix;
-        # haskell-nix-project-coverage = flake.hydraJobs.coverage;
       };
 
       outputs = {

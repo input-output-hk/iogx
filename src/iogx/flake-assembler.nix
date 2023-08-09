@@ -61,8 +61,8 @@ let
 
       read-the-docs-packages =
         let
-          combined-haddock =
-            src.modules.haskell.makeCombinedHaddockForProject projects.default;
+          combined-haddock = src.modules.haskell.makeCombinedHaddockForProject
+            projects.default-haddocked;
           site = src.modules.read-the-docs.makeReadTheDocsSite
             { inherit combined-haddock; };
         in

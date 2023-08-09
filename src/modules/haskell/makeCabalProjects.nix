@@ -122,6 +122,8 @@ let
 
       default = unprofiled.${default-prefix};
 
+      default-haddocked = haddocked."${haskell.defaultCompiler}-haddock";
+
       default-prefix = "${haskell.defaultCompiler}";
 
       profiled-prefix = "${haskell.defaultCompiler}-profiled";

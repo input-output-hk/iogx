@@ -11,6 +11,17 @@ let
 
 
   # :: haskell.nix-project(with meta field) -> flake-outputs
+  # If we only have one compiler, then the compiler name will not be appended 
+  # to the component names.
+  # If we have more than one supported compilers, then the compiler name will
+  # be appended to all components.
+  # In addition, aliases for the *executables* only will be added to the outputs.
+  # Only the cabal 'exes' will be aliased, both in 'packages' and in 'apps'.
+  # If we only have one compiler, then the compiler named will not the appended
+  # to the alias names.
+  # If we have more than one supported compilers, then the compiler name will
+  # also not be appended to the executables, and only aliases for the default
+  # compiler will be created.
   makeFlakeOutputsForProject = project:
     let
       flake = haskellLib.mkFlake project { };
@@ -23,50 +34,58 @@ let
         let mkPair = name: l.nameValuePair (renameComponent name);
         in l.mapAttrs' mkPair group;
 
+      # $type = exe|lib|test|bench|sublib
+      # $pkg:$type:$comp -> $pkg-$type-$comp(-profiled?)(-mingwW64?)(-$ghc?)
       renameComponent = name:
         let
           replaceCons = l.replaceStrings [ ":" ] [ "-" ];
-          ghc = "-${meta.haskellCompiler}";
+          ghc = if is-single-ghc then "" else "-${meta.haskellCompiler}";
           name' = replaceCons name;
           cross = if meta.enableCross then "-mingwW64" else "";
           profiled' = l.optionalString meta.enableProfiling "-profiled";
         in
         "${name'}${profiled'}${cross}${ghc}";
 
-      renameGroupShort = group:
-        let mkPair = name: l.nameValuePair (renameComponentShort name);
-        in l.mapAttrs' mkPair group;
-
-      renameComponentShort = name:
+      makeAliasesForGroupExes = group:
         let
-          ghc = if is-single-ghc then "" else "-${meta.haskellCompiler}";
+          is-default-compiler = meta.haskellCompiler == haskell.defaultCompiler;
+          mkPair = name: l.nameValuePair (makeAliasForExe name);
+          exes = l.filterAttrs (name: _: l.strings.hasInfix ":exe:" name) group;
+          group' = l.mapAttrs' mkPair exes;
+        in
+        l.optionalAttrs is-default-compiler group';
+
+      # $type = exe|lib|test|bench|sublib
+      # $pkg:$type:$comp -> $comp(-profiled?)(-mingwW64?)(-$ghc?)
+      makeAliasForExe = name:
+        let
+          ghc = "";
           name' = l.last (l.splitString ":" name);
           cross = if meta.enableCross then "-mingwW64" else "";
           profiled' = l.optionalString meta.enableProfiling "-profiled";
         in
         "${name'}${profiled'}${cross}${ghc}";
 
-      renameGroupShortIfNoDuplicates = group':
-        let
-          duplicates = findDuplicateComponentNames group';
-          group-short = renameGroupShort group';
-          group = renameGroup group';
+      findDuplicateExes = group:
+        let names = map makeAliasForExe (l.attrNames group);
+        in l.findDuplicates names;
+
+      makeAliasesForGroupExesIfNoDuplicates = group:
+        let duplicates = findDuplicateExes group;
         in
         if l.length duplicates == 0 then
-          group-short
+          makeAliasesForGroupExes group
         else
-          warnDuplicateComponentNames duplicates group;
+          warnDuplicateComponentNames duplicates { };
 
       warnDuplicateComponentNames = duplicates: l.iogxTrace ''
         There are multiple executables with the same name across your cabal files:
 
           ${l.concatStringsSep " " duplicates}
 
-        Therefore I cannot create short flake output aliases for those executables.'';
-
-      findDuplicateComponentNames = group:
-        let names = map renameComponentShort (l.attrNames group);
-        in l.findDuplicates names;
+        Therefore I cannot create flake output aliases for your executables.
+        Rename the executables across your cabal files so that they are unique.
+        This doesn't affect testsuites, libraries nor benchmarks.'';
 
       extra-packages = {
         haskell-nix-project-roots = flake.hydraJobs.roots;
@@ -76,14 +95,14 @@ let
       outputs = {
         apps =
           renameGroup flake.apps //
-          renameGroupShortIfNoDuplicates flake.apps;
+          makeAliasesForGroupExesIfNoDuplicates flake.apps;
 
         checks = renameGroup flake.checks;
 
         packages =
-          renameGround extra-packages //
+          renameGroup extra-packages //
           renameGroup flake.packages //
-          renameGroupShortIfNoDuplicates flake.packages;
+          makeAliasesForGroupExesIfNoDuplicates flake.packages;
       };
     in
     outputs;

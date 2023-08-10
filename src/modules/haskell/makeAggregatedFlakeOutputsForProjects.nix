@@ -67,7 +67,7 @@ let
         "${name'}${profiled'}${cross}${ghc}";
 
       findDuplicateExes = group:
-        let names = map makeAliasForExe (l.attrNames group);
+        let names = l.attrNames (makeAliasesForGroupExes group);
         in l.findDuplicates names;
 
       makeAliasesForGroupExesIfNoDuplicates = group:

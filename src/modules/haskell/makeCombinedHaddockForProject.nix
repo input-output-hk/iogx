@@ -1,4 +1,4 @@
-{ src, l, nix, iogx inputs, inputs', iogx-interface, pkgs, system, ... }:
+{ src, l, nix, iogx, inputs, inputs', iogx-interface, pkgs, system, ... }:
 
 project:
 

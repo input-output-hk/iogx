@@ -30,7 +30,8 @@ let
   mkCollisionError = field: { n, duplicates }: l.iogxError "per-system-outputs" ''
     Your nix/per-system-outputs.nix contains an invalid field: ${field}
 
-    It has ${toString n} ${l.plural n "attribute"} that are reserved for IOGX: 
+    '${field}' already contains the ${toString n} ${l.plural n "attribute"} listed below.
+    This could be because some cabal executables exist with these names:
 
       ${l.concatStringsSep ", " duplicates}
   '';

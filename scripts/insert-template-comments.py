@@ -6,7 +6,7 @@ repo_folder_names = [
   "marlowe-cardano",
   "marconi",
   "quickcheck-dynamic",
-  # "quickcheck-contractmodel",
+  "quickcheck-contractmodel",
   "stablecoin-plutus",
   "dapps-certification",
   "plutus",
@@ -39,8 +39,6 @@ def extract_comment_lines_from_template_files():
 
 COMMENT_LINES_DICT = extract_comment_lines_from_template_files()
 
-# This file is part of the IOGX template and is documented at the link below:
-# https://www.github.com/input-output-hk/iogx#32-nixhaskellnix
 
 def insert_template_comments_in_file(template, path):
   buff = []
@@ -68,10 +66,10 @@ def insert_template_comments_in_file(template, path):
     file.writelines("".join(buff)) 
 
 
-def insert_template_comments_in_repo():
+def insert_template_comments_in_repos():
   for repo in repo_folder_names:
     for template in template_file_names:
       insert_template_comments_in_file(template, f"../{repo}/{template}")
 
 
-insert_template_comments_in_repo()
+insert_template_comments_in_repos()

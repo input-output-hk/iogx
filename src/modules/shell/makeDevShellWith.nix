@@ -76,9 +76,9 @@ let
       name = user-shell.name;
       buildInputs = final-profile.packages ++ scripts-as-packages;
       shellHook = ''  
-          ${final-profile.enterShell}
-          ${env-as-bash}
-        '';
+        ${final-profile.enterShell}
+        ${env-as-bash}
+      '';
     };
 
 in

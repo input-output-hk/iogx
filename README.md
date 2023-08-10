@@ -79,7 +79,7 @@ You will fill in the templates in the `nix` folder while leaving `flake.nix` lar
 
 If you dislike this approach, you can always opt for using inline attribute sets instead of files.
 
-You may now move on to the [API Reference](#3-api-reference).
+You may now move on to the [API Reference](#3-reference).
 
 # 2. Features
 
@@ -120,7 +120,7 @@ The following files are parte of the interface:
 All the interface files managed by IOGX will have this format:
 
 ```nix
-{ nix, inputs, inputs', pkgs, system, l, iogx, ... }:
+{ iogx, nix, inputs, inputs', pkgs, system, l, iogx, ... }:
 
 { }
 ```
@@ -210,7 +210,7 @@ Note that the Nix files do not need the `".nix"` suffix, while files with any ot
 
 In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-Not just the template files, but any other file will also receive the standard arguments `nix`, `inputs`, `inputs'`, `pkgs`, `system`, `l`.
+Not just the template files, but any other file will also receive the standard arguments `iogx`, `nix`, `inputs`, `inputs'`, `pkgs`, `system`, `l`.
 
 Unlike the interface files, other files cannot omit the input parameter (see `alpha.nix` in the example above). You can use `{ ... }:` or `_:` in that case. 
 

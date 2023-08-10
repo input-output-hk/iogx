@@ -11,7 +11,12 @@ let
   modularise = import ../lib/modularise.nix { inherit l; };
 
 
-  supported-systems = [ "x86_64-darwin" "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+  supported-systems = [
+    "x86_64-darwin"
+    "x86_64-linux"
+    "aarch64-darwin"
+    "aarch64-linux"
+  ];
 
 
   iogx-schemas =
@@ -29,8 +34,7 @@ let
 
       getSchema = name:
         l.nameValuePair name
-          (import ../modules/${
-          name}/schema.nix libnixschema.validators);
+          (import "../modules/${name}/schema.nix" libnixschema.validators);
     in
     l.listToAttrs (map getSchema modules);
 
@@ -65,7 +69,7 @@ let
             root = user-repo-root + "/nix";
             module = "nix";
             args = {
-              inherit inputs inputs' pkgs l;
+              inherit inputs inputs' pkgs l system;
               iogx = __src__;
             };
             inherit debug;
@@ -74,9 +78,8 @@ let
             root = ../.;
             module = "src";
             args = {
-              inherit nix iogx-inputs inputs inputs' pkgs l;
-              inherit iogx-interface system user-repo-root;
-              inherit __flake__;
+              inherit nix inputs inputs' pkgs l system;
+              inherit iogx-inputs iogx-interface user-repo-root __flake__;
               iogx = __src__;
             };
             inherit debug;
@@ -242,19 +245,6 @@ let
         };
     in
     l.mapAttrs' mkNameValuePair iogx-schemas;
-
-
-  # support = l.mapAndRecursiveUpdateMany supported-systems (system:
-  #   let
-  #     pkgs = mkPkgs iogx-inputs system;
-  #     src = modularise {
-  #       root = ../.;
-  #       module = "src";
-  #       args = { inherit iogx-inputs pkgs l system; };
-  #     };
-  #   in
-  #   l.injectAttrName system src
-  # );
 
 
   lib = { inherit mkFlake l libnixschema modularise iogx-schemas; };

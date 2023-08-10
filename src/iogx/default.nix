@@ -34,7 +34,7 @@ let
 
       getSchema = name:
         l.nameValuePair name
-          (import "../modules/${name}/schema.nix" libnixschema.validators);
+          (import (../modules + "/${name}/schema.nix") libnixschema.validators);
     in
     l.listToAttrs (map getSchema modules);
 

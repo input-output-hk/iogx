@@ -1,7 +1,7 @@
 # This file is part of the IOGX template and is documented at the link below:
 # https://www.github.com/input-output-hk/iogx#39-nixcinix
 
-{ nix, inputs, inputs', pkgs, system, l, ... }:
+{ iogx, nix, inputs, inputs', pkgs, system, l, ... }:
 
 {
   # includeDefaultOutputs = true;

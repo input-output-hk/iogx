@@ -1,11 +1,11 @@
-{ pkgs, system, l, nix, iogx-interface, inputs, inputs', ... }:
+{ pkgs, system, l, nix, iogx, iogx-interface, inputs, inputs', ... }:
 
 { extra-args ? { }, flake }: # Can't use the __flake__ above or inf. rec.
 
 let
 
   per-system-outputs =
-    let args = { inherit nix inputs inputs' pkgs l system; } // extra-args;
+    let args = { inherit nix iogx inputs inputs' pkgs l system; } // extra-args;
     in iogx-interface."per-system-outputs.nix".load args;
 
 

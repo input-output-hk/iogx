@@ -1,10 +1,10 @@
-{ src, iogx-inputs, nix, iogx-interface, inputs, inputs', pkgs, l, system, ... }:
+{ src, iogx-inputs, nix, iogx, iogx-interface, inputs, inputs', pkgs, l, system, ... }:
 
 projects: # The haskell.nix projects with the meta field, prefixed by ghc config
 
 let
   haskell = iogx-interface."haskell.nix".load
-    { inherit nix inputs inputs' pkgs l system; };
+    { inherit nix iogx inputs inputs' pkgs l system; };
 
 
   haskellLib = pkgs.haskell-nix.haskellLib;

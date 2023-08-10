@@ -9,6 +9,7 @@
     - [3.0.4. `pkgs`](#304-pkgs)
     - [3.0.5. `system`](#305-system)
     - [3.0.6. `l`](#306-l)
+    - [3.0.6. `iogx`](#306-iogx)
   - [3.1. `flake.nix`](#31-flakenix)
     - [3.1.1. `description`](#311-description)
     - [3.1.2. `inputs`](#312-inputs)
@@ -119,7 +120,7 @@ The following files are parte of the interface:
 All the interface files managed by IOGX will have this format:
 
 ```nix
-{ nix, inputs, inputs', pkgs, system, l, ... }:
+{ nix, inputs, inputs', pkgs, system, l, iogx, ... }:
 
 { }
 ```
@@ -130,7 +131,7 @@ Each of these files will be called once for each of your supported systems.
 
 It is recommended to include the ellipse (`...`) in the attribute list, to make future versions of IOGX backward compatible in case new arguments are added.
 
-Some of the files may have additional arguments to the ones in the example above, but those six are standard and passed to every file.
+Some of the files may have additional arguments to the ones in the example above, but those seven are standard and passed to every file.
 
 If you don't need *any* of the input arguments, you may omit the parameter altogether:
 
@@ -192,7 +193,7 @@ arg1:
 l.someFunction arg1 arg2 nix.bravo.delta."golf.txt"
 
 # ./nix/per-system-outputs.nix
-{ nix, inputs, inputs', pkgs, system, l, ... }:
+{ nix, inputs, inputs', pkgs, system, l, iogx, ... }:
 { 
   packages.example = 
     let 
@@ -270,6 +271,26 @@ This is just `pkgs.stdenv.system`, which is likely to be used often.
 This is just `pkgs.lib // builtins`, plus some additional functions which are used internally by IOGX.
 
 It can be used instead of `pkgs.lib` to save 7 precious keystrokes.
+
+### 3.0.6. `iogx`
+
+The `iogx` argument gives you access to `iogx`'s own `src` folder.
+
+Just like the `nix` argument gives you access to the files inside your `./nix` folder.
+
+This way you can reach for the internal functions used by IOGX to build your flake.
+
+This is intended for power users who know what they are doing.
+
+For example you may use this to obtain a haskell toolchain:
+```nix
+# Any file in you ./nix/shell.nix folder
+{ iogx, project, ... }:
+let 
+  haskell-toolchain = iogx.modules.haskell.makeToolchainForGhc "ghc961";
+in 
+{ }
+```
 
 ## 3.1. `flake.nix`
 

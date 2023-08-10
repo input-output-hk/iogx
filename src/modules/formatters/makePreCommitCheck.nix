@@ -1,11 +1,11 @@
-{ src, iogx-inputs, nix, iogx-interface, user-repo-root, inputs, inputs', pkgs, system, l, ... }:
+{ src, iogx-inputs, nix, iogx, iogx-interface, user-repo-root, inputs, inputs', pkgs, system, l, ... }:
 
 ghc:
 
 let
 
   formatters = iogx-interface."formatters.nix".load
-    { inherit nix inputs inputs' pkgs l system; };
+    { inherit nix iogx inputs inputs' pkgs l system; };
 
 
   haskell-toolchain = src.modules.haskell.internal.makeToolchainForGhc ghc;

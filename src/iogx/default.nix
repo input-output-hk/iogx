@@ -11,6 +11,9 @@ let
   modularise = import ../lib/modularise.nix { inherit l; };
 
 
+  supported-systems = [ "x86_64-darwin" "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+
+
   iogx-schemas =
     let
       modules = [
@@ -61,16 +64,24 @@ let
           nix = modularise {
             root = user-repo-root + "/nix";
             module = "nix";
-            args = { inherit inputs inputs' pkgs l; };
+            args = {
+              inherit inputs inputs' pkgs l;
+              iogx = __src__;
+            };
             inherit debug;
           };
-          src = modularise {
+          __src__ = modularise {
             root = ../.;
             module = "src";
-            args = { inherit nix iogx-inputs inputs inputs' pkgs l iogx-interface system user-repo-root __flake__; };
+            args = {
+              inherit nix iogx-inputs inputs inputs' pkgs l;
+              inherit iogx-interface system user-repo-root;
+              inherit __flake__;
+              iogx = __src__;
+            };
             inherit debug;
           };
-          __flake__ = src.iogx.flake-assembler;
+          __flake__ = __src__.iogx.flake-assembler;
         in
         l.injectAttrName system __flake__
       );
@@ -108,12 +119,7 @@ let
 
   validateSystems = systems:
     libnixschema.validateValueOrThrow {
-      validator = libnixschema.validators.nonempty-enum-list [
-        "x86_64-darwin"
-        "x86_64-linux"
-        "aarch64-darwin"
-        "aarch64-linux"
-      ];
+      validator = libnixschema.validators.nonempty-enum-list supported-systems;
       field = "The 'systems' argument to iogx.lib.mkFlake";
       value = systems;
       error = { result }: l.iogxError "flake" '' 
@@ -121,6 +127,21 @@ let
 
         ${result.errmsg}
       '';
+    };
+
+
+  mkPkgs = iogx-inputs: system:
+    import iogx-inputs.nixpkgs {
+      inherit system;
+      config = iogx-inputs.haskell-nix.config;
+      overlays = # WARNING: The order of these is crucial
+        [
+          iogx-inputs.iohk-nix.overlays.crypto
+          iogx-inputs.iohk-nix.overlays.cardano-lib
+          iogx-inputs.haskell-nix.overlay
+          iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
+          iogx-inputs.iohk-nix.overlays.haskell-nix-extra
+        ];
     };
 
   # Returns this attrset:  
@@ -223,22 +244,20 @@ let
     l.mapAttrs' mkNameValuePair iogx-schemas;
 
 
-  mkPkgs = iogx-inputs: system:
-    import iogx-inputs.nixpkgs {
-      inherit system;
-      config = iogx-inputs.haskell-nix.config;
-      overlays = # WARNING: The order of these is crucial
-        [
-          iogx-inputs.iohk-nix.overlays.crypto
-          iogx-inputs.iohk-nix.overlays.cardano-lib
-          iogx-inputs.haskell-nix.overlay
-          iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
-          iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-        ];
-    };
+  # support = l.mapAndRecursiveUpdateMany supported-systems (system:
+  #   let
+  #     pkgs = mkPkgs iogx-inputs system;
+  #     src = modularise {
+  #       root = ../.;
+  #       module = "src";
+  #       args = { inherit iogx-inputs pkgs l system; };
+  #     };
+  #   in
+  #   l.injectAttrName system src
+  # );
 
 
-  lib = { inherit mkFlake l libnixschema modularise iogx-schemas mkPkgs; };
+  lib = { inherit mkFlake l libnixschema modularise iogx-schemas; };
 
 
   iogx = { inherit lib; };

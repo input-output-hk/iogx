@@ -1,11 +1,11 @@
-{ src, l, nix, inputs, inputs', iogx-interface, pkgs, system, ... }:
+{ src, l, nix, iogx inputs, inputs', iogx-interface, pkgs, system, ... }:
 
 project:
 
 let
 
   haskell = iogx-interface."haskell.nix".load
-    { inherit nix inputs inputs' pkgs l system; };
+    { inherit nix iogx inputs inputs' pkgs l system; };
 
 
   # Haskell packages to make documentation for. Only those with a "doc" output will be used.

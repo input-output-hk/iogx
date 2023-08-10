@@ -1,8 +1,8 @@
-{ pkgs, l, inputs, inputs', nix, system, iogx-interface, __flake__, ... }:
+{ pkgs, l, inputs, inputs', nix, iogx, system, iogx-interface, __flake__, ... }:
 
 let
 
-  ci = iogx-interface."ci.nix".load { inherit nix inputs inputs' pkgs l system; };
+  ci = iogx-interface."ci.nix".load { inherit nix iogx inputs inputs' pkgs l system; };
 
 
   initial-jobset = l.optionalAttrs ci.includeDefaultOutputs {

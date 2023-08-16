@@ -87,7 +87,7 @@ let
       enable = formatters.purs-tidy.enable;
       options = "format-in-place";
       extraOptions = getExtraOptions "purs-tidy";
-      package = src.modules.formatters.ext.purescript;
+      package = iogx-inputs.easy-purescript-nix.packages.${system}.purs-tidy;
       include = [ "purs" ];
       # language = "system"; # TODO
     };

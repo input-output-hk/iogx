@@ -47,10 +47,7 @@
       flake = false;
     };
 
-    easy-purescript-nix = {
-      url = "github:justinwoo/easy-purescript-nix";
-      flake = false;
-    };
+    easy-purescript-nix.url = "github:justinwoo/easy-purescript-nix";
   };
 
 

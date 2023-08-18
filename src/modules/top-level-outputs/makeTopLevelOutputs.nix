@@ -1,9 +1,11 @@
-{ l, nix, iogx-interface, inputs, flake, ... }:
+{ l, repoRoot, iogx-interface, inputs, flake, ... }:
 
 let
 
-  top-level-outputs = iogx-interface."top-level-outputs.nix".load
-    { inherit nix inputs l; };
+  top-level-outputs = iogx-interface."top-level-outputs.nix".load {
+    inherit repoRoot inputs;
+    lib = l;
+  };
 
 
   mkErrmsg = { n, duplicates }: l.iogxError "top-level-outputs" ''

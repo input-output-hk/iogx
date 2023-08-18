@@ -1,11 +1,13 @@
-{ src, l, nix, iogx, inputs, inputs', iogx-interface, pkgs, system, ... }:
+{ src, l, iogxRepoRoot, repoRoot, inputs, inputs', iogx-interface, pkgs, system, ... }:
 
 project:
 
 let
 
-  haskell = iogx-interface."haskell.nix".load
-    { inherit nix iogx inputs inputs' pkgs l system; };
+  haskell = iogx-interface."haskell.nix".load {
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  };
 
 
   # Haskell packages to make documentation for. Only those with a "doc" output will be used.
@@ -24,11 +26,14 @@ let
 
 
   # Optionally, a file to be used for the Haddock "--prologue" option.
-  prologue = if haskell.combinedHaddockPrologue == null then null else
-  pkgs.writeTextFile {
-    name = "prologue";
-    text = haskell.combinedHaddockPrologue;
-  };
+  prologue =
+    if haskell.combinedHaddockPrologue == null then
+      null
+    else
+      pkgs.writeTextFile {
+        name = "prologue";
+        text = haskell.combinedHaddockPrologue;
+      };
 
 
   hsPkgsDocs = map (x: x.doc) (l.filter (x: x ? doc) hsPkgs);

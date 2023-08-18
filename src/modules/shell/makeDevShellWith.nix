@@ -1,4 +1,4 @@
-{ src, iogx-inputs, nix, iogx, iogx-interface, inputs, inputs', pkgs, l, system, ... }:
+{ src, iogx-inputs, repoRoot, iogxRepoRoot, iogx-interface, inputs, inputs', pkgs, l, system, ... }:
 
 { extra-profiles ? [ ] # extra profiles to merge into the final shell
 , extra-args ? { } # extra arguments to pass to ./nix/shell.nix
@@ -6,10 +6,11 @@
 
 let
 
-  user-shell =
-    # This is how we'll pass project to ./nix/shell.nix when ./nix/haskell.nix exists
-    let args = { inherit nix iogx inputs inputs' pkgs l system; } // extra-args;
-    in iogx-interface."shell.nix".load args;
+  # This is how we'll pass project to ./nix/shell.nix when ./nix/haskell.nix exists
+  user-shell = iogx-interface."shell.nix".load ({
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  } // extra-args);
 
 
   user-shell-as-shell-profile =

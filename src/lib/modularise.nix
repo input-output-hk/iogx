@@ -15,7 +15,7 @@ let
         value' = if debug then trace value else value;
       in
       l.nameValuePair name value
-    else
+    else # non-Nix file
       l.nameValuePair path (l.readFile "${dir}/${path}");
 
 

@@ -65,12 +65,13 @@ let
         let
           inputs' = l.deSystemize system inputs;
           pkgs = mkPkgs iogx-inputs system;
-          nix = modularise {
-            root = user-repo-root + "/nix";
-            module = "nix";
+          repoRoot = modularise {
+            root = user-repo-root;
+            module = "repoRoot";
             args = {
-              inherit inputs inputs' pkgs l system;
-              iogx = __src__;
+              inherit inputs inputs' pkgs system;
+              lib = l;
+              iogxRepoRoot = __src__;
             };
             inherit debug;
           };
@@ -78,9 +79,9 @@ let
             root = ../.;
             module = "src";
             args = {
-              inherit nix inputs inputs' pkgs l system;
+              inherit repoRoot inputs inputs' pkgs l system;
               inherit iogx-inputs iogx-interface user-repo-root __flake__;
-              iogx = __src__;
+              iogxRepoRoot = __src__;
             };
             inherit debug;
           };
@@ -91,15 +92,18 @@ let
 
       flake' =
         let
-          nix = modularise {
-            root = user-repo-root + "/nix";
-            module = "nix";
-            args = { inherit inputs l; };
+          repoRoot = modularise {
+            root = user-repo-root;
+            module = "repoRoot";
+            args = {
+              inherit inputs;
+              lib = l;
+            };
           };
           src = modularise {
             root = ../.;
             module = "src";
-            args = { inherit nix iogx-inputs inputs l iogx-interface flake; };
+            args = { inherit repoRoot iogx-inputs inputs l iogx-interface flake; };
           };
         in
         src.modules.top-level-outputs.makeTopLevelOutputs;

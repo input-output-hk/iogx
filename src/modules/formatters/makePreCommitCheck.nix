@@ -1,17 +1,20 @@
-{ src, iogx-inputs, nix, iogx, iogx-interface, user-repo-root, inputs, inputs', pkgs, system, l, ... }:
+{ src, iogx-inputs, repoRoot, iogxRepoRoot, iogx-interface, user-repo-root, inputs, inputs', pkgs, system, l, ... }:
 
 ghc:
 
 let
 
-  formatters = iogx-interface."formatters.nix".load
-    { inherit nix iogx inputs inputs' pkgs l system; };
+  formatters = iogx-interface."formatters.nix".load {
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  };
 
 
   haskell-toolchain = src.modules.haskell.internal.makeToolchainForGhc ghc;
 
 
   getExtraOptions = fmt: l.getAttrWithDefault "extraOptions" "" formatters.${fmt}; # FIXME
+
 
   pre-commit-hooks = {
     cabal-fmt = {
@@ -87,7 +90,7 @@ let
       enable = formatters.purs-tidy.enable;
       options = "format-in-place";
       extraOptions = getExtraOptions "purs-tidy";
-      package = src.modules.formatters.ext.purescript;
+      package = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs;
       include = [ "purs" ];
       # language = "system"; # TODO
     };

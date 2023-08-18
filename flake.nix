@@ -49,7 +49,7 @@
 
     easy-purescript-nix = {
       url = "github:justinwoo/easy-purescript-nix";
-      flake = false;
+      flake = true;
     };
   };
 
@@ -70,10 +70,12 @@
           name = "iogx";
           packages = [
             pkgs.github-cli
+            pkgs.act
           ];
         };
         per-system-outputs = { pkgs, ... }: rec {
           packages.testsuite = import ./tests { inherit iogx pkgs; };
+          packages.pkgs = pkgs;
         };
         top-level-outputs = {
           inherit (iogx) lib;

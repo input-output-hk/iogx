@@ -433,7 +433,7 @@ outputs = inputs: inputs.iogx.lib.mkFlake {
   siteFolder = "read-the-docs";
 }
 
-# Contents of ./nix/read-the-docs.nix
+# Contents of ./nix/shell.nix
 { pkgs, ... }: 
 {
   packages = [ pkgs.hello ];

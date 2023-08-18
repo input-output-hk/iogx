@@ -1,11 +1,13 @@
-{ src, pkgs, nix, iogx, iogx-interface, user-repo-root, inputs, inputs', l, system, ... }:
+{ src, pkgs, repoRoot, iogxRepoRoot, iogx-interface, user-repo-root, inputs, inputs', l, system, ... }:
 
 { combined-haddock ? null }:
 
 let
 
-  read-the-docs = iogx-interface."read-the-docs.nix".load
-    { inherit nix iogx inputs inputs' pkgs l system; };
+  read-the-docs = iogx-interface."read-the-docs.nix".load {
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  };
 
 
   read-the-docs-site = pkgs.stdenv.mkDerivation {

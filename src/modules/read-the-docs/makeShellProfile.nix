@@ -1,11 +1,11 @@
-{ src, pkgs, nix, iogx, iogx-interface, inputs, inputs', l, system, ... }:
+{ src, pkgs, repoRoot, iogxRepoRoot, iogx-interface, inputs, inputs', l, system, ... }:
 
 let
 
-  read-the-docs =
-    iogx-interface."read-the-docs.nix".load
-      { inherit nix iogx inputs inputs' pkgs l system; };
-
+  read-the-docs = iogx-interface."read-the-docs.nix".load {
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  };
 
   shell-profile = {
 

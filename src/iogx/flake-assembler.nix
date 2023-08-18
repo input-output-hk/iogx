@@ -71,7 +71,7 @@ let
       devShells =
         let
           mkOne = project: src.modules.shell.makeDevShellWith {
-            extra-args = { inherit project; };
+            extra-args = { haskellProject = project; };
             extra-profiles = [
               src.modules.read-the-docs.makeShellProfile
               pre-commit-checks.${project.meta.haskellCompiler}.shell-profile
@@ -112,7 +112,7 @@ let
 
       flake' =
         src.modules.per-system-outputs.makeFlakeWithPerSystemOutputs {
-          extra-args = { projects = projects.unprofiled-and-default; };
+          extra-args = { haskellProjects = projects.unprofiled-and-default; };
           inherit flake;
         };
 

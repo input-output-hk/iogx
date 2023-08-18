@@ -1,11 +1,12 @@
-{ src, iogx-inputs, nix, iogx, iogx-interface, user-repo-root, inputs, inputs', pkgs, l, system, ... }:
+{ src, iogx-inputs, repoRoot, iogxRepoRoot, iogx-interface, user-repo-root, inputs, inputs', pkgs, l, system, ... }:
 
 # NOTE we assume that ./nix/cabal-project.nix exists 
 
 let
-  haskell = iogx-interface."haskell.nix".load
-    { inherit nix iogx inputs inputs' pkgs l system; };
-
+  haskell = iogx-interface."haskell.nix".load {
+    inherit iogxRepoRoot repoRoot inputs inputs' pkgs system;
+    lib = l;
+  };
 
   haskellLib = pkgs.haskell-nix.haskellLib;
 
@@ -29,8 +30,9 @@ let
       cabal-project = pkgs.haskell-nix.cabalProject' (args@{ pkgs, ... }:
         let
           project-parts = iogx-interface."cabal-project.nix".load {
-            inherit inputs inputs' meta nix iogx l system;
+            inherit iogxRepoRoot repoRoot inputs inputs' meta system;
             inherit (args) pkgs config;
+            lib = l;
           };
           prof-modules = l.optional enableProfiling { enableProfiling = true; };
         in
@@ -47,7 +49,8 @@ let
       cabal-project' =
         let
           project-parts = iogx-interface."cabal-project.nix".load {
-            inherit inputs inputs' meta pkgs nix iogx l system;
+            inherit iogxRepoRoot repoRoot inputs inputs' pkgs meta system;
+            lib = l;
             config = { };
           };
         in

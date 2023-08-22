@@ -45,6 +45,8 @@ let
     , repoRoot
     , config ? null
     , debug ? false
+    , nixpkgsConfig ? { } # TODO validate nixpkgsConfig
+    , overlays ? [ ] # TODO validate overlays
     }:
     let
       validated-systems = validateSystems systems;
@@ -64,7 +66,7 @@ let
       flake = l.mapAndRecursiveUpdateMany validated-systems (system:
         let
           inputs' = l.deSystemize system inputs;
-          pkgs = mkPkgs iogx-inputs system;
+          pkgs = mkPkgs { inherit iogx-inputs system nixpkgsConfig overlays; };
           repoRoot = modularise {
             root = user-repo-root;
             module = "repoRoot";
@@ -137,10 +139,10 @@ let
     };
 
 
-  mkPkgs = iogx-inputs: system:
+  mkPkgs = { iogx-inputs, system, nixpkgsConfig, overlays }:
     import iogx-inputs.nixpkgs {
       inherit system;
-      config = iogx-inputs.haskell-nix.config;
+      config = iogx-inputs.haskell-nix.config // nixpkgsConfig;
       overlays = # WARNING: The order of these is crucial
         [
           iogx-inputs.iohk-nix.overlays.crypto
@@ -148,7 +150,7 @@ let
           iogx-inputs.haskell-nix.overlay
           iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-        ];
+        ] ++ overlays;
     };
 
   # Returns this attrset:  

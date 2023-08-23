@@ -1,4 +1,4 @@
-{ iogx-inputs, pkgs, ... }:
+{ iogx-inputs, pkgs, l, ... }:
 
 pkgs.haskell-nix.cabalProject' {
 
@@ -14,18 +14,25 @@ pkgs.haskell-nix.cabalProject' {
   # b) Pull out the tools themselves from the HLS project so we can use
   #    them elsewhere
   cabalProjectLocal = ''
-    constraints: stylish-haskell==0.14.2.0, hlint==3.4.1
+    package shake-bench
+      buildable: False
+    benchmarks: Falses
   '';
+  # constraints: stylish-haskell==0.14.2.0, hlint==3.4.1
 
-  src = iogx-inputs.haskell-language-server-1_9_0_0;
-
-  compiler-nix-name = "ghc962";
-
-  sha256map = {
-    "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line
+  src = l.fetchTarball {
+    url = https://github.com/haskell/haskell-language-server/releases/download/2.1.0.0/haskell-language-server-2.1.0.0-src.tar.gz;
+    sha256 = "sha256:1ivqj503al44nnilmpqd916ds5cl7hcxy4jm94ahi8y13v9p8r7y";
   };
 
+  # Cannot build with 9.6.2 because shake-bench.cabal has this constraint:
+  # if impl(ghc >= 9.5)
+  #   buildable: False
+  compiler-nix-name = "ghc962";
+
   modules = [{
+    # packages.shake-bench.buildable = false;
+    # packages.shake-bench.buildable = false;
     # See https://github.com/haskell/haskell-language-server/pull/1382#issuecomment-780472005
     packages.ghcide.flags.ghc-patched-unboxed-bytecode = true;
   }];

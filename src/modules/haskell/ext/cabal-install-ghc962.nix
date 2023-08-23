@@ -2,7 +2,7 @@
 
 let
 
-  project = cell.library.haskell-nix.hackage-project {
+  project = pkgs.haskell-nix.hackage-project {
     name = "cabal-install";
 
     version = "3.10.1.0";

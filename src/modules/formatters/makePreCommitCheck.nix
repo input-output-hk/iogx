@@ -90,7 +90,7 @@ let
       enable = formatters.purs-tidy.enable;
       options = "format-in-place";
       extraOptions = getExtraOptions "purs-tidy";
-      package = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs;
+      package = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs-tidy;
       include = [ "purs" ];
       # language = "system"; # TODO
     };

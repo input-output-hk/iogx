@@ -21,8 +21,8 @@ pkgs.haskell-nix.cabalProject' {
     # packages.shake-bench.buildable = l.mkForce false;
     # packages.haskell-language-server.buildable = l.mkForce false;
     # packages.haskell-language-server.components.benchmarks.benchmark.buildable = l.mkForce false;
-    # See https://github.com/haskell/haskell-language-server/pull/1382#issuecomment-780472005
 
+    # See https://github.com/haskell/haskell-language-server/pull/1382#issuecomment-780472005
     packages.ghcide.flags.ghc-patched-unboxed-bytecode = true;
   }];
 }

@@ -128,7 +128,7 @@ in
 if iogx-interface."haskell.nix".exists then
   assembleHaskellFlake
 else
-  assembleNonHaskellFlake 
+  assembleNonHaskellFlake
   
 
 

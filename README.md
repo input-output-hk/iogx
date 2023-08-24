@@ -501,7 +501,7 @@ This file is optional and contains fundamental configuration values for your Has
 
 The non-empty list of GHC versions that can build your project. 
 
-Currently three GHC versions are supported and provided by IOGX: `ghc8107`, `ghc927`, `ghc928`, `ghc961` and `ghc962`.
+Currently these GHC versions are supported and provided by IOGX: `ghc8107`, `ghc927`, `ghc928` and `ghc962`.
 
 This field is required.
 

@@ -323,8 +323,8 @@ let
         The nix module folder works.
       '';
       config = {
-        per-system-outputs = { nix, ... }: {
-          packages.hello-world = nix.hello.world;
+        per-system-outputs = { repoRoot, ... }: {
+          packages.hello-world = repoRoot.nix.hello.world;
         };
       };
       expected = [

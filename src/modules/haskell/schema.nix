@@ -1,9 +1,9 @@
 validators: with validators;
 
 {
-  supportedCompilers.type = nonempty-enum-list [ "ghc8107" "ghc927" "ghc928" "ghc961" "ghc962" ];
+  supportedCompilers.type = nonempty-enum-list [ "ghc8107" "ghc927" "ghc928" "ghc962" ];
 
-  defaultCompiler.type = enum [ "ghc8107" "ghc927" "ghc928" "ghc961" "ghc962" ];
+  defaultCompiler.type = enum [ "ghc8107" "ghc927" "ghc928" "ghc962" ];
   defaultCompiler.default = conf: builtins.head conf.supportedCompilers;
 
   enableCrossCompilation.type = bool;

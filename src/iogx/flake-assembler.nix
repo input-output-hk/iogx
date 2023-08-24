@@ -126,9 +126,9 @@ let
 in
 
 if iogx-interface."haskell.nix".exists then
-  assembleHaskellFlake // { __iogx__ = src; }
+  assembleHaskellFlake
 else
-  assembleNonHaskellFlake // { __iogx__ = src; }
+  assembleNonHaskellFlake
   
 
 

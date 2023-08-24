@@ -20,7 +20,7 @@ pkgs.haskell-nix.cabalProject' {
     constraints: stylish-haskell==0.14.5.0, hlint==3.6.1
   '';
 
-  src = l.fetchTarball {
+  src = pkgs.fetchTarball {
     url = https://github.com/haskell/haskell-language-server/archive/refs/tags/2.1.0.0.tar.gz;
     sha256 = "sha256:1ivqj503al44nnilmpqd916ds5cl7hcxy4jm94ahi8y13v9p8r7y";
   };

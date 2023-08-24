@@ -1,4 +1,4 @@
-{ iogx-inputs, pkgs, l, ... }:
+{ pkgs, l, ... }:
 
 pkgs.haskell-nix.cabalProject' {
 
@@ -17,7 +17,7 @@ pkgs.haskell-nix.cabalProject' {
   # b) Pull out the tools themselves from the HLS project so we can use
   #    them elsewhere
   cabalProjectLocal = ''
-    --  constraints: stylish-haskell==0.14.2.0, hlint==3.4.1
+    constraints: stylish-haskell==0.14.5.0, hlint==3.6.1
   '';
 
   src = l.fetchTarball {

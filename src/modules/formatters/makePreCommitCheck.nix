@@ -122,7 +122,19 @@ let
 
 
   shell-profile = {
-    packages = [ pkgs.pre-commit ];
+    packages = [
+      pkgs.pre-commit
+      pre-commit-hooks.cabal-fmt.package
+      pre-commit-hooks.stylish-haskell.package
+      pre-commit-hooks.fourmolu.package
+      pre-commit-hooks.hlint.package
+      pre-commit-hooks.shellcheck.package
+      pre-commit-hooks.prettier.package
+      pre-commit-hooks.editorconfig-checker.package
+      pre-commit-hooks.nixpkgs-fmt.package
+      pre-commit-hooks.png-optimization.package
+      pre-commit-hooks.purs-tidy.package
+    ];
     enterShell = package.shellHook;
   };
 

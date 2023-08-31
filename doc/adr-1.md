@@ -240,6 +240,7 @@ The example above would yield a matrix of 216 elements/projects.
 ## Description of `makeProject`
 
 ```nix
+
 makeProject = { matrix }: {
 
   projectTag = "";
@@ -394,3 +395,8 @@ Each shell will be added to the flake outputs as `devShells.$TAG`. Where `$TAG` 
 
 This feels like a good place to place the `pre-commit-hooks` too (formerly `./nix/formatters.nix`)
 
+
+
+
+include h.nix 
+h.nix is what rebuilds the world

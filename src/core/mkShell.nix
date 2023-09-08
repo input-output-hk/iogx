@@ -53,12 +53,12 @@ let
     prettier = pkgs.nodePackages.prettier;
     editorconfig-checker = pkgs.editorconfig-checker;
     nixpkgs-fmt = repoRoot.src.ext.nixpkgs-fmt;
-    png-optimization = pkgs.optipng;
+    optipng = pkgs.optipng;
     purs-tidy = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs-tidy;
   };
 
 
-  getTool = x: if shell.tools.${x} == null then default-tools.${x} else shell.tools.${x};
+  getTool = x: if utils.getAttrWithDefault x null shell.tools == null then default-tools.${x} else shell.tools.${x};
 
 
   shell-tools = {
@@ -71,7 +71,7 @@ let
     prettier = getTool "prettier";
     editorconfig-checker = getTool "editorconfig-checker";
     nixpkgs-fmt = getTool "nixpkgs-fmt";
-    png-optimization = getTool "png-optimization";
+    optipng = getTool "optipng";
     purs-tidy = getTool "purs-tidy";
     haskell-language-server = getTool "haskell-language-server";
     haskell-language-server-wrapper = getTool "haskell-language-server-wrapper";
@@ -145,9 +145,9 @@ let
       include = [ "nix" ];
     };
 
-    png-optimization = {
-      enable = shell.preCommit.png-optimization.enable;
-      extraOptions = shell.preCommit.png-optimization.extraOptions;
+    optipng = {
+      enable = shell.preCommit.optipng.enable;
+      extraOptions = shell.preCommit.optipng.extraOptions;
       package = shell-tools.optipng;
       include = [ "png" ];
     };

@@ -23,7 +23,9 @@ let
       makeAliasesForGroupExes = group:
         let
           mkPair = name: lib.nameValuePair (makeAliasForExe name);
-          exes = lib.filterAttrs (name: _: lib.strings.hasInfix ":exe:" name) group;
+          isExe = lib.strings.hasInfix ":exe";
+          isTest = lib.strings.hasInfix ":test";
+          exes = lib.filterAttrs (name: _: isExe name || isTest name) group;
         in
         lib.mapAttrs' mkPair exes;
 
@@ -66,7 +68,7 @@ let
     { inherit packages env; };
 
 
-  iogx-overlay = _: cabalProject: # This will be called for each projectVariant as well
+  iogx-overlay = cabalProject: _: # This will be called for each projectVariant as well
     let
       combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
@@ -87,6 +89,7 @@ let
         combined-haddock = combined-haddock;
         # flake = flake;
         # outputs = {
+        shell = shell;
         devShell = devShell;
         apps = aliased-outputs.apps;
         packages = aliased-outputs.packages;
@@ -97,22 +100,7 @@ let
     };
 
 
-  cabalProjectArgs = {
-    src =
-      utils.getAttrWithDefault
-        "src"
-        user-inputs.self
-        haskellProject.cabalProjectArgs;
-
-    inputMap =
-      utils.getAttrWithDefault
-        "inputMap"
-        { "https://input-output-hk.github.io/cardano-haskell-packages" = iogx-inputs.CHaP; }
-        haskellProject.cabalProjectArgs;
-  };
-
-
-  project' = pkgs.haskell-nix.cabalProject' cabalProjectArgs;
+  project' = pkgs.haskell-nix.cabalProject' haskellProject.cabalProjectArgs;
 
 
   project = project'.appendOverlays [ iogx-overlay ];

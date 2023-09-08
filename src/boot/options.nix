@@ -148,7 +148,7 @@ let
         default = default-pre-commit-hook;
       };
 
-      png-optimization = l.mkOption {
+      optipng = l.mkOption {
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
       };
@@ -296,7 +296,10 @@ let
 
       shellFor = l.mkOption {
         type = l.types.functionTo shell-submodule;
-        default = _: { };
+        default = cabalProject: {
+          tools.haskellCompiler = cabalProject.args.compiler-nix-name;
+          name = cabalProject.args.name;
+        };
       };
 
       combinedHaddock = l.mkOption {

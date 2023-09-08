@@ -7,7 +7,7 @@ let
   shellProfile = {
 
     packages = [
-      repoRoot.src.core.ext.sphinx-toolchain
+      repoRoot.src.ext.sphinx-toolchain
       pkgs.python3
     ];
 

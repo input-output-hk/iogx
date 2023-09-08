@@ -6,12 +6,12 @@
 
     haskell-nix = {
       url = "github:input-output-hk/haskell.nix";
-      inputs.hackage.follows = "hackage-nix";
+      inputs.hackage.follows = "hackage";
     };
 
     nixpkgs.follows = "haskell-nix/nixpkgs-2305";
 
-    hackage-nix = {
+    hackage = {
       url = "github:input-output-hk/hackage.nix";
       flake = false;
     };

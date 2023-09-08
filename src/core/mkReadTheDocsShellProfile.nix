@@ -1,4 +1,4 @@
-{ repo, pkgs, ... }:
+{ repoRoot, pkgs, ... }:
 
 readTheDocs:
 
@@ -7,7 +7,7 @@ let
   shellProfile = {
 
     packages = [
-      repo.src.core.ext.sphinx-toolchain
+      repoRoot.src.core.ext.sphinx-toolchain
       pkgs.python3
     ];
 

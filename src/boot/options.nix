@@ -290,13 +290,13 @@ let
     options = {
 
       cabalProjectArgs = l.mkOption {
-        type = l.types.attrs;
+        type = l.types.raw;
         default = { };
       };
 
       shellFor = l.mkOption {
         type = l.types.functionTo shell-submodule;
-        default = { };
+        default = _: { };
       };
 
       combinedHaddock = l.mkOption {

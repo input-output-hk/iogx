@@ -1,4 +1,4 @@
-{ repo, iogx-inputs, pkgs, lib, ... }:
+{ repoRoot, iogx-inputs, pkgs, lib, ... }:
 
 cabalProject:
 combinedHaddock:
@@ -81,7 +81,7 @@ let
         interfaceOpts+=("--read-interface=$docdir,$interfaceFile")
         # Jam this in here for now
         pushd $out/share/doc
-        ${repo.src.ext.sphinxcontrib-haddock.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
+        ${repoRoot.src.ext.sphinxcontrib-haddock.sphinxcontrib-haddock}/bin/haddock_inventory $docdir
         popd
       done
       popd

@@ -1,4 +1,4 @@
-{ repo, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
+{ repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
 haskellProject'':
 
@@ -18,7 +18,7 @@ let
   haskellProject = evaluated-modules.config.haskellProject;
 
 
-  mkAliasedFlake = flake:
+  mkAliasedOutputs = flake:
     let
       makeAliasesForGroupExes = group:
         let
@@ -68,28 +68,51 @@ let
 
   iogx-overlay = _: cabalProject: # This will be called for each projectVariant as well
     let
-      combined-haddock = repo.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
-      read-the-docs-site = repo.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
-      read-the-docs-shell-profile = repo.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
+      combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
+      read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
+      read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
       cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
       extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
-      shell = repo.src.core.mkShell (haskellProject.shellFor cabalProject) extra-shell-profiles;
-      flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { devShell = shell.devShell; };
+      shell = repoRoot.src.core.mkShell (haskellProject.shellFor cabalProject) extra-shell-profiles;
+      devShell = shell.devShell;
+      pre-commit-check = shell.pre-commit-check;
+      flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
+      extra-packages = { inherit pre-commit-check read-the-docs-site combined-haddock; };
+      aliased-outputs = mkAliasedOutputs flake;
     in
     {
-      shell = shell.devShell;
       iogx = {
-        flake = flake;
-        devShell = shell.devShell;
-        aliases = mkAliasedFlake flake;
-        pre-commit-check = shell.preCommitCheck;
+        pre-commit-check = pre-commit-check;
         read-the-docs-site = read-the-docs-site;
-        # combined-haddock = combined-haddock; TODO 
+        combined-haddock = combined-haddock;
+        # flake = flake;
+        # outputs = {
+        devShell = devShell;
+        apps = aliased-outputs.apps;
+        packages = aliased-outputs.packages;
+        checks = aliased-outputs.checks;
+        hydraJobs = flake.hydraJobs;
+        # };
       };
     };
 
 
-  project' = pkgs.haskell-nix.cabalProject' haskellProject.cabalProjectArgs;
+  cabalProjectArgs = {
+    src =
+      utils.getAttrWithDefault
+        "src"
+        user-inputs.self
+        haskellProject.cabalProjectArgs;
+
+    inputMap =
+      utils.getAttrWithDefault
+        "inputMap"
+        { "https://input-output-hk.github.io/cardano-haskell-packages" = iogx-inputs.CHaP; }
+        haskellProject.cabalProjectArgs;
+  };
+
+
+  project' = pkgs.haskell-nix.cabalProject' cabalProjectArgs;
 
 
   project = project'.appendOverlays [ iogx-overlay ];

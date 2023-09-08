@@ -1,4 +1,4 @@
-{ repo, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
+{ repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
 shell'':
 extraProfiles:
@@ -36,13 +36,13 @@ let
   ghc = shell.tools.haskellCompiler;
 
 
-  hls = repo.src.ext."haskell-language-server-project-${ghc}";
+  hls = repoRoot.src.ext."haskell-language-server-project-${ghc}";
 
 
   default-tools = {
-    cabal-fmt = repo.src.ext.cabal-fmt;
-    cabal-install = repo.src.ext."cabal-install-${ghc}";
-    fourmolu = repo.src.ext.fourmolu;
+    cabal-fmt = repoRoot.src.ext.cabal-fmt;
+    cabal-install = repoRoot.src.ext."cabal-install-${ghc}";
+    fourmolu = repoRoot.src.ext.fourmolu;
 
     hlint = hls.hsPkgs.hlint.components.exes.hlint;
     stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
@@ -52,7 +52,7 @@ let
     shellcheck = pkgs.shellcheck;
     prettier = pkgs.nodePackages.prettier;
     editorconfig-checker = pkgs.editorconfig-checker;
-    nixpkgs-fmt = repo.src.ext.nixpkgs-fmt;
+    nixpkgs-fmt = repoRoot.src.ext.nixpkgs-fmt;
     png-optimization = pkgs.optipng;
     purs-tidy = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs-tidy;
   };
@@ -214,7 +214,7 @@ let
     ("${pkgs.glibcLocales}/lib/locale/locale-archive");
 
 
-  base-profile = repo.src.core.mkMergedShell (extraProfiles ++ [
+  base-profile = repoRoot.src.core.mkMergedShell (extraProfiles ++ [
     pre-commit-profile
     shell-as-shell-profile
     local-archive-profile
@@ -224,11 +224,11 @@ let
 
 
   utility-scripts-profile = {
-    scripts = repo.src.core.mkShellUtilityScripts base-profile;
+    scripts = repoRoot.src.core.mkShellUtilityScripts base-profile;
   };
 
 
-  final-profile = repo.src.core.mkMergedShell [ base-profile utility-scripts-profile ];
+  final-profile = repoRoot.src.core.mkMergedShell [ base-profile utility-scripts-profile ];
 
 
   final-scripts-as-packages =

@@ -1,14 +1,14 @@
-{ repo, pkgs, ... }:
+{ repoRoot, pkgs, ... }:
 
 let
-  sphinxcontrib-haddock = repo.src.ext.sphinxcontrib-haddock;
+  sphinxcontrib-haddock = repoRoot.src.ext.sphinxcontrib-haddock;
 in
 
 pkgs.python3.withPackages (py: [
 
-  repo.src.ext.sphinxcontrib-bibtex
-  repo.src.ext.sphinx-markdown-tables
-  repo.src.ext.sphinxemoji
+  repoRoot.src.ext.sphinxcontrib-bibtex
+  repoRoot.src.ext.sphinx-markdown-tables
+  repoRoot.src.ext.sphinxemoji
 
   sphinxcontrib-haddock.sphinxcontrib-haddock
   sphinxcontrib-haddock.sphinxcontrib-domaintools

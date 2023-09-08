@@ -1,4 +1,4 @@
-{ repo, pkgs, lib, user-inputs, ... }:
+{ repoRoot, pkgs, lib, user-inputs, ... }:
 
 readTheDocs:
 combined-haddock:
@@ -14,7 +14,7 @@ let
       [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" "txt" ];
 
     buildInputs = [
-      repo.src.core.ext.sphinx-toolchain
+      repoRoot.src.core.ext.sphinx-toolchain
       # We need this here in order to get the `plantuml` executable in PATH.
       # Unfortunately `python3.withPackages` (used by sphinx-toolchain above)
       # won't do it automatically.

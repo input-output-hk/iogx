@@ -27,9 +27,9 @@ let
   mkIogxLib = desystemized-user-inputs: pkgs:
     let
       iogx = { inherit utils modularise options; };
-      repo = modularise {
+      repoRoot = modularise {
         root = ../.;
-        module = "repo";
+        module = "repoRoot";
         args = {
           user-inputs = desystemized-user-inputs;
           iogx-inputs = utils.deSystemize pkgs.stdenv.system iogx-inputs;
@@ -40,9 +40,9 @@ let
       };
     in
     {
-      mkShell = repo.src.core.mkShell;
-      mkHaskellProject = repo.src.core.mkHaskellProject;
-      mkHydraRequiredJob = repo.src.core.mkHydraRequiredJob;
+      mkShell = repoRoot.src.core.mkShell;
+      mkHaskellProject = repoRoot.src.core.mkHaskellProject;
+      mkHydraRequiredJob = repoRoot.src.core.mkHydraRequiredJob;
 
       inherit (iogx) utils modularise options;
     };
@@ -78,7 +78,7 @@ let
           modularised-user-repo-root = modularise {
             inherit debug;
             root = repoRoot;
-            module = "repo";
+            module = "repoRoot";
             args = {
               inputs = desystemized-user-inputs;
               inherit pkgs lib system;
@@ -86,7 +86,7 @@ let
           };
 
           args-for-user-outputs = {
-            repo = modularised-user-repo-root;
+            repoRoot = modularised-user-repo-root;
             inputs = desystemized-user-inputs;
             inherit pkgs lib system;
           };
@@ -104,9 +104,9 @@ let
                 Or:
                   [AttrSet]
                 Or:
-                  { repo, inputs, pkgs, system, lib, ... } -> AttrSet
+                  { repoRoot, inputs, pkgs, system, lib, ... } -> AttrSet
                 Or:
-                  { repo, inputs, pkgs, system, lib, ... } -> [AttrSet]
+                  { repoRoot, inputs, pkgs, system, lib, ... } -> [AttrSet]
               '';
             };
 

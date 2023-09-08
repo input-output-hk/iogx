@@ -3,11 +3,11 @@
     "CHaP": {
       "flake": false,
       "locked": {
-        "lastModified": 1692114433,
-        "narHash": "sha256-l6UoBkt1SUUBga/u0qpQeuNTN2YgtdZMBJSw29Wb0xU=",
+        "lastModified": 1694155919,
+        "narHash": "sha256-sdbrl4GlUszafQPZqr+ud1mBeT2yAFtj2zaXO693qUc=",
         "owner": "input-output-hk",
         "repo": "cardano-haskell-packages",
-        "rev": "73093fde5e26b9f7594a2219d339175005256475",
+        "rev": "92255dd59e1e851b1dd36042d52611b818d19549",
         "type": "github"
       },
       "original": {
@@ -276,14 +276,14 @@
         "type": "github"
       }
     },
-    "hackage-nix": {
+    "hackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1692318155,
-        "narHash": "sha256-e4npK3xeIIIzq1MDFYhpT3cR37DtEttOdGE7uFi71PQ=",
+        "lastModified": 1694132703,
+        "narHash": "sha256-44c+OKSxUVAJ3hpFuNuNy1CG54iOkWJy/CHYyPx/NXk=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "0a259b13134e5ac7f9ca408365fd240bd4b42645",
+        "rev": "b7ff2a816ad540e7c6ab5b0c9a5567e041aac6aa",
         "type": "github"
       },
       "original": {
@@ -303,7 +303,7 @@
         "flake-utils": "flake-utils_3",
         "ghc-8.6.5-iohk": "ghc-8.6.5-iohk",
         "hackage": [
-          "hackage-nix"
+          "hackage"
         ],
         "hls-1.10": "hls-1.10",
         "hls-2.0": "hls-2.0",
@@ -708,7 +708,7 @@
         "CHaP": "CHaP",
         "easy-purescript-nix": "easy-purescript-nix",
         "flake-utils": "flake-utils_2",
-        "hackage-nix": "hackage-nix",
+        "hackage": "hackage",
         "haskell-nix": "haskell-nix",
         "iohk-nix": "iohk-nix",
         "nixpkgs": [

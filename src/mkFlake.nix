@@ -13,17 +13,21 @@ let
       config = iogx-inputs.haskell-nix.config // args.config;
       overlays =
         [
-          # WARNING: The order of these is crucial
           iogx-inputs.iohk-nix.overlays.crypto
           iogx-inputs.iohk-nix.overlays.cardano-lib
           iogx-inputs.haskell-nix.overlay
           iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
+          # WARNING: The order of these is crucial
+          # The iohk-nix.overlays.haskell-nix-crypto depends on both the 
+          # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
+          # and so must be after them in the list of overlays to nixpkgs.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
         ]
         ++ args.overlays;
     };
 
 
+  # This creates the IOGX lib and will become available as lib.iogx.* to the user.
   mkIogxLib = desystemized-user-inputs: pkgs:
     let
       iogx = { inherit utils modularise options; };
@@ -52,7 +56,7 @@ let
     { inputs
     , repoRoot
     , systems ? [ "x86_64-linux" "x86_64-darwin" ]
-    , outputs ? [ ]
+    , outputs ? _: [ ]
     , flake ? { }
     , nixpkgsArgs ? { config = { }; overlays = [ ]; }
     , debug ? false
@@ -91,38 +95,7 @@ let
             inherit pkgs lib system;
           };
 
-          throwInvalidOutputTypeError = i: mod:
-            utils.throwInvalidFieldError {
-              docs = "mkFlake:outputs";
-              message = ''
-                Value at index ${i} has invalid type:
-                  ${lib.typeOf mod}
-                Values must either have type:
-                  Path
-                Or:
-                  AttrSet 
-                Or:
-                  [AttrSet]
-                Or:
-                  { repoRoot, inputs, pkgs, system, lib, ... } -> AttrSet
-                Or:
-                  { repoRoot, inputs, pkgs, system, lib, ... } -> [AttrSet]
-              '';
-            };
-
-          evaluateOutputs = args: mod:
-            if lib.typeOf mod == "path" then
-              evaluateOutputs args (import mod)
-            else if lib.typeOf mod == "set" then
-              [ mod ]
-            else if lib.typeOf mod == "lambda" then
-              evaluateOutputs args (mod args)
-            else if lib.typeOf mod == "list" then
-              lib.concatLists (map (evaluateOutputs args) mod)
-            else
-              throwInvalidOutputTypeError mod;
-
-          evaluated-outputs = evaluateOutputs args-for-user-outputs outputs;
+          evaluated-outputs = outputs args-for-user-outputs;
 
           flake = utils.recursiveUpdateMany evaluated-outputs;
         in

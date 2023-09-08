@@ -7,12 +7,6 @@ let
 
   utils = rec {
 
-    mergeDisjointAttrsDetectDuplicates = s1: s2: {
-      duplicates = l.intersectLists (l.attrNames s1) (l.attrNames s2);
-      value = s1 // s2;
-    };
-
-
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
 
 

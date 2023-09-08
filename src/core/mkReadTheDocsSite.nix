@@ -11,7 +11,7 @@ let
 
     src = lib.sourceFilesBySuffices
       (user-inputs.self + "/${readTheDocs.siteFolder}")
-      [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" "txt" ];
+      [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" ".txt" ];
 
     buildInputs = [
       repoRoot.src.core.ext.sphinx-toolchain

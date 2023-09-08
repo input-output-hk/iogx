@@ -87,15 +87,13 @@ let
         pre-commit-check = pre-commit-check;
         read-the-docs-site = read-the-docs-site;
         combined-haddock = combined-haddock;
-        # flake = flake;
-        # outputs = {
+        flake = flake;
         shell = shell;
         devShell = devShell;
         apps = aliased-outputs.apps;
         packages = aliased-outputs.packages;
         checks = aliased-outputs.checks;
         hydraJobs = flake.hydraJobs;
-        # };
       };
     };
 

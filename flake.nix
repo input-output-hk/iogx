@@ -81,7 +81,7 @@
         };
         top-level-outputs = {
           inherit (iogx) lib;
-          template.default = {
+          templates.default = {
             path = ./template;
             description = "Flake Template for Haskell Projects at IOG";
             welcomeText = ''

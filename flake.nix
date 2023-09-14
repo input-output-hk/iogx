@@ -69,17 +69,9 @@
         options = import ./src/boot/options.nix inputs;
       };
 
-      outputs = { pkgs, lib, ... }: [{
+      outputs = { repoRoot, pkgs, lib, ... }: [{
 
-        packages.options-doc = pkgs.nixosOptionsDoc {
-          options = (
-            lib.evalModules {
-              modules = [{
-                options = inputs.self.lib.options;
-              }];
-            }
-          ).options;
-        };
+        packages.options-doc = repoRoot.src.core.mkIogxDoc;
 
         devShells.default = pkgs.mkShell {
           name = "iogx-devshell";

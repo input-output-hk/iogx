@@ -52,36 +52,41 @@ let
     };
 
 
-  mkFlake =
-    { inputs
-    , repoRoot
-    , systems ? [ "x86_64-linux" "x86_64-darwin" ]
-    , outputs ? _: [ ]
-    , flake ? { }
-    , nixpkgsArgs ? { config = { }; overlays = [ ]; }
-    , debug ? false
-    , ...
-    }:
+  mkFlake = args':
+    # { inputs
+    # , repoRoot
+    # , systems ? [ "x86_64-linux" "x86_64-darwin" ]
+    # , outputs ? _: [ ]
+    # , flake ? { }
+    # , nixpkgsArgs ? { config = { }; overlays = [ ]; }
+    # , debug ? false
+    # , ...
+    # }:
     let
-      flake'' = iogx-inputs.nixpkgs.lib.recursiveUpdate flake flake';
+      evaluated-modules = iogx-inputs.nixpkgs.lib.evalModules {
+        modules = [{
+          options.mkFlake = options.mkFlake;
+          config.mkFlake = args';
+        }];
+      };
 
-      flake' = iogx-inputs.flake-utils.lib.eachSystem systems mkPerSystemFlake;
+      args = evaluated-modules.config.mkFlake;
 
       mkPerSystemFlake = system:
         let
-          user-inputs = inputs;
+          user-inputs = args.inputs;
 
           desystemized-user-inputs = utils.deSystemize system user-inputs;
 
-          pkgs = mkNixpkgs system nixpkgsArgs;
+          pkgs = mkNixpkgs system args.nixpkgsArgs;
 
           lib = builtins // pkgs.lib // {
             iogx = mkIogxLib desystemized-user-inputs pkgs;
           };
 
           modularised-user-repo-root = modularise {
-            inherit debug;
-            root = repoRoot;
+            debug = args.debug;
+            root = args.repoRoot;
             module = "repoRoot";
             args = {
               inputs = desystemized-user-inputs;
@@ -95,13 +100,21 @@ let
             inherit pkgs lib system;
           };
 
-          evaluated-outputs = outputs args-for-user-outputs;
+          evaluated-outputs =
+            if lib.typeOf args.outputs == "path" then
+              import args.outputs args-for-user-outputs
+            else
+              args.outputs args-for-user-outputs;
 
-          flake = utils.recursiveUpdateMany evaluated-outputs;
+          flake = utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
         in
         flake;
+
+      flake = iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
+
+      flake' = iogx-inputs.nixpkgs.lib.recursiveUpdate args.flake flake;
     in
-    flake'';
+    flake';
 
 in
 

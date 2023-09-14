@@ -63,13 +63,23 @@
       };
 
       flake.lib = {
-        mkFlake = mkFlake;
-        utils = import ./src/bootstrap/utils.nix inputs;
-        modularise = import ./src/bootstrap/modularise.nix inputs;
-        options = import ./src/bootstrap/nixschema.nix inputs;
+        inherit mkFlake;
+        utils = import ./src/boot/utils.nix inputs;
+        modularise = import ./src/boot/modularise.nix inputs;
+        options = import ./src/boot/options.nix inputs;
       };
 
-      outputs = { pkgs, ... }: {
+      outputs = { pkgs, lib, ... }: [{
+
+        packages.options-doc = pkgs.nixosOptionsDoc {
+          options = (
+            lib.evalModules {
+              modules = [{
+                options = inputs.self.lib.options;
+              }];
+            }
+          ).options;
+        };
 
         devShells.default = pkgs.mkShell {
           name = "iogx-devshell";
@@ -78,7 +88,7 @@
             export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "
           '';
         };
-      };
+      }];
     };
 
 

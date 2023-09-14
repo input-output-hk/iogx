@@ -1,4 +1,4 @@
-# IOGX — A Flake Template for Your Project <!-- omit in toc -->
+# IOGX — A Flake Template for Your Haskell Project <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
@@ -60,24 +60,12 @@
 
 IOGX is a flake template that provides a skeleton for your Nix code and comes with a number of common DevX facilities to develop your project.
 
-It also implements an optional "module system" for Nix that replaces the `import` keyword.
-
-_The vision is to provide a JSON-like declarative interface to Nix, so that developers unfamiliar with the language may independently maintain and add to the Nix code with minimum effort and maximum pleasure._
-
 To get started run: 
 ```bash
 nix flake init --template github:input-output-hk/iogx
 ```
 
-This will generates a [`flake.nix`](./template/flake.nix) as well as a [`nix`](./template/nix) folder containing a number of file templates.
-
-These files constitute IOGX's *filesystem-based* API.
-
-You will fill in the templates in the `nix` folder while leaving `flake.nix` largely untouched.
-
-**IOGX will populate your flake outputs based on the contents of the nix folder.**
-
-If you dislike this approach, you can always opt for using inline attribute sets instead of files.
+This will generates a [`flake.nix`](./template/flake.nix) to get you started. 
 
 You may now move on to the [API Reference](#3-reference).
 

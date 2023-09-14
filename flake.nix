@@ -4,24 +4,20 @@
 
   inputs = {
 
-    CHaP = {
-      url = "github:input-output-hk/cardano-haskell-packages?ref=repo";
+    haskell-nix = {
+      url = "github:input-output-hk/haskell.nix";
+      inputs.hackage.follows = "hackage-nix";
+    };
+
+    nixpkgs.follows = "haskell-nix/nixpkgs-2305";
+
+    hackage-nix = {
+      url = "github:input-output-hk/hackage.nix";
       flake = false;
     };
 
-    flake-utils.url = "github:numtide/flake-utils";
-
-    haskell-nix = {
-      url = "github:input-output-hk/haskell.nix";
-      inputs.hackage.follows = "hackage";
-    };
-
-    # nixpkgs.url = "https://github.com/NixOS/nixpkgs"; 
-    nixpkgs.follows = "haskell-nix/nixpkgs-2305";
-    # nixpkgs.follows = "haskell-nix/nixpkgs-unstable";
-
-    hackage = {
-      url = "github:input-output-hk/hackage.nix";
+    CHaP = {
+      url = "github:input-output-hk/cardano-haskell-packages?ref=repo";
       flake = false;
     };
 
@@ -37,58 +33,50 @@
 
     pre-commit-hooks-nix.url = "github:cachix/pre-commit-hooks.nix";
 
-    haskell-language-server-1_9_0_0 = {
-      # This revision is the newest working 1.9.0.0 available.
-      url = "github:haskell/haskell-language-server/1916b5782d9f3204d25a1d8f94da4cfd83ae2607";
-      flake = false;
-    };
-
-    haskell-language-server-1_8_0_0 = {
-      # This revision is the newest 1.8.0.0 which includes a patch for the stan plugin.
-      url = "github:haskell/haskell-language-server/855a88238279b795634fa6144a4c0e8acc7e9644";
-      flake = false;
-    };
-
     easy-purescript-nix = {
       url = "github:justinwoo/easy-purescript-nix";
       flake = true;
     };
+
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
 
-  outputs = iogx-inputs:
+  outputs = inputs:
     let
-      iogx = import ./src/iogx { inherit iogx-inputs; };
+      mkFlake = import ./src/mkFlake.nix inputs;
     in
-    iogx.lib.mkFlake {
-      inputs = iogx-inputs;
-      systems = [ "x86_64-darwin" "x86_64-linux" ];
+    mkFlake {
+      inherit inputs;
+
       repoRoot = ./.;
-      config = {
-        formatters = {
-          nixpkgs-fmt.enable = true;
-        };
-        shell = { pkgs, ... }: {
-          name = "iogx";
-          packages = [
-            pkgs.github-cli
-            pkgs.act
-          ];
-        };
-        per-system-outputs = { pkgs, ... }: rec {
-          packages.testsuite = import ./tests { inherit iogx pkgs; };
-          packages.pkgs = pkgs;
-        };
-        top-level-outputs = {
-          inherit (iogx) lib;
-          templates.default = {
-            path = ./template;
-            description = "Flake Template for Haskell Projects at IOG";
-            welcomeText = ''
-              # Flake Template for Haskell Projects at IOG
-              Open flake.nix to get started.
-            '';
-          };
+
+      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
+
+      flake.templates.default = {
+        path = ./template;
+        description = "Flake Template for Haskell Projects at IOG";
+        welcomeText = ''
+          # Flake Template for Haskell Projects at IOG
+          Open flake.nix to get started.
+        '';
+      };
+
+      flake.lib = {
+        mkFlake = mkFlake;
+        utils = import ./src/bootstrap/utils.nix inputs;
+        modularise = import ./src/bootstrap/modularise.nix inputs;
+        options = import ./src/bootstrap/nixschema.nix inputs;
+      };
+
+      outputs = { pkgs, ... }: {
+
+        devShells.default = pkgs.mkShell {
+          name = "iogx-devshell";
+          buildInputs = [ pkgs.github-cli pkgs.python39 ];
+          shellHook = ''
+            export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "
+          '';
         };
       };
     };

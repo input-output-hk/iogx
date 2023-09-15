@@ -12,9 +12,9 @@
 ### `mkFlake` :: core API function
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 # flake.nix
 outputs = inputs: inputs.iogx.lib.mkFlake {
   inherit inputs;
@@ -24,6 +24,8 @@ outputs = inputs: inputs.iogx.lib.mkFlake {
 };
 
 ```
+
+
 The `inputs.iogx.lib.mkFlake` function takes an attrset of options and returns an attrset of flake outputs.
 
 In this document:
@@ -35,12 +37,11 @@ In this document:
 
 ### `mkFlake.<in>.debug` :: boolean
 
+**Default**: `false`
 
-```nix
-# Default:
-false
-```
-    
+
+
+
 If enabled, IOGX will trace debugging info to standard output.
 
 
@@ -48,14 +49,11 @@ If enabled, IOGX will trace debugging info to standard output.
 
 ### `mkFlake.<in>.flake` :: attribute set
 
+**Default**: `{ }`
 
+
+**Example**: 
 ```nix
-# Default:
-{ }
-```
-    
-```nix
-# Example:
 {
   lib.bar = _: null;
 
@@ -69,6 +67,8 @@ If enabled, IOGX will trace debugging info to standard output.
 }
 
 ```
+
+
 A flake-like attrset.
 
 You can place additional flake outputs here, which will be recursively updated with the outputs from #TODOmkFlake.outputs.
@@ -81,7 +81,9 @@ This is a good place to put system-independent values like a `lib` attrset or pu
 ### `mkFlake.<in>.inputs` :: attribute set
 
 
-    
+
+
+
 Your flake inputs.
 
 You want to do `inherit inputs;` here.
@@ -91,16 +93,18 @@ You want to do `inherit inputs;` here.
 
 ### `mkFlake.<in>.nixpkgsArgs` :: attribute set
 
-
+**Default**: 
 ```nix
-# Default:
 { 
   config = { }; 
   overlays = [ ]; 
 }
 
 ```
-    
+
+
+
+
 Internally, IOGX calls `import inputs.nixpkgs {}`.
 
 Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of `overlays` to be appended to nixpkgs.
@@ -111,9 +115,9 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 ### `mkFlake.<in>.outputs` :: function that evaluates to a(n) list of (attribute set)
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 [
   {
@@ -129,6 +133,8 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 ]
 
 ```
+
+
 A function that is called once for each #TODOsystem.
 
 This is the most important option as it will determine your flake outputs.
@@ -252,16 +258,12 @@ lib.iogx.mkShell {}
 
 ### `mkFlake.<in>.repoRoot` :: path
 
+**Default**: `null`
 
-```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
-/nix/store/qw7dllx4kpnvj6m2fbgqn3ip6zzjbjb5-source/src/boot
-```
+
+**Example**: `/nix/store/0gmg2a015f3zm56v07wr636ln6gasxxg-source/src/boot`
+
+
 The root of your repository.
 
 If not set, this will default to the folder containing the flake.nix file, using `inputs.self`.
@@ -271,12 +273,11 @@ If not set, this will default to the folder containing the flake.nix file, using
 
 ### `mkFlake.<in>.systems` :: list of (one of "x86_64-linux", "x86_64-darwin", "aarch64-darwin", "aarch64-linux")
 
+**Default**: `[ "x86_64-linux" "x86_64-darwin" ]`
 
-```nix
-# Default:
-[ "x86_64-linux" "x86_64-darwin" ]
-```
-    
+
+
+
 The systems you want to build for.
 
 
@@ -284,12 +285,11 @@ The systems you want to build for.
 
 ### `mkFlake.<out>."<flake>"` :: attribute set
 
+**Default**: `{ }`
 
-```nix
-# Default:
-{ }
-```
-    
+
+
+
 Test
 
 ---
@@ -297,9 +297,9 @@ Test
 ### `mkProject` :: core API function
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 let 
   cabalProject = lib.iogx.mkProject {
@@ -322,6 +322,8 @@ in
 ]
 
 ```
+
+
 The `pkgs.lib.iogx.mkProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
 
 In this document:
@@ -333,14 +335,11 @@ In this document:
 
 ### `mkProject.<in>.cabalProjectArgs` :: raw value
 
+**Default**: `{ }`
 
+
+**Example**: 
 ```nix
-# Default:
-{ }
-```
-    
-```nix
-# Example:
 # cabal-project.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 
@@ -364,6 +363,8 @@ lib.iogx.mkProject {
 };
 
 ```
+
+
 The very arguments that will be passed to `haskell.nix:cabalProject'`.
 
 The `src` and `inputMap` arguments can be omitted. 
@@ -373,18 +374,18 @@ The `src` and `inputMap` arguments can be omitted.
 
 ### `mkProject.<in>.combinedHaddock` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   packages = [ ];
   prologue = "";
 }
 ```
-    
+
+
+**Example**: 
 ```nix
-# Example:
 # outputs.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 let 
@@ -403,6 +404,8 @@ in
 ]
 
 ```
+
+
 Configuration for a combined Haddock.
 
 When enabled, your #TODO nix/read-the-docs.nix site will have access to Haddock symbols for your Haskell packages.
@@ -416,12 +419,11 @@ The combined Haddock will only be generated for your default project, not for an
 
 ### `mkProject.<in>.combinedHaddock.enable` :: boolean
 
+**Default**: `false`
 
-```nix
-# Default:
-false
-```
-    
+
+
+
 Whether to enable combined haddock for your project.
 
 
@@ -429,12 +431,11 @@ Whether to enable combined haddock for your project.
 
 ### `mkProject.<in>.combinedHaddock.packages` :: list of string
 
+**Default**: `[ ]`
 
-```nix
-# Default:
-[ ]
-```
-    
+
+
+
 The list of cabal package names to include in the combined Haddock.
 
 
@@ -442,12 +443,11 @@ The list of cabal package names to include in the combined Haddock.
 
 ### `mkProject.<in>.combinedHaddock.prologue` :: string
 
+**Default**: `""`
 
-```nix
-# Default:
-""
-```
-    
+
+
+
 A string acting as prologue for the combined Haddock.
 
 
@@ -455,12 +455,11 @@ A string acting as prologue for the combined Haddock.
 
 ### `mkProject.<in>.mkShell` :: function that evaluates to a(n) (attribute set)
 
+**Default**: `<function>`
 
-```nix
-# Default:
-<function>
-```
-    
+
+
+
 This function will be called to create a shell for your project variants.
 
 It receives each project as an argument and must return a #TODOmkShell.mkShell-IN-submodule attrset.
@@ -470,16 +469,16 @@ It receives each project as an argument and must return a #TODOmkShell.mkShell-I
 
 ### `mkProject.<in>.readTheDocs` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   siteFolder = null;
 }
 ```
-    
+
+
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 
 lib.iogx.mkProject {
@@ -487,6 +486,8 @@ lib.iogx.mkProject {
 }
 
 ```
+
+
 Configuration for your [`read-the-docs`](https://readthedocs.org) site. 
 
 If no site is required, this option can be omitted.
@@ -500,14 +501,11 @@ In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx ov
 
 ### `mkProject.<in>.readTheDocs.siteFolder` :: null or string
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # cabal-project.nix
 
 { repoRoot, inputs, pkgs, lib, system }:
@@ -517,6 +515,8 @@ lib.iogx.mkProject {
 }
 
 ```
+
+
 A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
 
 If no site is required you can set this field to `null`, or omit the #TODO`readTheDocs` option entirely. 
@@ -527,7 +527,9 @@ If no site is required you can set this field to `null`, or omit the #TODO`readT
 ### `mkProject.<out>.apps` :: attribute set
 
 
-    
+
+
+
 Only the project's executables end up here.
 
 Their name has been shortened to the cabal target name.
@@ -538,7 +540,9 @@ Their name has been shortened to the cabal target name.
 ### `mkProject.<out>.checks` :: attribute set
 
 
-    
+
+
+
 Only the project's executables end up here.
 
 Their name has been shortened to the cabal target name.
@@ -549,7 +553,9 @@ Their name has been shortened to the cabal target name.
 ### `mkProject.<out>.defaultFlakeOutputs` :: attribute set
 
 
-    
+
+
+
 Test
 
 
@@ -558,7 +564,9 @@ Test
 ### `mkProject.<out>.devShell` :: package
 
 
-    
+
+
+
 The devShell as provided by `mkShell`.
 
 
@@ -567,7 +575,9 @@ The devShell as provided by `mkShell`.
 ### `mkProject.<out>.flake` :: attribute set
 
 
-    
+
+
+
 The *original* flake outputs provided by haskell.nix.
 
 In general you don't need this.
@@ -578,7 +588,9 @@ In general you don't need this.
 ### `mkProject.<out>.hydraJobs` :: attribute set
 
 
-    
+
+
+
 Test
 
 
@@ -587,7 +599,9 @@ Test
 ### `mkProject.<out>.packages` :: attribute set
 
 
-    
+
+
+
 Only the project's executables end up here.
 
 Their name has been shortened to the cabal target name.
@@ -598,7 +612,9 @@ Their name has been shortened to the cabal target name.
 ### `mkProject.<out>.pre-commit-check` :: package
 
 
-    
+
+
+
 Test
 
 
@@ -607,7 +623,9 @@ Test
 ### `mkProject.<out>.read-the-docs-site` :: package
 
 
-    
+
+
+
 Test
 
 
@@ -616,9 +634,9 @@ Test
 ### `mkShell` :: core API function
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 
 lib.iogx.mkShell {
@@ -645,6 +663,8 @@ lib.iogx.mkShell {
 };
 
 ```
+
+
 The `pkgs.lib.iogx.mkFlake` function takes an attrset of options and returns an attrset containing the #TODOdevShell and the #TODOpre-commit-check derivation.
 
 In this document:
@@ -656,20 +676,19 @@ In this document:
 
 ### `mkShell.<in>.env` :: lazy attribute set of raw value
 
+**Default**: `{ }`
 
+
+**Example**: 
 ```nix
-# Default:
-{ }
-```
-    
-```nix
-# Example:
 env = {
   PGUSER = "postgres";
   THE_ANSWER = 42;
 };
 
 ```
+
+
 Custom environment variables. 
 
 Considering the example above, the following bash code will be executed every time you enter the shell:
@@ -684,12 +703,11 @@ export THE_ANSWER="42"
 
 ### `mkShell.<in>.name` :: string
 
+**Default**: `"nix-shell"`
 
-```nix
-# Default:
-"nix-shell"
-```
-    
+
+
+
 This field will be used as the shell's derivation name and it will also be used to fill in the default values for #TODO`prompt` and #TODO`welcomeMessage` below.
 
 
@@ -697,12 +715,11 @@ This field will be used as the shell's derivation name and it will also be used 
 
 ### `mkShell.<in>.packages` :: list of package
 
+**Default**: `[ ]`
 
-```nix
-# Default:
-[ ]
-```
-    
+
+
+
 You can add anything you want here, so long as it's a derivation with executables in the `/bin` folder. 
 
 What you put here ends up in your `$PATH` (basically the `buildInputs` in `mkDerivation`).
@@ -734,14 +751,11 @@ If you do, then `nix develop` will build your project every time you enter the s
 
 ### `mkShell.<in>.preCommit` :: submodule
 
+**Default**: `{ }`
 
+
+**Example**: 
 ```nix
-# Default:
-{ }
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 
@@ -771,6 +785,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Configuration for pre-commit hooks, including code formatters and linters.
 
 These are fed to [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix), which is run whenever you `git commit`.
@@ -800,15 +816,17 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 
 ### `mkShell.<in>.preCommit.cabal-fmt` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `cabal-fmt` pre-commit hook.
 
 
@@ -816,14 +834,11 @@ The `cabal-fmt` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.cabal-fmt.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -833,6 +848,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -847,14 +864,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.cabal-fmt.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -867,6 +881,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -878,14 +894,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.cabal-fmt.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -896,6 +909,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -909,15 +924,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.editorconfig-checker` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `editorconfig-checker` pre-commit hook.
 
 
@@ -925,14 +942,11 @@ The `editorconfig-checker` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -942,6 +956,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -956,14 +972,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -976,6 +989,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -987,14 +1002,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1005,6 +1017,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1018,15 +1032,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.fourmolu` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `fourmolu` pre-commit hook.
 
 
@@ -1034,14 +1050,11 @@ The `fourmolu` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.fourmolu.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1051,6 +1064,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1065,14 +1080,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.fourmolu.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1085,6 +1097,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1096,14 +1110,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.fourmolu.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1114,6 +1125,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1127,15 +1140,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.hlint` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `hlint` pre-commit hook.
 
 
@@ -1143,14 +1158,11 @@ The `hlint` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.hlint.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1160,6 +1172,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1174,14 +1188,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.hlint.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1194,6 +1205,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1205,14 +1218,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.hlint.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1223,6 +1233,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1236,15 +1248,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `nixpkgs-fmt` pre-commit hook.
 
 
@@ -1252,14 +1266,11 @@ The `nixpkgs-fmt` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1269,6 +1280,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1283,14 +1296,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1303,6 +1313,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1314,14 +1326,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1332,6 +1341,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1345,15 +1356,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.optipng` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `optipng` pre-commit hook.
 
 
@@ -1361,14 +1374,11 @@ The `optipng` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.optipng.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1378,6 +1388,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1392,14 +1404,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.optipng.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1412,6 +1421,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1423,14 +1434,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.optipng.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1441,6 +1449,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1454,15 +1464,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.prettier` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `prettier` pre-commit hook.
 
 
@@ -1470,14 +1482,11 @@ The `prettier` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.prettier.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1487,6 +1496,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1501,14 +1512,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.prettier.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1521,6 +1529,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1532,14 +1542,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.prettier.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1550,6 +1557,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1563,15 +1572,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.purs-tidy` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `purs-tidy` pre-commit hook.
 
 
@@ -1579,14 +1590,11 @@ The `purs-tidy` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.purs-tidy.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1596,6 +1604,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1610,14 +1620,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.purs-tidy.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1630,6 +1637,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1641,14 +1650,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.purs-tidy.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1659,6 +1665,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1672,15 +1680,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.shellcheck` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `shellcheck` pre-commit hook.
 
 
@@ -1688,14 +1698,11 @@ The `shellcheck` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.shellcheck.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1705,6 +1712,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1719,14 +1728,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.shellcheck.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1739,6 +1745,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1750,14 +1758,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.shellcheck.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1768,6 +1773,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1781,15 +1788,17 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.preCommit.stylish-haskell` :: submodule
 
-
+**Default**: 
 ```nix
-# Default:
 {
   enable = false;
   extraOptions = "";
 }
 ```
-    
+
+
+
+
 The `stylish-haskell` pre-commit hook.
 
 
@@ -1797,14 +1806,11 @@ The `stylish-haskell` pre-commit hook.
 
 ### `mkShell.<in>.preCommit.stylish-haskell.enable` :: boolean
 
+**Default**: `false`
 
+
+**Example**: 
 ```nix
-# Default:
-false
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1814,6 +1820,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this pre-commit hook.
 
 If `false`, the hook will not be installed.
@@ -1828,14 +1836,11 @@ pre-commit run <hook-name>
 
 ### `mkShell.<in>.preCommit.stylish-haskell.extraOptions` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1848,6 +1853,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Extra command line options to be passed to the hook.
 
 Each hooks knows how run itself, and will be called with the correct command line arguments.
@@ -1859,14 +1866,11 @@ However you can *append* additional options to a tool's command by setting this 
 
 ### `mkShell.<in>.preCommit.stylish-haskell.package` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1877,6 +1881,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The package that provides the hook.
 
 The `nixpkgs.lib.getExe` function will be used to extract the program to run.
@@ -1890,12 +1896,11 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ### `mkShell.<in>.prompt` :: null or string
 
+**Default**: `null`
 
-```nix
-# Default:
-null
-```
-    
+
+
+
 Terminal prompt, i.e. the value of the `PS1` environment variable. 
 
 You can use ANSI color escape sequences to customize your prompt, but you'll need to double-escape the left slashes because `prompt` is a nix string that will be embedded in a bash string.
@@ -1915,14 +1920,11 @@ This field is optional and defaults to the familiar green `nix-shell` prompt.
 
 ### `mkShell.<in>.scripts` :: lazy attribute set of (submodule)
 
+**Default**: `{ }`
 
+
+**Example**: 
 ```nix
-# Default:
-{ }
-```
-    
-```nix
-# Example:
 scripts = {
 
   foobar = {
@@ -1943,6 +1945,8 @@ scripts = {
 };
 
 ```
+
+
 Custom scripts for your shell.
 
 `scripts` is an attrset where each attribute name is the script name each the attribute value is an attrset.
@@ -1954,14 +1958,11 @@ The attribute names (`foobar` and `waz` in the example above) will be available 
 
 ### `mkShell.<in>.scripts.<name>.description` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -1974,6 +1975,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A string that will appear next to the script name when printed.
 
 
@@ -1981,14 +1984,11 @@ A string that will appear next to the script name when printed.
 
 ### `mkShell.<in>.scripts.<name>.enable` :: boolean
 
+**Default**: `true`
 
+
+**Example**: 
 ```nix
-# Default:
-true
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2003,6 +2003,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Whether to enable this string.
 
 This can be used to include scripts conditionally.
@@ -2013,9 +2015,9 @@ This can be used to include scripts conditionally.
 ### `mkShell.<in>.scripts.<name>.exec` :: string
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2029,6 +2031,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 Bash code to be executed when the script is run.
 
 This field is required.
@@ -2038,14 +2042,11 @@ This field is required.
 
 ### `mkShell.<in>.scripts.<name>.group` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2058,6 +2059,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A string to tag the script.
 
 This will be used to group scripts together so that they look prettier and more organized when listed. 
@@ -2067,20 +2070,19 @@ This will be used to group scripts together so that they look prettier and more 
 
 ### `mkShell.<in>.shellHook` :: string
 
+**Default**: `""`
 
+
+**Example**: 
 ```nix
-# Default:
-""
-```
-    
-```nix
-# Example:
 shellHook = \'\'
   # Bash code to be executed when you enter the shell.
   echo "I'm inside the shell!"
 \'\';
 
 ```
+
+
 Standard nix `shellHook`, to be executed every time you enter the shell.
 
 
@@ -2088,12 +2090,11 @@ Standard nix `shellHook`, to be executed every time you enter the shell.
 
 ### `mkShell.<in>.tools` :: submodule
 
+**Default**: `{ }`
 
-```nix
-# Default:
-{ }
-```
-    
+
+
+
 Test
 
 
@@ -2101,14 +2102,11 @@ Test
 
 ### `mkShell.<in>.tools.cabal-fmt` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2116,6 +2114,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `cabal-fmt` executable.
 
 If unset or `null`, a default `cabal-fmt` will be provided, which is independed of #TODOhaskellCompilerVersion.
@@ -2125,14 +2125,11 @@ If unset or `null`, a default `cabal-fmt` will be provided, which is independed 
 
 ### `mkShell.<in>.tools.cabal-install` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2140,6 +2137,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `cabal-install` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2149,14 +2148,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.tools.editorconfig-checker` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2164,6 +2160,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `editorconfig-checker` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2173,14 +2171,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.fourmolu` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2188,6 +2183,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `fourmolu` executable.
 
 If unset or `null`, a default `fourmolu` will be provided, which is independed of #TODOhaskellCompilerVersion.
@@ -2197,14 +2194,11 @@ If unset or `null`, a default `fourmolu` will be provided, which is independed o
 
 ### `mkShell.<in>.tools.ghcid` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2212,6 +2206,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `ghcid` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2221,14 +2217,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.tools.haskell-language-server` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2236,6 +2229,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `haskell-language-server` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2245,14 +2240,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.tools.haskell-language-server-wrapper` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2260,6 +2252,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `haskell-language-server-wrapper` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2269,14 +2263,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.tools.haskellCompiler` :: null or one of "ghc8107", "ghc928", "ghc964"
 
+**Default**: `"ghc8107"`
 
+
+**Example**: 
 ```nix
-# Default:
-"ghc8107"
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2284,6 +2275,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 The haskell compiler version.
 
 This determines the version of other tools like `cabal-install` and `haskell-language-server`.
@@ -2310,14 +2303,11 @@ IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
 
 ### `mkShell.<in>.tools.hlint` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2325,6 +2315,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `hlint` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2334,14 +2326,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.tools.nixpkgs-fmt` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2349,6 +2338,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `nixpkgs-fmt` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2358,14 +2349,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.optipng` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2373,6 +2361,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `optipng` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2382,14 +2372,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.prettier` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2397,6 +2384,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `prettier` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2406,14 +2395,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.purs-tidy` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2421,6 +2407,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `purs-tidy` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2430,14 +2418,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.shellcheck` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2445,6 +2430,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `shellcheck` executable.
 
 If unset or `null`, the most recent version available will be used.
@@ -2454,14 +2441,11 @@ If unset or `null`, the most recent version available will be used.
 
 ### `mkShell.<in>.tools.stylish-haskell` :: null or package
 
+**Default**: `null`
 
+
+**Example**: 
 ```nix
-# Default:
-null
-```
-    
-```nix
-# Example:
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
@@ -2469,6 +2453,8 @@ lib.iogx.mkShell {
 }
 
 ```
+
+
 A package that provides the `stylish-haskell` executable.
 
 If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
@@ -2478,12 +2464,11 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ### `mkShell.<in>.welcomeMessage` :: null or string
 
+**Default**: `null`
 
-```nix
-# Default:
-null
-```
-    
+
+
+
 When entering the shell, this welcome message will be printed.
 
 The same caveat about escaping back slashes in #TODO`prompt` applies here.
@@ -2496,9 +2481,9 @@ This field is optional and defaults to a simple welcome message using the #TODO`
 ### `mkShell.<out>.devShell` :: package
 
 
-    
+**Read Only**
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 [
   {
@@ -2507,6 +2492,8 @@ This field is optional and defaults to a simple welcome message using the #TODO`
 ]
 
 ```
+
+
 The actual shell derivation.
 You can put this in your flake outputs.
 
@@ -2516,9 +2503,9 @@ You can put this in your flake outputs.
 ### `mkShell.<out>.pre-commit-check` :: package
 
 
-    
+
+**Example**: 
 ```nix
-# Example:
 { repoRoot, inputs, pkgs, lib, system }:
 let
   shell = lib.iogx.mkShell {};
@@ -2532,6 +2519,8 @@ in
 ]
 
 ```
+
+
 A derivation that when built will run all the installed shell hooks.
 The hooks are configured in #TODO preCommit
 This derivation can be included in your packages and in hydraJobs.

@@ -9,7 +9,7 @@
 
 ---
 
-<h2>`mkFlake`</h2> :: core API function
+### `mkFlake` :: core API function
 
 
     
@@ -33,7 +33,7 @@ In this document:
 
 ---
 
-<h2>`mkFlake.<in>.debug`</h2> :: boolean
+### `mkFlake.<in>.debug` :: boolean
 
 
 ```nix
@@ -46,7 +46,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 ---
 
-<h2>`mkFlake.<in>.flake`</h2> :: attribute set
+### `mkFlake.<in>.flake` :: attribute set
 
 
 ```nix
@@ -78,7 +78,7 @@ This is a good place to put system-independent values like a `lib` attrset or pu
 
 ---
 
-<h2>`mkFlake.<in>.inputs`</h2> :: attribute set
+### `mkFlake.<in>.inputs` :: attribute set
 
 
     
@@ -89,7 +89,7 @@ You want to do `inherit inputs;` here.
 
 ---
 
-<h2>`mkFlake.<in>.nixpkgsArgs`</h2> :: attribute set
+### `mkFlake.<in>.nixpkgsArgs` :: attribute set
 
 
 ```nix
@@ -108,7 +108,7 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 
 ---
 
-<h2>`mkFlake.<in>.outputs`</h2> :: function that evaluates to a(n) list of (attribute set)
+### `mkFlake.<in>.outputs` :: function that evaluates to a(n) list of (attribute set)
 
 
     
@@ -250,7 +250,7 @@ lib.iogx.mkShell {}
 
 ---
 
-<h2>`mkFlake.<in>.repoRoot`</h2> :: path
+### `mkFlake.<in>.repoRoot` :: path
 
 
 ```nix
@@ -260,7 +260,7 @@ null
     
 ```nix
 # Example:
-/nix/store/977dra06rpply60c48jqzkclbrf2l5f4-source/src/boot
+/nix/store/qw7dllx4kpnvj6m2fbgqn3ip6zzjbjb5-source/src/boot
 ```
 The root of your repository.
 
@@ -269,7 +269,7 @@ If not set, this will default to the folder containing the flake.nix file, using
 
 ---
 
-<h2>`mkFlake.<in>.systems`</h2> :: list of (one of "x86_64-linux", "x86_64-darwin", "aarch64-darwin", "aarch64-linux")
+### `mkFlake.<in>.systems` :: list of (one of "x86_64-linux", "x86_64-darwin", "aarch64-darwin", "aarch64-linux")
 
 
 ```nix
@@ -282,7 +282,7 @@ The systems you want to build for.
 
 ---
 
-<h2>`mkFlake.<out>."<flake>"`</h2> :: attribute set
+### `mkFlake.<out>."<flake>"` :: attribute set
 
 
 ```nix
@@ -294,7 +294,7 @@ Test
 
 ---
 
-<h2>`mkProject`</h2> :: core API function
+### `mkProject` :: core API function
 
 
     
@@ -331,7 +331,7 @@ In this document:
 
 ---
 
-<h2>`mkProject.<in>.cabalProjectArgs`</h2> :: raw value
+### `mkProject.<in>.cabalProjectArgs` :: raw value
 
 
 ```nix
@@ -371,7 +371,7 @@ The `src` and `inputMap` arguments can be omitted.
 
 ---
 
-<h2>`mkProject.<in>.combinedHaddock`</h2> :: submodule
+### `mkProject.<in>.combinedHaddock` :: submodule
 
 
 ```nix
@@ -414,7 +414,7 @@ The combined Haddock will only be generated for your default project, not for an
 
 ---
 
-<h2>`mkProject.<in>.combinedHaddock.enable`</h2> :: boolean
+### `mkProject.<in>.combinedHaddock.enable` :: boolean
 
 
 ```nix
@@ -427,7 +427,7 @@ Whether to enable combined haddock for your project.
 
 ---
 
-<h2>`mkProject.<in>.combinedHaddock.packages`</h2> :: list of string
+### `mkProject.<in>.combinedHaddock.packages` :: list of string
 
 
 ```nix
@@ -440,7 +440,7 @@ The list of cabal package names to include in the combined Haddock.
 
 ---
 
-<h2>`mkProject.<in>.combinedHaddock.prologue`</h2> :: string
+### `mkProject.<in>.combinedHaddock.prologue` :: string
 
 
 ```nix
@@ -453,7 +453,7 @@ A string acting as prologue for the combined Haddock.
 
 ---
 
-<h2>`mkProject.<in>.mkShell`</h2> :: function that evaluates to a(n) (attribute set)
+### `mkProject.<in>.mkShell` :: function that evaluates to a(n) (attribute set)
 
 
 ```nix
@@ -468,7 +468,7 @@ It receives each project as an argument and must return a #TODOmkShell.mkShell-I
 
 ---
 
-<h2>`mkProject.<in>.readTheDocs`</h2> :: submodule
+### `mkProject.<in>.readTheDocs` :: submodule
 
 
 ```nix
@@ -498,7 +498,7 @@ In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx ov
 
 ---
 
-<h2>`mkProject.<in>.readTheDocs.siteFolder`</h2> :: null or string
+### `mkProject.<in>.readTheDocs.siteFolder` :: null or string
 
 
 ```nix
@@ -524,7 +524,7 @@ If no site is required you can set this field to `null`, or omit the #TODO`readT
 
 ---
 
-<h2>`mkProject.<out>.apps`</h2> :: attribute set
+### `mkProject.<out>.apps` :: attribute set
 
 
     
@@ -535,7 +535,7 @@ Their name has been shortened to the cabal target name.
 
 ---
 
-<h2>`mkProject.<out>.checks`</h2> :: attribute set
+### `mkProject.<out>.checks` :: attribute set
 
 
     
@@ -546,7 +546,7 @@ Their name has been shortened to the cabal target name.
 
 ---
 
-<h2>`mkProject.<out>.defaultFlakeOutputs`</h2> :: attribute set
+### `mkProject.<out>.defaultFlakeOutputs` :: attribute set
 
 
     
@@ -555,7 +555,7 @@ Test
 
 ---
 
-<h2>`mkProject.<out>.devShell`</h2> :: package
+### `mkProject.<out>.devShell` :: package
 
 
     
@@ -564,7 +564,7 @@ The devShell as provided by `mkShell`.
 
 ---
 
-<h2>`mkProject.<out>.flake`</h2> :: attribute set
+### `mkProject.<out>.flake` :: attribute set
 
 
     
@@ -575,7 +575,7 @@ In general you don't need this.
 
 ---
 
-<h2>`mkProject.<out>.hydraJobs`</h2> :: attribute set
+### `mkProject.<out>.hydraJobs` :: attribute set
 
 
     
@@ -584,7 +584,7 @@ Test
 
 ---
 
-<h2>`mkProject.<out>.packages`</h2> :: attribute set
+### `mkProject.<out>.packages` :: attribute set
 
 
     
@@ -595,7 +595,7 @@ Their name has been shortened to the cabal target name.
 
 ---
 
-<h2>`mkProject.<out>.pre-commit-check`</h2> :: package
+### `mkProject.<out>.pre-commit-check` :: package
 
 
     
@@ -604,7 +604,7 @@ Test
 
 ---
 
-<h2>`mkProject.<out>.read-the-docs-site`</h2> :: package
+### `mkProject.<out>.read-the-docs-site` :: package
 
 
     
@@ -613,7 +613,7 @@ Test
 
 ---
 
-<h2>`mkShell`</h2> :: core API function
+### `mkShell` :: core API function
 
 
     
@@ -654,7 +654,7 @@ In this document:
 
 ---
 
-<h2>`mkShell.<in>.env`</h2> :: lazy attribute set of raw value
+### `mkShell.<in>.env` :: lazy attribute set of raw value
 
 
 ```nix
@@ -682,7 +682,7 @@ export THE_ANSWER="42"
 
 ---
 
-<h2>`mkShell.<in>.name`</h2> :: string
+### `mkShell.<in>.name` :: string
 
 
 ```nix
@@ -695,7 +695,7 @@ This field will be used as the shell's derivation name and it will also be used 
 
 ---
 
-<h2>`mkShell.<in>.packages`</h2> :: list of package
+### `mkShell.<in>.packages` :: list of package
 
 
 ```nix
@@ -732,7 +732,7 @@ If you do, then `nix develop` will build your project every time you enter the s
 
 ---
 
-<h2>`mkShell.<in>.preCommit`</h2> :: submodule
+### `mkShell.<in>.preCommit` :: submodule
 
 
 ```nix
@@ -798,7 +798,7 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 
 ---
 
-<h2>`mkShell.<in>.preCommit.cabal-fmt`</h2> :: submodule
+### `mkShell.<in>.preCommit.cabal-fmt` :: submodule
 
 
 ```nix
@@ -814,7 +814,7 @@ The `cabal-fmt` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.cabal-fmt.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.cabal-fmt.enable` :: boolean
 
 
 ```nix
@@ -845,7 +845,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.cabal-fmt.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.cabal-fmt.extraOptions` :: string
 
 
 ```nix
@@ -876,7 +876,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.cabal-fmt.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.cabal-fmt.package` :: null or package
 
 
 ```nix
@@ -907,7 +907,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.editorconfig-checker`</h2> :: submodule
+### `mkShell.<in>.preCommit.editorconfig-checker` :: submodule
 
 
 ```nix
@@ -923,7 +923,7 @@ The `editorconfig-checker` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.editorconfig-checker.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.editorconfig-checker.enable` :: boolean
 
 
 ```nix
@@ -954,7 +954,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.editorconfig-checker.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.editorconfig-checker.extraOptions` :: string
 
 
 ```nix
@@ -985,7 +985,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.editorconfig-checker.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.editorconfig-checker.package` :: null or package
 
 
 ```nix
@@ -1016,7 +1016,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.fourmolu`</h2> :: submodule
+### `mkShell.<in>.preCommit.fourmolu` :: submodule
 
 
 ```nix
@@ -1032,7 +1032,7 @@ The `fourmolu` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.fourmolu.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.fourmolu.enable` :: boolean
 
 
 ```nix
@@ -1063,7 +1063,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.fourmolu.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.fourmolu.extraOptions` :: string
 
 
 ```nix
@@ -1094,7 +1094,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.fourmolu.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.fourmolu.package` :: null or package
 
 
 ```nix
@@ -1125,7 +1125,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.hlint`</h2> :: submodule
+### `mkShell.<in>.preCommit.hlint` :: submodule
 
 
 ```nix
@@ -1141,7 +1141,7 @@ The `hlint` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.hlint.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.hlint.enable` :: boolean
 
 
 ```nix
@@ -1172,7 +1172,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.hlint.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.hlint.extraOptions` :: string
 
 
 ```nix
@@ -1203,7 +1203,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.hlint.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.hlint.package` :: null or package
 
 
 ```nix
@@ -1234,7 +1234,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.nixpkgs-fmt`</h2> :: submodule
+### `mkShell.<in>.preCommit.nixpkgs-fmt` :: submodule
 
 
 ```nix
@@ -1250,7 +1250,7 @@ The `nixpkgs-fmt` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.nixpkgs-fmt.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.nixpkgs-fmt.enable` :: boolean
 
 
 ```nix
@@ -1281,7 +1281,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions` :: string
 
 
 ```nix
@@ -1312,7 +1312,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.nixpkgs-fmt.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.nixpkgs-fmt.package` :: null or package
 
 
 ```nix
@@ -1343,7 +1343,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.optipng`</h2> :: submodule
+### `mkShell.<in>.preCommit.optipng` :: submodule
 
 
 ```nix
@@ -1359,7 +1359,7 @@ The `optipng` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.optipng.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.optipng.enable` :: boolean
 
 
 ```nix
@@ -1390,7 +1390,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.optipng.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.optipng.extraOptions` :: string
 
 
 ```nix
@@ -1421,7 +1421,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.optipng.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.optipng.package` :: null or package
 
 
 ```nix
@@ -1452,7 +1452,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.prettier`</h2> :: submodule
+### `mkShell.<in>.preCommit.prettier` :: submodule
 
 
 ```nix
@@ -1468,7 +1468,7 @@ The `prettier` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.prettier.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.prettier.enable` :: boolean
 
 
 ```nix
@@ -1499,7 +1499,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.prettier.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.prettier.extraOptions` :: string
 
 
 ```nix
@@ -1530,7 +1530,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.prettier.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.prettier.package` :: null or package
 
 
 ```nix
@@ -1561,7 +1561,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.purs-tidy`</h2> :: submodule
+### `mkShell.<in>.preCommit.purs-tidy` :: submodule
 
 
 ```nix
@@ -1577,7 +1577,7 @@ The `purs-tidy` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.purs-tidy.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.purs-tidy.enable` :: boolean
 
 
 ```nix
@@ -1608,7 +1608,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.purs-tidy.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.purs-tidy.extraOptions` :: string
 
 
 ```nix
@@ -1639,7 +1639,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.purs-tidy.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.purs-tidy.package` :: null or package
 
 
 ```nix
@@ -1670,7 +1670,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.shellcheck`</h2> :: submodule
+### `mkShell.<in>.preCommit.shellcheck` :: submodule
 
 
 ```nix
@@ -1686,7 +1686,7 @@ The `shellcheck` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.shellcheck.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.shellcheck.enable` :: boolean
 
 
 ```nix
@@ -1717,7 +1717,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.shellcheck.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.shellcheck.extraOptions` :: string
 
 
 ```nix
@@ -1748,7 +1748,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.shellcheck.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.shellcheck.package` :: null or package
 
 
 ```nix
@@ -1779,7 +1779,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.preCommit.stylish-haskell`</h2> :: submodule
+### `mkShell.<in>.preCommit.stylish-haskell` :: submodule
 
 
 ```nix
@@ -1795,7 +1795,7 @@ The `stylish-haskell` pre-commit hook.
 
 ---
 
-<h2>`mkShell.<in>.preCommit.stylish-haskell.enable`</h2> :: boolean
+### `mkShell.<in>.preCommit.stylish-haskell.enable` :: boolean
 
 
 ```nix
@@ -1826,7 +1826,7 @@ pre-commit run <hook-name>
 
 ---
 
-<h2>`mkShell.<in>.preCommit.stylish-haskell.extraOptions`</h2> :: string
+### `mkShell.<in>.preCommit.stylish-haskell.extraOptions` :: string
 
 
 ```nix
@@ -1857,7 +1857,7 @@ However you can *append* additional options to a tool's command by setting this 
 
 ---
 
-<h2>`mkShell.<in>.preCommit.stylish-haskell.package`</h2> :: null or package
+### `mkShell.<in>.preCommit.stylish-haskell.package` :: null or package
 
 
 ```nix
@@ -1888,7 +1888,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 
 ---
 
-<h2>`mkShell.<in>.prompt`</h2> :: null or string
+### `mkShell.<in>.prompt` :: null or string
 
 
 ```nix
@@ -1913,7 +1913,7 @@ This field is optional and defaults to the familiar green `nix-shell` prompt.
 
 ---
 
-<h2>`mkShell.<in>.scripts`</h2> :: lazy attribute set of (submodule)
+### `mkShell.<in>.scripts` :: lazy attribute set of (submodule)
 
 
 ```nix
@@ -1952,7 +1952,7 @@ The attribute names (`foobar` and `waz` in the example above) will be available 
 
 ---
 
-<h2>`mkShell.<in>.scripts.<name>.description`</h2> :: string
+### `mkShell.<in>.scripts.<name>.description` :: string
 
 
 ```nix
@@ -1979,7 +1979,7 @@ A string that will appear next to the script name when printed.
 
 ---
 
-<h2>`mkShell.<in>.scripts.<name>.enable`</h2> :: boolean
+### `mkShell.<in>.scripts.<name>.enable` :: boolean
 
 
 ```nix
@@ -2010,7 +2010,7 @@ This can be used to include scripts conditionally.
 
 ---
 
-<h2>`mkShell.<in>.scripts.<name>.exec`</h2> :: string
+### `mkShell.<in>.scripts.<name>.exec` :: string
 
 
     
@@ -2036,7 +2036,7 @@ This field is required.
 
 ---
 
-<h2>`mkShell.<in>.scripts.<name>.group`</h2> :: string
+### `mkShell.<in>.scripts.<name>.group` :: string
 
 
 ```nix
@@ -2065,7 +2065,7 @@ This will be used to group scripts together so that they look prettier and more 
 
 ---
 
-<h2>`mkShell.<in>.shellHook`</h2> :: string
+### `mkShell.<in>.shellHook` :: string
 
 
 ```nix
@@ -2086,7 +2086,7 @@ Standard nix `shellHook`, to be executed every time you enter the shell.
 
 ---
 
-<h2>`mkShell.<in>.tools`</h2> :: submodule
+### `mkShell.<in>.tools` :: submodule
 
 
 ```nix
@@ -2099,7 +2099,7 @@ Test
 
 ---
 
-<h2>`mkShell.<in>.tools.cabal-fmt`</h2> :: null or package
+### `mkShell.<in>.tools.cabal-fmt` :: null or package
 
 
 ```nix
@@ -2123,7 +2123,7 @@ If unset or `null`, a default `cabal-fmt` will be provided, which is independed 
 
 ---
 
-<h2>`mkShell.<in>.tools.cabal-install`</h2> :: null or package
+### `mkShell.<in>.tools.cabal-install` :: null or package
 
 
 ```nix
@@ -2147,7 +2147,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.tools.editorconfig-checker`</h2> :: null or package
+### `mkShell.<in>.tools.editorconfig-checker` :: null or package
 
 
 ```nix
@@ -2171,7 +2171,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.fourmolu`</h2> :: null or package
+### `mkShell.<in>.tools.fourmolu` :: null or package
 
 
 ```nix
@@ -2195,7 +2195,7 @@ If unset or `null`, a default `fourmolu` will be provided, which is independed o
 
 ---
 
-<h2>`mkShell.<in>.tools.ghcid`</h2> :: null or package
+### `mkShell.<in>.tools.ghcid` :: null or package
 
 
 ```nix
@@ -2219,7 +2219,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.tools.haskell-language-server`</h2> :: null or package
+### `mkShell.<in>.tools.haskell-language-server` :: null or package
 
 
 ```nix
@@ -2243,7 +2243,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.tools.haskell-language-server-wrapper`</h2> :: null or package
+### `mkShell.<in>.tools.haskell-language-server-wrapper` :: null or package
 
 
 ```nix
@@ -2267,7 +2267,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.tools.haskellCompiler`</h2> :: null or one of "ghc8107", "ghc928", "ghc964"
+### `mkShell.<in>.tools.haskellCompiler` :: null or one of "ghc8107", "ghc928", "ghc964"
 
 
 ```nix
@@ -2308,7 +2308,7 @@ IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
 
 ---
 
-<h2>`mkShell.<in>.tools.hlint`</h2> :: null or package
+### `mkShell.<in>.tools.hlint` :: null or package
 
 
 ```nix
@@ -2332,7 +2332,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.tools.nixpkgs-fmt`</h2> :: null or package
+### `mkShell.<in>.tools.nixpkgs-fmt` :: null or package
 
 
 ```nix
@@ -2356,7 +2356,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.optipng`</h2> :: null or package
+### `mkShell.<in>.tools.optipng` :: null or package
 
 
 ```nix
@@ -2380,7 +2380,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.prettier`</h2> :: null or package
+### `mkShell.<in>.tools.prettier` :: null or package
 
 
 ```nix
@@ -2404,7 +2404,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.purs-tidy`</h2> :: null or package
+### `mkShell.<in>.tools.purs-tidy` :: null or package
 
 
 ```nix
@@ -2428,7 +2428,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.shellcheck`</h2> :: null or package
+### `mkShell.<in>.tools.shellcheck` :: null or package
 
 
 ```nix
@@ -2452,7 +2452,7 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
-<h2>`mkShell.<in>.tools.stylish-haskell`</h2> :: null or package
+### `mkShell.<in>.tools.stylish-haskell` :: null or package
 
 
 ```nix
@@ -2476,7 +2476,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 
 ---
 
-<h2>`mkShell.<in>.welcomeMessage`</h2> :: null or string
+### `mkShell.<in>.welcomeMessage` :: null or string
 
 
 ```nix
@@ -2493,7 +2493,7 @@ This field is optional and defaults to a simple welcome message using the #TODO`
 
 ---
 
-<h2>`mkShell.<out>.devShell`</h2> :: package
+### `mkShell.<out>.devShell` :: package
 
 
     
@@ -2513,7 +2513,7 @@ You can put this in your flake outputs.
 
 ---
 
-<h2>`mkShell.<out>.pre-commit-check`</h2> :: package
+### `mkShell.<out>.pre-commit-check` :: package
 
 
     

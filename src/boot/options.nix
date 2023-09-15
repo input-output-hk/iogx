@@ -4,6 +4,10 @@ let
 
   l = builtins // iogx-inputs.nixpkgs.lib;
 
+  utils = import ./utils.nix iogx-inputs;
+
+  link = utils.headerToLocalMarkDownLink;
+
 
   default-pre-commit-hook = {
     enable = false;
@@ -785,7 +789,7 @@ let
         description = ''
           A flake-like attrset.
 
-          You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#testoloni).
+          You can place additional flake outputs here, which will be recursively updated with the outputs from ${link "outputs" "mkFlake.<in>.outputs"}.
 
           This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
         '';

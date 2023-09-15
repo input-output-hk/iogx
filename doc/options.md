@@ -79,7 +79,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 A flake-like attrset.
 
-You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#testoloni).
+You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#mkflakeinoutputs).
 
 This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
@@ -277,7 +277,7 @@ lib.iogx.mkShell {}
 **Default**: `null`
 
 
-**Example**: `/nix/store/qdsk50c2nscp6ybwjrif05ck7vhi9h6r-source/src/boot`
+**Example**: `/nix/store/wqsff04lms1qmqhzcq9jv9ghsl1xpgrg-source/src/boot`
 
 
 The root of your repository.

@@ -14,6 +14,7 @@
 **Type**: core API function
 
 
+
 **Example**: 
 ```nix
 # flake.nix
@@ -41,6 +42,7 @@ In this document:
 ### `mkFlake.<in>.debug`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -54,6 +56,7 @@ If enabled, IOGX will trace debugging info to standard output.
 ### `mkFlake.<in>.flake`
 
 **Type**: attribute set
+
 **Default**: `{ }`
 
 
@@ -90,6 +93,7 @@ This is a good place to put system-independent values like a `lib` attrset or pu
 
 
 
+
 Your flake inputs.
 
 You want to do `inherit inputs;` here.
@@ -100,6 +104,7 @@ You want to do `inherit inputs;` here.
 ### `mkFlake.<in>.nixpkgsArgs`
 
 **Type**: attribute set
+
 **Default**: 
 ```nix
 { 
@@ -122,6 +127,7 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 ### `mkFlake.<in>.outputs`
 
 **Type**: function that evaluates to a(n) list of (attribute set)
+
 
 
 **Example**: 
@@ -267,10 +273,11 @@ lib.iogx.mkShell {}
 ### `mkFlake.<in>.repoRoot`
 
 **Type**: path
+
 **Default**: `null`
 
 
-**Example**: `/nix/store/wsh0jxxyk3grzq7szrjgrgcpc83f6b9p-source/src/boot`
+**Example**: `/nix/store/qdsk50c2nscp6ybwjrif05ck7vhi9h6r-source/src/boot`
 
 
 The root of your repository.
@@ -283,6 +290,7 @@ If not set, this will default to the folder containing the flake.nix file, using
 ### `mkFlake.<in>.systems`
 
 **Type**: list of (one of "x86_64-linux", "x86_64-darwin", "aarch64-darwin", "aarch64-linux")
+
 **Default**: `[ "x86_64-linux" "x86_64-darwin" ]`
 
 
@@ -296,6 +304,7 @@ The systems you want to build for.
 ### `mkFlake.<out>."<flake>"`
 
 **Type**: attribute set
+
 **Default**: `{ }`
 
 
@@ -308,6 +317,7 @@ Test
 ### `mkProject`
 
 **Type**: core API function
+
 
 
 **Example**: 
@@ -348,6 +358,7 @@ In this document:
 ### `mkProject.<in>.cabalProjectArgs`
 
 **Type**: raw value
+
 **Default**: `{ }`
 
 
@@ -388,6 +399,7 @@ The `src` and `inputMap` arguments can be omitted.
 ### `mkProject.<in>.combinedHaddock`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -434,6 +446,7 @@ The combined Haddock will only be generated for your default project, not for an
 ### `mkProject.<in>.combinedHaddock.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -447,6 +460,7 @@ Whether to enable combined haddock for your project.
 ### `mkProject.<in>.combinedHaddock.packages`
 
 **Type**: list of string
+
 **Default**: `[ ]`
 
 
@@ -460,6 +474,7 @@ The list of cabal package names to include in the combined Haddock.
 ### `mkProject.<in>.combinedHaddock.prologue`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -473,6 +488,7 @@ A string acting as prologue for the combined Haddock.
 ### `mkProject.<in>.mkShell`
 
 **Type**: function that evaluates to a(n) (attribute set)
+
 **Default**: `<function>`
 
 
@@ -488,6 +504,7 @@ It receives each project as an argument and must return a #TODOmkShell.mkShell-I
 ### `mkProject.<in>.readTheDocs`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -521,6 +538,7 @@ In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx ov
 ### `mkProject.<in>.readTheDocs.siteFolder`
 
 **Type**: null or string
+
 **Default**: `null`
 
 
@@ -551,6 +569,7 @@ If no site is required you can set this field to `null`, or omit the #TODO`readT
 
 
 
+
 Only the project's executables end up here.
 
 Their name has been shortened to the cabal target name.
@@ -561,6 +580,7 @@ Their name has been shortened to the cabal target name.
 ### `mkProject.<out>.checks`
 
 **Type**: attribute set
+
 
 
 
@@ -579,6 +599,7 @@ Their name has been shortened to the cabal target name.
 
 
 
+
 Test
 
 
@@ -591,6 +612,7 @@ Test
 
 
 
+
 The devShell as provided by `mkShell`.
 
 
@@ -599,6 +621,7 @@ The devShell as provided by `mkShell`.
 ### `mkProject.<out>.flake`
 
 **Type**: attribute set
+
 
 
 
@@ -617,6 +640,7 @@ In general you don't need this.
 
 
 
+
 Test
 
 
@@ -625,6 +649,7 @@ Test
 ### `mkProject.<out>.packages`
 
 **Type**: attribute set
+
 
 
 
@@ -643,6 +668,7 @@ Their name has been shortened to the cabal target name.
 
 
 
+
 Test
 
 
@@ -655,6 +681,7 @@ Test
 
 
 
+
 Test
 
 
@@ -663,6 +690,7 @@ Test
 ### `mkShell`
 
 **Type**: core API function
+
 
 
 **Example**: 
@@ -707,6 +735,7 @@ In this document:
 ### `mkShell.<in>.env`
 
 **Type**: lazy attribute set of raw value
+
 **Default**: `{ }`
 
 
@@ -735,6 +764,7 @@ export THE_ANSWER="42"
 ### `mkShell.<in>.name`
 
 **Type**: string
+
 **Default**: `"nix-shell"`
 
 
@@ -748,6 +778,7 @@ This field will be used as the shell's derivation name and it will also be used 
 ### `mkShell.<in>.packages`
 
 **Type**: list of package
+
 **Default**: `[ ]`
 
 
@@ -785,6 +816,7 @@ If you do, then `nix develop` will build your project every time you enter the s
 ### `mkShell.<in>.preCommit`
 
 **Type**: submodule
+
 **Default**: `{ }`
 
 
@@ -851,6 +883,7 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 ### `mkShell.<in>.preCommit.cabal-fmt`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -870,6 +903,7 @@ The `cabal-fmt` pre-commit hook.
 ### `mkShell.<in>.preCommit.cabal-fmt.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -901,6 +935,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.cabal-fmt.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -932,6 +967,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.cabal-fmt.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -963,6 +999,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.editorconfig-checker`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -982,6 +1019,7 @@ The `editorconfig-checker` pre-commit hook.
 ### `mkShell.<in>.preCommit.editorconfig-checker.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1013,6 +1051,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.editorconfig-checker.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1044,6 +1083,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.editorconfig-checker.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1075,6 +1115,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.fourmolu`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1094,6 +1135,7 @@ The `fourmolu` pre-commit hook.
 ### `mkShell.<in>.preCommit.fourmolu.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1125,6 +1167,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.fourmolu.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1156,6 +1199,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.fourmolu.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1187,6 +1231,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.hlint`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1206,6 +1251,7 @@ The `hlint` pre-commit hook.
 ### `mkShell.<in>.preCommit.hlint.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1237,6 +1283,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.hlint.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1268,6 +1315,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.hlint.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1299,6 +1347,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.nixpkgs-fmt`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1318,6 +1367,7 @@ The `nixpkgs-fmt` pre-commit hook.
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1349,6 +1399,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1380,6 +1431,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1411,6 +1463,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.optipng`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1430,6 +1483,7 @@ The `optipng` pre-commit hook.
 ### `mkShell.<in>.preCommit.optipng.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1461,6 +1515,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.optipng.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1492,6 +1547,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.optipng.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1523,6 +1579,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.prettier`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1542,6 +1599,7 @@ The `prettier` pre-commit hook.
 ### `mkShell.<in>.preCommit.prettier.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1573,6 +1631,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.prettier.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1604,6 +1663,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.prettier.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1635,6 +1695,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.purs-tidy`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1654,6 +1715,7 @@ The `purs-tidy` pre-commit hook.
 ### `mkShell.<in>.preCommit.purs-tidy.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1685,6 +1747,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.purs-tidy.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1716,6 +1779,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.purs-tidy.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1747,6 +1811,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.shellcheck`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1766,6 +1831,7 @@ The `shellcheck` pre-commit hook.
 ### `mkShell.<in>.preCommit.shellcheck.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1797,6 +1863,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.shellcheck.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1828,6 +1895,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.shellcheck.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1859,6 +1927,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.preCommit.stylish-haskell`
 
 **Type**: submodule
+
 **Default**: 
 ```nix
 {
@@ -1878,6 +1947,7 @@ The `stylish-haskell` pre-commit hook.
 ### `mkShell.<in>.preCommit.stylish-haskell.enable`
 
 **Type**: boolean
+
 **Default**: `false`
 
 
@@ -1909,6 +1979,7 @@ pre-commit run <hook-name>
 ### `mkShell.<in>.preCommit.stylish-haskell.extraOptions`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -1940,6 +2011,7 @@ However you can *append* additional options to a tool's command by setting this 
 ### `mkShell.<in>.preCommit.stylish-haskell.package`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -1971,6 +2043,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ### `mkShell.<in>.prompt`
 
 **Type**: null or string
+
 **Default**: `null`
 
 
@@ -1996,6 +2069,7 @@ This field is optional and defaults to the familiar green `nix-shell` prompt.
 ### `mkShell.<in>.scripts`
 
 **Type**: lazy attribute set of (submodule)
+
 **Default**: `{ }`
 
 
@@ -2035,6 +2109,7 @@ The attribute names (`foobar` and `waz` in the example above) will be available 
 ### `mkShell.<in>.scripts.<name>.description`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -2062,6 +2137,7 @@ A string that will appear next to the script name when printed.
 ### `mkShell.<in>.scripts.<name>.enable`
 
 **Type**: boolean
+
 **Default**: `true`
 
 
@@ -2095,6 +2171,7 @@ This can be used to include scripts conditionally.
 **Type**: string
 
 
+
 **Example**: 
 ```nix
 # shell.nix 
@@ -2122,6 +2199,7 @@ This field is required.
 ### `mkShell.<in>.scripts.<name>.group`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -2151,6 +2229,7 @@ This will be used to group scripts together so that they look prettier and more 
 ### `mkShell.<in>.shellHook`
 
 **Type**: string
+
 **Default**: `""`
 
 
@@ -2172,6 +2251,7 @@ Standard nix `shellHook`, to be executed every time you enter the shell.
 ### `mkShell.<in>.tools`
 
 **Type**: submodule
+
 **Default**: `{ }`
 
 
@@ -2185,6 +2265,7 @@ Test
 ### `mkShell.<in>.tools.cabal-fmt`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2209,6 +2290,7 @@ If unset or `null`, a default `cabal-fmt` will be provided, which is independed 
 ### `mkShell.<in>.tools.cabal-install`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2233,6 +2315,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.tools.editorconfig-checker`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2257,6 +2340,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.fourmolu`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2281,6 +2365,7 @@ If unset or `null`, a default `fourmolu` will be provided, which is independed o
 ### `mkShell.<in>.tools.ghcid`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2305,6 +2390,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.tools.haskell-language-server`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2329,6 +2415,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.tools.haskell-language-server-wrapper`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2353,6 +2440,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.tools.haskellCompiler`
 
 **Type**: null or one of "ghc8107", "ghc928", "ghc964"
+
 **Default**: `"ghc8107"`
 
 
@@ -2394,6 +2482,7 @@ IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
 ### `mkShell.<in>.tools.hlint`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2418,6 +2507,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.tools.nixpkgs-fmt`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2442,6 +2532,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.optipng`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2466,6 +2557,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.prettier`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2490,6 +2582,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.purs-tidy`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2514,6 +2607,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.shellcheck`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2538,6 +2632,7 @@ If unset or `null`, the most recent version available will be used.
 ### `mkShell.<in>.tools.stylish-haskell`
 
 **Type**: null or package
+
 **Default**: `null`
 
 
@@ -2562,6 +2657,7 @@ If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitabl
 ### `mkShell.<in>.welcomeMessage`
 
 **Type**: null or string
+
 **Default**: `null`
 
 
@@ -2579,6 +2675,7 @@ This field is optional and defaults to a simple welcome message using the #TODO`
 ### `mkShell.<out>.devShell`
 
 **Type**: package
+
 
 **Read Only**
 **Example**: 
@@ -2602,6 +2699,7 @@ You can put this in your flake outputs.
 ### `mkShell.<out>.pre-commit-check`
 
 **Type**: package
+
 
 
 **Example**: 

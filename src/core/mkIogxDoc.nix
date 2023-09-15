@@ -45,6 +45,7 @@ let
     ### `${cleanupName name}`
 
     **Type**: ${value.type}
+    
     ${
       if lib.hasAttr "default" value then 
         ''

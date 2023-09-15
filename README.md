@@ -14,7 +14,7 @@ To get started run:
 nix flake init --template github:input-output-hk/iogx
 ```
 
-This will generates a [`flake.nix`](./template/flake.nix#TODO) to get you started. 
+This will generates a [`flake.nix`](./template/flake.nix#TODO) and a #TODO nix folder to get you started. 
 
 You may now move on to the [Options Reference](./doc/options.md).
 

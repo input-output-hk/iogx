@@ -44,12 +44,12 @@ let
 
     ### `${cleanupName name}`
 
-    #### Type: `${value.type}`
+    **Type**: ${value.type}
 
     ${
       if lib.hasAttr "default" value then 
         ''
-          #### Default: ${prettyPrintValue value.default}
+          **Default**: ${prettyPrintValue value.default}
         ''
       else 
         ""
@@ -60,13 +60,11 @@ let
     ${ 
       if lib.hasAttr "example" value then 
         ''
-          #### Example: ${prettyPrintValue value.example}
+          **Example**: ${prettyPrintValue value.example}
         ''
       else 
         ""
     }
-
-    #### Description:
 
     ${value.description}
   '';
@@ -76,14 +74,14 @@ in
 lib.toFile "options.md" ''
   # Options Reference 
 
-  1. [`flake.nix`](#TODO)
-    - Entrypoint for the Nix code.
-  2. [`inputs.iogx.lib.mkFlake`](#TODO) 
+  1. [`inputs.iogx.lib.mkFlake`](#TODO) 
     - Makes the final flake outputs.
-  3. [`pkgs.lib.iogx.mkProject`](#TODO) 
+  2. [`pkgs.lib.iogx.mkProject`](#TODO) 
     - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-  4. [`pkgs.lib.iogx.mkShell`](#TODO) 
+  3. [`pkgs.lib.iogx.mkShell`](#TODO) 
     - Makes a `devShell` with `pre-commit-check` and tools.
 
   ${options-doc-markdown}
 ''
+
+

@@ -70,30 +70,50 @@ let
 
   iogx-overlay = cabalProject: _: # This will be called for each projectVariant as well
     let
+      devShell = 
+        let 
+          read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
+          cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
+          extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
+          final-shell = repoRoot.src.core.mkShell (haskellProject.shellFor cabalProject) extra-shell-profiles;
+        in 
+          final-shell;
+
+      flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
+      
+      inherit (mkAliasedOutputs flake) 
+        apps 
+        checks 
+        packages;
+      
+      inherit (flake) 
+        hydraJobs;
+
       combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
-      read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
-      cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
-      extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
-      shell = repoRoot.src.core.mkShell (haskellProject.shellFor cabalProject) extra-shell-profiles;
-      devShell = shell.devShell;
-      pre-commit-check = shell.pre-commit-check;
-      flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
-      extra-packages = { inherit pre-commit-check read-the-docs-site combined-haddock; };
-      aliased-outputs = mkAliasedOutputs flake;
+      pre-commit-check = devShell.pre-commit-check;
+
+      defaultFlakeOutputs = rec {
+        devShells.default = devShell;
+        inherit apps checks packages;
+        hydraJobs.${cabalProject.args.compiler-nix-name} = hydraJobs;
+        hydraJobs.combined-haddock = combined-haddock;
+        hydraJobs.read-the-docs-site = read-the-docs-site;
+        hydraJobs.pre-commit-check = pre-commit-check;
+      };
     in
     {
       iogx = {
-        pre-commit-check = pre-commit-check;
-        read-the-docs-site = read-the-docs-site;
-        combined-haddock = combined-haddock;
-        flake = flake;
-        shell = shell;
-        devShell = devShell;
-        apps = aliased-outputs.apps;
-        packages = aliased-outputs.packages;
-        checks = aliased-outputs.checks;
-        hydraJobs = flake.hydraJobs;
+        inherit 
+          flake 
+          apps 
+          checks 
+          packages 
+          hydraJobs
+          combined-haddock 
+          read-the-docs-site
+          pre-commit-check
+          defaultFlakeOutputs;
       };
     };
 

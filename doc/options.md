@@ -79,7 +79,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 A flake-like attrset.
 
-You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#mkflakeinoutputs).
+You can place additional flake outputs here, which will be recursively updated with the attrset from [outputs](#mkflakeinoutputs).
 
 This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
@@ -96,7 +96,7 @@ This is a good place to put system-independent values like a `lib` attrset or pu
 
 Your flake inputs.
 
-You want to do `inherit inputs;` here.
+You almost certainly want to do `inherit inputs;` here (see the example in [mkFlake](#mkflake))
 
 
 ---
@@ -115,6 +115,20 @@ You want to do `inherit inputs;` here.
 ```
 
 
+**Example**: 
+```nix
+# flake.nix
+outputs = inputs: inputs.iogx.lib.mkFlake {
+  inherit inputs;
+  outputs = import ./nix/outputs.nix;
+  nixpkgsArgs = {
+    overlays = [(self: super: { 
+      acme = super.callPackage ./nix/acme.nix { }; 
+    })];
+  };  
+};
+
+```
 
 
 Internally, IOGX calls `import inputs.nixpkgs {}`.
@@ -149,7 +163,7 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 ```
 
 
-A function that is called once for each #TODOsystem.
+A function that is called once for each [system](#mkflakeinsystems).
 
 This is the most important option as it will determine your flake outputs.
 
@@ -165,13 +179,13 @@ Ordinarily you would use the `import` keyword to import nix files, but you can u
 
 `repoRoot` is an attrset that can be used to reference the contents of your repository folder instead of using the `import` keyword.
 
-Its value is set to the path in #TODOmkFlake.repoRoot.
+Its value is set to the path in [repoRoot](#mkflakeinreporoot).
 
 For example, if this is your top-level folder:
 ```
 * src 
   - Main.hs 
-cabal.project 
+- cabal.project 
 * nix
   - outputs.nix
   - alpha.nix
@@ -223,15 +237,15 @@ Note that the Nix files do not need the `".nix"` suffix, while files with any ot
 
 In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the `outputs` option.
+Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the [outputs](#mkflakeinoutputs).
 
 Using the `repoRoot` argument is optional, but it has the advantage of not having to thead the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
 ### `inputs`
 
-Your original flake inputs as defined in #TODOmkFlake.inputs.
+Your flake inputs as given in [inputs](#mkflakeininputs).
 
-Note that the inputs have been de-systemized against the current system.
+Note that the `inputs` have been de-systemized against the current system.
 
 This means that you can use the following syntax:
 ```nix
@@ -247,7 +261,7 @@ inputs'.self.packages.x86_64-darwin.foo
 
 #### `pkgs`
 
-A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your supported systems, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your [systems](#mkflakeinsystems), and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
 
 A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` but that should *not* be used because it doesn't have the required overlays.
 
@@ -277,12 +291,12 @@ lib.iogx.mkShell {}
 **Default**: `null`
 
 
-**Example**: `/nix/store/wqsff04lms1qmqhzcq9jv9ghsl1xpgrg-source/src/boot`
+**Example**: `./.`
 
 
 The root of your repository.
 
-If not set, this will default to the folder containing the flake.nix file, using `inputs.self`.
+If not set, this will default to the folder containing the `flake.nix` file, using `inputs.self`.
 
 
 ---
@@ -298,19 +312,8 @@ If not set, this will default to the folder containing the flake.nix file, using
 
 The systems you want to build for.
 
+The [outputs](#mkflakeinoutputs) function will be called once for each system.
 
----
-
-### `mkFlake.<out>."<flake>"`
-
-**Type**: attribute set
-
-**Default**: `{ }`
-
-
-
-
-Test
 
 ---
 

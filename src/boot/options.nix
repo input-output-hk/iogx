@@ -621,7 +621,7 @@ let
         description = ''
           Your flake inputs.
 
-          You want to do `inherit inputs;` here.
+          You almost certainly want to do `inherit inputs;` here (see the example in ${link "mkFlake" "mkFlake"})
         '';
       };
 
@@ -630,16 +630,18 @@ let
         description = ''
           The root of your repository.
 
-          If not set, this will default to the folder containing the flake.nix file, using `inputs.self`.
+          If not set, this will default to the folder containing the `flake.nix` file, using `inputs.self`.
         '';
         default = null;
-        example = ./.;
+        example = l.literalExpression "./.";
       };
 
       systems = l.mkOption {
         type = l.types.listOf (l.types.enum [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]);
         description = ''
           The systems you want to build for.
+
+          The ${link "outputs" "mkFlake.<in>.outputs"} function will be called once for each system.
         '';
         default = [ "x86_64-linux" "x86_64-darwin" ];
         defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" ]'';
@@ -663,7 +665,7 @@ let
           ]
         '';
         description = ''
-          A function that is called once for each #TODOsystem.
+          A function that is called once for each ${link "system" "mkFlake.<in>.systems"}.
 
           This is the most important option as it will determine your flake outputs.
 
@@ -679,13 +681,13 @@ let
 
           `repoRoot` is an attrset that can be used to reference the contents of your repository folder instead of using the `import` keyword.
 
-          Its value is set to the path in #TODOmkFlake.repoRoot.
+          Its value is set to the path in ${link "repoRoot" "mkFlake.<in>.repoRoot"}.
 
           For example, if this is your top-level folder:
           ```
           * src 
             - Main.hs 
-          cabal.project 
+          - cabal.project 
           * nix
             - outputs.nix
             - alpha.nix
@@ -737,15 +739,15 @@ let
 
           In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-          Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the `outputs` option.
+          Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the ${link "outputs" "mkFlake.<in>.outputs"}.
 
           Using the `repoRoot` argument is optional, but it has the advantage of not having to thead the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
           ### `inputs`
 
-          Your original flake inputs as defined in #TODOmkFlake.inputs.
+          Your flake inputs as given in ${link "inputs" "mkFlake.<in>.inputs"}.
 
-          Note that the inputs have been de-systemized against the current system.
+          Note that the `inputs` have been de-systemized against the current system.
           
           This means that you can use the following syntax:
           ```nix
@@ -761,7 +763,7 @@ let
 
           #### `pkgs`
 
-          A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your supported systems, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+          A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your ${link "systems" "mkFlake.<in>.systems"}, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
 
           A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` but that should *not* be used because it doesn't have the required overlays.
 
@@ -789,7 +791,7 @@ let
         description = ''
           A flake-like attrset.
 
-          You can place additional flake outputs here, which will be recursively updated with the outputs from ${link "outputs" "mkFlake.<in>.outputs"}.
+          You can place additional flake outputs here, which will be recursively updated with the attrset from ${link "outputs" "mkFlake.<in>.outputs"}.
 
           This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
         '';
@@ -820,6 +822,18 @@ let
           config = { };
           overlays = [ ];
         };
+        example = l.literalExpression ''
+          # flake.nix
+          outputs = inputs: inputs.iogx.lib.mkFlake {
+            inherit inputs;
+            outputs = import ./nix/outputs.nix;
+            nixpkgsArgs = {
+              overlays = [(self: super: { 
+                acme = super.callPackage ./nix/acme.nix { }; 
+              })];
+            };  
+          };
+        '';
         defaultText = l.literalExpression ''
           { 
             config = { }; 
@@ -1156,14 +1170,6 @@ let
   };
 
 
-  mkFlake-OUT-submodule = l.types.submodule {
-    options."<flake>" = l.mkOption {
-      type = l.types.attrs;
-      default = { };
-      description = "Test";
-    };
-  };
-
   mkProject-OUT-submodule = l.types.submodule {
     options = {
 
@@ -1294,8 +1300,13 @@ let
 
 
   mkFlake-OUT-option = l.mkOption {
-    type = mkFlake-OUT-submodule;
-    description = "";
+    type = l.types.attrs;
+    description = ''
+      The ${link "mkFlake" "mkFlake"} function returns the final flake outputs.
+
+      The optional attrset defined in ${link "flake" "mkFlake.<in>.flake"} will 
+      be updated with the attrset obtained by merging the attrsets returned by ${link "outputs" "mkFlake.<in>.outputs"}.
+    '';
   };
 
 
@@ -1324,7 +1335,7 @@ let
 
 
   mkFlake = l.mkOption {
-    type = apiFuncType mkFlake-IN-submodule mkFlake-OUT-submodule;
+    type = apiFuncType mkFlake-IN-submodule mkFlake-OUT-option.type;
     description = ''
       The `inputs.iogx.lib.mkFlake` function takes an attrset of options and returns an attrset of flake outputs.
 

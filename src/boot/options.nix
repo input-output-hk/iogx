@@ -17,10 +17,23 @@ let
         type = l.types.bool;
         default = false;
         description = ''
-          Enable the pre-commit hook.
-          If false, the hook will not be installed.
-          If true, the hook will become avaible in  
-          pre-commit run <tool-name>
+          Whether to enable this pre-commit hook.
+
+          If `false`, the hook will not be installed.
+
+          If `true`, the hook will become available in the shell: 
+          ```bash 
+          pre-commit run <hook-name>
+          ```
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            preCommit = {
+              cabal-fmt.enable = system != "x86_64-darwin";
+            };
+          }
         '';
       };
 
@@ -29,8 +42,22 @@ let
         default = null;
         description = ''
           The package that provides the hook.
-          The nixpkgs.lib.getExe function will be used to extract the program.
-          If left null, the default package will be used.
+
+          The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+          If unset or `null`, the default package will be used.
+
+          In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            preCommit = {
+              cabal-fmt.enable = true;
+              cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+            };
+          }
         '';
       };
 
@@ -38,7 +65,23 @@ let
         type = l.types.str;
         default = "";
         description = ''
-          Each hooks knows how run itself
+          Extra command line options to be passed to the hook.
+
+          Each hooks knows how run itself, and will be called with the correct command line arguments.
+          
+          However you can *append* additional options to a tool's command by setting this field.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            preCommit = {
+              cabal-fmt.enable = true;
+              cabal-fmt.extraOptions = "--no-tabular";
+              fourmolu.enable = false;
+              fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+            };
+          }
         '';
       };
     };
@@ -47,11 +90,38 @@ let
 
   tools-submodule = l.types.submodule {
     options = {
+      # TODO rename to haskellCompilerVersion and default!!!
       haskellCompiler = l.mkOption {
-        type = l.types.nullOr l.types.str;
-        # default = null; # TODO default?
+        default = "ghc8107";
+        type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc964" ]);
         description = ''
-          Test
+          The haskell compiler version.
+          
+          This determines the version of other tools like `cabal-install` and `haskell-language-server`.
+
+          This option must be set to a value.
+
+          If you have a `cabalProject`, you should use its `compiler-nix-name`:
+          ```nix
+          # shell.nix
+          { repoRoot, inputs, pkgs, lib, system }:
+
+          cabalProject: 
+
+          lib.iogx.mkShell {
+            tools.haskellCompilerVersion = cabalProject.args.compiler-nix-name;
+          }
+          ```
+
+          The example above will use the same compiler version as your project.
+          IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.haskellCompilerVersion = "ghc8107";
+          }
         '';
       };
 
@@ -59,23 +129,50 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `cabal-fmt` executable.
+
+          If unset or `null`, a default `cabal-fmt` will be provided, which is independed of #TODOhaskellCompilerVersion.
         '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.cabal-fmt = repoRoot.nix.patched-cabal-fmt;
+          }
+        '';  
       };
 
       cabal-install = l.mkOption {
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `cabal-install` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
         '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.cabal-install = repoRoot.nix.patched-cabal-install;
+          }
+        ''; 
       };
 
       haskell-language-server = l.mkOption {
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `haskell-language-server` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.haskell-language-server = repoRoot.nix.patched-haskell-language-server;
+          }
         '';
       };
 
@@ -83,7 +180,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `haskell-language-server-wrapper` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.haskell-language-server-wrapper = repoRoot.nix.pathced-haskell-language-server-wrapper;
+          }
         '';
       };
 
@@ -91,7 +197,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `fourmolu` executable.
+
+          If unset or `null`, a default `fourmolu` will be provided, which is independed of #TODOhaskellCompilerVersion.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.fourmolu = repoRoot.nix.patched-fourmolu;
+          }
         '';
       };
 
@@ -99,7 +214,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `hlint` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.hlint = repoRoot.nix.patched-hlint;
+          }
         '';
       };
 
@@ -107,7 +231,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `stylish-haskell` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.stylish-haskell = repoRoot.nix.patched-stylish-haskell;
+          }
         '';
       };
 
@@ -115,7 +248,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `ghcid` executable.
+
+          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.ghcid = repoRoot.nix.patched-ghcid;
+          }
         '';
       };
 
@@ -123,7 +265,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `shellcheck` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.shellcheck = repoRoot.nix.patched-shellcheck;
+          }
         '';
       };
 
@@ -131,7 +282,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `prettier` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.prettier = repoRoot.nix.patched-prettier;
+          }
         '';
       };
 
@@ -139,7 +299,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `editorconfig-checker` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.editorconfig-checker = repoRoot.nix.patched-editorconfig-checker;
+          }
         '';
       };
 
@@ -147,15 +316,33 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `nixpkgs-fmt` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.nixpkgs-fmt = repoRoot.nix.patched-nixpkgs-fmt;
+          }
         '';
       };
 
-      png-optimization = l.mkOption {
+      optipng = l.mkOption {
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `optipng` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.optipng = repoRoot.nix.patched-optipng;
+          }
         '';
       };
 
@@ -163,7 +350,16 @@ let
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          Test
+          A package that provides the `purs-tidy` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.purs-tidy = repoRoot.nix.patched-purs-tidy;
+          }
         '';
       };
     };
@@ -176,7 +372,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `cabal-fmt` pre-commit hook.
         '';
       };
 
@@ -184,7 +380,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `stylish-haskell` pre-commit hook.
         '';
       };
 
@@ -192,7 +388,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `fourmolu` pre-commit hook.
         '';
       };
 
@@ -200,7 +396,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `hlint` pre-commit hook.
         '';
       };
 
@@ -208,7 +404,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `shellcheck` pre-commit hook.
         '';
       };
 
@@ -216,7 +412,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `prettier` pre-commit hook.
         '';
       };
 
@@ -224,7 +420,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `editorconfig-checker` pre-commit hook.
         '';
       };
 
@@ -232,7 +428,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `nixpkgs-fmt` pre-commit hook.
         '';
       };
 
@@ -240,7 +436,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `optipng` pre-commit hook.
         '';
       };
 
@@ -248,7 +444,7 @@ let
         type = pre-commit-hook-submodule;
         default = default-pre-commit-hook;
         description = ''
-          Test
+          The `purs-tidy` pre-commit hook.
         '';
       };
     };
@@ -260,7 +456,22 @@ let
       exec = l.mkOption {
         type = l.types.str;
         description = ''
-          Test
+          Bash code to be executed when the script is run.
+
+          This field is required.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            scripts = {
+              foo = {
+                exec = \'\'
+                  echo "Hello, world!"
+                \'\';
+              };
+            };
+          }
         '';
       };
 
@@ -268,7 +479,19 @@ let
         type = l.types.str;
         default = "";
         description = ''
-          Test
+          A string that will appear next to the script name when printed.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            scripts = {
+              foo = {
+                description = "Short description for script foo";
+                exec = "#";
+              };
+            };
+          }
         '';
       };
 
@@ -276,7 +499,21 @@ let
         type = l.types.str;
         default = "";
         description = ''
-          Test
+          A string to tag the script.
+
+          This will be used to group scripts together so that they look prettier and more organized when listed. 
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            scripts = {
+              foo = {
+                group = "devops";
+                exec = "#";
+              };
+            };
+          }
         '';
       };
 
@@ -284,8 +521,24 @@ let
         type = l.types.bool;
         default = true;
         description = ''
-          Test
+          Whether to enable this string.
+
+          This can be used to include scripts conditionally.
         '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            scripts = {
+              foo = {
+                enable = pkgs.stdenv.hostPlatform.isLinux;
+                exec = \'\'
+                  echo "I only run on Linux."
+                \'\';
+              };
+            };
+          }
+        '';        
       };
     };
   };
@@ -297,7 +550,7 @@ let
         type = l.types.bool;
         default = false;
         description = ''
-          Test 
+          Whether to enable combined haddock for your project.
         '';
       };
 
@@ -305,7 +558,7 @@ let
         type = l.types.listOf l.types.str;
         default = [ ];
         description = ''
-          Test
+          The list of cabal package names to include in the combined Haddock.
         '';
       };
 
@@ -313,7 +566,7 @@ let
         type = l.types.str;
         default = "";
         description = ''
-          Test
+          A string acting as prologue for the combined Haddock.
         '';
       };
     };
@@ -333,7 +586,18 @@ let
         type = l.types.nullOr l.types.str;
         default = null;
         description = ''
-          Test
+          A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
+
+          If no site is required you can set this field to `null`, or omit the #TODO`readTheDocs` option entirely. 
+        '';
+        example = l.literalExpression ''
+          # cabal-project.nix
+
+          { repoRoot, inputs, pkgs, lib, system }:
+          
+          lib.iogx.mkProject {
+            readTheDocs.siteFolder = "./doc/read-the-docs-site";
+          }
         '';
       };
     };
@@ -352,6 +616,7 @@ let
         type = l.types.attrs;
         description = ''
           Your flake inputs.
+
           You want to do `inherit inputs;` here.
         '';
       };
@@ -360,6 +625,7 @@ let
         type = l.types.path;
         description = ''
           The root of your repository.
+
           If not set, this will default to the folder containing the flake.nix file, using `inputs.self`.
         '';
         default = null;
@@ -370,7 +636,6 @@ let
         type = l.types.listOf (l.types.enum [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]);
         description = ''
           The systems you want to build for.
-          Available systems are `x86_64-linux`, `x86_64-darwin`, `aarch64-darwin`, `aarch64-linux`.
         '';
         default = [ "x86_64-linux" "x86_64-darwin" ];
         defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" ]'';
@@ -522,15 +787,19 @@ let
 
           You can place additional flake outputs here, which will be recursively updated with the outputs from #TODOmkFlake.outputs.
 
-          This is a good place to put system-independent values like a `lib` attrset or JSON-like config data.
+          This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
         '';
         example = l.literalExpression ''
           {
-            lib = { 
-              bar = _: null;
-            };
+            lib.bar = _: null;
+
             packages.x86_64-linux.foo = null;
             devShells.x86_64-darwin.bar = null;
+
+            networks = {
+              prod = { };
+              dev = { };
+            };
           }
         '';
       };
@@ -573,18 +842,45 @@ let
         type = l.types.raw;
         default = { };
         description = ''
-          Test
+          The very arguments that will be passed to `haskell.nix:cabalProject'`.
+          
+          The `src` and `inputMap` arguments can be omitted. 
+        '';
+        example = l.literalExpression ''
+          # cabal-project.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          
+          lib.iogx.mkProject {
+            cabalProjectArgs = {
+              src = ./.; # Optional (must contain the cabal.project file)
+              inputMap = {
+                "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;
+              };
+              compiler-nix-name = "ghc8197";
+              flake.variants = {
+                profiled = {
+                  modules = [{ enableProfiling = true; }];
+                };
+                ghc928 = {
+                  compiler-nix-name = "ghc928";
+                };
+              };
+              modules = [];
+            };
+          };
         '';
       };
 
       mkShell = l.mkOption {
-        type = l.types.functionTo mkShell-IN-submodule;
+        type = l.types.functionTo l.types.attrs;
         default = cabalProject: {
           tools.haskellCompiler = cabalProject.args.compiler-nix-name;
           name = cabalProject.args.name;
         };
         description = ''
-          Test
+          This function will be called to create a shell for your project variants.
+
+          It receives each project as an argument and must return a #TODOmkShell.mkShell-IN-submodule attrset.
         '';
       };
 
@@ -592,7 +888,31 @@ let
         type = combined-haddock-submodule;
         default = default-combined-haddock;
         description = ''
-          Test
+          Configuration for a combined Haddock.
+
+          When enabled, your #TODO nix/read-the-docs.nix site will have access to Haddock symbols for your Haskell packages.
+
+          Combining Haddock artifacts takes a significant amount of time and may slow do CI.
+
+          The combined Haddock will only be generated for your default project, not for any of the variants.
+        '';
+        example = l.literalExpression ''
+        # outputs.nix 
+        { repoRoot, inputs, pkgs, lib, system }:
+        let 
+          cabalProject = lib.iogx.mkProject {
+            combinedHaddock = {
+              enable = system == "x86_64-linux";
+              packages = [ "foo" "bar" ];
+              prologue = "This is the prologue.";
+            };
+          };
+        in 
+        [
+          {
+            inherit cabalProject;
+          }
+        ]
         '';
       };
 
@@ -600,7 +920,22 @@ let
         type = read-the-docs-submodule;
         default = default-read-the-docs;
         description = ''
-          Test
+          Configuration for your [`read-the-docs`](https://readthedocs.org) site. 
+
+          If no site is required, this option can be omitted.
+
+          The shells generated by #TODOmkShell will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
+
+          In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx overlay.
+        '';
+        example = l.literalExpression ''
+          # ./cabal-project.nix
+
+          { repoRoot, inputs, pkgs, lib, system }:
+          
+          lib.iogx.mkProject {
+            readTheDocs.siteFolder = "./doc/read-the-docs-site";
+          }
         '';
       };
     };
@@ -610,27 +945,11 @@ let
   mkShell-IN-submodule = l.types.submodule {
     options = {
 
-      # devShell = l.mkOption {
-      #   type = l.types.package;
-      #   readOnly = true;
-      #   description = ''
-      #     Test
-      #   '';
-      # };
-
-      # preCommitCheck = l.mkOption {
-      #   type = l.types.package;
-      #   readOnly = true;
-      #   description = ''
-      #     Test
-      #   '';
-      # };
-
       name = l.mkOption {
         type = l.types.str;
         default = "nix-shell";
         description = ''
-          Test
+          This field will be used as the shell's derivation name and it will also be used to fill in the default values for #TODO`prompt` and #TODO`welcomeMessage` below.
         '';
       };
 
@@ -638,7 +957,19 @@ let
         type = l.types.nullOr l.types.str;
         default = null;
         description = ''
-          Test
+          Terminal prompt, i.e. the value of the `PS1` environment variable. 
+
+          You can use ANSI color escape sequences to customize your prompt, but you'll need to double-escape the left slashes because `prompt` is a nix string that will be embedded in a bash string.
+
+          For example, if you would normally do this in bash:
+          ```bash
+          export PS1="\n\[\033[1;32m\][nix-shell:\w]\$\[\033[0m\] "
+          ```
+          Then you need to do this in `shell.nix`:
+          ```nix
+          prompt = "\n\\[\\033[1;32m\\][nix-shell:\\w]\\$\\[\\033[0m\\] ";
+          ```
+          This field is optional and defaults to the familiar green `nix-shell` prompt.
         '';
       };
 
@@ -646,7 +977,11 @@ let
         type = l.types.nullOr l.types.str;
         default = null;
         description = ''
-          Test
+          When entering the shell, this welcome message will be printed.
+
+          The same caveat about escaping back slashes in #TODO`prompt` applies here.
+
+          This field is optional and defaults to a simple welcome message using the #TODO`name` field.
         '';
       };
 
@@ -654,7 +989,31 @@ let
         type = l.types.listOf l.types.package;
         default = [ ];
         description = ''
-          Test
+          You can add anything you want here, so long as it's a derivation with executables in the `/bin` folder. 
+
+          What you put here ends up in your `$PATH` (basically the `buildInputs` in `mkDerivation`).
+
+          For example:
+          ```nix
+          packages = [
+            pkgs.hello 
+            pkgs.curl 
+            pkgs.sqlite3 
+            pkgs.nodePackages.yo
+          ]
+          ```
+
+          If you `cabalProject` is in scope, you could use `hsPkgs` to obtain some useful binaries:
+          ```nix
+          packages = [
+            cabalProject.hsPkgs.cardano-cli.components.exes.cardano-cli
+            cabalProject.hsPkgs.cardano-node.components.exes.cardano-node
+          ];
+          ```
+
+          Be careful not to reference your project's own cabal packages via `hsPkgs`. 
+
+          If you do, then `nix develop` will build your project every time you enter the shell, and it will fail to do so if there are Haskell compiler errors.
         '';
       };
 
@@ -662,7 +1021,31 @@ let
         type = l.types.lazyAttrsOf script-submodule;
         default = { };
         description = ''
-          Test
+          Custom scripts for your shell.
+
+          `scripts` is an attrset where each attribute name is the script name each the attribute value is an attrset.
+
+          The attribute names (`foobar` and `waz` in the example above) will be available in your shell as commands under the same name.
+        '';
+        example = l.literalExpression ''
+          scripts = {
+
+            foobar = {
+              exec = \'\'
+                # Bash code to be executed whenever the script `foobar` is run.
+                echo "Delete me from your nix/shell.nix!"
+              \'\';
+              description = \'\'
+                You might want to delete the foobar script.
+              \'\';
+              group = "bazwaz";
+              enable = true;
+            };
+
+            waz.exec = \'\'
+              echo "I don't have a group!"
+            \'\';
+          };
         '';
       };
 
@@ -670,7 +1053,20 @@ let
         type = l.types.lazyAttrsOf l.types.raw;
         default = { };
         description = ''
-          Test
+          Custom environment variables. 
+
+          Considering the example above, the following bash code will be executed every time you enter the shell:
+
+          ```bash 
+          export PGUSER="postgres"
+          export THE_ANSWER="42"
+          ```
+        '';
+        example = l.literalExpression ''
+          env = {
+            PGUSER = "postgres";
+            THE_ANSWER = 42;
+          };
         '';
       };
 
@@ -678,7 +1074,13 @@ let
         type = l.types.str;
         default = "";
         description = ''
-          Test
+          Standard nix `shellHook`, to be executed every time you enter the shell.
+        '';
+        example = l.literalExpression ''
+          shellHook = \'\'
+            # Bash code to be executed when you enter the shell.
+            echo "I'm inside the shell!"
+          \'\';
         '';
       };
 
@@ -694,7 +1096,58 @@ let
         type = pre-commit-submodule;
         default = { };
         description = ''
-          Test
+          Configuration for pre-commit hooks, including code formatters and linters.
+
+          These are fed to [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix), which is run whenever you `git commit`.
+
+          The `pre-commit` executable will be made available in the shell.
+
+          All the hooks are disabled by default.
+
+          It is sufficient to set the #TODO`enable` flag to `true` to make the hook active.
+
+          When enabled, some hooks expect to find a configuration file in the root of the repository:
+
+          | Hook Name | Config File | 
+          | --------- | ----------- |
+          | `stylish-haskell` | `.stylish-haskell.yaml` |
+          | `editorconfig-checker` | `.editorconfig` |
+          | `fourmolu` | `fourmolu.yaml` (note the missing dot `.`) |
+          | `hlint` | `.hlint.yaml` |
+          | `hindent` | `.hindent.yaml` |
+
+          Currently there is no way to change the location of the configuration files.
+
+          Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+
+          lib.iogx.mkShell {
+            preCommit = {
+              cabal-fmt.enable = false;
+              cabal-fmt.extraOptions = "";
+              stylish-haskell.enable = false;
+              stylish-haskell.extraOptions = "";
+              shellcheck.enable = false;
+              shellcheck.extraOptions = "";
+              prettier.enable = false;
+              prettier.extraOptions = "";
+              editorconfig-checker.enable = false;
+              editorconfig-checker.extraOptions = "";
+              nixpkgs-fmt.enable = false;
+              nixpkgs-fmt.extraOptions = "";
+              optipng.enable = false;
+              optipng.extraOptions = "";
+              fourmolu.enable = false;
+              fourmolu.extraOptions = "";
+              hlint.enable = false;
+              hlint.extraOptions = "";
+              purs-tidy.enable = false;
+              purs-tidy.extraOptions = "";
+            };
+          }
         '';
       };
     };
@@ -722,28 +1175,36 @@ let
       flake = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Test
+          The *original* flake outputs provided by haskell.nix.
+
+          In general you don't need this.
         '';
       };
 
       packages = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Test
+          Only the project's executables end up here.
+
+          Their name has been shortened to the cabal target name.
         '';
       };
 
       apps = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Test
+          Only the project's executables end up here.
+
+          Their name has been shortened to the cabal target name.
         '';
       };
 
       checks = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Test
+          Only the project's executables end up here.
+
+          Their name has been shortened to the cabal target name.
         '';
       };
 
@@ -757,7 +1218,7 @@ let
       devShell = l.mkOption {
         type = l.types.package;
         description = ''
-          Test
+          The devShell as provided by `mkShell`.
         '';
       };
 
@@ -784,14 +1245,42 @@ let
       devShell = l.mkOption {
         type = l.types.package;
         description = ''
-          Test
+          The actual shell derivation.
+          You can put this in your flake outputs.
+        '';
+        readOnly = true;
+        example = l.literalExpression ''
+          # ./outputs.nix
+          { repoRoot, inputs, pkgs, lib, system }:
+          [
+            {
+              devShells.foo = (lib.iogx.mkShell {}).devShell;
+            }
+          ]
         '';
       };
 
       pre-commit-check = l.mkOption {
         type = l.types.package;
         description = ''
+          A derivation that when built will run all the installed shell hooks.
+          The hooks are configured in #TODO preCommit
+          This derivation can be included in your packages and in hydraJobs.
           Test
+        '';
+        example = l.literalExpression ''
+          # ./outputs.nix
+          { repoRoot, inputs, pkgs, lib, system }:
+          let
+            shell = lib.iogx.mkShell {};
+          in 
+          [
+            {
+              devShells.foo = shell.devShell;
+              packages.pre-commit-check = shell.pre-commit-check;
+              hydraJobs.pre-commit-check = shell.pre-commit-check;
+            }
+          ]
         '';
       };
     };
@@ -856,21 +1345,82 @@ let
 
 
   mkProject = l.mkOption {
-    description = "asd";
+    description = ''
+      The `pkgs.lib.iogx.mkProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
+
+      In this document:
+        - Options for the input attrset are prefixed by `mkProject.<in>`.
+        - The returned attrset contans attributes prefixed by `mkShell.<out>`.
+    '';
     type = apiFuncType mkProject-IN-submodule mkProject-OUT-submodule;
+    example = l.literalExpression ''
+      # ./outputs.nix
+      { repoRoot, inputs, pkgs, lib, system }:
+      let 
+        cabalProject = lib.iogx.mkProject {
+          cabalProjectArgs = {
+            compiler-nix-name = "ghc8107";
+            flake.variants.FOO = {
+              modules = [{..}];
+            };
+          };
+          mkShell = repoRoot.nix.make-shell;
+        };
+      in 
+      [
+        {
+          inherit cabalProject;
+        }
+        {
+          hydraJobs.FOO = cabalProject.projectVariants.FOO.iogx.hydraJobs;
+        }
+      ]
+    '';
   };
 
 
   mkShell = l.mkOption {
-    description = "asd";
+    description = ''
+      The `pkgs.lib.iogx.mkFlake` function takes an attrset of options and returns an attrset containing the #TODOdevShell and the #TODOpre-commit-check derivation.
+
+      In this document:
+        - Options for the input attrset are prefixed by `mkShell.<in>`.
+        - The returned attrset contans attributes prefixed by `mkShell.<out>`.
+    '';
     type = apiFuncType mkShell-IN-submodule mkShell-OUT-submodule;
+    example = l.literalExpression ''
+      # ./shell.nix
+      { repoRoot, inputs, pkgs, lib, system }:
+
+      lib.iogx.mkShell {
+        name = "dev-shell";
+        packages = [ pkgs.hello ];
+        env = {
+          FOO = "bar";
+        };
+        scripts = {
+          foo = {
+            description = "";
+            group = "general";
+            enabled = false;
+            exec = \'\'
+              echo "Hello, World!"
+            \'\';
+          };
+        };
+        shellHook = "";
+        preCommit = {
+          shellcheck.enable = true;
+        };
+        tools.haskellCompiler = "ghc8103";
+      };
+    '';
   };
 
 
   apiFuncType = type-IN: type-OUT: l.mkOptionType {
     name = "core-API-function";
     description = "core API function";
-    # descriptionClass = "noun";
     getSubOptions = prefix:
       type-IN.getSubOptions (prefix ++ [ "<in>" ]) //
       type-OUT.getSubOptions (prefix ++ [ "<out>" ]);

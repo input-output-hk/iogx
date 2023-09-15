@@ -1,4 +1,15 @@
-# IOGX 
+# Options Reference 
+
+1. [`flake.nix`](#TODO)
+  - Entrypoint for the Nix code.
+2. [`inputs.iogx.lib.mkFlake`](#TODO) 
+  - Makes the final flake outputs.
+3. [`pkgs.lib.iogx.mkProject`](#TODO) 
+  - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+4. [`pkgs.lib.iogx.mkShell`](#TODO) 
+  - Makes a `devShell` with `pre-commit-check` and tools.
+
+----- 
 
 ### `mkFlake`
 
@@ -28,6 +39,8 @@ In this document:
   - The returned attrset contans attributes prefixed by `mkFlake.<out>`.
 
 
+----- 
+
 ### `mkFlake.<in>.debug`
 
 #### Type: `boolean`
@@ -42,6 +55,8 @@ In this document:
 If enabled, IOGX will trace debugging info to standard output.
 
 
+----- 
+
 ### `mkFlake.<in>.flake`
 
 #### Type: `attribute set`
@@ -52,11 +67,15 @@ If enabled, IOGX will trace debugging info to standard output.
 #### Example: 
 ```nix
 {
-  lib = { 
-    bar = _: null;
-  };
+  lib.bar = _: null;
+
   packages.x86_64-linux.foo = null;
   devShells.x86_64-darwin.bar = null;
+
+  networks = {
+    prod = { };
+    dev = { };
+  };
 }
 
 ```
@@ -68,8 +87,10 @@ A flake-like attrset.
 
 You can place additional flake outputs here, which will be recursively updated with the outputs from #TODOmkFlake.outputs.
 
-This is a good place to put system-independent values like a `lib` attrset or JSON-like config data.
+This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
+
+----- 
 
 ### `mkFlake.<in>.inputs`
 
@@ -82,8 +103,11 @@ This is a good place to put system-independent values like a `lib` attrset or JS
 #### Description:
 
 Your flake inputs.
+
 You want to do `inherit inputs;` here.
 
+
+----- 
 
 ### `mkFlake.<in>.nixpkgsArgs`
 
@@ -107,6 +131,8 @@ Internally, IOGX calls `import inputs.nixpkgs {}`.
 
 Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of `overlays` to be appended to nixpkgs.
 
+
+----- 
 
 ### `mkFlake.<in>.outputs`
 
@@ -254,6 +280,8 @@ lib.iogx.mkShell {}
 ```
 
 
+----- 
+
 ### `mkFlake.<in>.repoRoot`
 
 #### Type: `path`
@@ -261,14 +289,17 @@ lib.iogx.mkShell {}
 #### Default: `null`
 
 
-#### Example: `/nix/store/3hh9v3hkvjaaqzpn5qd2921df6nxck40-source/src/boot`
+#### Example: `/nix/store/vki6kwa46m7f2dcnm5w31246zy3lrcvy-source/src/boot`
 
 
 #### Description:
 
 The root of your repository.
+
 If not set, this will default to the folder containing the flake.nix file, using `inputs.self`.
 
+
+----- 
 
 ### `mkFlake.<in>.systems`
 
@@ -282,8 +313,9 @@ If not set, this will default to the folder containing the flake.nix file, using
 #### Description:
 
 The systems you want to build for.
-Available systems are `x86_64-linux`, `x86_64-darwin`, `aarch64-darwin`, `aarch64-linux`.
 
+
+----- 
 
 ### `mkFlake.<out>."<flake>"`
 
@@ -298,17 +330,51 @@ Available systems are `x86_64-linux`, `x86_64-darwin`, `aarch64-darwin`, `aarch6
 
 Test
 
+----- 
+
 ### `mkProject`
 
 #### Type: `core API function`
 
 
 
+#### Example: 
+```nix
+# ./outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  cabalProject = lib.iogx.mkProject {
+    cabalProjectArgs = {
+      compiler-nix-name = "ghc8107";
+      flake.variants.FOO = {
+        modules = [{..}];
+      };
+    };
+    mkShell = repoRoot.nix.make-shell;
+  };
+in 
+[
+  {
+    inherit cabalProject;
+  }
+  {
+    hydraJobs.FOO = cabalProject.projectVariants.FOO.iogx.hydraJobs;
+  }
+]
+
+```
 
 
 #### Description:
 
-asd
+The `pkgs.lib.iogx.mkProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
+
+In this document:
+  - Options for the input attrset are prefixed by `mkProject.<in>`.
+  - The returned attrset contans attributes prefixed by `mkShell.<out>`.
+
+
+----- 
 
 ### `mkProject.<in>.cabalProjectArgs`
 
@@ -317,12 +383,41 @@ asd
 #### Default: `{ }`
 
 
+#### Example: 
+```nix
+# cabal-project.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+
+lib.iogx.mkProject {
+  cabalProjectArgs = {
+    src = ./.; # Optional (must contain the cabal.project file)
+    inputMap = {
+      "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;
+    };
+    compiler-nix-name = "ghc8197";
+    flake.variants = {
+      profiled = {
+        modules = [{ enableProfiling = true; }];
+      };
+      ghc928 = {
+        compiler-nix-name = "ghc928";
+      };
+    };
+    modules = [];
+  };
+};
+
+```
 
 
 #### Description:
 
-Test
+The very arguments that will be passed to `haskell.nix:cabalProject'`.
 
+The `src` and `inputMap` arguments can be omitted. 
+
+
+----- 
 
 ### `mkProject.<in>.combinedHaddock`
 
@@ -338,12 +433,40 @@ Test
 ```
 
 
+#### Example: 
+```nix
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  cabalProject = lib.iogx.mkProject {
+    combinedHaddock = {
+      enable = system == "x86_64-linux";
+      packages = [ "foo" "bar" ];
+      prologue = "This is the prologue.";
+    };
+  };
+in 
+[
+  {
+    inherit cabalProject;
+  }
+]
+
+```
 
 
 #### Description:
 
-Test
+Configuration for a combined Haddock.
 
+When enabled, your #TODO nix/read-the-docs.nix site will have access to Haddock symbols for your Haskell packages.
+
+Combining Haddock artifacts takes a significant amount of time and may slow do CI.
+
+The combined Haddock will only be generated for your default project, not for any of the variants.
+
+
+----- 
 
 ### `mkProject.<in>.combinedHaddock.enable`
 
@@ -356,8 +479,10 @@ Test
 
 #### Description:
 
-Test 
+Whether to enable combined haddock for your project.
 
+
+----- 
 
 ### `mkProject.<in>.combinedHaddock.packages`
 
@@ -370,8 +495,10 @@ Test
 
 #### Description:
 
-Test
+The list of cabal package names to include in the combined Haddock.
 
+
+----- 
 
 ### `mkProject.<in>.combinedHaddock.prologue`
 
@@ -384,12 +511,14 @@ Test
 
 #### Description:
 
-Test
+A string acting as prologue for the combined Haddock.
 
+
+----- 
 
 ### `mkProject.<in>.mkShell`
 
-#### Type: `function that evaluates to a(n) (submodule)`
+#### Type: `function that evaluates to a(n) (attribute set)`
 
 #### Default: `<function>`
 
@@ -398,1068 +527,12 @@ Test
 
 #### Description:
 
-Test
+This function will be called to create a shell for your project variants.
 
+It receives each project as an argument and must return a #TODOmkShell.mkShell-IN-submodule attrset.
 
-### `mkProject.<in>.mkShell.<function body>.env`
 
-#### Type: `lazy attribute set of raw value`
-
-#### Default: `{ }`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.name`
-
-#### Type: `string`
-
-#### Default: `"nix-shell"`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.packages`
-
-#### Type: `list of package`
-
-#### Default: `[ ]`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit`
-
-#### Type: `submodule`
-
-#### Default: `{ }`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.cabal-fmt`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.cabal-fmt.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.cabal-fmt.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.cabal-fmt.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.editorconfig-checker`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.editorconfig-checker.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.editorconfig-checker.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.editorconfig-checker.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.fourmolu`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.fourmolu.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.fourmolu.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.fourmolu.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.hlint`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.hlint.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.hlint.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.hlint.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.nixpkgs-fmt`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.nixpkgs-fmt.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.nixpkgs-fmt.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.nixpkgs-fmt.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.optipng`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.optipng.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.optipng.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.optipng.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.prettier`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.prettier.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.prettier.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.prettier.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.purs-tidy`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.purs-tidy.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.purs-tidy.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.purs-tidy.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.shellcheck`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.shellcheck.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.shellcheck.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.shellcheck.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.stylish-haskell`
-
-#### Type: `submodule`
-
-#### Default: 
-```nix
-{
-  enable = false;
-  extraOptions = "";
-}
-```
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.stylish-haskell.enable`
-
-#### Type: `boolean`
-
-#### Default: `false`
-
-
-
-
-#### Description:
-
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.stylish-haskell.extraOptions`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Each hooks knows how run itself
-
-
-### `mkProject.<in>.mkShell.<function body>.preCommit.stylish-haskell.package`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
-
-
-### `mkProject.<in>.mkShell.<function body>.prompt`
-
-#### Type: `null or string`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.scripts`
-
-#### Type: `lazy attribute set of (submodule)`
-
-#### Default: `{ }`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.scripts.<name>.description`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.scripts.<name>.enable`
-
-#### Type: `boolean`
-
-#### Default: `true`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.scripts.<name>.exec`
-
-#### Type: `string`
-
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.scripts.<name>.group`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.shellHook`
-
-#### Type: `string`
-
-#### Default: `""`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools`
-
-#### Type: `submodule`
-
-#### Default: `{ }`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.cabal-fmt`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.cabal-install`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.editorconfig-checker`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.fourmolu`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.ghcid`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.haskell-language-server`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.haskell-language-server-wrapper`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.haskellCompiler`
-
-#### Type: `null or string`
-
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.hlint`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.nixpkgs-fmt`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.png-optimization`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.prettier`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.purs-tidy`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.shellcheck`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.tools.stylish-haskell`
-
-#### Type: `null or package`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
-
-### `mkProject.<in>.mkShell.<function body>.welcomeMessage`
-
-#### Type: `null or string`
-
-#### Default: `null`
-
-
-
-
-#### Description:
-
-Test
-
+----- 
 
 ### `mkProject.<in>.readTheDocs`
 
@@ -1473,12 +546,31 @@ Test
 ```
 
 
+#### Example: 
+```nix
+# ./cabal-project.nix
+
+{ repoRoot, inputs, pkgs, lib, system }:
+
+lib.iogx.mkProject {
+  readTheDocs.siteFolder = "./doc/read-the-docs-site";
+}
+
+```
 
 
 #### Description:
 
-Test
+Configuration for your [`read-the-docs`](https://readthedocs.org) site. 
 
+If no site is required, this option can be omitted.
+
+The shells generated by #TODOmkShell will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
+
+In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx overlay.
+
+
+----- 
 
 ### `mkProject.<in>.readTheDocs.siteFolder`
 
@@ -1487,12 +579,27 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# cabal-project.nix
+
+{ repoRoot, inputs, pkgs, lib, system }:
+
+lib.iogx.mkProject {
+  readTheDocs.siteFolder = "./doc/read-the-docs-site";
+}
+
+```
 
 
 #### Description:
 
-Test
+A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
 
+If no site is required you can set this field to `null`, or omit the #TODO`readTheDocs` option entirely. 
+
+
+----- 
 
 ### `mkProject.<out>.apps`
 
@@ -1504,8 +611,12 @@ Test
 
 #### Description:
 
-Test
+Only the project's executables end up here.
 
+Their name has been shortened to the cabal target name.
+
+
+----- 
 
 ### `mkProject.<out>.checks`
 
@@ -1517,8 +628,12 @@ Test
 
 #### Description:
 
-Test
+Only the project's executables end up here.
 
+Their name has been shortened to the cabal target name.
+
+
+----- 
 
 ### `mkProject.<out>.defaultFlakeOutputs`
 
@@ -1533,6 +648,8 @@ Test
 Test
 
 
+----- 
+
 ### `mkProject.<out>.devShell`
 
 #### Type: `package`
@@ -1543,8 +660,10 @@ Test
 
 #### Description:
 
-Test
+The devShell as provided by `mkShell`.
 
+
+----- 
 
 ### `mkProject.<out>.flake`
 
@@ -1556,8 +675,12 @@ Test
 
 #### Description:
 
-Test
+The *original* flake outputs provided by haskell.nix.
 
+In general you don't need this.
+
+
+----- 
 
 ### `mkProject.<out>.hydraJobs`
 
@@ -1572,6 +695,8 @@ Test
 Test
 
 
+----- 
+
 ### `mkProject.<out>.packages`
 
 #### Type: `attribute set`
@@ -1582,8 +707,12 @@ Test
 
 #### Description:
 
-Test
+Only the project's executables end up here.
 
+Their name has been shortened to the cabal target name.
+
+
+----- 
 
 ### `mkProject.<out>.pre-commit-check`
 
@@ -1598,6 +727,8 @@ Test
 Test
 
 
+----- 
+
 ### `mkProject.<out>.read-the-docs-site`
 
 #### Type: `package`
@@ -1611,17 +742,55 @@ Test
 Test
 
 
+----- 
+
 ### `mkShell`
 
 #### Type: `core API function`
 
 
 
+#### Example: 
+```nix
+# ./shell.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+
+lib.iogx.mkShell {
+  name = "dev-shell";
+  packages = [ pkgs.hello ];
+  env = {
+    FOO = "bar";
+  };
+  scripts = {
+    foo = {
+      description = "";
+      group = "general";
+      enabled = false;
+      exec = \'\'
+        echo "Hello, World!"
+      \'\';
+    };
+  };
+  shellHook = "";
+  preCommit = {
+    shellcheck.enable = true;
+  };
+  tools.haskellCompiler = "ghc8103";
+};
+
+```
 
 
 #### Description:
 
-asd
+The `pkgs.lib.iogx.mkFlake` function takes an attrset of options and returns an attrset containing the #TODOdevShell and the #TODOpre-commit-check derivation.
+
+In this document:
+  - Options for the input attrset are prefixed by `mkShell.<in>`.
+  - The returned attrset contans attributes prefixed by `mkShell.<out>`.
+
+
+----- 
 
 ### `mkShell.<in>.env`
 
@@ -1630,12 +799,29 @@ asd
 #### Default: `{ }`
 
 
+#### Example: 
+```nix
+env = {
+  PGUSER = "postgres";
+  THE_ANSWER = 42;
+};
+
+```
 
 
 #### Description:
 
-Test
+Custom environment variables. 
 
+Considering the example above, the following bash code will be executed every time you enter the shell:
+
+```bash 
+export PGUSER="postgres"
+export THE_ANSWER="42"
+```
+
+
+----- 
 
 ### `mkShell.<in>.name`
 
@@ -1648,8 +834,10 @@ Test
 
 #### Description:
 
-Test
+This field will be used as the shell's derivation name and it will also be used to fill in the default values for #TODO`prompt` and #TODO`welcomeMessage` below.
 
+
+----- 
 
 ### `mkShell.<in>.packages`
 
@@ -1662,8 +850,34 @@ Test
 
 #### Description:
 
-Test
+You can add anything you want here, so long as it's a derivation with executables in the `/bin` folder. 
 
+What you put here ends up in your `$PATH` (basically the `buildInputs` in `mkDerivation`).
+
+For example:
+```nix
+packages = [
+  pkgs.hello 
+  pkgs.curl 
+  pkgs.sqlite3 
+  pkgs.nodePackages.yo
+]
+```
+
+If you `cabalProject` is in scope, you could use `hsPkgs` to obtain some useful binaries:
+```nix
+packages = [
+  cabalProject.hsPkgs.cardano-cli.components.exes.cardano-cli
+  cabalProject.hsPkgs.cardano-node.components.exes.cardano-node
+];
+```
+
+Be careful not to reference your project's own cabal packages via `hsPkgs`. 
+
+If you do, then `nix develop` will build your project every time you enter the shell, and it will fail to do so if there are Haskell compiler errors.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit`
 
@@ -1672,12 +886,67 @@ Test
 #### Default: `{ }`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = false;
+    cabal-fmt.extraOptions = "";
+    stylish-haskell.enable = false;
+    stylish-haskell.extraOptions = "";
+    shellcheck.enable = false;
+    shellcheck.extraOptions = "";
+    prettier.enable = false;
+    prettier.extraOptions = "";
+    editorconfig-checker.enable = false;
+    editorconfig-checker.extraOptions = "";
+    nixpkgs-fmt.enable = false;
+    nixpkgs-fmt.extraOptions = "";
+    optipng.enable = false;
+    optipng.extraOptions = "";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "";
+    hlint.enable = false;
+    hlint.extraOptions = "";
+    purs-tidy.enable = false;
+    purs-tidy.extraOptions = "";
+  };
+}
+
+```
 
 
 #### Description:
 
-Test
+Configuration for pre-commit hooks, including code formatters and linters.
 
+These are fed to [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix), which is run whenever you `git commit`.
+
+The `pre-commit` executable will be made available in the shell.
+
+All the hooks are disabled by default.
+
+It is sufficient to set the #TODO`enable` flag to `true` to make the hook active.
+
+When enabled, some hooks expect to find a configuration file in the root of the repository:
+
+| Hook Name | Config File | 
+| --------- | ----------- |
+| `stylish-haskell` | `.stylish-haskell.yaml` |
+| `editorconfig-checker` | `.editorconfig` |
+| `fourmolu` | `fourmolu.yaml` (note the missing dot `.`) |
+| `hlint` | `.hlint.yaml` |
+| `hindent` | `.hindent.yaml` |
+
+Currently there is no way to change the location of the configuration files.
+
+Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.cabal-fmt`
 
@@ -1696,8 +965,10 @@ Test
 
 #### Description:
 
-Test
+The `cabal-fmt` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.cabal-fmt.enable`
 
@@ -1706,15 +977,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.cabal-fmt.extraOptions`
 
@@ -1723,12 +1011,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.cabal-fmt.package`
 
@@ -1737,14 +1045,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.editorconfig-checker`
 
@@ -1763,8 +1089,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `editorconfig-checker` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.enable`
 
@@ -1773,15 +1101,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.extraOptions`
 
@@ -1790,12 +1135,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.editorconfig-checker.package`
 
@@ -1804,14 +1169,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.fourmolu`
 
@@ -1830,8 +1213,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `fourmolu` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.fourmolu.enable`
 
@@ -1840,15 +1225,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.fourmolu.extraOptions`
 
@@ -1857,12 +1259,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.fourmolu.package`
 
@@ -1871,14 +1293,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.hlint`
 
@@ -1897,8 +1337,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `hlint` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.hlint.enable`
 
@@ -1907,15 +1349,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.hlint.extraOptions`
 
@@ -1924,12 +1383,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.hlint.package`
 
@@ -1938,14 +1417,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt`
 
@@ -1964,8 +1461,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `nixpkgs-fmt` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.enable`
 
@@ -1974,15 +1473,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions`
 
@@ -1991,12 +1507,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.package`
 
@@ -2005,14 +1541,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.optipng`
 
@@ -2031,8 +1585,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `optipng` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.optipng.enable`
 
@@ -2041,15 +1597,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.optipng.extraOptions`
 
@@ -2058,12 +1631,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.optipng.package`
 
@@ -2072,14 +1665,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.prettier`
 
@@ -2098,8 +1709,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `prettier` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.prettier.enable`
 
@@ -2108,15 +1721,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.prettier.extraOptions`
 
@@ -2125,12 +1755,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.prettier.package`
 
@@ -2139,14 +1789,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.purs-tidy`
 
@@ -2165,8 +1833,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `purs-tidy` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.purs-tidy.enable`
 
@@ -2175,15 +1845,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.purs-tidy.extraOptions`
 
@@ -2192,12 +1879,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.purs-tidy.package`
 
@@ -2206,14 +1913,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.shellcheck`
 
@@ -2232,8 +1957,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `shellcheck` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.shellcheck.enable`
 
@@ -2242,15 +1969,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.shellcheck.extraOptions`
 
@@ -2259,12 +2003,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.shellcheck.package`
 
@@ -2273,14 +2037,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.stylish-haskell`
 
@@ -2299,8 +2081,10 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+The `stylish-haskell` pre-commit hook.
 
+
+----- 
 
 ### `mkShell.<in>.preCommit.stylish-haskell.enable`
 
@@ -2309,15 +2093,32 @@ Test
 #### Default: `false`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = system != "x86_64-darwin";
+  };
+}
+
+```
 
 
 #### Description:
 
-Enable the pre-commit hook.
-If false, the hook will not be installed.
-If true, the hook will become avaible in  
-pre-commit run <tool-name>
+Whether to enable this pre-commit hook.
 
+If `false`, the hook will not be installed.
+
+If `true`, the hook will become available in the shell: 
+```bash 
+pre-commit run <hook-name>
+```
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.stylish-haskell.extraOptions`
 
@@ -2326,12 +2127,32 @@ pre-commit run <tool-name>
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.extraOptions = "--no-tabular";
+    fourmolu.enable = false;
+    fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+  };
+}
+
+```
 
 
 #### Description:
 
-Each hooks knows how run itself
+Extra command line options to be passed to the hook.
 
+Each hooks knows how run itself, and will be called with the correct command line arguments.
+
+However you can *append* additional options to a tool's command by setting this field.
+
+
+----- 
 
 ### `mkShell.<in>.preCommit.stylish-haskell.package`
 
@@ -2340,14 +2161,32 @@ Each hooks knows how run itself
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    cabal-fmt.enable = true;
+    cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+  };
+}
+
+```
 
 
 #### Description:
 
 The package that provides the hook.
-The nixpkgs.lib.getExe function will be used to extract the program.
-If left null, the default package will be used.
 
+The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+
+If unset or `null`, the default package will be used.
+
+In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+
+
+----- 
 
 ### `mkShell.<in>.prompt`
 
@@ -2360,8 +2199,22 @@ If left null, the default package will be used.
 
 #### Description:
 
-Test
+Terminal prompt, i.e. the value of the `PS1` environment variable. 
 
+You can use ANSI color escape sequences to customize your prompt, but you'll need to double-escape the left slashes because `prompt` is a nix string that will be embedded in a bash string.
+
+For example, if you would normally do this in bash:
+```bash
+export PS1="\n\[\033[1;32m\][nix-shell:\w]\$\[\033[0m\] "
+```
+Then you need to do this in `shell.nix`:
+```nix
+prompt = "\n\\[\\033[1;32m\\][nix-shell:\\w]\\$\\[\\033[0m\\] ";
+```
+This field is optional and defaults to the familiar green `nix-shell` prompt.
+
+
+----- 
 
 ### `mkShell.<in>.scripts`
 
@@ -2370,12 +2223,40 @@ Test
 #### Default: `{ }`
 
 
+#### Example: 
+```nix
+scripts = {
+
+  foobar = {
+    exec = \'\'
+      # Bash code to be executed whenever the script `foobar` is run.
+      echo "Delete me from your nix/shell.nix!"
+    \'\';
+    description = \'\'
+      You might want to delete the foobar script.
+    \'\';
+    group = "bazwaz";
+    enable = true;
+  };
+
+  waz.exec = \'\'
+    echo "I don't have a group!"
+  \'\';
+};
+
+```
 
 
 #### Description:
 
-Test
+Custom scripts for your shell.
 
+`scripts` is an attrset where each attribute name is the script name each the attribute value is an attrset.
+
+The attribute names (`foobar` and `waz` in the example above) will be available in your shell as commands under the same name.
+
+
+----- 
 
 ### `mkShell.<in>.scripts.<name>.description`
 
@@ -2384,12 +2265,28 @@ Test
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  scripts = {
+    foo = {
+      description = "Short description for script foo";
+      exec = "#";
+    };
+  };
+}
+
+```
 
 
 #### Description:
 
-Test
+A string that will appear next to the script name when printed.
 
+
+----- 
 
 ### `mkShell.<in>.scripts.<name>.enable`
 
@@ -2398,12 +2295,32 @@ Test
 #### Default: `true`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  scripts = {
+    foo = {
+      enable = pkgs.stdenv.hostPlatform.isLinux;
+      exec = \'\'
+        echo "I only run on Linux."
+      \'\';
+    };
+  };
+}
+
+```
 
 
 #### Description:
 
-Test
+Whether to enable this string.
 
+This can be used to include scripts conditionally.
+
+
+----- 
 
 ### `mkShell.<in>.scripts.<name>.exec`
 
@@ -2411,12 +2328,31 @@ Test
 
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  scripts = {
+    foo = {
+      exec = \'\'
+        echo "Hello, world!"
+      \'\';
+    };
+  };
+}
+
+```
 
 
 #### Description:
 
-Test
+Bash code to be executed when the script is run.
 
+This field is required.
+
+
+----- 
 
 ### `mkShell.<in>.scripts.<name>.group`
 
@@ -2425,12 +2361,30 @@ Test
 #### Default: `""`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  scripts = {
+    foo = {
+      group = "devops";
+      exec = "#";
+    };
+  };
+}
+
+```
 
 
 #### Description:
 
-Test
+A string to tag the script.
 
+This will be used to group scripts together so that they look prettier and more organized when listed. 
+
+
+----- 
 
 ### `mkShell.<in>.shellHook`
 
@@ -2439,12 +2393,22 @@ Test
 #### Default: `""`
 
 
+#### Example: 
+```nix
+shellHook = \'\'
+  # Bash code to be executed when you enter the shell.
+  echo "I'm inside the shell!"
+\'\';
+
+```
 
 
 #### Description:
 
-Test
+Standard nix `shellHook`, to be executed every time you enter the shell.
 
+
+----- 
 
 ### `mkShell.<in>.tools`
 
@@ -2460,6 +2424,8 @@ Test
 Test
 
 
+----- 
+
 ### `mkShell.<in>.tools.cabal-fmt`
 
 #### Type: `null or package`
@@ -2467,12 +2433,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.cabal-fmt = repoRoot.nix.patched-cabal-fmt;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `cabal-fmt` executable.
 
+If unset or `null`, a default `cabal-fmt` will be provided, which is independed of #TODOhaskellCompilerVersion.
+
+
+----- 
 
 ### `mkShell.<in>.tools.cabal-install`
 
@@ -2481,12 +2460,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.cabal-install = repoRoot.nix.patched-cabal-install;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `cabal-install` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.tools.editorconfig-checker`
 
@@ -2495,12 +2487,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.editorconfig-checker = repoRoot.nix.patched-editorconfig-checker;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `editorconfig-checker` executable.
 
+If unset or `null`, the most recent version available will be used.
+
+
+----- 
 
 ### `mkShell.<in>.tools.fourmolu`
 
@@ -2509,12 +2514,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.fourmolu = repoRoot.nix.patched-fourmolu;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `fourmolu` executable.
 
+If unset or `null`, a default `fourmolu` will be provided, which is independed of #TODOhaskellCompilerVersion.
+
+
+----- 
 
 ### `mkShell.<in>.tools.ghcid`
 
@@ -2523,12 +2541,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.ghcid = repoRoot.nix.patched-ghcid;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `ghcid` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.tools.haskell-language-server`
 
@@ -2537,12 +2568,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.haskell-language-server = repoRoot.nix.patched-haskell-language-server;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `haskell-language-server` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.tools.haskell-language-server-wrapper`
 
@@ -2551,25 +2595,69 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.haskell-language-server-wrapper = repoRoot.nix.pathced-haskell-language-server-wrapper;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `haskell-language-server-wrapper` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.tools.haskellCompiler`
 
-#### Type: `null or string`
+#### Type: `null or one of "ghc8107", "ghc928", "ghc964"`
+
+#### Default: `"ghc8107"`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.haskellCompilerVersion = "ghc8107";
+}
 
+```
 
 
 #### Description:
 
-Test
+The haskell compiler version.
 
+This determines the version of other tools like `cabal-install` and `haskell-language-server`.
+
+This option must be set to a value.
+
+If you have a `cabalProject`, you should use its `compiler-nix-name`:
+```nix
+# shell.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+
+cabalProject: 
+
+lib.iogx.mkShell {
+  tools.haskellCompilerVersion = cabalProject.args.compiler-nix-name;
+}
+```
+
+The example above will use the same compiler version as your project.
+IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
+
+
+----- 
 
 ### `mkShell.<in>.tools.hlint`
 
@@ -2578,12 +2666,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.hlint = repoRoot.nix.patched-hlint;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `hlint` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.tools.nixpkgs-fmt`
 
@@ -2592,26 +2693,52 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.nixpkgs-fmt = repoRoot.nix.patched-nixpkgs-fmt;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `nixpkgs-fmt` executable.
+
+If unset or `null`, the most recent version available will be used.
 
 
-### `mkShell.<in>.tools.png-optimization`
+----- 
+
+### `mkShell.<in>.tools.optipng`
 
 #### Type: `null or package`
 
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.optipng = repoRoot.nix.patched-optipng;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `optipng` executable.
 
+If unset or `null`, the most recent version available will be used.
+
+
+----- 
 
 ### `mkShell.<in>.tools.prettier`
 
@@ -2620,12 +2747,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.prettier = repoRoot.nix.patched-prettier;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `prettier` executable.
 
+If unset or `null`, the most recent version available will be used.
+
+
+----- 
 
 ### `mkShell.<in>.tools.purs-tidy`
 
@@ -2634,12 +2774,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.purs-tidy = repoRoot.nix.patched-purs-tidy;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `purs-tidy` executable.
 
+If unset or `null`, the most recent version available will be used.
+
+
+----- 
 
 ### `mkShell.<in>.tools.shellcheck`
 
@@ -2648,12 +2801,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.shellcheck = repoRoot.nix.patched-shellcheck;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `shellcheck` executable.
 
+If unset or `null`, the most recent version available will be used.
+
+
+----- 
 
 ### `mkShell.<in>.tools.stylish-haskell`
 
@@ -2662,12 +2828,25 @@ Test
 #### Default: `null`
 
 
+#### Example: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.stylish-haskell = repoRoot.nix.patched-stylish-haskell;
+}
+
+```
 
 
 #### Description:
 
-Test
+A package that provides the `stylish-haskell` executable.
 
+If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+
+
+----- 
 
 ### `mkShell.<in>.welcomeMessage`
 
@@ -2680,21 +2859,41 @@ Test
 
 #### Description:
 
-Test
+When entering the shell, this welcome message will be printed.
 
+The same caveat about escaping back slashes in #TODO`prompt` applies here.
+
+This field is optional and defaults to a simple welcome message using the #TODO`name` field.
+
+
+----- 
 
 ### `mkShell.<out>.devShell`
 
 #### Type: `package`
 
 
+**Read Only**
+#### Example: 
+```nix
+# ./outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+[
+  {
+    devShells.foo = (lib.iogx.mkShell {}).devShell;
+  }
+]
 
+```
 
 
 #### Description:
 
-Test
+The actual shell derivation.
+You can put this in your flake outputs.
 
+
+----- 
 
 ### `mkShell.<out>.pre-commit-check`
 
@@ -2702,10 +2901,29 @@ Test
 
 
 
+#### Example: 
+```nix
+# ./outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+let
+  shell = lib.iogx.mkShell {};
+in 
+[
+  {
+    devShells.foo = shell.devShell;
+    packages.pre-commit-check = shell.pre-commit-check;
+    hydraJobs.pre-commit-check = shell.pre-commit-check;
+  }
+]
+
+```
 
 
 #### Description:
 
+A derivation that when built will run all the installed shell hooks.
+The hooks are configured in #TODO preCommit
+This derivation can be included in your packages and in hydraJobs.
 Test
 
 

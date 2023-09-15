@@ -10,13 +10,13 @@ let
 
   evaluated-shell-module = lib.evalModules {
     modules = [{
-      options.shell = lib.iogx.options.shell;
-      config.shell = shell'';
+      options = lib.iogx.options;
+      config.mkShell-IN-option = shell'';
     }];
   };
 
 
-  shell' = evaluated-shell-module.config.shell;
+  shell' = evaluated-shell-module.config.mkShell-IN-option;
 
 
   shell = lib.recursiveUpdate shell' {
@@ -245,7 +245,7 @@ let
     in lib.concatStringsSep "\n" (lib.mapAttrsToList exportVar final-profile.env);
 
 
-  dev-shell = pkgs.mkShell {
+  devShell' = pkgs.mkShell {
     name = shell.name;
     buildInputs = final-profile.packages ++ final-scripts-as-packages;
     shellHook = ''  
@@ -255,8 +255,13 @@ let
   };
 
 
-  outputs = { devShell = dev-shell; preCommitCheck = pre-commit-check; };
+  devShell = devShell' // {
+    tools = shell-tools;
+    inherit pre-commit-check;
+  };
+
+  # outputs = { devShell = dev-shell; preCommitCheck = pre-commit-check; };
 
 in
 
-shell // { tools = shell-tools; } // outputs
+devShell

@@ -23,7 +23,7 @@ let
       (lib.mapAttrsToList mkMarkdownForOption options-doc-nix);
 
 
-  cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" ] [ "<in>" "<out>" ] name;
+  cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" "<function body>"] [ "<in>" "<out>" "<func>" ] name;
 
 
   prettyPrintValue = value:
@@ -40,6 +40,8 @@ let
 
 
   mkMarkdownForOption = name: value: ''
+    ----- 
+
     ### `${cleanupName name}`
 
     #### Type: `${value.type}`
@@ -72,7 +74,16 @@ let
 in
 
 lib.toFile "options.md" ''
-  # IOGX 
+  # Options Reference 
+
+  1. [`flake.nix`](#TODO)
+    - Entrypoint for the Nix code.
+  2. [`inputs.iogx.lib.mkFlake`](#TODO) 
+    - Makes the final flake outputs.
+  3. [`pkgs.lib.iogx.mkProject`](#TODO) 
+    - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+  4. [`pkgs.lib.iogx.mkShell`](#TODO) 
+    - Makes a `devShell` with `pre-commit-check` and tools.
 
   ${options-doc-markdown}
 ''

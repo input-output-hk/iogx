@@ -73,13 +73,19 @@
 
         packages.options-doc = repoRoot.src.core.mkIogxDoc;
 
-        devShells.default = pkgs.mkShell {
+        devShells.default = lib.iogx.mkShell {
           name = "iogx-devshell";
-          buildInputs = [ pkgs.github-cli pkgs.python39 ];
-          shellHook = ''
-            export PS1="\n\[\033[1;32m\][IOGX:\w]\$\[\033[0m\] "
-          '';
-        };
+          packages = [ pkgs.github-cli pkgs.python39 ];
+          scripts.build-docs = {
+            description = "Produce ./doc/options.md";
+            exec = ''
+              set -e
+              nix build .#options-doc --system x86_64-darwin --show-trace --out-link options.md
+              cp options.md doc/options.md
+              rm options.md
+            '';
+          };
+        } [];
       }];
     };
 

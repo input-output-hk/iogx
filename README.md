@@ -2,13 +2,8 @@
 
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
-- [3. Reference](#3-reference)
-- [4. The `flake.nix` file](#4-the-flakenix-file)
-  - [4.1. `description`](#41-description)
-  - [4.2. `inputs`](#42-inputs)
-  - [4.3. `outputs`](#43-outputs)
-  - [4.4. `nixConfig`](#44-nixconfig)
-- [5. Future Work](#5-future-work)
+- [3. The `flake.nix` file](#3-the-flakenix-file)
+- [4. Future Work](#4-future-work)
 
 # 1. Introduction 
 
@@ -19,7 +14,7 @@ To get started run:
 nix flake init --template github:input-output-hk/iogx
 ```
 
-This will generates a [`flake.nix`](./template/flake.nix) to get you started. 
+This will generates a [`flake.nix`](./template/flake.nix#TODO) to get you started. 
 
 You may now move on to the [Options Reference](./doc/options.md).
 
@@ -45,18 +40,7 @@ IOGX uses [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix) t
 
 If you project needs a [Read The Docs](https://readthedocs.org) site then IOGX will include the necessary tools and scripts, and will add the relevant derivations to CI.
 
-# 3. Reference 
-
-1. [`flake.nix`](#TODO)
-   - Entrypoint for the Nix code.
-2. [`inputs.iogx.lib.mkFlake`](#TODO) 
-   - Makes the final flake outputs.
-3. [`pkgs.lib.iogx.mkProject`](#TODO) 
-   - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-4. [`pkgs.lib.iogx.mkShell`](#TODO) 
-   - Makes a `devShell` with `pre-commit-check` and tools.
-
-# 4. The `flake.nix` file
+# 3. The `flake.nix` file
 
 ```nix
 {
@@ -99,7 +83,7 @@ If you project needs a [Read The Docs](https://readthedocs.org) site then IOGX w
 }
 ```
 
-## 4.1. `description`
+## `description` <!-- omit in toc -->
 
 Arbitrary description for the flake. 
 
@@ -107,7 +91,7 @@ This string is displayed when running `nix flake info` and other flake commands.
 
 It can be a short title for your project. 
 
-## 4.2. `inputs`
+## `inputs` <!-- omit in toc -->
 
 Your flake *must* define `iogx` among its inputs. 
 
@@ -143,11 +127,11 @@ If you need to update IOGX, you can do it the normal way:
 nix flake lock --update-input iogx 
 ```
 
-## 4.3. `outputs`
+## `outputs` <!-- omit in toc -->
 
 Your flake `outputs` are produced using `inputs.iogx.lib.mkFlake`#TODO
 
-## 4.4. `nixConfig`
+## `nixConfig` <!-- omit in toc -->
 
 Unless you know what you are doing, you should not change `nixConfig`.
 
@@ -169,7 +153,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work co
 
 If Nix starts building `GHC` or other large artifacts that means that your caches have not been configured properly.
 
-# 5. Future Work
+# 4. Future Work
 
 In the future we plan to develop the following features:
 

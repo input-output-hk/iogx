@@ -929,8 +929,6 @@ let
           In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx overlay.
         '';
         example = l.literalExpression ''
-          # ./cabal-project.nix
-
           { repoRoot, inputs, pkgs, lib, system }:
           
           lib.iogx.mkProject {
@@ -1250,7 +1248,6 @@ let
         '';
         readOnly = true;
         example = l.literalExpression ''
-          # ./outputs.nix
           { repoRoot, inputs, pkgs, lib, system }:
           [
             {
@@ -1269,7 +1266,6 @@ let
           Test
         '';
         example = l.literalExpression ''
-          # ./outputs.nix
           { repoRoot, inputs, pkgs, lib, system }:
           let
             shell = lib.iogx.mkShell {};
@@ -1333,7 +1329,7 @@ let
         - The returned attrset contans attributes prefixed by `mkFlake.<out>`.
     '';
     example = l.literalExpression ''
-      # ./flake.nix
+      # flake.nix
       outputs = inputs: inputs.iogx.lib.mkFlake {
         inherit inputs;
         repoRoot = ./.;
@@ -1354,7 +1350,6 @@ let
     '';
     type = apiFuncType mkProject-IN-submodule mkProject-OUT-submodule;
     example = l.literalExpression ''
-      # ./outputs.nix
       { repoRoot, inputs, pkgs, lib, system }:
       let 
         cabalProject = lib.iogx.mkProject {
@@ -1389,7 +1384,6 @@ let
     '';
     type = apiFuncType mkShell-IN-submodule mkShell-OUT-submodule;
     example = l.literalExpression ''
-      # ./shell.nix
       { repoRoot, inputs, pkgs, lib, system }:
 
       lib.iogx.mkShell {

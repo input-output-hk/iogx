@@ -26,25 +26,17 @@ let
   cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" "<function body>"] [ "<in>" "<out>" "<func>" ] name;
 
 
-  prettyPrintValue = value:
-    if value._type == "literalExpression" && lib.hasInfix "\n" value.text then
-      "\n```nix\n${value.text}\n```"
-    else if value._type == "literalExpression" && !lib.hasInfix "\n" value.text then
-      "`${value.text}`"
-    else if value._type != "literalExpression" && lib.hasInfix "\n" value.text then
-      "\n```nix\n${lib.toJSON value.text}\n```"
-    else if value._type != "literalExpression" && !lib.hasInfix "\n" value.text then
-      "`${lib.toJSON value.text}`"
-    else
-      "";
+  prettyPrintValue = header: value:
+    if value._type == "literalExpression"then
+      "\n```nix\n${header}\n${value.text}\n```"
+    else 
+      "\n```nix\n${header}\n${lib.toJSON value.text}\n```";
 
 
-  mkMarkdownForOption = name: value: ''
-    ----- 
+  mkMarkdownForOptionOld = name: value: ''
+    ---
 
-    ### `${cleanupName name}`
-
-    **Type**: ${value.type}
+    ### `${cleanupName name}` :: ${value.type}
 
     ${
       if lib.hasAttr "default" value then 
@@ -66,6 +58,24 @@ let
         ""
     }
 
+    ${value.description}
+  '';
+
+  mkMarkdownForOption = name: value: ''
+    ---
+
+    ### `${cleanupName name}` :: ${value.type}
+
+    ${
+      if lib.hasAttr "default" value 
+      then prettyPrintValue "# Default:" value.default
+      else ""
+    }
+        ${
+      if lib.hasAttr "example" value 
+      then prettyPrintValue "# Example:" value.example
+      else ""
+    }
     ${value.description}
   '';
 

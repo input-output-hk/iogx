@@ -42,8 +42,9 @@ let
   mkMarkdownForOption = name: value: ''
     ---
 
-    ### `${cleanupName name}` :: ${value.type}
+    ### `${cleanupName name}`
 
+    **Type**: ${value.type}
     ${
       if lib.hasAttr "default" value then 
         ''
@@ -70,7 +71,7 @@ let
   mkMarkdownForOptionOld = name: value: ''
     ---
 
-    ### `${cleanupName name}` :: ${value.type} <a name="testoloni"></a>
+    ### `${cleanupName name}` :: ${value.type}
 
     ${prettyPrintValue value.default}
     ${prettyPrintValue value.example}

@@ -70,7 +70,7 @@ let
   mkMarkdownForOptionOld = name: value: ''
     ---
 
-    ### `${cleanupName name}` :: ${value.type}
+    ### `${cleanupName name}` :: ${value.type} <a name="testoloni"></a>
 
     ${prettyPrintValue value.default}
     ${prettyPrintValue value.example}

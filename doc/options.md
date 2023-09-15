@@ -19,6 +19,8 @@
 outputs = inputs: inputs.iogx.lib.mkFlake {
   inherit inputs;
   repoRoot = ./.;
+  debug = false;
+  nixpkgsArgs = {};
   systems = [ "x86_64-linux" "x86_64-darwin" ];
   outputs = { repoRoot, inputs, pkgs, lib, system }: [];
 };
@@ -71,7 +73,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 A flake-like attrset.
 
-You can place additional flake outputs here, which will be recursively updated with the outputs from #TODOmkFlake.outputs.
+You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#testoloni).
 
 This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
@@ -261,7 +263,7 @@ lib.iogx.mkShell {}
 **Default**: `null`
 
 
-**Example**: `/nix/store/0gmg2a015f3zm56v07wr636ln6gasxxg-source/src/boot`
+**Example**: `/nix/store/hdkmpr9fia89gpcalcx2210h6a4ax8xc-source/src/boot`
 
 
 The root of your repository.

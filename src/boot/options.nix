@@ -785,7 +785,7 @@ let
         description = ''
           A flake-like attrset.
 
-          You can place additional flake outputs here, which will be recursively updated with the outputs from #TODOmkFlake.outputs.
+          You can place additional flake outputs here, which will be recursively updated with the outputs from [outputs](#testoloni).
 
           This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
         '';
@@ -1333,6 +1333,8 @@ let
       outputs = inputs: inputs.iogx.lib.mkFlake {
         inherit inputs;
         repoRoot = ./.;
+        debug = false;
+        nixpkgsArgs = {};
         systems = [ "x86_64-linux" "x86_64-darwin" ];
         outputs = { repoRoot, inputs, pkgs, lib, system }: [];
       };

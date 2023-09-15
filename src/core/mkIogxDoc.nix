@@ -64,7 +64,7 @@ let
   mkMarkdownForOption = name: value: ''
     ---
 
-    ### `${cleanupName name}` :: ${value.type}
+    <h2>`${cleanupName name}`</h2> :: ${value.type}
 
     ${
       if lib.hasAttr "default" value 

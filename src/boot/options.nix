@@ -120,7 +120,8 @@ let
           ```
 
           The example above will use the same compiler version as your project.
-          IOGX does this automatically when creating a shell with #TODOmkProject.mkShell.
+
+          IOGX does this automatically when creating a shell with ${link "mkProject.<in>.mkShell"}.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -137,7 +138,7 @@ let
         description = ''
           A package that provides the `cabal-fmt` executable.
 
-          If unset or `null`, a default `cabal-fmt` will be provided, which is independed of #TODOhaskellCompilerVersion.
+          If unset or `null`, a default `cabal-fmt` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompiler"}.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -154,7 +155,7 @@ let
         description = ''
           A package that provides the `cabal-install` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -171,7 +172,7 @@ let
         description = ''
           A package that provides the `haskell-language-server` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -188,7 +189,7 @@ let
         description = ''
           A package that provides the `haskell-language-server-wrapper` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -205,7 +206,7 @@ let
         description = ''
           A package that provides the `fourmolu` executable.
 
-          If unset or `null`, a default `fourmolu` will be provided, which is independed of #TODOhaskellCompilerVersion.
+          If unset or `null`, a default `fourmolu` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompiler"}.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -222,7 +223,7 @@ let
         description = ''
           A package that provides the `hlint` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -239,7 +240,7 @@ let
         description = ''
           A package that provides the `stylish-haskell` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -256,7 +257,7 @@ let
         description = ''
           A package that provides the `ghcid` executable.
 
-          If unset or `null`, #TODOhaskellCompilerVersion will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -472,9 +473,9 @@ let
           lib.iogx.mkShell {
             scripts = {
               foo = {
-                exec = \\'\\'
+                exec = '''
                   echo "Hello, world!"
-                \\'\\';
+                ''';
               };
             };
           }
@@ -527,7 +528,7 @@ let
         type = l.types.bool;
         default = true;
         description = ''
-          Whether to enable this string.
+          Whether to enable this script.
 
           This can be used to include scripts conditionally.
         '';
@@ -538,9 +539,9 @@ let
             scripts = {
               foo = {
                 enable = pkgs.stdenv.hostPlatform.isLinux;
-                exec = \'\'
+                exec = '''
                   echo "I only run on Linux."
-                \'\';
+                ''';
               };
             };
           }
@@ -678,7 +679,7 @@ let
 
           This is the most important option as it will determine your flake outputs.
 
-          The function receives an attrset and must return a list of attrsets.
+          `outputs` receives an attrset and must return a list of attrsets.
 
           The returned attrsets are recursively merged top-to-bottom. 
 
@@ -690,9 +691,9 @@ let
 
           `repoRoot` is an attrset that can be used to reference the contents of your repository folder instead of using the `import` keyword.
 
-          Its value is set to the path in ${link "mkFlake.<in>.repoRoot"}.
+          Its value is set to the path of ${link "mkFlake.<in>.repoRoot"}.
 
-          For example, if this is your top-level folder:
+          For example, if this is your top-level repository folder:
           ```
           * src 
             - Main.hs 
@@ -730,7 +731,7 @@ let
           lib.someFunction arg1 arg2 repoRoot.nix.bravo.delta."golf.txt"
 
           # ./nix/per-system-outputs.nix
-          { repoRoot, pkgs, system, lib, ... }:
+          { repoRoot, inputs, pkgs, system, lib, ... }:
           { 
             packages.example = 
               let 
@@ -748,15 +749,15 @@ let
 
           In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-          Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the ${link "mkFlake.<in>.outputs"}.
+          Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like ${link "mkFlake.<in>.outputs"}.
 
-          Using the `repoRoot` argument is optional, but it has the advantage of not having to thead the standard arguments (especially `pkgs` and `inputs`) all over the place.
+          Using the `repoRoot` argument is optional, but it has the advantage of not having to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
           ### `inputs`
 
-          Your flake inputs as given in ${link "mkFlake.<in>.inputs"}.
+          Your flake inputs as defined in ${link "mkFlake.<in>.inputs"}.
 
-          Note that the `inputs` have been de-systemized against the current system.
+          Note that these `inputs` have been de-systemized against the current system.
           
           This means that you can use the following syntax:
           ```nix
@@ -767,7 +768,7 @@ let
           In addition to the usual syntax which mentions `system` explicitely.
           ```nix 
           inputs.n2c.packages.x86_64-linux.nix2container
-          inputs'.self.packages.x86_64-darwin.foo
+          inputs.self.packages.x86_64-darwin.foo
           ```
 
           #### `pkgs`
@@ -823,7 +824,7 @@ let
       nixpkgsArgs = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Internally, IOGX calls `import inputs.nixpkgs {}`.
+          Internally, IOGX calls `import inputs.nixpkgs {}` for each of your ${link "mkFlake.<in>.systems"}.
 
           Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of `overlays` to be appended to nixpkgs.
         '';
@@ -875,9 +876,9 @@ let
           
           The `src` and `inputMap` arguments can be omitted and will default to the values in the example above.
 
-          You should use `flake.variants` to provide support for profiling, different GHC versions, an any other additional configuration.
+          You should use `flake.variants` to provide support for profiling, different GHC versions, and any other additional configuration.
 
-          The variants will be available as `cabalProject.projectVariant.<name>`, and they will all contain the `iogx` overlay.
+          The variants will be available as `cabalProject.projectVariant.<flake-variant-name>`, and they will also contain the `iogx` overlay.
 
           See ${link "mkProject.<out>.iogx"} for more details.
         '';
@@ -892,15 +893,14 @@ let
                 "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;
               };
               compiler-nix-name = "ghc8197";
-              flake.variants = {
-                profiled = {
-                  modules = [{ enableProfiling = true; }];
-                };
-                ghc928 = {
-                  compiler-nix-name = "ghc928";
-                };
+              flake.variants.profiled = {
+                modules = [{ enableProfiling = true; }];
+              };
+              flake.variants.ghc928 = {
+                compiler-nix-name = "ghc928";
               };
               modules = [];
+              cabalProjectLocal = "";
             };
           };
         '';
@@ -995,7 +995,7 @@ let
         type = l.types.str;
         default = "nix-shell";
         description = ''
-          This field will be used as the shell's derivation name and it will also be used to fill in the default values for #TODO`prompt` and #TODO`welcomeMessage` below.
+          This field will be used as the shell's derivation name and it will also be used to fill in the default values for ${link "mkShell.<in>.prompt"} and ${link "mkShell.<in>.welcomeMessage"}.
         '';
       };
 
@@ -1025,9 +1025,9 @@ let
         description = ''
           When entering the shell, this welcome message will be printed.
 
-          The same caveat about escaping back slashes in #TODO`prompt` applies here.
+          The same caveat about escaping back slashes in ${link "mkShell.<in>.prompt"} applies here.
 
-          This field is optional and defaults to a simple welcome message using the #TODO`name` field.
+          This field is optional and defaults to a simple welcome message using the ${link "mkShell.<in>.name"} field.
         '';
       };
 
@@ -1049,7 +1049,7 @@ let
           ]
           ```
 
-          If you `cabalProject` is in scope, you could use `hsPkgs` to obtain some useful binaries:
+          If you `cabalProject` (coming from ${link "mkProject"}) is in scope, you could use `hsPkgs` to obtain some useful binaries:
           ```nix
           packages = [
             cabalProject.hsPkgs.cardano-cli.components.exes.cardano-cli
@@ -1077,20 +1077,20 @@ let
           scripts = {
 
             foobar = {
-              exec = \'\'
+              exec = '''
                 # Bash code to be executed whenever the script `foobar` is run.
                 echo "Delete me from your nix/shell.nix!"
-              \'\';
-              description = \'\'
+              ''';
+              description = '''
                 You might want to delete the foobar script.
-              \'\';
+              ''';
               group = "bazwaz";
               enable = true;
             };
 
-            waz.exec = \'\'
+            waz.exec = '''
               echo "I don't have a group!"
-            \'\';
+            ''';
           };
         '';
       };
@@ -1123,10 +1123,10 @@ let
           Standard nix `shellHook`, to be executed every time you enter the shell.
         '';
         example = l.literalExpression ''
-          shellHook = \'\'
+          shellHook = '''
             # Bash code to be executed when you enter the shell.
             echo "I'm inside the shell!"
-          \'\';
+          ''';
         '';
       };
 
@@ -1134,7 +1134,11 @@ let
         type = tools-submodule;
         default = { };
         description = ''
-          Test
+          An attrset of packages to be made available in the shell.
+
+          This can be used to override the default derivations used by IOGX.
+
+          The value of ${link "mkShell.<in>.tools.haskellCompiler"} will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
         '';
       };
 
@@ -1150,7 +1154,7 @@ let
 
           All the hooks are disabled by default.
 
-          It is sufficient to set the #TODO`enable` flag to `true` to make the hook active.
+          It is sufficient to set the `enable` flag to `true` to make the hook active.
 
           When enabled, some hooks expect to find a configuration file in the root of the repository:
 
@@ -1208,7 +1212,7 @@ let
 
           Note that the `iogx` attrset will be avaialable for each of your project variants defined in ${link "mkProject.<in>.cabalProjectArgs"}.
 
-          You will consume `iogx` in your flake ${link "mkFlake.<in>.outputs"}, as shown in the example above.
+          You will want to consume `iogx` in your flake ${link "mkFlake.<in>.outputs"}, as shown in the example above.
         '';
         example = l.literalExpression ''
           # flake.nix 
@@ -1246,7 +1250,7 @@ let
             {
               devShells.default = cabalProject.iogx.devShell;
               devShells.profiled = cabalProject.projectVariants.profiled.iogx.devShell;
-              devShells.ghc928 = cabalProject.projectVariants.profiled.ghc928.devShell;
+              devShells.ghc928 = cabalProject.projectVariants.ghc928.iogx.devShell;
             }
             {
               hydraJobs.ghc8107 = cabalProject.iogx.hydraJobs;
@@ -1299,15 +1303,6 @@ let
               '';
             };
 
-            flake = l.mkOption {
-              type = l.types.attrs;
-              description = ''
-                The *original* flake outputs provided by `haskell.nix`.
-
-                In general you don't need this.
-              '';
-            };
-
             packages = l.mkOption {
               type = l.types.attrs;
               description = ''
@@ -1335,6 +1330,8 @@ let
               description = ''
                 A attrset containing the cabal testsuites.
 
+                When these derivations are **built**, the actual tests will be run as part of the build.
+
                 The keys are the cabal target names, and the values are the derivations.
 
                 IOGX will fail to evaluate if some of you cabal targets have the same name.
@@ -1344,16 +1341,16 @@ let
             hydraJobs = l.mkOption {
               type = l.types.attrs;
               description = ''
-                A jobset containing `packages`, `checks`, `devShell` and `haskell.nix`'s `plan-nix` and `roots`.
+                A jobset containing `packages`, `checks`, `devShells.default` and `haskell.nix`'s `plan-nix` and `roots`.
 
                 The `devShell` comes from your implementation of ${link "mkProject.<in>.mkShell"}.
 
                 This attrset does not contain:
-                - ${link "mkProject.<out>.iogx.combined-haddock"}, 
-                - ${link "mkProject.<out>.iogx.read-the-docs-site"}, 
-                - ${link "mkProject.<out>.iogx.pre-commit-check"}.
+                - ${link "mkProject.<out>.iogx.combined-haddock"}
+                - ${link "mkProject.<out>.iogx.read-the-docs-site"}
+                - ${link "mkProject.<out>.iogx.pre-commit-check"}
 
-                If you need those you can use ${link "mkProject.<out>.iogx.defaultFlakeOutputs"}.
+                If you need those you can use ${link "mkProject.<out>.iogx.defaultFlakeOutputs"}, or you can reference them directly from the `iogx` attrset.
               '';
             };
 
@@ -1361,6 +1358,8 @@ let
               type = l.types.package;
               description = ''
                 The `devShell` as provided by your implementation of ${link "mkProject.<in>.mkShell"}.
+
+                There is a different `devShell` for the default project variant, and one for each of the variants defined in ${link "mkProject.<in>.cabalProjectArgs"}.
               '';
             };
 
@@ -1381,7 +1380,7 @@ let
             pre-commit-check = l.mkOption {
               type = l.types.package;
               description = ''
-                The derivation for the ${link "mkShell.<in>.preCommit"} in your ${link "mkProject.<in>.mkShell"}.
+                The derivation for the ${link "mkShell.<in>.preCommit"} coming from ${link "mkProject.<in>.mkShell"}.
               '';
             };
           };
@@ -1492,7 +1491,7 @@ let
 
       In this document:
         - Options for the input attrset are prefixed by `mkProject.<in>`.
-        - The returned attrset contans the attributes prefixed by `mkProject.<out>`.
+        - The returned attrset contains the attributes prefixed by `mkProject.<out>.iogx`.
     '';
     type = apiFuncType mkProject-IN-submodule mkProject-OUT-submodule;
     example = l.literalExpression ''
@@ -1501,10 +1500,17 @@ let
       let 
         cabalProject = lib.iogx.mkProject {
           mkShell = repoRoot.nix.make-shell;
+
+          readTheDocs.siteFolder = "doc/read-the-docs-site";
+          
+          combinedHaddock.enable = true;
+          
           cabalProjectArgs = {
+
             compiler-nix-name = "ghc8107";
+
             flake.variants.FOO = {
-              modules = [{}];
+              compiler-nix-name = "ghc927";
             };
           };
         };
@@ -1523,11 +1529,11 @@ let
 
   mkShell = l.mkOption {
     description = ''
-      The `pkgs.lib.iogx.mkFlake` function takes an attrset of options and returns an attrset containing the #TODOdevShell and the #TODOpre-commit-check derivation.
+      The `lib.iogx.mkShell` function takes an attrset of options and returns a normal `devShell` with an additional attribute named ${link "mkShell.<out>.pre-commit-check"}.
 
       In this document:
         - Options for the input attrset are prefixed by `mkShell.<in>`.
-        - The returned attrset contans the attributes prefixed by `mkShell.<out>`.
+        - The returned attrset contains the attributes prefixed by `mkShell.<out>`.
     '';
     type = apiFuncType mkShell-IN-submodule mkShell-OUT-submodule;
     example = l.literalExpression ''
@@ -1544,9 +1550,9 @@ let
             description = "";
             group = "general";
             enabled = false;
-            exec = \'\'
+            exec = '''
               echo "Hello, World!"
-            \'\';
+            ''';
           };
         };
         shellHook = "";

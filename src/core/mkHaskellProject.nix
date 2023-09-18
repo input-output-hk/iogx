@@ -106,7 +106,6 @@ let
     {
       iogx = {
         inherit 
-          flake 
           apps 
           checks 
           packages 

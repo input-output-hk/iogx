@@ -12,7 +12,7 @@ let
         name' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] hd;
         name'' = l.strings.toLower name';
       in 
-        "[${tag}](#${name''})";
+        "[`${tag}`](#${name''})";
 
 
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;

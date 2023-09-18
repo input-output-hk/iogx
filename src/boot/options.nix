@@ -472,9 +472,9 @@ let
           lib.iogx.mkShell {
             scripts = {
               foo = {
-                exec = \'\'
+                exec = \\'\\'
                   echo "Hello, world!"
-                \'\';
+                \\'\\';
               };
             };
           }
@@ -1467,7 +1467,7 @@ let
     description = ''
       The `inputs.iogx.lib.mkFlake` function takes an attrset of options and returns an attrset of flake outputs.
 
-      In this document, ptions for the input attrset are prefixed by `mkFlake.<in>`.
+      In this document, options for the input attrset are prefixed by `mkFlake.<in>`.
     '';
     example = l.literalExpression ''
       # flake.nix

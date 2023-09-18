@@ -1,10 +1,10 @@
 # Options Reference 
 
-1. [`inputs.iogx.lib.mkFlake`](#TODO) 
+1. [inputs.iogx.lib.mkFlake](#mkflake) 
   - Makes the final flake outputs.
-2. [`pkgs.lib.iogx.mkProject`](#TODO) 
+2. [pkgs.lib.iogx.mkProject](#mkproject) 
   - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-3. [`pkgs.lib.iogx.mkShell`](#TODO) 
+3. [pkgs.lib.iogx.mkShell](#mkshell)
   - Makes a `devShell` with `pre-commit-check` and tools.
 
 ---
@@ -18,23 +18,23 @@
 **Example**: 
 ```nix
 # flake.nix
-outputs = inputs: inputs.iogx.lib.mkFlake {
-  inherit inputs;
-  repoRoot = ./.;
-  debug = false;
-  nixpkgsArgs = {};
-  systems = [ "x86_64-linux" "x86_64-darwin" ];
-  outputs = { repoRoot, inputs, pkgs, lib, system }: [];
-};
+{
+  outputs = inputs: inputs.iogx.lib.mkFlake {
+    inherit inputs;
+    repoRoot = ./.;
+    debug = false;
+    nixpkgsArgs = {};
+    systems = [ "x86_64-linux" "x86_64-darwin" ];
+    outputs = { repoRoot, inputs, pkgs, lib, system }: [];
+  };
+}
 
 ```
 
 
 The `inputs.iogx.lib.mkFlake` function takes an attrset of options and returns an attrset of flake outputs.
 
-In this document:
-  - Options for the input attrset are prefixed by `mkFlake.<in>`.
-  - The returned attrset contans attributes prefixed by `mkFlake.<out>`.
+In this document, ptions for the input attrset are prefixed by `mkFlake.<in>`.
 
 
 ---
@@ -79,7 +79,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 A flake-like attrset.
 
-You can place additional flake outputs here, which will be recursively updated with the attrset from [outputs](#mkflakeinoutputs).
+You can place additional flake outputs here, which will be recursively updated with the attrset from [mkFlake.<in>.outputs](#mkflakeinoutputs).
 
 This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
@@ -118,15 +118,17 @@ You almost certainly want to do `inherit inputs;` here (see the example in [mkFl
 **Example**: 
 ```nix
 # flake.nix
-outputs = inputs: inputs.iogx.lib.mkFlake {
-  inherit inputs;
-  outputs = import ./nix/outputs.nix;
-  nixpkgsArgs = {
-    overlays = [(self: super: { 
-      acme = super.callPackage ./nix/acme.nix { }; 
-    })];
-  };  
-};
+{
+  outputs = inputs: inputs.iogx.lib.mkFlake {
+    inherit inputs;
+    outputs = import ./nix/outputs.nix;
+    nixpkgsArgs = {
+      overlays = [(self: super: { 
+        acme = super.callPackage ./nix/acme.nix { }; 
+      })];
+    };  
+  };
+}
 
 ```
 
@@ -171,7 +173,7 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 ```
 
 
-A function that is called once for each [system](#mkflakeinsystems).
+A function that is called once for each system in [mkFlake.<in>.systems](#mkflakeinsystems).
 
 This is the most important option as it will determine your flake outputs.
 
@@ -179,7 +181,7 @@ The function receives an attrset and must return a list of attrsets.
 
 The returned attrsets are recursively merged top-to-bottom. 
 
-Each of the input attributes is documented below:
+Each of the input attributes is documented below.
 
 #### `repoRoot`
 
@@ -187,7 +189,7 @@ Ordinarily you would use the `import` keyword to import nix files, but you can u
 
 `repoRoot` is an attrset that can be used to reference the contents of your repository folder instead of using the `import` keyword.
 
-Its value is set to the path in [repoRoot](#mkflakeinreporoot).
+Its value is set to the path in [mkFlake.<in>.repoRoot](#mkflakeinreporoot).
 
 For example, if this is your top-level folder:
 ```
@@ -245,13 +247,13 @@ Note that the Nix files do not need the `".nix"` suffix, while files with any ot
 
 In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the [outputs](#mkflakeinoutputs).
+Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like the [mkFlake.<in>.outputs](#mkflakeinoutputs).
 
 Using the `repoRoot` argument is optional, but it has the advantage of not having to thead the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
 ### `inputs`
 
-Your flake inputs as given in [inputs](#mkflakeininputs).
+Your flake inputs as given in [mkFlake.<in>.inputs](#mkflakeininputs).
 
 Note that the `inputs` have been de-systemized against the current system.
 
@@ -269,7 +271,7 @@ inputs'.self.packages.x86_64-darwin.foo
 
 #### `pkgs`
 
-A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your [systems](#mkflakeinsystems), and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your [mkFlake.<in>.systems](#mkflakeinsystems), and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
 
 A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` but that should *not* be used because it doesn't have the required overlays.
 
@@ -320,7 +322,7 @@ If not set, this will default to the folder containing the `flake.nix` file, usi
 
 The systems you want to build for.
 
-The [outputs](#mkflakeinoutputs) function will be called once for each system.
+The [mkFlake.<in>.outputs](#mkflakeinoutputs) function will be called once for each system.
 
 
 ---
@@ -338,7 +340,7 @@ The [outputs](#mkflakeinoutputs) function will be called once for each system.
 let 
   cabalProject = lib.iogx.mkProject {
     mkShell = repoRoot.nix.make-shell;
-    args = {
+    cabalProjectArgs = {
       compiler-nix-name = "ghc8107";
       flake.variants.FOO = {
         modules = [{}];
@@ -362,7 +364,7 @@ The `lib.iogx.mkProject` function takes an attrset of options and returns a `cab
 
 In this document:
   - Options for the input attrset are prefixed by `mkProject.<in>`.
-  - The returned attrset contans attributes prefixed by `mkProject.<out>`.
+  - The returned attrset contans the attributes prefixed by `mkProject.<out>`.
 
 
 ---
@@ -381,7 +383,7 @@ In this document:
 
 lib.iogx.mkProject {
   cabalProjectArgs = {
-    src = ./.; # Must contain the cabal.project file)
+    src = ./.; # Must contain the cabal.project file
     inputMap = {
       "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;
     };
@@ -401,7 +403,7 @@ lib.iogx.mkProject {
 ```
 
 
-The very arguments that will be passed to `haskell.nix:cabalProject'`.
+The very arguments that will be passed to [`haskell.nix:cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjec#cabalproject).
 
 The `src` and `inputMap` arguments can be omitted and will default to the values in the example above.
 
@@ -409,7 +411,7 @@ You should use `flake.variants` to provide support for profiling, different GHC 
 
 The variants will be available as `cabalProject.projectVariant.<name>`, and they will all contain the `iogx` overlay.
 
-See the [mkProject return value](#mkprojectout) for more details.
+See [mkProject.<out>.iogx](#mkprojectoutiogx) for more details.
 
 
 ---
@@ -455,9 +457,9 @@ in
 
 Configuration for a combined Haddock.
 
-When enabled, your [read-the-docs site](#mkprojectinreadthedocs) will have access to Haddock symbols for your Haskell packages.
+When enabled, your [mkProject.<in>.readTheDocs](#mkprojectinreadthedocs) site will have access to Haddock symbols for your Haskell packages.
 
-Combining Haddock artifacts takes a significant amount of time and may slow do CI.
+Combining Haddock artifacts takes a significant amount of time and may slow down CI.
 
 
 ---
@@ -515,9 +517,9 @@ A string acting as prologue for the combined Haddock.
 
 This function will be called to create a shell for each of your project variants.
 
-It receives each project as an argument and must return an attrset of options for [mkShell](#mkshellin).
+It receives each project as an argument and must return an attrset of options for [mkShell](#mkshell).
 
-The shell will be available in the `iogx` overlay as #TODO
+The shell will be available in the `iogx` overlay as [mkProject.<out>.iogx.devShell](#mkprojectoutiogxdevshell).
 
 
 ---
@@ -559,9 +561,9 @@ Configuration for your [`read-the-docs`](https://readthedocs.org) site.
 
 If no site is required, this option can be omitted.
 
-The shells generated by [mkShell](#mkprojectinmkshell) will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
+The shells generated by [mkProject.<in>.mkShell](#mkprojectinmkshell) will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
 
-In addition, a `read-the-docs-site` derivation will be added to the #TODOiogx overlay.
+In addition, the `read-the-docs-site` derivation will be available in [mkProject.<out>.iogx.read-the-docs-site](#mkprojectoutiogxread-the-docs-site).
 
 
 ---
@@ -587,12 +589,75 @@ lib.iogx.mkProject {
 
 A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
 
-If no site is required you can set this field to `null`, or omit the #TODO`readTheDocs` option entirely. 
+If no site is required you can set this field to `null`, or omit the `readTheDocs` option entirely. 
 
 
 ---
 
-### `mkProject.<out>.apps`
+### `mkProject.<out>.iogx`
+
+**Type**: submodule
+
+
+
+**Example**: 
+```nix
+# flake.nix 
+{
+  outputs = inputs: inputs.iogx.lib.mkFlake {
+    outputs = import ./outputs.nix;
+  };
+}
+
+# outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  cabalProject = lib.iogx.mkProject {
+    cabalProjectArgs = {
+      compiler-nix-name = "ghc8107";
+
+      flake.variants.profiled = { 
+        modules = [{ enableProfiling = true; }];
+      };
+
+      flake.variants.ghc928 = { 
+        compiler-nix-name = "ghc928";
+      };
+    }
+  };
+in 
+[
+  {
+    inherit cabalProject;
+  }
+  {
+    pacakges.read-the-docs-site-ghc8107 = cabalProject.iogx.read-the-docs-site;
+    pacakges.read-the-docs-site-ghc928 = cabalProject.projectVariants.ghc928.iogx.read-the-docs-site;
+  }
+  {
+    devShells.default = cabalProject.iogx.devShell;
+    devShells.profiled = cabalProject.projectVariants.profiled.iogx.devShell;
+    devShells.ghc928 = cabalProject.projectVariants.profiled.ghc928.devShell;
+  }
+  {
+    hydraJobs.ghc8107 = cabalProject.iogx.hydraJobs;
+    hydraJobs.ghc928 = cabalProject.projectVariants.ghc928.iogx.hydraJobs;
+  }
+]
+
+```
+
+
+This in an attrset containing all the derivations for your project.
+
+Note that the `iogx` attrset will be avaialable for each of your project variants defined in [mkProject.<in>.cabalProjectArgs](#mkprojectincabalprojectargs).
+
+You will consume `iogx` in your flake [mkFlake.<in>.outputs](#mkflakeinoutputs), as shown in the example above.
+
+
+---
+
+### `mkProject.<out>.iogx.apps`
 
 **Type**: attribute set
 
@@ -600,14 +665,16 @@ If no site is required you can set this field to `null`, or omit the #TODO`readT
 
 
 
-Only the project's executables end up here.
+A attrset containing the cabal executables, testsuites and benchmarks.
 
-Their name has been shortened to the cabal target name.
+The keys are the cabal target names, and the values are the program paths.
+
+IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 
 ---
 
-### `mkProject.<out>.checks`
+### `mkProject.<out>.iogx.checks`
 
 **Type**: attribute set
 
@@ -615,27 +682,16 @@ Their name has been shortened to the cabal target name.
 
 
 
-Only the project's executables end up here.
+A attrset containing the cabal testsuites.
 
-Their name has been shortened to the cabal target name.
+The keys are the cabal target names, and the values are the derivations.
 
-
----
-
-### `mkProject.<out>.defaultFlakeOutputs`
-
-**Type**: attribute set
-
-
-
-
-
-Test
+IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 
 ---
 
-### `mkProject.<out>.devShell`
+### `mkProject.<out>.iogx.combined-haddock`
 
 **Type**: package
 
@@ -643,12 +699,76 @@ Test
 
 
 
-The devShell as provided by `mkShell`.
+The derivation for your [mkProject.<in>.combinedHaddock](#mkprojectincombinedhaddock).
 
 
 ---
 
-### `mkProject.<out>.flake`
+### `mkProject.<out>.iogx.defaultFlakeOutputs`
+
+**Type**: attribute set
+
+
+
+**Example**: 
+```nix
+# flake.nix 
+{
+  outputs = inputs: inputs.iogx.lib.mkFlake {
+    outputs = inherit ./outputs.nix;
+  };
+}
+
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  cabalProject = lib.iogx.mkProject {};
+in 
+[
+  {
+    inherit cabalProject;
+  }
+  (
+    cabalProject.iogx.defaultFlakeOutputs
+  )
+]
+
+```
+
+
+An attribute set that can be included in your [mkFlake.<in>.outputs](#mkflakeinoutputs) directly.
+
+It basically aggregates all other attributes in the [mkProject.<out>.iogx](#mkprojectoutiogx) overlay.
+
+- `devShells.default` = [mkProject.<out>.iogx.devShell](#mkprojectoutiogxdevshell)
+- `packages.*` = [mkProject.<out>.iogx.packages](#mkprojectoutiogxpackages)
+- `packages.combined-haddock` = [mkProject.<out>.iogx.combined-haddock](#mkprojectoutiogxcombined-haddock)
+- `packages.read-the-docs-site` = [mkProject.<out>.iogx.read-the-docs-site](#mkprojectoutiogxread-the-docs-site)
+- `packages.pre-commit-check` = [mkProject.<out>.iogx.pre-commit-check](#mkprojectoutiogxpre-commit-check)
+- `apps.*` = [mkProject.<out>.iogx.apps](#mkprojectoutiogxapps)
+- `checks.*` = [mkProject.<out>.iogx.checks](#mkprojectoutiogxchecks)
+- `hydraJobs.*` = [mkProject.<out>.iogx.hydraJobs](#mkprojectoutiogxhydrajobs)
+- `hydraJobs.combined-haddock` = [mkProject.<out>.iogx.combined-haddock](#mkprojectoutiogxcombined-haddock)
+- `hydraJobs.read-the-docs-site` = [mkProject.<out>.iogx.read-the-docs-site](#mkprojectoutiogxread-the-docs-site) 
+- `hydraJobs.pre-commit-check =` [mkProject.<out>.iogx.pre-commit-check](#mkprojectoutiogxpre-commit-check) 
+
+
+---
+
+### `mkProject.<out>.iogx.devShell`
+
+**Type**: package
+
+
+
+
+
+The `devShell` as provided by your implementation of [mkProject.<in>.mkShell](#mkprojectinmkshell).
+
+
+---
+
+### `mkProject.<out>.iogx.flake`
 
 **Type**: attribute set
 
@@ -656,14 +776,14 @@ The devShell as provided by `mkShell`.
 
 
 
-The *original* flake outputs provided by haskell.nix.
+The *original* flake outputs provided by `haskell.nix`.
 
 In general you don't need this.
 
 
 ---
 
-### `mkProject.<out>.hydraJobs`
+### `mkProject.<out>.iogx.hydraJobs`
 
 **Type**: attribute set
 
@@ -671,12 +791,21 @@ In general you don't need this.
 
 
 
-Test
+A jobset containing `packages`, `checks`, `devShell` and `haskell.nix`'s `plan-nix` and `roots`.
+
+The `devShell` comes from your implementation of [mkProject.<in>.mkShell](#mkprojectinmkshell).
+
+This attrset does not contain:
+- [mkProject.<out>.iogx.combined-haddock](#mkprojectoutiogxcombined-haddock), 
+- [mkProject.<out>.iogx.read-the-docs-site](#mkprojectoutiogxread-the-docs-site), 
+- [mkProject.<out>.iogx.pre-commit-check](#mkprojectoutiogxpre-commit-check).
+
+If you need those you can use [mkProject.<out>.iogx.defaultFlakeOutputs](#mkprojectoutiogxdefaultflakeoutputs).
 
 
 ---
 
-### `mkProject.<out>.packages`
+### `mkProject.<out>.iogx.packages`
 
 **Type**: attribute set
 
@@ -684,14 +813,16 @@ Test
 
 
 
-Only the project's executables end up here.
+A attrset containing the cabal executables, testsuites and benchmarks.
 
-Their name has been shortened to the cabal target name.
+The keys are the cabal target names, and the values are the derivations.
+
+IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 
 ---
 
-### `mkProject.<out>.pre-commit-check`
+### `mkProject.<out>.iogx.pre-commit-check`
 
 **Type**: package
 
@@ -699,12 +830,12 @@ Their name has been shortened to the cabal target name.
 
 
 
-Test
+The derivation for the [mkShell.<in>.preCommit](#mkshellinprecommit) in your [mkProject.<in>.mkShell](#mkprojectinmkshell).
 
 
 ---
 
-### `mkProject.<out>.read-the-docs-site`
+### `mkProject.<out>.iogx.read-the-docs-site`
 
 **Type**: package
 
@@ -712,7 +843,7 @@ Test
 
 
 
-Test
+The derivation for your [mkProject.<in>.readTheDocs](#mkprojectinreadthedocs).
 
 
 ---
@@ -757,7 +888,7 @@ The `pkgs.lib.iogx.mkFlake` function takes an attrset of options and returns an 
 
 In this document:
   - Options for the input attrset are prefixed by `mkShell.<in>`.
-  - The returned attrset contans attributes prefixed by `mkShell.<out>`.
+  - The returned attrset contans the attributes prefixed by `mkShell.<out>`.
 
 
 ---
@@ -2702,30 +2833,6 @@ This field is optional and defaults to a simple welcome message using the #TODO`
 
 ---
 
-### `mkShell.<out>.devShell`
-
-**Type**: package
-
-
-**Read Only**
-**Example**: 
-```nix
-{ repoRoot, inputs, pkgs, lib, system }:
-[
-  {
-    devShells.foo = (lib.iogx.mkShell {}).devShell;
-  }
-]
-
-```
-
-
-The actual shell derivation.
-You can put this in your flake outputs.
-
-
----
-
 ### `mkShell.<out>.pre-commit-check`
 
 **Type**: package
@@ -2740,7 +2847,7 @@ let
 in 
 [
   {
-    devShells.foo = shell.devShell;
+    devShells.foo = shell;
     packages.pre-commit-check = shell.pre-commit-check;
     hydraJobs.pre-commit-check = shell.pre-commit-check;
   }
@@ -2750,8 +2857,9 @@ in
 
 
 A derivation that when built will run all the installed shell hooks.
-The hooks are configured in #TODO preCommit
-This derivation can be included in your packages and in hydraJobs.
-Test
+
+The hooks are configured in [mkShell.<in>.preCommit](#mkshellinprecommit).
+
+This derivation can be included in your `packages` and in `hydraJobs`.
 
 

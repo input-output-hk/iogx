@@ -87,11 +87,11 @@ in
 lib.toFile "options.md" ''
   # Options Reference 
 
-  1. [`inputs.iogx.lib.mkFlake`](#TODO) 
+  1. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
     - Makes the final flake outputs.
-  2. [`pkgs.lib.iogx.mkProject`](#TODO) 
+  2. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkProject" "mkProject"} 
     - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-  3. [`pkgs.lib.iogx.mkShell`](#TODO) 
+  3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
     - Makes a `devShell` with `pre-commit-check` and tools.
 
   ${options-doc-markdown}

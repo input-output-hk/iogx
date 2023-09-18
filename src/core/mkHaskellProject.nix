@@ -96,6 +96,7 @@ let
       defaultFlakeOutputs = rec {
         devShells.default = devShell;
         inherit apps checks packages;
+        inherit combined-haddock read-the-docs-site pre-commit-check;
         hydraJobs.${cabalProject.args.compiler-nix-name} = hydraJobs;
         hydraJobs.combined-haddock = combined-haddock;
         hydraJobs.read-the-docs-site = read-the-docs-site;
@@ -110,6 +111,7 @@ let
           checks 
           packages 
           hydraJobs
+          devShell
           combined-haddock 
           read-the-docs-site
           pre-commit-check

@@ -1,6 +1,6 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-haskellProject'':
+haskellProject':
 
 let
 
@@ -9,13 +9,13 @@ let
 
   evaluated-modules = lib.evalModules {
     modules = [{
-      options.haskellProject = lib.iogx.options.haskellProject;
-      config.haskellProject = haskellProject'';
+      options = lib.iogx.options;
+      config.mkProject-IN-option = haskellProject';
     }];
   };
 
 
-  haskellProject = evaluated-modules.config.haskellProject;
+  haskellProject = evaluated-modules.config.mkProject-IN-option;
 
 
   mkAliasedOutputs = flake:
@@ -75,7 +75,7 @@ let
           read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
           cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
           extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
-          final-shell = repoRoot.src.core.mkShell (haskellProject.shellFor cabalProject) extra-shell-profiles;
+          final-shell = repoRoot.src.core.mkShell (haskellProject.shellArgsForProjectVariant cabalProject) extra-shell-profiles;
         in 
           final-shell;
 

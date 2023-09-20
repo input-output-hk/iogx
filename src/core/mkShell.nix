@@ -33,6 +33,8 @@ let
   };
 
 
+  # TODO use haskell-nix to find latest ghc mapping 
+  
   ghc = shell.tools.haskellCompiler;
 
 

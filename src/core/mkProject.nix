@@ -10,12 +10,12 @@ let
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkProject-IN-option = haskellProject';
+      config.mkProject-IN = haskellProject';
     }];
   };
 
 
-  haskellProject = evaluated-modules.config.mkProject-IN-option;
+  haskellProject = evaluated-modules.config.mkProject-IN;
 
 
   mkAliasedOutputs = flake:
@@ -70,23 +70,23 @@ let
 
   iogx-overlay = cabalProject: _: # This will be called for each projectVariant as well
     let
-      devShell = 
-        let 
+      devShell =
+        let
           read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
           cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
           extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
           final-shell = repoRoot.src.core.mkShell (haskellProject.shellArgsForProjectVariant cabalProject) extra-shell-profiles;
-        in 
-          final-shell;
+        in
+        final-shell;
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
-      
-      inherit (mkAliasedOutputs flake) 
-        apps 
-        checks 
+
+      inherit (mkAliasedOutputs flake)
+        apps
+        checks
         packages;
-      
-      inherit (flake) 
+
+      inherit (flake)
         hydraJobs;
 
       combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
@@ -105,13 +105,13 @@ let
     in
     {
       iogx = {
-        inherit 
-          apps 
-          checks 
-          packages 
+        inherit
+          apps
+          checks
+          packages
           hydraJobs
           devShell
-          combined-haddock 
+          combined-haddock
           read-the-docs-site
           pre-commit-check
           defaultFlakeOutputs;

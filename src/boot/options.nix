@@ -99,7 +99,7 @@ let
       # TODO rename to haskellCompilerVersion and default!!!
       haskellCompiler = l.mkOption {
         default = "ghc8107";
-        type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc964" "ghc810" "ghc92" "ghc96" ]);
+        type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc927" "ghc964" "ghc810" "ghc92" "ghc96" ]);
         description = ''
           The haskell compiler version.
           
@@ -146,7 +146,7 @@ let
           lib.iogx.mkShell {
             tools.cabal-fmt = repoRoot.nix.patched-cabal-fmt;
           }
-        '';  
+        '';
       };
 
       cabal-install = l.mkOption {
@@ -163,7 +163,7 @@ let
           lib.iogx.mkShell {
             tools.cabal-install = repoRoot.nix.patched-cabal-install;
           }
-        ''; 
+        '';
       };
 
       haskell-language-server = l.mkOption {
@@ -545,7 +545,7 @@ let
               };
             };
           }
-        '';        
+        '';
       };
     };
   };
@@ -1420,7 +1420,7 @@ let
   };
 
 
-  mkFlake-IN-option = l.mkOption {
+  mkFlake-IN = l.mkOption {
     type = mkFlake-IN-submodule;
     description = "";
   };
@@ -1437,7 +1437,7 @@ let
   };
 
 
-  mkProject-IN-option = l.mkOption {
+  mkProject-IN = l.mkOption {
     type = mkProject-IN-submodule;
     description = "";
   };
@@ -1449,7 +1449,7 @@ let
   };
 
 
-  mkShell-IN-option = l.mkOption {
+  mkShell-IN = l.mkOption {
     type = mkShell-IN-submodule;
     description = "";
   };
@@ -1577,5 +1577,5 @@ in
 
 {
   inherit mkFlake mkProject mkShell;
-  inherit mkFlake-IN-option mkProject-IN-option mkShell-IN-option;
+  inherit mkFlake-IN mkProject-IN mkShell-IN;
 }

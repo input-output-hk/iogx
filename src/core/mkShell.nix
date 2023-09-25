@@ -11,12 +11,12 @@ let
   evaluated-shell-module = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkShell-IN-option = shell'';
+      config.mkShell-IN = shell'';
     }];
   };
 
 
-  shell' = evaluated-shell-module.config.mkShell-IN-option;
+  shell' = evaluated-shell-module.config.mkShell-IN;
 
 
   shell = lib.recursiveUpdate shell' {
@@ -33,8 +33,6 @@ let
   };
 
 
-  # TODO use haskell-nix to find latest ghc mapping 
-  
   ghc = shell.tools.haskellCompiler;
 
 
@@ -98,7 +96,7 @@ let
       enable = shell.preCommit.stylish-haskell.enable;
       extraOptions = shell.preCommit.stylish-haskell.extraOptions;
       package = shell-tools.stylish-haskell;
-      options = "--inplace --config .stylish-haskellib.yaml";
+      options = "--inplace --config .stylish-haskell.yaml";
       include = [ "hs" "lhs" ];
     };
 

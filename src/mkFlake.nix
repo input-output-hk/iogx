@@ -66,11 +66,11 @@ let
       evaluated-modules = iogx-inputs.nixpkgs.lib.evalModules {
         modules = [{
           options = options;
-          config.mkFlake-IN-option = args';
+          config.mkFlake-IN = args';
         }];
       };
 
-      args = evaluated-modules.config.mkFlake-IN-option;
+      args = evaluated-modules.config.mkFlake-IN;
 
       mkPerSystemFlake = system:
         let

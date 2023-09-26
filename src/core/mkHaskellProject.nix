@@ -137,8 +137,11 @@ let
     let
       mkVariant = variant: variant.iogx // { cabalProject = removeAttrs variant [ "iogx" ]; };
     in
-    mkVariant cabalProject // { variants = utils.mapAttrValues mkVariant cabalProject.projectVariants; };
+    mkVariant cabalProject // {
+      variants = utils.mapAttrValues mkVariant cabalProject.projectVariants;
+      cross = utils.mapAttrValues mkVariant cabalProject.projectCross;
+    };
 
 in
 
-project
+cabalProject

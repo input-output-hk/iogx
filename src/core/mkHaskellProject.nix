@@ -85,6 +85,7 @@ let
         lib.recursiveUpdate tools-args project-args;
 
       devShell = repoRoot.src.core.mkShellWith shell-args shell-profiles;
+      devShells.default = devShell;
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
 
@@ -93,37 +94,41 @@ let
         checks
         packages;
 
-      inherit (flake)
-        hydraJobs;
+      inherit (flake) hydraJobs;
+
+      hydraJobsNoDevShell = removeAttrs hydraJobs [ "devShells" "devShell" ];
 
       combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
       pre-commit-check = devShell.pre-commit-check;
 
-      devShells.default = devShell;
+      defaultFlakeOutputs = lib.recursiveUpdate
+        {
+          inherit devShell devShells apps checks packages hydraJobs;
+        }
+        {
+          packages = { inherit combined-haddock read-the-docs-site pre-commit-check; };
+          hydraJobs = { inherit combined-haddock read-the-docs-site pre-commit-check; };
+        };
 
-      defaultFlakeOutputs = rec {
-        inherit devShell devShells apps checks packages;
-        inherit combined-haddock read-the-docs-site pre-commit-check;
-        hydraJobs.${cabalProject.args.compiler-nix-name} = hydraJobs; # Use project name?
-        hydraJobs.combined-haddock = combined-haddock;
-        hydraJobs.read-the-docs-site = read-the-docs-site;
-        hydraJobs.pre-commit-check = pre-commit-check;
-      };
-    in
-    {
-      iogx = {
+      iogx-attrset = {
         inherit
-          apps
-          checks
-          packages
-          hydraJobs
-          devShell
+          apps# Cabal executables component names
+          checks# Cabal testsuites component names
+          packages# Cabal executables component names
+          devShells# Contains devShells.default == augmented devShell
+          devShell# The augmented devShell
+          hydraJobs# Contains apps, checks, packages and devShells
+          hydraJobsNoDevShell# Original flake, equals to hydraJobs minus the augmented shell
           combined-haddock
           read-the-docs-site
           pre-commit-check
           defaultFlakeOutputs;
       };
+
+    in
+    {
+      iogx = iogx-attrset;
     };
 
 
@@ -132,14 +137,18 @@ let
 
   cabalProject = cabalProject'.appendOverlays [ iogx-overlay ];
 
+
   # project =
-  #   let
-  #     mkVariant = variant: variant.iogx // { cabalProject = removeAttrs variant [ "iogx" ]; };
+  #   let 
+  #     mkOutputs = variant: iogx-overlay variant null;
+  #     mkCrossVariant = variant: mkCrossVariant
+  #     mkVariant = variant: mkOutputs variant // { cabalProject = variant; };
   #   in
   #   mkVariant cabalProject // {
   #     variants = utils.mapAttrValues mkVariant cabalProject.projectVariants;
-  #     cross = utils.mapAttrValues mkVariant cabalProject.projectCross;
+  #     cross = utils.mapAttrValues mkCrossVariant cabalProject.projectCross;
   #   };
+
 in
 
 cabalProject

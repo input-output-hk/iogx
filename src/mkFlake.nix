@@ -7,10 +7,15 @@ let
   options = import ./boot/options.nix iogx-inputs;
 
 
-  mkNixpkgs = system: args:
+  gitrev-overlay = user-inputs: _: _: {
+    gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
+  };
+
+
+  mkNixpkgs = user-inputs: system: args:
     import iogx-inputs.nixpkgs {
       inherit system;
-      config = iogx-inputs.haskell-nix.config // args.config;
+      config = iogx-inputs.haskell-nix.config // (args.config or { });
       overlays =
         [
           iogx-inputs.iohk-nix.overlays.crypto
@@ -22,8 +27,9 @@ let
           # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
           # and so must be after them in the list of overlays to nixpkgs.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
+          (gitrev-overlay user-inputs)
         ]
-        ++ args.overlays;
+        ++ (args.overlays or [ ]);
     };
 
 
@@ -53,15 +59,6 @@ let
 
 
   mkFlake = args':
-    # { inputs
-    # , repoRoot
-    # , systems ? [ "x86_64-linux" "x86_64-darwin" ]
-    # , outputs ? _: [ ]
-    # , flake ? { }
-    # , nixpkgsArgs ? { config = { }; overlays = [ ]; }
-    # , debug ? false
-    # , ...
-    # }:
     let
       evaluated-modules = iogx-inputs.nixpkgs.lib.evalModules {
         modules = [{
@@ -78,7 +75,7 @@ let
 
           desystemized-user-inputs = utils.deSystemize system user-inputs;
 
-          pkgs = mkNixpkgs system args.nixpkgsArgs;
+          pkgs = mkNixpkgs user-inputs system args.nixpkgsArgs;
 
           lib = builtins // pkgs.lib // {
             iogx = mkIogxLib desystemized-user-inputs pkgs;

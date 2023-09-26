@@ -1,4 +1,4 @@
-{ user-inputs, lib, system, ... }:
+{ user-inputs, pkgs, lib, system, ... }:
 
 { ... }:
 

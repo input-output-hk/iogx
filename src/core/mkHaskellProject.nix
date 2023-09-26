@@ -144,4 +144,4 @@ let
 
 in
 
-cabalProject
+project

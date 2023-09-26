@@ -1,6 +1,9 @@
 { user-inputs, lib, system, ... }:
 
-let
+{
+  .. }:
+
+  let
 
   clean-jobs =
     lib.filterAttrsRecursive (name: _: name != "recurseForDerivations")
@@ -13,6 +16,6 @@ let
     constituents = lib.collect lib.isDerivation clean-jobs;
   };
 
-in
+  in
 
-required-job
+  required-job

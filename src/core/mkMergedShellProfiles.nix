@@ -50,8 +50,8 @@ let
   };
 
 
-  mkMergedShell = lib.foldl' mergeTwoShellProfiles { };
+  mkMergedShellProfilesProfiles = lib.foldl' mergeTwoShellProfiles { };
 
 in
 
-mkMergedShell
+mkMergedShellProfilesProfiles

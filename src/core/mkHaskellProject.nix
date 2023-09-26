@@ -10,12 +10,12 @@ let
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkProject-IN = haskellProject';
+      config.mkHaskellProject-IN = haskellProject';
     }];
   };
 
 
-  haskellProject = evaluated-modules.config.mkProject-IN;
+  haskellProject = evaluated-modules.config.mkHaskellProject-IN;
 
 
   mkAliasedOutputs = flake:
@@ -42,7 +42,7 @@ let
         else
           warnDuplicateComponentNames duplicates { };
 
-      warnDuplicateComponentNames = duplicates: utils.iogxTrace ''
+      warnDuplicateComponentNames = duplicates: utils.iogxThrow ''
         There are multiple executables with the same name across your cabal files:
 
           ${lib.concatStringsSep " " duplicates}
@@ -68,16 +68,23 @@ let
     { inherit packages env; };
 
 
-  iogx-overlay = cabalProject: _: # This will be called for each projectVariant as well
+  iogx-overlay = cabalProject: _: # This will be called for each projectVariant 
     let
-      devShell =
+      shell-profiles =
         let
-          read-the-docs-shell-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
-          cabal-project-shell-profile = mkCabalProjectShellProfile cabalProject;
-          extra-shell-profiles = [ cabal-project-shell-profile read-the-docs-shell-profile ];
-          final-shell = repoRoot.src.core.mkShell (haskellProject.shellArgsForProjectVariant cabalProject) extra-shell-profiles;
+          read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
+          cabal-project-profile = mkCabalProjectShellProfile cabalProject;
         in
-        final-shell;
+        [ cabal-project-profile read-the-docs-profile ];
+
+      shell-args =
+        let
+          tools-args = { tools.haskellCompiler = cabalProject.args.compiler-nix-name; };
+          project-args = haskellProject.shellArgsForProjectVariant cabalProject;
+        in
+        lib.recursiveUpdate tools-args project-args;
+
+      devShell = repoRoot.src.core.mkShellWith shell-args shell-profiles;
 
       flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
 
@@ -93,11 +100,12 @@ let
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
       pre-commit-check = devShell.pre-commit-check;
 
+      devShells.default = devShell;
+
       defaultFlakeOutputs = rec {
-        devShells.default = devShell;
-        inherit apps checks packages;
+        inherit devShell devShells apps checks packages;
         inherit combined-haddock read-the-docs-site pre-commit-check;
-        hydraJobs.${cabalProject.args.compiler-nix-name} = hydraJobs;
+        hydraJobs.${cabalProject.args.compiler-nix-name} = hydraJobs; # Use project name?
         hydraJobs.combined-haddock = combined-haddock;
         hydraJobs.read-the-docs-site = read-the-docs-site;
         hydraJobs.pre-commit-check = pre-commit-check;
@@ -119,10 +127,17 @@ let
     };
 
 
-  project' = pkgs.haskell-nix.cabalProject' haskellProject.cabalProjectArgs;
+  cabalProject' = pkgs.haskell-nix.cabalProject' haskellProject.cabalProjectArgs;
 
 
-  project = project'.appendOverlays [ iogx-overlay ];
+  cabalProject = cabalProject'.appendOverlays [ iogx-overlay ];
+
+
+  project =
+    let
+      mkVariant = variant: variant.iogx // { cabalProject = removeAttrs variant [ "iogx" ]; };
+    in
+    mkVariant cabalProject // { variants = utils.mapAttrValues mkVariant cabalProject.projectVariants; };
 
 in
 

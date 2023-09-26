@@ -4,7 +4,7 @@ let
 
   evaluated-modules = lib.evalModules {
     modules = [{
-      options = { inherit (inputs.self.lib.options) mkFlake mkProject mkShell; };
+      options = { inherit (inputs.self.lib.options) mkFlake mkHaskellProject mkShell; };
     }];
   };
 
@@ -23,7 +23,7 @@ let
       (lib.mapAttrsToList mkMarkdownForOption options-doc-nix);
 
 
-  cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" "<function body>"] [ "<in>" "<out>" "<func>" ] name;
+  cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" "<function body>" ] [ "<in>" "<out>" "<func>" ] name;
 
 
   prettyPrintValue = value:
@@ -89,7 +89,7 @@ lib.toFile "options.md" ''
 
   1. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
       Makes the final flake outputs.
-  2. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkProject" "mkProject"} 
+  2. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
       Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
   3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
       Makes a `devShell` with `pre-commit-check` and tools.

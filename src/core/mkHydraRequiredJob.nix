@@ -5,8 +5,9 @@
 let
 
   clean-jobs =
-    lib.filterAttrsRecursive (name: _: name != "recurseForDerivations")
-      user-inputs.self.hydraJobs.${system};
+    lib.filterAttrsRecursive
+      (name: _: name != "recurseForDerivations")
+      (removeAttrs user-inputs.self.hydraJobs.${system} [ "required" ]);
 
 
   required-job = pkgs.releaseTools.aggregate {

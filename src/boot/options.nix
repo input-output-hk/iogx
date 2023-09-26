@@ -99,7 +99,7 @@ let
       # TODO rename to haskellCompilerVersion and default!!!
       haskellCompiler = l.mkOption {
         default = "ghc8107";
-        type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc927" "ghc964" "ghc810" "ghc92" "ghc96" ]);
+        type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc927" "ghc962" "ghc810" "ghc92" "ghc96" ]);
         description = ''
           The haskell compiler version.
           

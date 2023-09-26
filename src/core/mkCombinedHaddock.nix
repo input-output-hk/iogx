@@ -117,7 +117,7 @@ let
 
 
   command-args = {
-    buildInputs = [ hsPkgsDocs ];
+    buildInputs = [ hsPkgs-docs ];
 
     # For each package in hsdocs, this will create a file `graph-N` (where N is the index in the list)
     # which contains information about which nix paths are referenced by the package. This will allow

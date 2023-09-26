@@ -132,7 +132,6 @@ let
 
   cabalProject = cabalProject'.appendOverlays [ iogx-overlay ];
 
-
   # project =
   #   let
   #     mkVariant = variant: variant.iogx // { cabalProject = removeAttrs variant [ "iogx" ]; };
@@ -141,7 +140,6 @@ let
   #     variants = utils.mapAttrValues mkVariant cabalProject.projectVariants;
   #     cross = utils.mapAttrValues mkVariant cabalProject.projectCross;
   #   };
-
 in
 
 cabalProject

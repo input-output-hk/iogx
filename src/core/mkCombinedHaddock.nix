@@ -126,7 +126,7 @@ let
     # See also https://nixos.org/manual/nix/stable/expressions/advanced-attributes.html#adv-attr-exportReferencesGraph # editorconfig-checker-disable-line
     exportReferencesGraph =
       lib.concatLists
-        (lib.imap0 (i: pkg: [ "graph-${toString i}" pkg ]) hsPkgsDocs);
+        (lib.imap0 (i: pkg: [ "graph-${toString i}" pkg ]) hsPkgs-docs);
   };
 
 

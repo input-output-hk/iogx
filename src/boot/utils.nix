@@ -7,9 +7,9 @@ let
 
   utils = rec {
 
-    headerToLocalMarkDownLink = tag: hd:
+    headerToLocalMarkDownLink = tag: name:
       let
-        name' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] hd;
+        name' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] name;
         name'' = l.strings.toLower name';
       in
       "[`${tag}`](#${name''})";
@@ -18,7 +18,6 @@ let
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
 
 
-    # FIXME ensure that recursion stops when encountering values of type Derivation
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
 
@@ -88,7 +87,6 @@ let
     getAttrByPathString = path: l.getAttrFromPath (l.splitString "." path);
 
 
-    # FIXME Probably this function is very inefficient 
     restrictManyAttrsByPathString = paths: set:
       let
         parts = map (l.flip restrictAttrByPathString set) paths;
@@ -174,36 +172,9 @@ let
     mapAttrValues = f: l.mapAttrs (_: f);
 
 
-    # Odd that this isn't a builtin. 
-    attrsSize = s: l.length (l.attrNames s);
-
-
     pthrow = text:
       l.throw "\n${text}";
 
-
-    iogxError = file: errmsg:
-      let
-        readme-anchor = {
-          flake = "31-flakenix";
-          haskell = "32-nixhaskellnix";
-          cabal-project = "33-nixcabal-projectnix";
-          shell = "34-nixshellnix";
-          per-system-outputs = "35-nixper-system-outputsnix";
-          top-level-outputs = "36-nixtop-level-outputsnix";
-          read-the-docs = "37-nixread-the-docsnix";
-          formatters = "38-nixformattersnix";
-          ci = "39-nixcisnix";
-        }.${file};
-      in
-      l.throw ''
-        
-        ------------------------------------ IOGX --------------------------------------
-        ${errmsg}
-        Follow this link for documentation:
-        https://www.github.com/input-output-hk/iogx#${readme-anchor}
-        --------------------------------------------------------------------------------
-      '';
 
     iogxThrow = errmsg:
       l.throw ''
@@ -242,13 +213,7 @@ let
       iteration 3;
 
 
-    mapMaybe = f: xs: builtins.filter (x: x != null) (map f xs);
-
-
     filterEmptyStrings = l.filter (x: x != "");
-
-
-    injectAttrName = n: l.mapAttrs' (k: v: l.nameValuePair k { ${n} = v; });
 
 
     findDuplicates = list:

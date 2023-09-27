@@ -23,7 +23,11 @@ let
       (lib.mapAttrsToList mkMarkdownForOption options-doc-nix);
 
 
-  cleanupName = name: lib.replaceStrings [ "\"<in>\"" "\"<out>\"" "<function body>" ] [ "<in>" "<out>" "<func>" ] name;
+  cleanupName = name: 
+    lib.replaceStrings 
+      [ "\"<in>\"" "\"<out>\"" "<function body>" ] 
+      [ "<in>" "<out>" "<func>" ] 
+      name;
 
 
   prettyPrintValue = value:
@@ -69,26 +73,13 @@ let
     ${value.description}
   '';
 
-  mkMarkdownForOptionOld = name: value: ''
-    ---
-
-    ### `${cleanupName name}` :: ${value.type}
-
-    ${prettyPrintValue value.default}
-    ${prettyPrintValue value.example}
-        ""
-    }
-
-    ${value.description}
-  '';
-
 in
 
 lib.toFile "options.md" ''
   # Options Reference 
 
   1. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
-      Makes the final flake outputs.
+      Makes your flake outputs.
   2. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
       Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
   3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}

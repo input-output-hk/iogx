@@ -6,8 +6,6 @@ let
 
   utils = import ./utils.nix iogx-inputs;
 
-  link' = utils.headerToLocalMarkDownLink;
-
   link = x: utils.headerToLocalMarkDownLink x x;
 
 
@@ -96,8 +94,7 @@ let
 
   tools-submodule = l.types.submodule {
     options = {
-      # TODO rename to haskellCompilerVersion and default!!!
-      haskellCompiler = l.mkOption {
+      haskellCompilerVersion = l.mkOption {
         default = "ghc8107";
         type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc927" "ghc962" "ghc810" "ghc92" "ghc96" ]);
         description = ''
@@ -138,7 +135,7 @@ let
         description = ''
           A package that provides the `cabal-fmt` executable.
 
-          If unset or `null`, a default `cabal-fmt` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompiler"}.
+          If unset or `null`, a default `cabal-fmt` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompilerVersion"}.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -155,7 +152,7 @@ let
         description = ''
           A package that provides the `cabal-install` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -172,7 +169,7 @@ let
         description = ''
           A package that provides the `haskell-language-server` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -189,7 +186,7 @@ let
         description = ''
           A package that provides the `haskell-language-server-wrapper` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -206,7 +203,7 @@ let
         description = ''
           A package that provides the `fourmolu` executable.
 
-          If unset or `null`, a default `fourmolu` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompiler"}.
+          If unset or `null`, a default `fourmolu` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompilerVersion"}.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -223,7 +220,7 @@ let
         description = ''
           A package that provides the `hlint` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -240,7 +237,7 @@ let
         description = ''
           A package that provides the `stylish-haskell` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -257,7 +254,7 @@ let
         description = ''
           A package that provides the `ghcid` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompiler"} will be used to select a suitable derivation.
+          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -820,7 +817,6 @@ let
         '';
       };
 
-      # TODO missing config/overlays in implementation
       nixpkgsArgs = l.mkOption {
         type = l.types.attrs;
         description = ''
@@ -868,7 +864,7 @@ let
   mkHaskellProject-IN-submodule = l.types.submodule {
     options = {
 
-      cabalProjectArgs = l.mkOption {
+      haskellDotNixProject = l.mkOption {
         type = l.types.raw;
         default = { };
         description = ''
@@ -909,7 +905,7 @@ let
       shellArgsForProjectVariant = l.mkOption {
         type = l.types.functionTo l.types.attrs;
         default = cabalProject: {
-          tools.haskellCompiler = cabalProject.args.compiler-nix-name;
+          tools.haskellCompilerVersion = cabalProject.args.compiler-nix-name;
           name = cabalProject.args.name;
         };
         description = ''
@@ -918,6 +914,14 @@ let
           It receives each project as an argument and must return an attrset of options for ${link "mkShell"}.
 
           The shell will be available in the `iogx` overlay as ${link "mkHaskellProject.<out>.iogx.devShell"}.
+        '';
+      };
+
+      crossCompileMingwW64Supported = l.mkOption {
+        type = l.types.bool;
+        default = false; # TODO Document Better
+        description = ''
+          Whether to enable cross-compilation on MingwW64.
         '';
       };
 
@@ -1138,7 +1142,7 @@ let
 
           This can be used to override the default derivations used by IOGX.
 
-          The value of ${link "mkShell.<in>.tools.haskellCompiler"} will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
+          The value of ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
         '';
       };
 
@@ -1483,7 +1487,6 @@ let
     '';
   };
 
-  # TODO rename cabalProjectArgs to args
 
   mkHaskellProject = l.mkOption {
     description = ''
@@ -1559,7 +1562,7 @@ let
         preCommit = {
           shellcheck.enable = true;
         };
-        tools.haskellCompiler = "ghc8103";
+        tools.haskellCompilerVersion = "ghc8103";
       };
     '';
   };

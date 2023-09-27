@@ -73,10 +73,14 @@
 
         packages.options-doc = repoRoot.src.core.mkIogxDoc;
 
+        hydraJobs.required = lib.iogx.mkHydraRequiredJob {};
+        hydraJobs.options-doc = repoRoot.src.core.mkIogxDoc; 
+
         devShells.default = lib.iogx.mkShell {
           name = "iogx-devshell";
           packages = [ pkgs.github-cli pkgs.python39 ];
           scripts.build-docs = {
+            group = "iogx";
             description = "Produce ./doc/options.md";
             exec = ''
               set -e
@@ -85,7 +89,7 @@
               rm options.md
             '';
           };
-        } [];
+        };
       }];
     };
 

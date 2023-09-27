@@ -20,135 +20,135 @@ let
 
   mkAliasedOutputs = flake:
     let
-      makeAliasesForGroupExes = group:
+      makeAliasesForGroup = group:
         let
-          mkPair = name: lib.nameValuePair (makeAliasForExe name);
+          mkPair = name: lib.nameValuePair (makeAliasForComp name);
           isExe = lib.strings.hasInfix ":exe";
           isTest = lib.strings.hasInfix ":test";
-          exes = lib.filterAttrs (name: _: isExe name || isTest name) group;
+          isBench = lib.strings.hasInfix ":bench";
+          isRunnable = name: isExe name || isTest name || isBench name;
+          runnables = lib.filterAttrs (name: _: isRunnable name) group;
         in
-        lib.mapAttrs' mkPair exes;
+        lib.mapAttrs' mkPair runnables;
 
-      makeAliasForExe = name: lib.last (lib.splitString ":" name);
+      makeAliasForComp = name: lib.last (lib.splitString ":" name);
 
-      findDuplicateExes = group:
-        let names = lib.attrNames (makeAliasesForGroupExes group);
+      findDuplicateComps = group:
+        let names = lib.attrNames (makeAliasesForGroup group);
         in utils.findDuplicates names;
 
-      makeAliasesForGroupExesIfNoDuplicates = group:
-        let duplicates = findDuplicateExes group; in
+      makeAliasesForGroupIfNoDuplicates = group:
+        let duplicates = findDuplicateComps group; in
         if lib.length duplicates == 0 then
-          makeAliasesForGroupExes group
+          makeAliasesForGroup group
         else
           warnDuplicateComponentNames duplicates { };
 
       warnDuplicateComponentNames = duplicates: utils.iogxThrow ''
-        There are multiple executables with the same name across your cabal files:
+        There are multiple components with the same name across your cabal files:
 
           ${lib.concatStringsSep " " duplicates}
 
-        Therefore I cannot create flake output aliases for your executables.
-        Rename the executables across your cabal files so that they are unique.'';
+        Therefore I cannot create unique flake outputs for those.
+        Rename the components across your cabal files so that they are unique.'';
 
       outputs = {
-        apps = makeAliasesForGroupExesIfNoDuplicates flake.apps;
-        checks = makeAliasesForGroupExesIfNoDuplicates flake.checks;
-        packages = makeAliasesForGroupExesIfNoDuplicates flake.packages;
+        apps = makeAliasesForGroupIfNoDuplicates flake.apps;
+        checks = makeAliasesForGroupIfNoDuplicates flake.checks;
+        packages = makeAliasesForGroupIfNoDuplicates flake.packages;
       };
     in
     outputs;
 
 
-  mkCabalProjectShellProfile = cabalProject:
+  mkProjectShellProfile = project:
     let
-      devshell = pkgs.haskell-nix.haskellLib.devshellFor cabalProject.shell;
+      devshell = pkgs.haskell-nix.haskellLib.devshellFor project.shell;
       packages = devshell.packages;
       env = lib.listToAttrs devshell.env;
     in
     { inherit packages env; };
 
-
-  iogx-overlay = cabalProject: _: # This will be called for each projectVariant 
+  
+  mkProjectDevShell = project: 
     let
-      shell-profiles =
-        let
-          read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
-          cabal-project-profile = mkCabalProjectShellProfile cabalProject;
-        in
-        [ cabal-project-profile read-the-docs-profile ];
+      read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
+      cabal-project-profile = mkProjectShellProfile project;
+      shell-profiles = [ cabal-project-profile read-the-docs-profile ];
 
-      shell-args =
-        let
-          tools-args = { tools.haskellCompiler = cabalProject.args.compiler-nix-name; };
-          project-args = haskellProject.shellArgsForProjectVariant cabalProject;
-        in
-        lib.recursiveUpdate tools-args project-args;
+      tools-args = { tools.haskellCompilerVersion = project.args.compiler-nix-name; };
+      project-args = haskellProject.shellArgsForProjectVariant project;
+      shell-args = lib.recursiveUpdate tools-args project-args;
+    in 
+      repoRoot.src.core.mkShellWith shell-args shell-profiles;
 
-      devShell = repoRoot.src.core.mkShellWith shell-args shell-profiles;
+
+  mkProjectVariantOutputs = project:
+    let 
+      devShell = mkProjectDevShell project; 
       devShells.default = devShell;
 
-      flake = pkgs.haskell-nix.haskellLib.mkFlake cabalProject { inherit devShell; };
+      originalFlake = pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
 
-      inherit (mkAliasedOutputs flake)
+      inherit (mkAliasedOutputs originalFlake)
         apps
         checks
         packages;
 
-      inherit (flake) hydraJobs;
+      inherit (originalFlake) hydraJobs;
 
-      hydraJobsNoDevShell = removeAttrs hydraJobs [ "devShells" "devShell" ];
-
-      combined-haddock = repoRoot.src.core.mkCombinedHaddock cabalProject haskellProject.combinedHaddock;
+      combined-haddock = repoRoot.src.core.mkCombinedHaddock project haskellProject.combinedHaddock;
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
       pre-commit-check = devShell.pre-commit-check;
-
-      defaultFlakeOutputs = lib.recursiveUpdate
-        {
-          inherit devShell devShells apps checks packages hydraJobs;
-        }
-        {
-          packages = { inherit combined-haddock read-the-docs-site pre-commit-check; };
-          hydraJobs = { inherit combined-haddock read-the-docs-site pre-commit-check; };
-        };
-
-      iogx-attrset = {
-        inherit
-          apps# Cabal executables component names
-          checks# Cabal testsuites component names
-          packages# Cabal executables component names
-          devShells# Contains devShells.default == augmented devShell
-          devShell# The augmented devShell
-          hydraJobs# Contains apps, checks, packages and devShells
-          hydraJobsNoDevShell# Original flake, equals to hydraJobs minus the augmented shell
-          combined-haddock
-          read-the-docs-site
-          pre-commit-check
-          defaultFlakeOutputs;
-      };
-
-    in
+    in 
     {
-      iogx = iogx-attrset;
+      cabalProject = project;
+      inherit apps checks packages devShells devShell hydraJobs;
+      inherit combined-haddock read-the-docs-site pre-commit-check;
     };
 
 
-  cabalProject' = pkgs.haskell-nix.cabalProject' haskellProject.cabalProjectArgs;
+  mkCrossVariantOutputs = project: 
+    let 
+      flake = pkgs.haskell-nix.haskellLib.mkFlake project {};
+      hydraJobs = removeAttrs flake.hydraJobs [ "devShell" "devShells" ];
+    in 
+    { inherit hydraJobs; };
 
 
-  cabalProject = cabalProject'.appendOverlays [ iogx-overlay ];
+  iogx-project =
+    let 
+      base = haskellProject.haskellDotNixProject;
 
+      mkProjectVariant = project: 
+        ( mkProjectVariantOutputs project ) // 
+        { cross = utils.mapAttrValues mkCrossVariantOutputs project.projectCross; };
+      
+      project = 
+        ( mkProjectVariant base ) //
+        { variants = utils.mapAttrValues mkProjectVariant base.projectVariants; }; 
+      
+      extra-packages = { 
+        inherit (project) combined-haddock read-the-docs-site pre-commit-check; 
+      };
 
-  # project =
-  #   let 
-  #     mkOutputs = variant: iogx-overlay variant null;
-  #     mkCrossVariant = variant: mkCrossVariant
-  #     mkVariant = variant: mkOutputs variant // { cabalProject = variant; };
-  #   in
-  #   mkVariant cabalProject // {
-  #     variants = utils.mapAttrValues mkVariant cabalProject.projectVariants;
-  #     cross = utils.mapAttrValues mkCrossVariant cabalProject.projectCross;
-  #   };
+      flake = {
+        inherit (project) devShell devShells apps checks cabalProject;
+        
+        hydraJobs = # TODO profiled
+          project.hydraJobs // 
+          extra-packages // 
+          utils.mapAttrValues (project: project.hydraJobs) project.variants //
+          { required = repoRoot.src.core.mkRequiredHydraJobs {}; } //
+          lib.optionalAttrs 
+            (system == "x86_64-linux" && haskellProject.crossCompileMingwW64Supported)
+            { mingwW64 = project.cross.mingwW64.hydraJobs; }; 
+
+        packages = project.packages // extra-packages;
+      };
+    in 
+      project // { inherit flake; };
 
 in
 
-cabalProject
+iogx-project

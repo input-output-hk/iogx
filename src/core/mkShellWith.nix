@@ -1,7 +1,10 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
 shell'':
+# The shell config provided by the user (mkShell-IN).
+
 extra-shell-profiles:
+# Extra profiles. Internally these will be read-the-docs and haskell-nix.
 
 let
 
@@ -33,7 +36,7 @@ let
   };
 
 
-  ghc = shell.tools.haskellCompiler;
+  ghc = shell.tools.haskellCompilerVersion;
 
 
   hls = repoRoot.src.ext."haskell-language-server-project-${ghc}";
@@ -216,13 +219,16 @@ let
     ("${pkgs.glibcLocales}/lib/locale/locale-archive");
 
 
-  base-profile = repoRoot.src.core.mkMergedShellProfiles (extra-shell-profiles ++ [
-    pre-commit-profile
-    shell-as-shell-profile
-    local-archive-profile
-    toolchain-profile
-    name-and-welcome-message-profile
-  ]);
+  base-profile = repoRoot.src.core.mkMergedShellProfiles (
+    extra-shell-profiles ++ 
+    [
+      pre-commit-profile
+      shell-as-shell-profile
+      local-archive-profile
+      toolchain-profile
+      name-and-welcome-message-profile
+    ]
+  );
 
 
   utility-scripts-profile = {
@@ -230,7 +236,10 @@ let
   };
 
 
-  final-profile = repoRoot.src.core.mkMergedShellProfiles [ base-profile utility-scripts-profile ];
+  final-profile = repoRoot.src.core.mkMergedShellProfiles [ 
+    base-profile 
+    utility-scripts-profile 
+  ];
 
 
   final-scripts-as-packages =

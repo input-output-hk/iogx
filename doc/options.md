@@ -1,8 +1,8 @@
 # Options Reference 
 
 1. [`inputs.iogx.lib.mkFlake`](#mkflake) 
-    Makes the final flake outputs.
-2. [`pkgs.lib.iogx.mkProject`](#mkproject) 
+    Makes your flake outputs.
+2. [`pkgs.lib.iogx.mkHaskellProject`](#mkhaskellproject) 
     Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
 3. [`pkgs.lib.iogx.mkShell`](#mkshell)
     Makes a `devShell` with `pre-commit-check` and tools.
@@ -159,7 +159,7 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 { repoRoot, inputs, pkgs, lib, system }:
 [
   {
-    cabalProject = lib.iogx.mkProject {};
+    cabalProject = lib.iogx.mkHaskellProject {};
   }
   {
     packages.foo = repoRoot.nix.foo;
@@ -287,7 +287,7 @@ This is just `pkgs.lib` plus the `iogx` attrset, which contains library function
 
 In here you will find the following: 
 ```nix 
-lib.iogx.mkProject {}
+lib.iogx.mkHaskellProject {}
 lib.iogx.mkShell {}
 ```
 
@@ -327,7 +327,7 @@ The [`mkFlake.<in>.outputs`](#mkflakeinoutputs) function will be called once for
 
 ---
 
-### `mkProject`
+### `mkHaskellProject`
 
 **Type**: core API function
 
@@ -338,7 +338,7 @@ The [`mkFlake.<in>.outputs`](#mkflakeinoutputs) function will be called once for
 # project.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 let 
-  cabalProject = lib.iogx.mkProject {
+  cabalProject = lib.iogx.mkHaskellProject {
     mkShell = repoRoot.nix.make-shell;
 
     readTheDocs.siteFolder = "doc/read-the-docs-site";
@@ -367,16 +367,16 @@ in
 ```
 
 
-The `lib.iogx.mkProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
+The `lib.iogx.mkHaskellProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
 
 In this document:
-  - Options for the input attrset are prefixed by `mkProject.<in>`.
-  - The returned attrset contains the attributes prefixed by `mkProject.<out>.iogx`.
+  - Options for the input attrset are prefixed by `mkHaskellProject.<in>`.
+  - The returned attrset contains the attributes prefixed by `mkHaskellProject.<out>.iogx`.
 
 
 ---
 
-### `mkProject.<in>.cabalProjectArgs`
+### `mkHaskellProject.<in>.cabalProjectArgs`
 
 **Type**: raw value
 
@@ -388,7 +388,7 @@ In this document:
 # project.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 
-lib.iogx.mkProject {
+lib.iogx.mkHaskellProject {
   cabalProjectArgs = {
     src = ./.; # Must contain the cabal.project file
     inputMap = {
@@ -417,12 +417,12 @@ You should use `flake.variants` to provide support for profiling, different GHC 
 
 The variants will be available as `cabalProject.projectVariant.<flake-variant-name>`, and they will also contain the `iogx` overlay.
 
-See [`mkProject.<out>.iogx`](#mkprojectoutiogx) for more details.
+See [`mkHaskellProject.<out>.iogx`](#mkhaskellprojectoutiogx) for more details.
 
 
 ---
 
-### `mkProject.<in>.combinedHaddock`
+### `mkHaskellProject.<in>.combinedHaddock`
 
 **Type**: submodule
 
@@ -441,7 +441,7 @@ See [`mkProject.<out>.iogx`](#mkprojectoutiogx) for more details.
 # outputs.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 let 
-  cabalProject = lib.iogx.mkProject {
+  cabalProject = lib.iogx.mkHaskellProject {
     combinedHaddock = {
       enable = system == "x86_64-linux";
       packages = [ "foo" "bar" ];
@@ -463,14 +463,14 @@ in
 
 Configuration for a combined Haddock.
 
-When enabled, your [`mkProject.<in>.readTheDocs`](#mkprojectinreadthedocs) site will have access to Haddock symbols for your Haskell packages.
+When enabled, your [`mkHaskellProject.<in>.readTheDocs`](#mkhaskellprojectinreadthedocs) site will have access to Haddock symbols for your Haskell packages.
 
 Combining Haddock artifacts takes a significant amount of time and may slow down CI.
 
 
 ---
 
-### `mkProject.<in>.combinedHaddock.enable`
+### `mkHaskellProject.<in>.combinedHaddock.enable`
 
 **Type**: boolean
 
@@ -484,7 +484,7 @@ Whether to enable combined haddock for your project.
 
 ---
 
-### `mkProject.<in>.combinedHaddock.packages`
+### `mkHaskellProject.<in>.combinedHaddock.packages`
 
 **Type**: list of string
 
@@ -498,7 +498,7 @@ The list of cabal package names to include in the combined Haddock.
 
 ---
 
-### `mkProject.<in>.combinedHaddock.prologue`
+### `mkHaskellProject.<in>.combinedHaddock.prologue`
 
 **Type**: string
 
@@ -512,25 +512,7 @@ A string acting as prologue for the combined Haddock.
 
 ---
 
-### `mkProject.<in>.mkShell`
-
-**Type**: function that evaluates to a(n) (attribute set)
-
-**Default**: `<function>`
-
-
-
-
-This function will be called to create a shell for each of your project variants.
-
-It receives each project as an argument and must return an attrset of options for [`mkShell`](#mkshell).
-
-The shell will be available in the `iogx` overlay as [`mkProject.<out>.iogx.devShell`](#mkprojectoutiogxdevshell).
-
-
----
-
-### `mkProject.<in>.readTheDocs`
+### `mkHaskellProject.<in>.readTheDocs`
 
 **Type**: submodule
 
@@ -547,7 +529,7 @@ The shell will be available in the `iogx` overlay as [`mkProject.<out>.iogx.devS
 # outputs.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 let 
-  cabalProject = lib.iogx.mkProject {
+  cabalProject = lib.iogx.mkHaskellProject {
     readTheDocs.siteFolder = "doc/read-the-docs-site";
   };
 in 
@@ -567,14 +549,14 @@ Configuration for your [`read-the-docs`](https://readthedocs.org) site.
 
 If no site is required, this option can be omitted.
 
-The shells generated by [`mkProject.<in>.mkShell`](#mkprojectinmkshell) will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
+The shells generated by [`mkHaskellProject.<in>.shellArgsForProjectVariant`](#mkhaskellprojectinshellargsforprojectvariant) will be augmented with several scripts to make developing your site easier, grouped under the tag `read-the-docs`.
 
-In addition, the `read-the-docs-site` derivation will be available in [`mkProject.<out>.iogx.read-the-docs-site`](#mkprojectoutiogxread-the-docs-site).
+In addition, the `read-the-docs-site` derivation will be available in [`mkHaskellProject.<out>.iogx.read-the-docs-site`](#mkhaskellprojectoutiogxread-the-docs-site).
 
 
 ---
 
-### `mkProject.<in>.readTheDocs.siteFolder`
+### `mkHaskellProject.<in>.readTheDocs.siteFolder`
 
 **Type**: null or string
 
@@ -586,7 +568,7 @@ In addition, the `read-the-docs-site` derivation will be available in [`mkProjec
 # project.nix
 { repoRoot, inputs, pkgs, lib, system }:
 
-lib.iogx.mkProject {
+lib.iogx.mkHaskellProject {
   readTheDocs.siteFolder = "./doc/read-the-docs-site";
 }
 
@@ -600,7 +582,25 @@ If no site is required you can set this field to `null`, or omit the `readTheDoc
 
 ---
 
-### `mkProject.<out>.iogx`
+### `mkHaskellProject.<in>.shellArgsForProjectVariant`
+
+**Type**: function that evaluates to a(n) (attribute set)
+
+**Default**: `<function>`
+
+
+
+
+This function will be called to create a shell for each of your project variants.
+
+It receives each project as an argument and must return an attrset of options for [`mkShell`](#mkshell).
+
+The shell will be available in the `iogx` overlay as [`mkHaskellProject.<out>.iogx.devShell`](#mkhaskellprojectoutiogxdevshell).
+
+
+---
+
+### `mkHaskellProject.<out>.iogx`
 
 **Type**: submodule
 
@@ -618,7 +618,7 @@ If no site is required you can set this field to `null`, or omit the `readTheDoc
 # outputs.nix
 { repoRoot, inputs, pkgs, lib, system }:
 let 
-  cabalProject = lib.iogx.mkProject {
+  cabalProject = lib.iogx.mkHaskellProject {
     cabalProjectArgs = {
       compiler-nix-name = "ghc8107";
 
@@ -656,14 +656,14 @@ in
 
 This in an attrset containing all the derivations for your project.
 
-Note that the `iogx` attrset will be avaialable for each of your project variants defined in [`mkProject.<in>.cabalProjectArgs`](#mkprojectincabalprojectargs).
+Note that the `iogx` attrset will be avaialable for each of your project variants defined in [`mkHaskellProject.<in>.cabalProjectArgs`](#mkhaskellprojectincabalprojectargs).
 
 You will want to consume `iogx` in your flake [`mkFlake.<in>.outputs`](#mkflakeinoutputs), as shown in the example above.
 
 
 ---
 
-### `mkProject.<out>.iogx.apps`
+### `mkHaskellProject.<out>.iogx.apps`
 
 **Type**: attribute set
 
@@ -680,7 +680,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkProject.<out>.iogx.checks`
+### `mkHaskellProject.<out>.iogx.checks`
 
 **Type**: attribute set
 
@@ -699,7 +699,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkProject.<out>.iogx.combined-haddock`
+### `mkHaskellProject.<out>.iogx.combined-haddock`
 
 **Type**: package
 
@@ -707,12 +707,12 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 
 
-The derivation for your [`mkProject.<in>.combinedHaddock`](#mkprojectincombinedhaddock).
+The derivation for your [`mkHaskellProject.<in>.combinedHaddock`](#mkhaskellprojectincombinedhaddock).
 
 
 ---
 
-### `mkProject.<out>.iogx.defaultFlakeOutputs`
+### `mkHaskellProject.<out>.iogx.defaultFlakeOutputs`
 
 **Type**: attribute set
 
@@ -730,7 +730,7 @@ The derivation for your [`mkProject.<in>.combinedHaddock`](#mkprojectincombinedh
 # outputs.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 let 
-  cabalProject = lib.iogx.mkProject {};
+  cabalProject = lib.iogx.mkHaskellProject {};
 in 
 [
   {
@@ -746,24 +746,24 @@ in
 
 An attribute set that can be included in your [`mkFlake.<in>.outputs`](#mkflakeinoutputs) directly.
 
-It basically aggregates all other attributes in the [`mkProject.<out>.iogx`](#mkprojectoutiogx) overlay.
+It basically aggregates all other attributes in the [`mkHaskellProject.<out>.iogx`](#mkhaskellprojectoutiogx) overlay.
 
-- `devShells.default` = [`mkProject.<out>.iogx.devShell`](#mkprojectoutiogxdevshell)
-- `packages.*` = [`mkProject.<out>.iogx.packages`](#mkprojectoutiogxpackages)
-- `packages.combined-haddock` = [`mkProject.<out>.iogx.combined-haddock`](#mkprojectoutiogxcombined-haddock)
-- `packages.read-the-docs-site` = [`mkProject.<out>.iogx.read-the-docs-site`](#mkprojectoutiogxread-the-docs-site)
-- `packages.pre-commit-check` = [`mkProject.<out>.iogx.pre-commit-check`](#mkprojectoutiogxpre-commit-check)
-- `apps.*` = [`mkProject.<out>.iogx.apps`](#mkprojectoutiogxapps)
-- `checks.*` = [`mkProject.<out>.iogx.checks`](#mkprojectoutiogxchecks)
-- `hydraJobs.*` = [`mkProject.<out>.iogx.hydraJobs`](#mkprojectoutiogxhydrajobs)
-- `hydraJobs.combined-haddock` = [`mkProject.<out>.iogx.combined-haddock`](#mkprojectoutiogxcombined-haddock)
-- `hydraJobs.read-the-docs-site` = [`mkProject.<out>.iogx.read-the-docs-site`](#mkprojectoutiogxread-the-docs-site) 
-- `hydraJobs.pre-commit-check =` [`mkProject.<out>.iogx.pre-commit-check`](#mkprojectoutiogxpre-commit-check) 
+- `devShells.default` = [`mkHaskellProject.<out>.iogx.devShell`](#mkhaskellprojectoutiogxdevshell)
+- `packages.*` = [`mkHaskellProject.<out>.iogx.packages`](#mkhaskellprojectoutiogxpackages)
+- `packages.combined-haddock` = [`mkHaskellProject.<out>.iogx.combined-haddock`](#mkhaskellprojectoutiogxcombined-haddock)
+- `packages.read-the-docs-site` = [`mkHaskellProject.<out>.iogx.read-the-docs-site`](#mkhaskellprojectoutiogxread-the-docs-site)
+- `packages.pre-commit-check` = [`mkHaskellProject.<out>.iogx.pre-commit-check`](#mkhaskellprojectoutiogxpre-commit-check)
+- `apps.*` = [`mkHaskellProject.<out>.iogx.apps`](#mkhaskellprojectoutiogxapps)
+- `checks.*` = [`mkHaskellProject.<out>.iogx.checks`](#mkhaskellprojectoutiogxchecks)
+- `hydraJobs.*` = [`mkHaskellProject.<out>.iogx.hydraJobs`](#mkhaskellprojectoutiogxhydrajobs)
+- `hydraJobs.combined-haddock` = [`mkHaskellProject.<out>.iogx.combined-haddock`](#mkhaskellprojectoutiogxcombined-haddock)
+- `hydraJobs.read-the-docs-site` = [`mkHaskellProject.<out>.iogx.read-the-docs-site`](#mkhaskellprojectoutiogxread-the-docs-site) 
+- `hydraJobs.pre-commit-check =` [`mkHaskellProject.<out>.iogx.pre-commit-check`](#mkhaskellprojectoutiogxpre-commit-check) 
 
 
 ---
 
-### `mkProject.<out>.iogx.devShell`
+### `mkHaskellProject.<out>.iogx.devShell`
 
 **Type**: package
 
@@ -771,14 +771,14 @@ It basically aggregates all other attributes in the [`mkProject.<out>.iogx`](#mk
 
 
 
-The `devShell` as provided by your implementation of [`mkProject.<in>.mkShell`](#mkprojectinmkshell).
+The `devShell` as provided by your implementation of [`mkHaskellProject.<in>.shellArgsForProjectVariant`](#mkhaskellprojectinshellargsforprojectvariant).
 
-There is a different `devShell` for the default project variant, and one for each of the variants defined in [`mkProject.<in>.cabalProjectArgs`](#mkprojectincabalprojectargs).
+There is a different `devShell` for the default project variant, and one for each of the variants defined in [`mkHaskellProject.<in>.cabalProjectArgs`](#mkhaskellprojectincabalprojectargs).
 
 
 ---
 
-### `mkProject.<out>.iogx.hydraJobs`
+### `mkHaskellProject.<out>.iogx.hydraJobs`
 
 **Type**: attribute set
 
@@ -788,19 +788,19 @@ There is a different `devShell` for the default project variant, and one for eac
 
 A jobset containing `packages`, `checks`, `devShells.default` and `haskell.nix`'s `plan-nix` and `roots`.
 
-The `devShell` comes from your implementation of [`mkProject.<in>.mkShell`](#mkprojectinmkshell).
+The `devShell` comes from your implementation of [`mkHaskellProject.<in>.shellArgsForProjectVariant`](#mkhaskellprojectinshellargsforprojectvariant).
 
 This attrset does not contain:
-- [`mkProject.<out>.iogx.combined-haddock`](#mkprojectoutiogxcombined-haddock)
-- [`mkProject.<out>.iogx.read-the-docs-site`](#mkprojectoutiogxread-the-docs-site)
-- [`mkProject.<out>.iogx.pre-commit-check`](#mkprojectoutiogxpre-commit-check)
+- [`mkHaskellProject.<out>.iogx.combined-haddock`](#mkhaskellprojectoutiogxcombined-haddock)
+- [`mkHaskellProject.<out>.iogx.read-the-docs-site`](#mkhaskellprojectoutiogxread-the-docs-site)
+- [`mkHaskellProject.<out>.iogx.pre-commit-check`](#mkhaskellprojectoutiogxpre-commit-check)
 
-If you need those you can use [`mkProject.<out>.iogx.defaultFlakeOutputs`](#mkprojectoutiogxdefaultflakeoutputs), or you can reference them directly from the `iogx` attrset.
+If you need those you can use [`mkHaskellProject.<out>.iogx.defaultFlakeOutputs`](#mkhaskellprojectoutiogxdefaultflakeoutputs), or you can reference them directly from the `iogx` attrset.
 
 
 ---
 
-### `mkProject.<out>.iogx.packages`
+### `mkHaskellProject.<out>.iogx.packages`
 
 **Type**: attribute set
 
@@ -817,7 +817,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkProject.<out>.iogx.pre-commit-check`
+### `mkHaskellProject.<out>.iogx.pre-commit-check`
 
 **Type**: package
 
@@ -825,12 +825,12 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 
 
-The derivation for the [`mkShell.<in>.preCommit`](#mkshellinprecommit) coming from [`mkProject.<in>.mkShell`](#mkprojectinmkshell).
+The derivation for the [`mkShell.<in>.preCommit`](#mkshellinprecommit) coming from [`mkHaskellProject.<in>.shellArgsForProjectVariant`](#mkhaskellprojectinshellargsforprojectvariant).
 
 
 ---
 
-### `mkProject.<out>.iogx.read-the-docs-site`
+### `mkHaskellProject.<out>.iogx.read-the-docs-site`
 
 **Type**: package
 
@@ -838,7 +838,7 @@ The derivation for the [`mkShell.<in>.preCommit`](#mkshellinprecommit) coming fr
 
 
 
-The derivation for your [`mkProject.<in>.readTheDocs`](#mkprojectinreadthedocs).
+The derivation for your [`mkHaskellProject.<in>.readTheDocs`](#mkhaskellprojectinreadthedocs).
 
 
 ---
@@ -873,7 +873,7 @@ lib.iogx.mkShell {
   preCommit = {
     shellcheck.enable = true;
   };
-  tools.haskellCompiler = "ghc8103";
+  tools.haskellCompilerVersion = "ghc8103";
 };
 
 ```
@@ -954,7 +954,7 @@ packages = [
 ]
 ```
 
-If you `cabalProject` (coming from [`mkProject`](#mkproject)) is in scope, you could use `hsPkgs` to obtain some useful binaries:
+If you `cabalProject` (coming from [`mkHaskellProject`](#mkhaskellproject)) is in scope, you could use `hsPkgs` to obtain some useful binaries:
 ```nix
 packages = [
   cabalProject.hsPkgs.cardano-cli.components.exes.cardano-cli
@@ -2417,7 +2417,7 @@ An attrset of packages to be made available in the shell.
 
 This can be used to override the default derivations used by IOGX.
 
-The value of [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
+The value of [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
 
 
 ---
@@ -2442,7 +2442,7 @@ lib.iogx.mkShell {
 
 A package that provides the `cabal-fmt` executable.
 
-If unset or `null`, a default `cabal-fmt` will be provided, which is independent of [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler).
+If unset or `null`, a default `cabal-fmt` will be provided, which is independent of [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion).
 
 
 ---
@@ -2467,7 +2467,7 @@ lib.iogx.mkShell {
 
 A package that provides the `cabal-install` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---
@@ -2517,7 +2517,7 @@ lib.iogx.mkShell {
 
 A package that provides the `fourmolu` executable.
 
-If unset or `null`, a default `fourmolu` will be provided, which is independent of [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler).
+If unset or `null`, a default `fourmolu` will be provided, which is independent of [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion).
 
 
 ---
@@ -2542,7 +2542,7 @@ lib.iogx.mkShell {
 
 A package that provides the `ghcid` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---
@@ -2567,7 +2567,7 @@ lib.iogx.mkShell {
 
 A package that provides the `haskell-language-server` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---
@@ -2592,14 +2592,14 @@ lib.iogx.mkShell {
 
 A package that provides the `haskell-language-server-wrapper` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---
 
-### `mkShell.<in>.tools.haskellCompiler`
+### `mkShell.<in>.tools.haskellCompilerVersion`
 
-**Type**: null or one of "ghc8107", "ghc928", "ghc964"
+**Type**: null or one of "ghc8107", "ghc928", "ghc927", "ghc962", "ghc810", "ghc92", "ghc96"
 
 **Default**: `"ghc8107"`
 
@@ -2635,7 +2635,7 @@ lib.iogx.mkShell {
 
 The example above will use the same compiler version as your project.
 
-IOGX does this automatically when creating a shell with [`mkProject.<in>.mkShell`](#mkprojectinmkshell).
+IOGX does this automatically when creating a shell with [`mkHaskellProject.<in>.shellArgsForProjectVariant`](#mkhaskellprojectinshellargsforprojectvariant).
 
 
 ---
@@ -2660,7 +2660,7 @@ lib.iogx.mkShell {
 
 A package that provides the `hlint` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---
@@ -2810,7 +2810,7 @@ lib.iogx.mkShell {
 
 A package that provides the `stylish-haskell` executable.
 
-If unset or `null`, [`mkShell.<in>.tools.haskellCompiler`](#mkshellintoolshaskellcompiler) will be used to select a suitable derivation.
+If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintoolshaskellcompilerversion) will be used to select a suitable derivation.
 
 
 ---

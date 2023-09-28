@@ -46,18 +46,29 @@
     let
       mkFlake = import ./src/mkFlake.nix inputs;
     in
-    mkFlake {
+    mkFlake rec {
       inherit inputs;
 
       repoRoot = ./.;
 
       systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
 
-      flake.templates.default = {
-        path = ./template;
-        description = "Flake Template for Haskell Projects at IOG";
+      flake.templates.default = flake.templates.vanilla;
+
+      flake.templates.haskell = {
+        path = ./templates/haskell;
+        description = "Flake Template for Haskell Projects";
         welcomeText = ''
-          # Flake Template for Haskell Projects at IOG
+          # Flake Template for Haskell Projects
+          Open flake.nix to get started.
+        '';
+      };
+
+      flake.templates.vanilla = {
+        path = ./templates/vanilla;
+        description = "Flake Template for Vanilla Projects";
+        welcomeText = ''
+          # Flake Template for Vanilla Projects
           Open flake.nix to get started.
         '';
       };

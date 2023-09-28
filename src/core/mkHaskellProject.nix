@@ -113,7 +113,10 @@ let
       flake = pkgs.haskell-nix.haskellLib.mkFlake project {};
       hydraJobs = removeAttrs flake.hydraJobs [ "devShell" "devShells" ];
     in 
-    { inherit hydraJobs; };
+    { 
+      cabalProject = project;
+      inherit hydraJobs; 
+    };
 
 
   iogx-project =
@@ -123,7 +126,10 @@ let
       mkProjectVariant = project: 
         ( mkProjectVariantOutputs project ) // 
         { cross = utils.mapAttrValues mkCrossVariantOutputs project.projectCross; };
-      
+
+      # { cabalProject, cross, variants
+      # , combined-haddock, read-the-docs-site pre-commit-check
+      # , packages/checks/apps/devShells/hydraJobs }
       project = 
         ( mkProjectVariant base ) //
         { variants = utils.mapAttrValues mkProjectVariant base.projectVariants; }; 
@@ -134,7 +140,8 @@ let
 
       flake = {
         inherit (project) devShell devShells apps checks cabalProject;
-        
+        _iogx = project;
+        packages = project.packages // extra-packages;
         hydraJobs = # TODO profiled
           project.hydraJobs // 
           extra-packages // 
@@ -143,8 +150,6 @@ let
           lib.optionalAttrs 
             (system == "x86_64-linux" && haskellProject.crossCompileMingwW64Supported)
             { mingwW64 = project.cross.mingwW64.hydraJobs; }; 
-
-        packages = project.packages // extra-packages;
       };
     in 
       project // { inherit flake; };

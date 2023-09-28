@@ -139,7 +139,7 @@ let
           project.hydraJobs // 
           extra-packages // 
           utils.mapAttrValues (project: project.hydraJobs) project.variants //
-          { required = repoRoot.src.core.mkRequiredHydraJob {}; } //
+          { required = repoRoot.src.core.mkHydraRequiredJob {}; } //
           lib.optionalAttrs 
             (system == "x86_64-linux" && haskellProject.crossCompileMingwW64Supported)
             { mingwW64 = project.cross.mingwW64.hydraJobs; }; 

@@ -130,7 +130,7 @@ let
 
   iogx-project =
     let 
-      base = haskellProject.haskellDotNixProject;
+      base = haskellProject.cabalProject;
 
       mkProjectVariant = project: 
         ( mkProjectVariantOutputs project ) // 

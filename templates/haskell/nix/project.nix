@@ -2,7 +2,7 @@
 
 let
 
-  haskellDotNixProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: {
+  cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: {
 
     src = ../.;
 
@@ -40,11 +40,11 @@ let
   });
 
 
-  haskellDotNixProject = haskellDotNixProject'.appendOverlays [ ];
+  cabalProject = cabalProject'.appendOverlays [ ];
 
 
   project = lib.iogx.mkHaskellProject {
-    inherit haskellDotNixProject;
+    inherit cabalProject;
     
     shellArgs = repoRoot.nix.shell;
 

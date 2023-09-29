@@ -902,8 +902,7 @@ let
 
   mkHaskellProject-IN-submodule = l.types.submodule {
     options = {
-
-      haskellDotNixProject = l.mkOption {
+      cabalProject = l.mkOption {
         type = l.types.raw;
         default = { };
         description = ''

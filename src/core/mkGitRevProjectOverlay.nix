@@ -16,9 +16,9 @@ let
 
 
   overlay = _: prev: {
-    hsPkgs = prev.pkgs.pkgsBuildHost.setGitRevForPaths 
+    hsPkgs = prev.pkgs.pkgsHostTarget.setGitRevForPaths 
       prev.pkgs.gitrev 
-      exe-paths 
+      args.exePaths 
       prev.hsPkgs;
   };
 

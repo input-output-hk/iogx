@@ -14,11 +14,12 @@ let
       [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" ".txt" ];
 
     buildInputs = [
-      repoRoot.src.ext.sphinx-toolchain
+      readTheDocs.sphinxToolchain
       # We need this here in order to get the `plantuml` executable in PATH.
       # Unfortunately `python3.withPackages` (used by sphinx-toolchain above)
       # won't do it automatically.
-      pkgs.python3Packages.sphinxcontrib_plantuml
+      readTheDocs.sphinxToolchain.pkgs.sphinxcontrib_plantuml
+      # pkgs.python3Packages.sphinxcontrib_plantuml
     ];
 
     dontInstall = true;
@@ -39,4 +40,4 @@ let
 
 in
 
-if readTheDocs.siteFolder == null then dummySite else site
+if readTheDocs.enable then site else dummySite

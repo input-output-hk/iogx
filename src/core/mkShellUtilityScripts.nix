@@ -1,4 +1,4 @@
-{ pkgs, lib, user-inputs, ... }:
+{ pkgs, lib, user-inputs, system, ... }:
 
 shell:
 
@@ -25,7 +25,7 @@ let
         if lib.hasAttr group user-inputs.self && user-inputs.self.${group} != { } then
           let
             mkCommand = name: _: "nix ${command} .#${utils.ansiBold name}";
-            commands = lib.mapAttrsToList mkCommand user-inputs.self.${group};
+            commands = lib.mapAttrsToList mkCommand user-inputs.self.${group}.${system};
           in
           ''
             ${utils.ansiColor group "yellow" "bold"}

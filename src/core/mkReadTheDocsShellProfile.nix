@@ -4,7 +4,7 @@ readTheDocs:
 
 let
 
-  shellProfile = {
+  shell-profile = {
 
     packages = [
       repoRoot.src.ext.sphinx-toolchain
@@ -46,6 +46,6 @@ let
 
 in
 
-if readTheDocs.siteFolder == null then { } else shellProfile
+if readTheDocs.enable then shell-profile else {} 
 
 

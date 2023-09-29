@@ -18,6 +18,15 @@ let
   haskellProject = evaluated-modules.config.mkHaskellProject-IN;
 
 
+  readTheDocs = lib.recursiveUpdate haskellProject.readTheDocs {
+
+    sphinxToolchain = 
+      if haskellProject.readTheDocs.sphinxToolchain == null 
+      then repoRoot.src.ext.sphinx-toolchain
+      else haskellProject.readTheDocs.sphinxToolchain;
+  };
+
+
   mkAliasedOutputs = flake:
     let
       makeAliasesForGroup = group:
@@ -72,12 +81,12 @@ let
   
   mkProjectDevShell = project: 
     let
-      read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile haskellProject.readTheDocs;
+      read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile readTheDocs;
       cabal-project-profile = mkProjectShellProfile project;
       shell-profiles = [ cabal-project-profile read-the-docs-profile ];
 
       tools-args = { tools.haskellCompilerVersion = project.args.compiler-nix-name; };
-      project-args = haskellProject.shellArgsForProjectVariant project;
+      project-args = haskellProject.shellArgs project;
       shell-args = lib.recursiveUpdate tools-args project-args;
     in 
       repoRoot.src.core.mkShellWith shell-args shell-profiles;
@@ -98,7 +107,7 @@ let
       inherit (originalFlake) hydraJobs;
 
       combined-haddock = repoRoot.src.core.mkCombinedHaddock project haskellProject.combinedHaddock;
-      read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite haskellProject.readTheDocs combined-haddock;
+      read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite readTheDocs combined-haddock;
       pre-commit-check = devShell.pre-commit-check;
     in 
     {
@@ -148,7 +157,7 @@ let
           utils.mapAttrValues (project: project.hydraJobs) project.variants //
           { required = repoRoot.src.core.mkHydraRequiredJob {}; } //
           lib.optionalAttrs 
-            (system == "x86_64-linux" && haskellProject.crossCompileMingwW64Supported)
+            (system == "x86_64-linux" && haskellProject.enableCrossCompileMingwW64)
             { mingwW64 = project.cross.mingwW64.hydraJobs; }; 
       };
     in 

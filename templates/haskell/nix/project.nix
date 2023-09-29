@@ -1,8 +1,8 @@
-{ repoRoot, inputs, pkgs, lib, system }:
+{ repoRoot, inputs, lib, system }:
 
 let
 
-  haskellDotNixProject = pkgs.haskell-nix.cabalProject' {
+  haskellDotNixProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: {
 
     src = ../.;
 
@@ -14,7 +14,7 @@ let
 
     name = "my-project";
 
-    compiler-nix-name = "ghc8107";
+    compiler-nix-name = lib.mkDefault "ghc8107";
 
     # flake.variants.profiled = {
     #   modules = [{ enableProfiling = true; }];
@@ -30,14 +30,14 @@ let
 
     modules =
       [
-        ({ config, pkgs, ... }: {
+        {
           packages = { };
-        })
-        ({ config, pkgs, ... }: {
+        }
+        {
           packages = { };
-        })
+        }
       ];
-  };
+  });
 
 
   haskellDotNixProject = haskellDotNixProject'.appendOverlays [ ];
@@ -46,12 +46,14 @@ let
   project = lib.iogx.mkHaskellProject {
     inherit haskellDotNixProject;
     
-    shellArgsForProjectVariant = repoRoot.nix.shell;
+    shellArgs = repoRoot.nix.shell;
 
-    # crossCompileMingwW64Supported = false; 
+    # enableCrossCompileMingwW64 = false; 
 
     # readTheDocs = {
-    #   siteFolder = null;
+    #   enable = false;
+    #   siteFolder = "doc/read-the-docs-site";
+    #   sphinxToolchain = null;
     # };
 
     # combinedHaddock = {

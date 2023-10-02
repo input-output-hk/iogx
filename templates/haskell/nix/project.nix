@@ -1,11 +1,11 @@
-{ repoRoot, inputs, lib, system }:
+{ repoRoot, inputs, lib, system, ... }:
 
 let
 
   cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: 
     let 
       # When `isCross` is `true`, it means that we are cross-compiling the project.
-      isCross= pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
+      isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
     in 
     {
       src = ../.;
@@ -21,7 +21,10 @@ let
       compiler-nix-name = lib.mkDefault "ghc8107";
 
       # flake.variants.profiled = {
-      #   modules = [{ enableProfiling = true; }];
+      #   modules = [{ 
+      #     enableProfiling = true; 
+      #     enableLibraryProfiling = true; 
+      #   }];
       # };
 
       # flake.variants.ghc928 = {

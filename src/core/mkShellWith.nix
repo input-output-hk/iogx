@@ -36,35 +36,41 @@ let
   };
 
 
-  ghc = shell.tools.haskellCompilerVersion;
+  ghc = 
+    if shell.tools.haskellCompilerVersion == null 
+    then "ghc8107" 
+    else shell.tools.haskellCompilerVersion;
 
 
   hls = repoRoot.src.ext."haskell-language-server-project-${ghc}";
 
 
-  default-tools = {
-    cabal-fmt = repoRoot.src.ext.cabal-fmt;
-    cabal-install = repoRoot.src.ext.cabal-install ghc;
-    fourmolu = repoRoot.src.ext.fourmolu;
+  purescript = pkgs.callPackage iogx-inputs.easy-purescript-nix { };
 
-    hlint = hls.hsPkgs.hlint.components.exes.hlint;
-    stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
+
+  default-tools = {
+    cabal-install = repoRoot.src.ext.cabal-install ghc;
     haskell-language-server = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
     haskell-language-server-wrapper = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
+
+    stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
+    cabal-fmt = repoRoot.src.ext.cabal-fmt;
+    fourmolu = repoRoot.src.ext.fourmolu;
+    hlint = hls.hsPkgs.hlint.components.exes.hlint;
 
     shellcheck = pkgs.shellcheck;
     prettier = pkgs.nodePackages.prettier;
     editorconfig-checker = pkgs.editorconfig-checker;
     nixpkgs-fmt = repoRoot.src.ext.nixpkgs-fmt;
     optipng = pkgs.optipng;
-    purs-tidy = (pkgs.callPackage iogx-inputs.easy-purescript-nix { }).purs-tidy;
+    purs-tidy = purescript.purs-tidy;
   };
 
 
-  getTool = x:
-    if utils.getAttrWithDefault x null shell.tools == null
-    then default-tools.${x}
-    else shell.tools.${x};
+  getTool = name:
+    if utils.getAttrWithDefault name null shell.tools == null
+    then default-tools.${name}
+    else shell.tools.${name};
 
 
   shell-tools = {
@@ -81,11 +87,6 @@ let
     purs-tidy = getTool "purs-tidy";
     haskell-language-server = getTool "haskell-language-server";
     haskell-language-server-wrapper = getTool "haskell-language-server-wrapper";
-  };
-
-
-  toolchain-profile = {
-    packages = lib.attrValues shell-tools;
   };
 
 
@@ -186,11 +187,45 @@ let
   };
 
 
+  toolchain-profile = 
+    let 
+      should-include-haskell-tools = 
+        shell.tools.haskellCompilerVersion != null || 
+        pre-commit-hooks.cabal-fmt.enable ||
+        pre-commit-hooks.stylish-haskell.enable ||
+        pre-commit-hooks.fourmolu.enable ||
+        pre-commit-hooks.hlint.enable;
+
+      haskell-tools = [
+        shell-tools.haskell-language-server
+        shell-tools.haskell-language-server-wrapper 
+        shell-tools.cabal-install
+        shell-tools.cabal-fmt
+        shell-tools.stylish-haskell
+        shell-tools.fourmolu
+        shell-tools.hlint
+      ];
+
+      pre-commit-packages = 
+        let getPkg = _: hook: if hook.enable then hook.package else null;
+        in lib.mapAttrsToList getPkg pre-commit-hooks; 
+
+      packages = 
+        pre-commit-packages ++ 
+        lib.optional should-include-haskell-tools haskell-tools;
+    in 
+      { inherit packages; };
+
+
   pre-commit-check = iogx-inputs.pre-commit-hooks-nix.lib.${system}.run {
     src = lib.cleanSource user-inputs.self;
     hooks = lib.mapAttrs mkPreCommitHook pre-commit-hooks;
   };
 
+
+  pre-commit-profile-packages = lib.mapAttrsToList (name: hook:
+    if hook.enable then hook.package else null
+  ) pre-commit-hooks;
 
   pre-commit-profile = {
     packages = [ pkgs.pre-commit ];

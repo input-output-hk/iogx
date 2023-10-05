@@ -16,10 +16,9 @@ let
     buildInputs = [
       readTheDocs.sphinxToolchain
       # We need this here in order to get the `plantuml` executable in PATH.
-      # Unfortunately `python3.withPackages` (used by sphinx-toolchain above)
+      # Unfortunately `python3.withPackages` (used by sphinxToolchain above)
       # won't do it automatically.
       readTheDocs.sphinxToolchain.pkgs.sphinxcontrib_plantuml
-      # pkgs.python3Packages.sphinxcontrib_plantuml
     ];
 
     dontInstall = true;
@@ -33,11 +32,11 @@ let
   };
 
 
-  dummySite = pkgs.runCommand "dummy-read-the-docs-site" { } ''
+  dummy-site = pkgs.runCommand "dummy-read-the-docs-site" { } ''
     mkdir -p $out
     echo "This is a dummy read-the-docs site." > $out/index.html
   '';
 
 in
 
-if readTheDocs.enable then site else dummySite
+if readTheDocs.enable then site else dummy-site

@@ -7,7 +7,8 @@ let
   options = import ./boot/options.nix iogx-inputs;
 
 
-  gitrev-overlay = user-inputs: _: _: {
+  mkGitRevOverlay = user-inputs: _: _: {
+    # `self.rev` is only defined when the git tree is not dirty
     gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
   };
 
@@ -27,7 +28,7 @@ let
           # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
           # and so must be after them in the list of overlays to nixpkgs.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-          (gitrev-overlay user-inputs)
+          (mkGitRevOverlay user-inputs)
         ]
         ++ (args.overlays or [ ]);
     };

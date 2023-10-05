@@ -95,7 +95,7 @@ let
   tools-submodule = l.types.submodule {
     options = {
       haskellCompilerVersion = l.mkOption {
-        default = "ghc8107";
+        default = null;
         type = l.types.nullOr (l.types.enum [ "ghc8107" "ghc928" "ghc927" "ghc962" "ghc810" "ghc92" "ghc96" ]);
         description = ''
           The haskell compiler version.

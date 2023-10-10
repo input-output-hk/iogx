@@ -13,6 +13,7 @@ let
     else if l.hasSuffix ".nix" path then
       let
         name = l.removeSuffix ".nix" path;
+        # TODO check that import "${dir}/${path}" is a function and warn otherwise
         value = import "${dir}/${path}" (args // { ${module} = __module__; });
         trace = l.ptrace ("[modularise.nix] importing ${dir}/${path}");
         value' = if debug then trace value else value;

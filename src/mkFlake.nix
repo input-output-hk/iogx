@@ -2,9 +2,9 @@ iogx-inputs:
 
 let
 
-  utils = import ./boot/utils.nix iogx-inputs;
-  modularise = import ./boot/modularise.nix iogx-inputs;
-  options = import ./boot/options.nix iogx-inputs;
+  utils = import ./lib/utils.nix iogx-inputs;
+  modularise = import ./lib/modularise.nix iogx-inputs;
+  options = import ./lib/options.nix iogx-inputs;
 
 
   mkGitRevOverlay = user-inputs: _: _: {

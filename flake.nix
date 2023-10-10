@@ -75,9 +75,9 @@
 
       flake.lib = {
         inherit mkFlake;
-        utils = import ./src/boot/utils.nix inputs;
-        modularise = import ./src/boot/modularise.nix inputs;
-        options = import ./src/boot/options.nix inputs;
+        utils = import ./src/lib/utils.nix inputs;
+        modularise = import ./src/lib/modularise.nix inputs;
+        options = import ./src/lib/options.nix inputs;
       };
 
       outputs = { repoRoot, pkgs, lib, ... }: [{
@@ -90,7 +90,7 @@
         hydraJobs.options-doc = repoRoot.src.core.mkIogxDoc; 
 
         devShells.default = lib.iogx.mkShell {
-          name = "iogx-devshell";
+          name = "iogx";
           packages = [ pkgs.github-cli pkgs.python39 ];
           scripts.build-docs = {
             group = "iogx";

@@ -1,5 +1,5 @@
 {
-  description = "Change the description field in your flake.nix";
+  description = "Change the description field in your ./flake.nix";
 
 
   inputs = {

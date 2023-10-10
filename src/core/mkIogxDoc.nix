@@ -4,7 +4,7 @@ let
 
   evaluated-modules = lib.evalModules {
     modules = [{
-      options = { inherit (inputs.self.lib.options) mkFlake mkHaskellProject mkShell; };
+      options = { inherit (inputs.self.lib.options) flake mkFlake mkHaskellProject mkShell; };
     }];
   };
 

@@ -4,7 +4,14 @@ let
 
   evaluated-modules = lib.evalModules {
     modules = [{
-      options = { inherit (inputs.self.lib.options) flake mkFlake mkHaskellProject mkShell; };
+      options = { 
+        inherit (inputs.self.lib.options) 
+          # Note: the `.<in>` submodules are rendered implicitly.
+          "flake.nix" 
+          mkFlake 
+          mkHaskellProject 
+          mkShell;
+      };
     }];
   };
 
@@ -75,15 +82,18 @@ let
 
 in
 
-lib.toFile "options.md" ''
-  # Options Reference 
+lib.toFile "api.md" ''
 
-  1. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
-      Makes your flake outputs.
-  2. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
-      Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-  3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
-      Makes a `devShell` with `pre-commit-check` and tools.
+  # API Reference 
+
+  1. ${lib.iogx.utils.headerToLocalMarkDownLink "./flake.nix" "\"flake.nix\""} 
+      - Top-level ./flake.nix file.
+  2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
+      - Makes your flake outputs.
+  3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
+      - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+  4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
+      - Makes a `devShell` with `pre-commit-check` and tools.
 
   ${options-doc-markdown}
 ''

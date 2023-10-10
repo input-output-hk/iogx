@@ -14,12 +14,12 @@ let
   evaluated-shell-module = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkShell-IN = shell'';
+      config."mkShell.<in>" = shell'';
     }];
   };
 
 
-  shell' = evaluated-shell-module.config.mkShell-IN;
+  shell' = evaluated-shell-module.config."mkShell.<in>";
 
 
   shell = lib.recursiveUpdate shell' {

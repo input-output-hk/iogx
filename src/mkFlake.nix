@@ -4,7 +4,7 @@ let
 
   utils = import ./lib/utils.nix iogx-inputs;
   modularise = import ./lib/modularise.nix iogx-inputs;
-  options = import ./lib/options.nix iogx-inputs;
+  options = import ./options iogx-inputs;
 
 
   mkGitRevOverlay = user-inputs: _: _: {
@@ -64,11 +64,11 @@ let
       evaluated-modules = iogx-inputs.nixpkgs.lib.evalModules {
         modules = [{
           options = options;
-          config.mkFlake-IN = args';
+          config."mkFlake.<in>" = args';
         }];
       };
 
-      args = evaluated-modules.config.mkFlake-IN;
+      args = evaluated-modules.config."mkFlake.<in>";
 
       mkPerSystemFlake = system:
         let

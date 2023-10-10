@@ -1,5 +1,7 @@
 # Options Reference 
 
+1. [`flake.nix`](#flakenix) 
+    The options for this flake.
 1. [`inputs.iogx.lib.mkFlake`](#mkflake) 
     Makes your flake outputs.
 2. [`pkgs.lib.iogx.mkHaskellProject`](#mkhaskellproject) 
@@ -9,7 +11,7 @@
 
 ---
 
-### `flake`
+### `"flake.nix"`
 
 **Type**: submodule
 
@@ -21,7 +23,7 @@
 
 ---
 
-### `flake.description`
+### `"flake.nix".description`
 
 **Type**: string
 
@@ -51,7 +53,7 @@ It can be a short title for your project.
 
 ---
 
-### `flake.inputs`
+### `"flake.nix".inputs`
 
 **Type**: attribute set
 
@@ -168,7 +170,7 @@ nix flake lock --update-input CHaP
 
 ---
 
-### `flake.nixConfig`
+### `"flake.nix".nixConfig`
 
 **Type**: null or package
 
@@ -220,7 +222,7 @@ If Nix starts building `GHC` or other large artifacts that means that your cache
 
 ---
 
-### `flake.outputs`
+### `"flake.nix".outputs`
 
 **Type**: function that evaluates to a(n) (attribute set)
 

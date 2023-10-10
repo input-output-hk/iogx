@@ -10,12 +10,12 @@ let
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkHaskellProject-IN = haskellProject';
+      config."mkHaskellProject.<in>" = haskellProject';
     }];
   };
 
 
-  haskellProject = evaluated-modules.config.mkHaskellProject-IN;
+  haskellProject = evaluated-modules.config."mkHaskellProject.<in>";
 
 
   readTheDocs = lib.recursiveUpdate haskellProject.readTheDocs {

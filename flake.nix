@@ -77,17 +77,17 @@
         inherit mkFlake;
         utils = import ./src/lib/utils.nix inputs;
         modularise = import ./src/lib/modularise.nix inputs;
-        options = import ./src/lib/options.nix inputs;
+        options = import ./src/options inputs;
       };
 
       outputs = { repoRoot, pkgs, lib, ... }: [{
 
         _repoRoot = repoRoot;
 
-        packages.options-doc = repoRoot.src.core.mkIogxDoc;
+        packages.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
 
         hydraJobs.required = lib.iogx.mkHydraRequiredJob {};
-        hydraJobs.options-doc = repoRoot.src.core.mkIogxDoc; 
+        hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference; 
 
         devShells.default = lib.iogx.mkShell {
           name = "iogx";
@@ -97,7 +97,7 @@
             description = "Produce ./doc/options.md";
             exec = ''
               set -e
-              nix build .#options-doc --system x86_64-darwin --show-trace --out-link options.md
+              nix build .#render-iogx-api-reference --system x86_64-darwin --show-trace --out-link options.md
               cp options.md doc/options.md
               rm options.md
             '';

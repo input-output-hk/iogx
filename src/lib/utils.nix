@@ -225,6 +225,14 @@ let
         )
       );
 
+
+    mkApiFuncOptionType = type-in: type-out: l.mkOptionType {
+      name = "core-API-function";
+      description = "Core API Function";
+      getSubOptions = prefix:
+        type-in.getSubOptions (prefix ++ [ "<in>" ]) //
+        type-out.getSubOptions (prefix ++ [ "<out>" ]);
+    };
   };
 
 in

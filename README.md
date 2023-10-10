@@ -1,4 +1,4 @@
-# IOGX — A Flake Template for Your Project <!-- omit in toc -->
+# IOGX — Flake Templates for Your Project <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
@@ -7,7 +7,7 @@
 
 # 1. Introduction 
 
-IOGX is a Nix library of functions and templates to structure your Nix code and provision a number of common DevX facilities to develop your project.
+IOGX is a Nix library of functions and templates for structuring your Nix code and comes with a number of common DevX facilities to help develop your project.
 
 To get started run: 
 ```bash
@@ -18,7 +18,7 @@ nix flake init --template github:input-output-hk/iogx#haskell
 nix flake init --template github:input-output-hk/iogx#vanilla
 ```
 
-These will generates a `flake.nix` and a `nix` folder in your repository root to get you started. 
+These will generates a `flake.nix` and a `nix` folder in your repository root.
 
 You may now move on to the [API Reference](./doc/options.md).
 
@@ -46,7 +46,7 @@ If your project needs a [Read The Docs](https://readthedocs.org) site then IOGX 
 
 # 3. API Reference 
 
-All library functions and templates are documented in the [API Reference](./doc/options.md).
+The `flake.nix` file and all library functions are documented in the [API Reference](./doc/options.md).
 
 # 4. Future Work
 

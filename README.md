@@ -3,7 +3,7 @@
 - [1. Introduction](#1-introduction)
 - [2. Features](#2-features)
 - [3. API Reference](#3-api-reference)
-- [3. Future Work](#3-future-work)
+- [4. Future Work](#4-future-work)
 
 # 1. Introduction 
 
@@ -48,7 +48,7 @@ If your project needs a [Read The Docs](https://readthedocs.org) site then IOGX 
 
 All library functions and templates are documented in the [API Reference](./doc/options.md).
 
-# 3. Future Work
+# 4. Future Work
 
 In the future we plan to develop the following features:
 

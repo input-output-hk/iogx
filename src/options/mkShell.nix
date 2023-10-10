@@ -12,6 +12,7 @@ let
   default-pre-commit-hook = {
     enable = false;
     extraOptions = "";
+    package = null;
   };
 
 
@@ -102,29 +103,20 @@ let
           
           This determines the version of other tools like `cabal-install` and `haskell-language-server`.
 
-          This option must be set to a value.
+          If this option is unset of null, then no Haskell tools will be made available in the shell.
 
-          If you have a `cabalProject`, you should use its `compiler-nix-name`:
-          ```nix
-          # shell.nix
-          { repoRoot, inputs, pkgs, lib, system }:
+          However if you enable some Haskell-specific ${link "mkShell.<in>.preCommit"} hooks, then 
+          that Haskell tools will be installed automatically using `ghc8107` as the default compiler version.
 
-          cabalProject: 
-
-          lib.iogx.mkShell {
-            tools.haskellCompilerVersion = cabalProject.args.compiler-nix-name;
-          }
-          ```
-
-          The example above will use the same compiler version as your project.
-
-          IOGX does this automatically when creating a shell with ${link "mkHaskellProject.<in>.shellArgs"}.
+          When using ${link "mkHaskellProject.<in>.shellArgs"}, this option is automatically set to 
+          the same value as the project's (or project variant's) `compiler-nix-name`.
         '';
         example = l.literalExpression ''
           # shell.nix 
           { repoRoot, inputs, pkgs, lib, system }:
           lib.iogx.mkShell {
             tools.haskellCompilerVersion = "ghc8107";
+            # ^^^^^ This will bring the haskell tools in your shell
           }
         '';
       };
@@ -842,7 +834,7 @@ let
         preCommit = {
           shellcheck.enable = true;
         };
-        tools.haskellCompilerVersion = "ghc8103";
+        tools.haskellCompilerVersion = "ghc8107";
       };
     '';
   };

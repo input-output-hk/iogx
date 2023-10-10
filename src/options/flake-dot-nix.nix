@@ -12,7 +12,6 @@ let
   flake-dot-nix-submodule = l.types.submodule {
     options = {
       description = l.mkOption {
-        default = "";
         type = l.types.str;
         description = ''
           Arbitrary description for the flake. 
@@ -26,16 +25,12 @@ let
           # flake.nix 
           { 
             description = "My Haskell Project";
-            inputs = {};
-            outputs = _: {};
-            nixConfig = {};
           }
         '';
       };
 
       inputs = l.mkOption {
         type = l.types.attrs;
-        default = {};
         description = ''
           Your flake *must* define `iogx` among its inputs. 
 
@@ -51,9 +46,9 @@ let
           [easy-purescript-nix](https://github.com/justinwoo/easy-purescript-nix). 
 
           If you find that you want to use a different version of some of the 
-          implicit inputs, for instance because IOGX has not been updated, or 
-          because you need to test against a specific branch, you can use the 
-          `follows` syntax like in the example above.
+          implicit inputs listed above, for instance because IOGX has not been 
+          updated, or because you need to test against a specific branch, you 
+          can use the `follows` syntax like in the example above.
 
           Note that the Haskell template `flake.nix` does this by default with 
           `CHaP`, `hackage.nix` and `haskell.nix`.
@@ -75,17 +70,23 @@ let
           may use this syntax:
 
           ```nix
-          nixpkgs = inputs.iogx.inputs.nixpkgs;
-          CHaP = inputs.iogx.inputs.CHaP;
-          haskellNix = inputs.iogx.inputs.haskell-nix;
+          { inputs, ... }:
+          {
+            nixpkgs = inputs.iogx.inputs.nixpkgs;
+            CHaP = inputs.iogx.inputs.CHaP;
+            haskellNix = inputs.iogx.inputs.haskell-nix;
+          }
           ```
 
           If you are using the `follows` syntax for some inputs, you can avoid 
           one level of indirection when referencing those inputs:
           ```nix
-          nixpkgs = inputs.nixpkgs;
-          CHaP = inputs.CHaP;
-          haskellNix = inputs.haskell-nix;
+          { inputs, ... }:
+          {
+            nixpkgs = inputs.nixpkgs;
+            CHaP = inputs.CHaP;
+            haskellNix = inputs.haskell-nix;
+          }
           ```
 
           If you need to update IOGX (or any other input) you can do it the 
@@ -99,9 +100,8 @@ let
           ```
         '';
         example = l.literalExpression ''
-          # Template Haskell ./flake.nix
+          # flake.nix inputs for Haskell Projects
           { 
-            description = "";
             inputs = {
               iogx = {
                 url = "github:input-output-hk/iogx";
@@ -126,35 +126,25 @@ let
                 inputs.hackage.follows = "hackage";
               };
             };
-            outputs = _: {};
-            nixConfig = {};
           }
 
-          # Template Vanilla ./flake.nix
+          # flake.nix inputs for Vanilla Projects
           { 
-            description = "";
             inputs = {
               iogx.url = "github:input-output-hk/iogx";
             };
-            outputs = _: {};
-            nixConfig = {};
           }       
         '';
       };
 
       outputs = l.mkOption {
         type = l.types.functionTo l.types.attrs;
-        default = _: {};
         description = ''
           Your flake `outputs` are produced using ${link "mkFlake"}.
         '';
         example = l.literalExpression ''
-          # Template ./flake.nix
+          # flake.nix
           {
-            description = "";
-            inputs = {};
-            nixConfig = {};
-
             outputs = inputs: inputs.iogx.lib.mkFlake {
 
               inherit inputs;
@@ -179,14 +169,13 @@ let
       };
 
       nixConfig = l.mkOption {
-        type = l.types.nullOr l.types.package;
-        default = {};
+        type = l.types.attrs;
         description = ''
           Unless you know what you are doing, you should not change `nixConfig`.
 
           You could always add new `extra-substituters` and `extra-trusted-public-keys`, but do not delete the existing ones, or you won't have access to IOG caches. 
 
-          For the caches to work properly, it is sufficient that the following two lines are included in your `/etc/nix/nix.conf`:
+          For the caches to work properly, it is sufficient that the following two lines be included in your `/etc/nix/nix.conf`:
           ```txt
           trusted-users = USER
           experimental-features = nix-command flakes
@@ -203,12 +192,8 @@ let
           If Nix starts building `GHC` or other large artifacts that means that your caches have not been configured properly.
         '';
         example = l.literalExpression ''
-          # Template ./flake.nix 
+          # flake.nix 
           { 
-            description = "";
-            inputs = {};
-            outputs = _: {};
-
             nixConfig = {
               extra-substituters = [
                 "https://cache.iog.io"
@@ -230,14 +215,17 @@ let
     description = ''
       The `flake.nix` file for your project.
 
-      This is included in the templates:
+      For [Haskell Projects](../templates/haskell/flake.nix):
       ```bash
-      # For Haskell Projects
       nix flake init --template github:input-output-hk/iogx#haskell
+      ```
 
-      # For Other Projects
+      For [Other Projects](../templates/vanilla/flake.nix):
+      ```nix
       nix flake init --template github:input-output-hk/iogx#vanilla
       ```
+
+      Below is a description of each of its attributes.
     '';
   };
 

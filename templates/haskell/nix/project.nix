@@ -3,6 +3,8 @@
 let
 
   cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: 
+    # NOTE: YOU MUST USE THE `pkgs` ABOVE FOR INSIDE THIS FUNCTION CALL.
+    # Notice that the `pkgs` has been ellipsed (...) on line 1 of this file.
     let 
       # When `isCross` is `true`, it means that we are cross-compiling the project.
       isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;

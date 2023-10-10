@@ -24,12 +24,9 @@ let
       repoRoot = l.mkOption {
         type = l.types.path;
         description = ''
-          The root of your repository.
-
-          If not set, this will default to the folder containing the `flake.nix` file, using `inputs.self`.
+          The root of your repository (most likely `./.`).
         '';
-        default = null;
-        example = l.literalExpression "./.";
+        example = l.literalExpression "./alternative/flake.nix";
       };
 
       systems = l.mkOption {
@@ -57,14 +54,14 @@ let
           { repoRoot, inputs, pkgs, lib, system }:
           [
             {
-              cabalProject = lib.iogx.mkHaskellProject {};
+              project = lib.iogx.mkHaskellProject {};
             }
             {
               packages.foo = repoRoot.nix.foo;
               devShells.foo = lib.iogx.mkShell {};
             }
             {
-              hydraJobs.ghc928 = inputs.self.cabalProject.projectVariants.ghc928.iogx.hydraJobs;
+              hydraJobs.ghc928 = inputs.self.project.variants.ghc928.hydraJobs;
             }
           ]
         '';
@@ -77,7 +74,7 @@ let
 
           The returned attrsets are recursively merged top-to-bottom. 
 
-          Each of the input attributes is documented below.
+          Each of the input attributes to the `outputs` function is documented below.
 
           #### `repoRoot`
 
@@ -143,7 +140,7 @@ let
 
           In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-          Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like ${link "mkFlake.<in>.outputs"}.
+          > **_NOTE:_** Any nix file that is referenced this way will also receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like ${link "mkFlake.<in>.outputs"}.
 
           Using the `repoRoot` argument is optional, but it has the advantage of not having to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
@@ -183,8 +180,10 @@ let
           
           In here you will find the following: 
           ```nix 
-          lib.iogx.mkHaskellProject {}
           lib.iogx.mkShell {}
+          lib.iogx.mkHaskellProject {}
+          lib.iogx.mkHydraRequiredJob {}
+          lib.iogx.mkGitRevProjectOverlay {}
           ```
         '';
       };
@@ -229,13 +228,12 @@ let
           # flake.nix
           {
             outputs = inputs: inputs.iogx.lib.mkFlake {
-              inherit inputs;
-              outputs = import ./nix/outputs.nix;
-              nixpkgsArgs = {
-                overlays = [(self: super: { 
-                  acme = super.callPackage ./nix/acme.nix { }; 
-                })];
-              };  
+              nixpkgsArgs.overlays = [(self: super: { 
+                acme = super.callPackage ./nix/acme.nix { }; 
+              })];
+              nixpkgsArgs.config.permittedInsecurePackages [
+                "python-2.7.18.6"
+              ];
             };
           }
         '';

@@ -22,14 +22,17 @@
 
 The `flake.nix` file for your project.
 
-This is included in the templates:
+For [Haskell Projects](../templates/haskell/flake.nix):
 ```bash
-# For Haskell Projects
 nix flake init --template github:input-output-hk/iogx#haskell
+```
 
-# For Other Projects
+For [Other Projects](../templates/vanilla/flake.nix):
+```nix
 nix flake init --template github:input-output-hk/iogx#vanilla
 ```
+
+Below is a description of each of its attributes.
 
 
 ---
@@ -38,7 +41,6 @@ nix flake init --template github:input-output-hk/iogx#vanilla
 
 **Type**: string
 
-**Default**: `""`
 
 
 **Example**: 
@@ -46,9 +48,6 @@ nix flake init --template github:input-output-hk/iogx#vanilla
 # flake.nix 
 { 
   description = "My Haskell Project";
-  inputs = {};
-  outputs = _: {};
-  nixConfig = {};
 }
 
 ```
@@ -68,14 +67,12 @@ It can be a short title for your project.
 
 **Type**: attribute set
 
-**Default**: `{ }`
 
 
 **Example**: 
 ```nix
-# Template Haskell ./flake.nix
+# flake.nix inputs for Haskell Projects
 { 
-  description = "";
   inputs = {
     iogx = {
       url = "github:input-output-hk/iogx";
@@ -100,18 +97,13 @@ It can be a short title for your project.
       inputs.hackage.follows = "hackage";
     };
   };
-  outputs = _: {};
-  nixConfig = {};
 }
 
-# Template Vanilla ./flake.nix
+# flake.nix inputs for Vanilla Projects
 { 
-  description = "";
   inputs = {
     iogx.url = "github:input-output-hk/iogx";
   };
-  outputs = _: {};
-  nixConfig = {};
 }       
 
 ```
@@ -131,9 +123,9 @@ In turn, IOGX manages the following inputs for you:
 [easy-purescript-nix](https://github.com/justinwoo/easy-purescript-nix). 
 
 If you find that you want to use a different version of some of the 
-implicit inputs, for instance because IOGX has not been updated, or 
-because you need to test against a specific branch, you can use the 
-`follows` syntax like in the example above.
+implicit inputs listed above, for instance because IOGX has not been 
+updated, or because you need to test against a specific branch, you 
+can use the `follows` syntax like in the example above.
 
 Note that the Haskell template `flake.nix` does this by default with 
 `CHaP`, `hackage.nix` and `haskell.nix`.
@@ -155,17 +147,23 @@ If you need to reference the inputs managed by IOGX in your flake, you
 may use this syntax:
 
 ```nix
-nixpkgs = inputs.iogx.inputs.nixpkgs;
-CHaP = inputs.iogx.inputs.CHaP;
-haskellNix = inputs.iogx.inputs.haskell-nix;
+{ inputs, ... }:
+{
+  nixpkgs = inputs.iogx.inputs.nixpkgs;
+  CHaP = inputs.iogx.inputs.CHaP;
+  haskellNix = inputs.iogx.inputs.haskell-nix;
+}
 ```
 
 If you are using the `follows` syntax for some inputs, you can avoid 
 one level of indirection when referencing those inputs:
 ```nix
-nixpkgs = inputs.nixpkgs;
-CHaP = inputs.CHaP;
-haskellNix = inputs.haskell-nix;
+{ inputs, ... }:
+{
+  nixpkgs = inputs.nixpkgs;
+  CHaP = inputs.CHaP;
+  haskellNix = inputs.haskell-nix;
+}
 ```
 
 If you need to update IOGX (or any other input) you can do it the 
@@ -183,19 +181,14 @@ nix flake lock --update-input CHaP
 
 ### `"flake.nix".nixConfig`
 
-**Type**: null or package
+**Type**: attribute set
 
-**Default**: `{ }`
 
 
 **Example**: 
 ```nix
-# Template ./flake.nix 
+# flake.nix 
 { 
-  description = "";
-  inputs = {};
-  outputs = _: {};
-
   nixConfig = {
     extra-substituters = [
       "https://cache.iog.io"
@@ -214,7 +207,7 @@ Unless you know what you are doing, you should not change `nixConfig`.
 
 You could always add new `extra-substituters` and `extra-trusted-public-keys`, but do not delete the existing ones, or you won't have access to IOG caches. 
 
-For the caches to work properly, it is sufficient that the following two lines are included in your `/etc/nix/nix.conf`:
+For the caches to work properly, it is sufficient that the following two lines be included in your `/etc/nix/nix.conf`:
 ```txt
 trusted-users = USER
 experimental-features = nix-command flakes
@@ -237,17 +230,12 @@ If Nix starts building `GHC` or other large artifacts that means that your cache
 
 **Type**: function that evaluates to a(n) (attribute set)
 
-**Default**: `<function>`
 
 
 **Example**: 
 ```nix
-# Template ./flake.nix
+# flake.nix
 {
-  description = "";
-  inputs = {};
-  nixConfig = {};
-
   outputs = inputs: inputs.iogx.lib.mkFlake {
 
     inherit inputs;
@@ -388,13 +376,12 @@ You almost certainly want to do `inherit inputs;` here (see the example in [`mkF
 # flake.nix
 {
   outputs = inputs: inputs.iogx.lib.mkFlake {
-    inherit inputs;
-    outputs = import ./nix/outputs.nix;
-    nixpkgsArgs = {
-      overlays = [(self: super: { 
-        acme = super.callPackage ./nix/acme.nix { }; 
-      })];
-    };  
+    nixpkgsArgs.overlays = [(self: super: { 
+      acme = super.callPackage ./nix/acme.nix { }; 
+    })];
+    nixpkgsArgs.config.permittedInsecurePackages [
+      "python-2.7.18.6"
+    ];
   };
 }
 
@@ -427,14 +414,14 @@ Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of
 { repoRoot, inputs, pkgs, lib, system }:
 [
   {
-    cabalProject = lib.iogx.mkHaskellProject {};
+    project = lib.iogx.mkHaskellProject {};
   }
   {
     packages.foo = repoRoot.nix.foo;
     devShells.foo = lib.iogx.mkShell {};
   }
   {
-    hydraJobs.ghc928 = inputs.self.cabalProject.projectVariants.ghc928.iogx.hydraJobs;
+    hydraJobs.ghc928 = inputs.self.project.variants.ghc928.hydraJobs;
   }
 ]
 
@@ -449,7 +436,7 @@ This is the most important option as it will determine your flake outputs.
 
 The returned attrsets are recursively merged top-to-bottom. 
 
-Each of the input attributes is documented below.
+Each of the input attributes to the `outputs` function is documented below.
 
 #### `repoRoot`
 
@@ -515,7 +502,7 @@ Note that the Nix files do not need the `".nix"` suffix, while files with any ot
 
 In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-Any nix file that is referenced this way will receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like [`mkFlake.<in>.outputs`](#mkflakeinoutputs).
+> **_NOTE:_** Any nix file that is referenced this way will also receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like [`mkFlake.<in>.outputs`](#mkflakeinoutputs).
 
 Using the `repoRoot` argument is optional, but it has the advantage of not having to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
@@ -555,8 +542,10 @@ This is just `pkgs.lib` plus the `iogx` attrset, which contains library function
 
 In here you will find the following: 
 ```nix 
-lib.iogx.mkHaskellProject {}
 lib.iogx.mkShell {}
+lib.iogx.mkHaskellProject {}
+lib.iogx.mkHydraRequiredJob {}
+lib.iogx.mkGitRevProjectOverlay {}
 ```
 
 
@@ -566,15 +555,12 @@ lib.iogx.mkShell {}
 
 **Type**: path
 
-**Default**: `null`
 
 
-**Example**: `./.`
+**Example**: `./alternative/flake.nix`
 
 
-The root of your repository.
-
-If not set, this will default to the folder containing the `flake.nix` file, using `inputs.self`.
+The root of your repository (most likely `./.`).
 
 
 ---
@@ -603,61 +589,71 @@ The [`mkFlake.<in>.outputs`](#mkflakeinoutputs) function will be called once for
 
 **Example**: 
 ```nix
-# project.nix 
+# nix/project.nix 
 { repoRoot, inputs, pkgs, lib, system }:
-let 
-  cabalProject = lib.iogx.mkHaskellProject {
-    mkShell = repoRoot.nix.make-shell;
+lib.iogx.mkHaskellProject {
 
-    readTheDocs.siteFolder = "doc/read-the-docs-site";
-    
-    combinedHaddock.enable = true;
-    
-    cabalProjectArgs = {
+  shellArgs = repoRoot.nix.make-shell;
 
-      compiler-nix-name = "ghc8107";
+  readTheDocs = {
+    enable = true;
+    siteFolder = "doc/read-the-docs-site";
+  };
+  
+  combinedHaddock.enable = true;
+  
+  cabalProject = pkgs.haskell-nix.cabalProject' {
+    compiler-nix-name = "ghc8107";
 
-      flake.variants.FOO = {
-        compiler-nix-name = "ghc927";
-      };
+    flake.variants.FOO = {
+      compiler-nix-name = "ghc927";
     };
   };
+}
+
+# outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  project = repoRoot.nix.project;
 in 
 [
   {
-    inherit cabalProject;
+    inherit (project) cabalProject;
   }
+  (
+    project.flake
+  )
   {
-    hydraJobs.FOO = cabalProject.projectVariants.FOO.iogx.hydraJobs;
+    hydraJobs.FOO = project.variants.FOO.hydraJobs;
   }
 ]
 
 ```
 
 
-The `lib.iogx.mkHaskellProject` function takes an attrset of options and returns a `cabalProject` with the `iogx` overlay.
+The `lib.iogx.mkHaskellProject` function builds your `haskell.nix`-based project.
 
 In this document:
   - Options for the input attrset are prefixed by `mkHaskellProject.<in>`.
-  - The returned attrset contains the attributes prefixed by `mkHaskellProject.<out>.iogx`.
+  - The returned attrset contains the attributes prefixed by `mkHaskellProject.<out>`.
 
 
 ---
 
 ### `mkHaskellProject.<in>.cabalProject`
 
-**Type**: raw value
+**Type**: attribute set
 
 **Default**: `{ }`
 
 
 **Example**: 
 ```nix
-# project.nix 
-{ repoRoot, inputs, pkgs, lib, system }:
+# nix/project.nix 
+{ repoRoot, inputs, lib, system, ... }:
 
 lib.iogx.mkHaskellProject {
-  cabalProject = pkgs.haskell-nix.cabalProject' {
+  cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ...) {
     name = "my-project"; 
     src = ./.; # Must contain the cabal.project file
     inputMap = {
@@ -675,7 +671,7 @@ lib.iogx.mkHaskellProject {
     };
     modules = [];
     cabalProjectLocal = "";
-  };
+  });
 };
 
 ```
@@ -683,7 +679,9 @@ lib.iogx.mkHaskellProject {
 
 The original `cabalProject`. 
 
-You most likely want to get one using [`haskell.nix:cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjec#cabalproject).
+You most likely want to get one using 
+[`haskell.nix:cabalProject'`](https://input-output-hk.github.io/haskell.nix/reference/library.html?highlight=cabalProjec#cabalproject)
+like in the example above.
 
 You should use `flake.variants` to provide support for profiling, different GHC versions, and any other additional configuration.
 
@@ -721,9 +719,6 @@ let
 in 
 [
   {
-    inherit (project) cabalProject;
-  }
-  {
     packages.combined-haddock = project.combined-haddock;
   }
 ]
@@ -737,9 +732,9 @@ When enabled, your [`mkHaskellProject.<in>.readTheDocs`](#mkhaskellprojectinread
 
 Combining Haddock artifacts takes a significant amount of time and may slow down CI.
 
-The combined Haddock will be available in:
+The combined Haddock(s) will be available in:
 - [`mkHaskellProject.<out>.combined-haddock`](#mkhaskellprojectoutcombined-haddock)
-- [`mkHaskellProject.<out>.cross.<name>.combined-haddock`](#mkhaskellprojectoutcrossnamecombined-haddock)
+- [`mkHaskellProject.<out>.variants.<name>.combined-haddock`](#mkhaskellprojectoutvariantsnamecombined-haddock)
 
 
 ---
@@ -793,10 +788,46 @@ A string acting as prologue for the combined Haddock.
 **Default**: `false`
 
 
+**Example**: 
+```nix
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  project = lib.iogx.mkHaskellProject {
+    includeMingwW64HydraJobs = true;
+  };
+in 
+[
+  (
+    project.flake 
+    # ^^^^^ Includes: hydraJobs.mingwW64 = project.cross.mingwW64.hydraJobs;
+  )
+]
+```
+
+```
 
 
-When set to `true` then [`mkHaskellProject.<out>.flake`](#mkhaskellprojectoutflake) will include `hydraJobs.mingwW64`
-for your `cabalProject.projectCross.mingwW64`.
+When set to `true` then [`mkHaskellProject.<out>.flake`](#mkhaskellprojectoutflake) will include:
+```nix 
+hydraJobs.mingwW66 = project.cross.mingwW64
+```
+
+This is just a convenience option, you can always reference the jobs directly:
+```nix
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  project = lib.iogx.mkHaskellProject {
+    includeMingwW64HydraJobs = false;
+  };
+in 
+[
+  {
+    hydraJobs.mingwW64 = project.cross.mingwW64.hydraJobs;
+  }
+]
+```
 
 
 ---
@@ -808,7 +839,9 @@ for your `cabalProject.projectCross.mingwW64`.
 **Default**: 
 ```nix
 {
+  enable = false;
   siteFolder = null;
+  sphinxToolchain = null;
 }
 ```
 
@@ -842,7 +875,7 @@ The shells generated by [`mkHaskellProject.<in>.shellArgs`](#mkhaskellprojectins
 augmented with several scripts to make developing your site easier, 
 grouped under the tag `read-the-docs`.
 
-The Read The Docs site derivation will be available in:
+The Read The Docs site derivation(s) will be available in:
 - [`mkHaskellProject.<out>.read-the-docs-site`](#mkhaskellprojectoutread-the-docs-site)
 - [`mkHaskellProject.<out>.variants.<name>.read-the-docs-site`](#mkhaskellprojectoutvariantsnameread-the-docs-site)
 
@@ -940,7 +973,8 @@ Normally you don't need to override this.
 
 Arguments for [`mkShell`](#mkshell).
 
-This is a function that is called once with the [`mkHaskellProject.<in>.cabalProject`](#mkhaskellprojectincabalproject) 
+This is a function that is called once with the original
+[`mkHaskellProject.<in>.cabalProject`](#mkhaskellprojectincabalproject) (coming from `haskell.nix`),
 and then once for each project variant. 
 
 Internally these `shellArgs` are passed to [`mkShell`](#mkshell).
@@ -952,71 +986,7 @@ The shells will be available in:
 
 ---
 
-### `mkHaskellProject.<out>.iogx`
-
-**Type**: submodule
-
-
-
-**Example**: 
-```nix
-# flake.nix 
-{
-  outputs = inputs: inputs.iogx.lib.mkFlake {
-    outputs = import ./outputs.nix;
-  };
-}
-
-# outputs.nix
-{ repoRoot, inputs, pkgs, lib, system }:
-let 
-  project = lib.iogx.mkHaskellProject {
-    cabalProject = {
-      compiler-nix-name = "ghc8107";
-
-      flake.variants.profiled = { 
-        modules = [{ 
-          enableProfiling = true; 
-          enableLibraryProfiling = true; 
-        }];
-      };
-
-      flake.variants.ghc928 = { 
-        compiler-nix-name = "ghc928";
-      };
-    }
-  };
-in 
-[
-  {
-    inherit (project) cabalProject;
-  }
-  {
-    pacakges.read-the-docs-site-ghc8107 = project.read-the-docs-site;
-    pacakges.read-the-docs-site-ghc928 = project.variants.ghc928.read-the-docs-site;
-  }
-  {
-    devShells.default = project.devShell;
-    devShells.profiled = project.variants.profiled.devShell;
-    devShells.ghc928 = project.variants.ghc928.devShell;
-  }
-  {
-    hydraJobs.ghc8107 = project.hydraJobs;
-    hydraJobs.ghc928 = project.variants.ghc928.hydraJobs;
-  }
-]
-
-```
-
-
-This in an attrset containing all the derivations for your project.
-
-You will want to consume this value in your flake [`mkFlake.<in>.outputs`](#mkflakeinoutputs), as shown in the example above.
-
-
----
-
-### `mkHaskellProject.<out>.iogx.apps`
+### `mkHaskellProject.<out>.apps`
 
 **Type**: attribute set
 
@@ -1033,7 +1003,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkHaskellProject.<out>.iogx.checks`
+### `mkHaskellProject.<out>.checks`
 
 **Type**: attribute set
 
@@ -1052,7 +1022,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkHaskellProject.<out>.iogx.combined-haddock`
+### `mkHaskellProject.<out>.combined-haddock`
 
 **Type**: package
 
@@ -1065,7 +1035,7 @@ The derivation for your [`mkHaskellProject.<in>.combinedHaddock`](#mkhaskellproj
 
 ---
 
-### `mkHaskellProject.<out>.iogx.cross`
+### `mkHaskellProject.<out>.cross`
 
 **Type**: attribute set
 
@@ -1094,13 +1064,13 @@ in
 This attribute contains cross-compilation variants for your project.
 
 Each variant only has two attributes: 
-- `cabalProject` the original project coming from `projectCross.<name>`
+- `cabalProject` the original project coming from `haskell.nix`'s `.projectCross.<name>`
 - `hydraJobs` that can be included directly in your flake outputs
 
 
 ---
 
-### `mkHaskellProject.<out>.iogx.devShell`
+### `mkHaskellProject.<out>.devShell`
 
 **Type**: package
 
@@ -1113,7 +1083,7 @@ The `devShell` as provided by your implementation of [`mkHaskellProject.<in>.she
 
 ---
 
-### `mkHaskellProject.<out>.iogx.flake`
+### `mkHaskellProject.<out>.flake`
 
 **Type**: attribute set
 
@@ -1124,7 +1094,7 @@ The `devShell` as provided by your implementation of [`mkHaskellProject.<in>.she
 # flake.nix 
 {
   outputs = inputs: inputs.iogx.lib.mkFlake {
-    outputs = inherit ./outputs.nix;
+    outputs = import ./outputs.nix;
   };
 }
 
@@ -1144,12 +1114,16 @@ in
 
 An attribute set that can be included in your [`mkFlake.<in>.outputs`](#mkflakeinoutputs) directly.
 
+For simple Haskell projects with no flake variants, this is all you need.
+
 It contains all the derivations for your project, but does not include project variants.
 
 If you set [`mkHaskellProject.<in>.includeMingwW64HydraJobs`](#mkhaskellprojectinincludemingww64hydrajobs) to `true`, then 
 this attrset will also include `hydraJobs.mingwW64`.
 
-This also automatically adds the `required` job using [`mkHydraRequiredJob`](#mkhydrarequiredjob).
+This also automatically adds the `hydraJobs.required` job using [`mkHydraRequiredJob`](#mkhydrarequiredjob).
+
+Below is a list of all its attributes:
 
 - `cabalProject` = [`mkHaskellProject.<out>.cabalProject`](#mkhaskellprojectoutcabalproject)
 - `devShells.default` = [`mkHaskellProject.<out>.devShell`](#mkhaskellprojectoutdevshell)
@@ -1163,13 +1137,13 @@ This also automatically adds the `required` job using [`mkHydraRequiredJob`](#mk
 - `hydraJobs.combined-haddock` = [`mkHaskellProject.<out>.combined-haddock`](#mkhaskellprojectoutcombined-haddock)
 - `hydraJobs.read-the-docs-site` = [`mkHaskellProject.<out>.read-the-docs-site`](#mkhaskellprojectoutread-the-docs-site) 
 - `hydraJobs.pre-commit-check` = [`mkHaskellProject.<out>.pre-commit-check`](#mkhaskellprojectoutpre-commit-check) 
-- `hydraJobs.mingwW64` = [`mkHaskellProject.<out>.cross.mingwW64.hydraJobs`](#mkhaskellprojectoutcrossmingww64hydrajobs)
+- `hydraJobs.mingwW64` = [`mkHaskellProject.<out>.cross.mingwW64.hydraJobs`](#mkhaskellprojectoutcrossmingww64hydrajobs) (conditionally)
 - `hydraJobs.required` = [`mkHydraRequiredJob`](#mkhydrarequiredjob)
 
 
 ---
 
-### `mkHaskellProject.<out>.iogx.hydraJobs`
+### `mkHaskellProject.<out>.hydraJobs`
 
 **Type**: attribute set
 
@@ -1186,12 +1160,12 @@ This attrset does not contain:
 - [`mkHaskellProject.<out>.read-the-docs-site`](#mkhaskellprojectoutread-the-docs-site)
 - [`mkHaskellProject.<out>.pre-commit-check`](#mkhaskellprojectoutpre-commit-check)
 
-If you need those you can use [`mkHaskellProject.<out>.iogx.defaultFlakeOutputs`](#mkhaskellprojectoutiogxdefaultflakeoutputs), or you can reference them directly from the `iogx` attrset.
+If you need those you can use [`mkHaskellProject.<out>.flake`](#mkhaskellprojectoutflake), or you can consume them directly.
 
 
 ---
 
-### `mkHaskellProject.<out>.iogx.packages`
+### `mkHaskellProject.<out>.packages`
 
 **Type**: attribute set
 
@@ -1208,7 +1182,7 @@ IOGX will fail to evaluate if some of you cabal targets have the same name.
 
 ---
 
-### `mkHaskellProject.<out>.iogx.pre-commit-check`
+### `mkHaskellProject.<out>.pre-commit-check`
 
 **Type**: package
 
@@ -1221,7 +1195,7 @@ The derivation for the [`mkShell.<in>.preCommit`](#mkshellinprecommit) coming fr
 
 ---
 
-### `mkHaskellProject.<out>.iogx.read-the-docs-site`
+### `mkHaskellProject.<out>.read-the-docs-site`
 
 **Type**: package
 
@@ -1229,12 +1203,12 @@ The derivation for the [`mkShell.<in>.preCommit`](#mkshellinprecommit) coming fr
 
 
 
-The derivation for your [`mkHaskellProject.<in>.readTheDocs`](#mkhaskellprojectinreadthedocs).
+The derivation for your [`mkHaskellProject.<in>.readTheDocs`](#mkhaskellprojectinreadthedocs) site.
 
 
 ---
 
-### `mkHaskellProject.<out>.iogx.variants`
+### `mkHaskellProject.<out>.variants`
 
 **Type**: attribute set
 
@@ -1309,7 +1283,7 @@ lib.iogx.mkShell {
   preCommit = {
     shellcheck.enable = true;
   };
-  tools.haskellCompilerVersion = "ghc8103";
+  tools.haskellCompilerVersion = "ghc8107";
 };
 
 ```
@@ -1481,6 +1455,7 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -1597,6 +1572,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -1713,6 +1689,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -1829,6 +1806,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -1945,6 +1923,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -2061,6 +2040,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -2177,6 +2157,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -2293,6 +2274,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -2409,6 +2391,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -2525,6 +2508,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 {
   enable = false;
   extraOptions = "";
+  package = null;
 }
 ```
 
@@ -3046,6 +3030,7 @@ If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintool
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
   tools.haskellCompilerVersion = "ghc8107";
+  # ^^^^^ This will bring the haskell tools in your shell
 }
 
 ```
@@ -3055,23 +3040,13 @@ The haskell compiler version.
 
 This determines the version of other tools like `cabal-install` and `haskell-language-server`.
 
-This option must be set to a value.
+If this option is unset of null, then no Haskell tools will be made available in the shell.
 
-If you have a `cabalProject`, you should use its `compiler-nix-name`:
-```nix
-# shell.nix
-{ repoRoot, inputs, pkgs, lib, system }:
+However if you enable some Haskell-specific [`mkShell.<in>.preCommit`](#mkshellinprecommit) hooks, then 
+that Haskell tools will be installed automatically using `ghc8107` as the default compiler version.
 
-cabalProject: 
-
-lib.iogx.mkShell {
-  tools.haskellCompilerVersion = cabalProject.args.compiler-nix-name;
-}
-```
-
-The example above will use the same compiler version as your project.
-
-IOGX does this automatically when creating a shell with [`mkHaskellProject.<in>.shellArgs`](#mkhaskellprojectinshellargs).
+When using [`mkHaskellProject.<in>.shellArgs`](#mkhaskellprojectinshellargs), this option is automatically set to 
+the same value as the project's (or project variant's) `compiler-nix-name`.
 
 
 ---

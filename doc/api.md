@@ -1,13 +1,14 @@
-# Options Reference 
 
-1. [`flake.nix`](#flakenix) 
-    The options for this flake.
-1. [`inputs.iogx.lib.mkFlake`](#mkflake) 
-    Makes your flake outputs.
-2. [`pkgs.lib.iogx.mkHaskellProject`](#mkhaskellproject) 
-    Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
-3. [`pkgs.lib.iogx.mkShell`](#mkshell)
-    Makes a `devShell` with `pre-commit-check` and tools.
+# API Reference 
+
+1. [`./flake.nix`](#flakenix) 
+    - Top-level ./flake.nix file.
+2. [`inputs.iogx.lib.mkFlake`](#mkflake) 
+    - Makes your flake outputs.
+3. [`pkgs.lib.iogx.mkHaskellProject`](#mkhaskellproject) 
+    - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+4. [`pkgs.lib.iogx.mkShell`](#mkshell)
+    - Makes a `devShell` with `pre-commit-check` and tools.
 
 ---
 
@@ -19,6 +20,16 @@
 
 
 
+The `flake.nix` file for your project.
+
+This is included in the templates:
+```bash
+# For Haskell Projects
+nix flake init --template github:input-output-hk/iogx#haskell
+
+# For Other Projects
+nix flake init --template github:input-output-hk/iogx#vanilla
+```
 
 
 ---
@@ -268,7 +279,7 @@ Your flake `outputs` are produced using [`mkFlake`](#mkflake).
 
 ### `mkFlake`
 
-**Type**: core API function
+**Type**: Core API Function
 
 
 
@@ -586,7 +597,7 @@ The [`mkFlake.<in>.outputs`](#mkflakeinoutputs) function will be called once for
 
 ### `mkHaskellProject`
 
-**Type**: core API function
+**Type**: Core API Function
 
 
 
@@ -870,7 +881,8 @@ lib.iogx.mkHaskellProject {
 ```
 
 
-A Nix string representing a path, relative to the repository root, to your site folder containing the `conf.py` file.
+A Nix string representing a path, relative to the repository root, to 
+your site folder containing the `conf.py` file.
 
 
 ---
@@ -909,7 +921,8 @@ lib.iogx.mkHaskellProject {
 ```
 
 
-A python environment with the required packages to build your site using sphinx.
+A python environment with the required packages to build your site 
+using sphinx.
 
 Normally you don't need to override this.
 
@@ -1268,7 +1281,7 @@ See the example above for more information.
 
 ### `mkShell`
 
-**Type**: core API function
+**Type**: Core API Function
 
 
 

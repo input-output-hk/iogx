@@ -92,14 +92,13 @@
         devShells.default = lib.iogx.mkShell {
           name = "iogx";
           packages = [ pkgs.github-cli pkgs.python39 ];
-          scripts.build-docs = {
+          scripts.render-iogx-api-reference = {
             group = "iogx";
             description = "Produce ./doc/options.md";
             exec = ''
               set -e
-              nix build .#render-iogx-api-reference --system x86_64-darwin --show-trace --out-link options.md
-              cp options.md doc/options.md
-              rm options.md
+              nix build .#render-iogx-api-reference --system x86_64-darwin --show-trace
+              cp result doc/api.md
             '';
           };
         };

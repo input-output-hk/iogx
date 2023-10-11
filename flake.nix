@@ -102,29 +102,6 @@
 
         packages.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
 
-        packages.test = pkgs.haskell-nix.cabalProject' {
-          cabalProjectLocal = ''
-          '';
-
-          src = pkgs.fetchFromGitHub {
-            owner = "haskell";
-            repo = "haskell-language-server";
-            rev = "2.1.0.0";
-            sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
-          };
-
-          compiler-nix-name = "ghc96";
-
-          sha256map = {
-            "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line
-          };
-
-          modules = [{
-            # See https://github.com/haskell/haskell-language-server/pull/1382#issuecomment-780472005
-            packages.ghcide.flags.ghc-patched-unboxed-bytecode = true;
-          }];
-        };
-
         hydraJobs.devShells.ghc810 = mkDevShell lib "ghc810";
         hydraJobs.devShells.ghc92 = mkDevShell lib "ghc92";
         hydraJobs.devShells.ghc96 = mkDevShell lib "ghc96";

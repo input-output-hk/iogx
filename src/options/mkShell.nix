@@ -105,7 +105,7 @@ let
           "ghc928"
           "ghc96"
           "ghc962"
-          "ghc98"
+          "ghc981"
         ]);
         description = ''
           The haskell compiler version.

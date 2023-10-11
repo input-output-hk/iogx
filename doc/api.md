@@ -6,7 +6,7 @@
 2. [`inputs.iogx.lib.mkFlake`](#mkflake) 
     - Makes your flake outputs.
 3. [`pkgs.lib.iogx.mkHaskellProject`](#mkhaskellproject) 
-    - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+    - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
 4. [`pkgs.lib.iogx.mkShell`](#mkshell)
     - Makes a `devShell` with `pre-commit-check` and tools.
 
@@ -261,6 +261,61 @@ If Nix starts building `GHC` or other large artifacts that means that your cache
 
 
 Your flake `outputs` are produced using [`mkFlake`](#mkflake).
+
+
+---
+
+### `_module.args`
+
+**Type**: lazy attribute set of raw value
+
+
+
+
+
+Additional arguments passed to each module in addition to ones
+like `lib`, `config`,
+and `pkgs`, `modulesPath`.
+
+This option is also available to all submodules. Submodules do not
+inherit args from their parent module, nor do they provide args to
+their parent module or sibling submodules. The sole exception to
+this is the argument `name` which is provided by
+parent modules to a submodule and contains the attribute name
+the submodule is bound to, or a unique generated name if it is
+not bound to an attribute.
+
+Some arguments are already passed by default, of which the
+following *cannot* be changed with this option:
+- {var}`lib`: The nixpkgs library.
+- {var}`config`: The results of all options after merging the values from all modules together.
+- {var}`options`: The options declared in all modules.
+- {var}`specialArgs`: The `specialArgs` argument passed to `evalModules`.
+- All attributes of {var}`specialArgs`
+
+  Whereas option values can generally depend on other option values
+  thanks to laziness, this does not apply to `imports`, which
+  must be computed statically before anything else.
+
+  For this reason, callers of the module system can provide `specialArgs`
+  which are available during import resolution.
+
+  For NixOS, `specialArgs` includes
+  {var}`modulesPath`, which allows you to import
+  extra modules from the nixpkgs package tree without having to
+  somehow make the module aware of the location of the
+  `nixpkgs` or NixOS directories.
+  ```
+  { modulesPath, ... }: {
+    imports = [
+      (modulesPath + "/profiles/minimal.nix")
+    ];
+  }
+  ```
+
+For NixOS, the default value for this option includes at least this argument:
+- {var}`pkgs`: The nixpkgs package set according to
+  the {option}`nixpkgs.pkgs` option.
 
 
 ---
@@ -3019,7 +3074,7 @@ If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintool
 
 ### `mkShell.<in>.tools.haskellCompilerVersion`
 
-**Type**: null or one of "ghc8107", "ghc928", "ghc927", "ghc962", "ghc810", "ghc92", "ghc96"
+**Type**: null or one of "ghc810", "ghc8107", "ghc92", "ghc927", "ghc928", "ghc96", "ghc962", "ghc981"
 
 **Default**: `null`
 

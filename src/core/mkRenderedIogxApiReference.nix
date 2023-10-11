@@ -91,7 +91,7 @@ lib.toFile "api.md" ''
   2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
       - Makes your flake outputs.
   3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
-      - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project decorated with the `iogx` overlay.
+      - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
   4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
       - Makes a `devShell` with `pre-commit-check` and tools.
 

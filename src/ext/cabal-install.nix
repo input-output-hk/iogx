@@ -8,7 +8,7 @@ let
     if lib.hasInfix "ghc810" ghc then
       "3.6.2.0"
     else if lib.hasInfix "ghc92" ghc then
-      "3.8.1.0"
+      "3.10.1.0"
     else
       "3.10.1.0";
 

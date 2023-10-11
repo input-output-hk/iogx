@@ -1,12 +1,12 @@
-{ repoRoot, inputs, lib, system, ... }:
+{ repoRoot, inputs, pkgs, lib, system }:
 
 let
 
   cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: 
-    # NOTE: YOU MUST USE THE `pkgs` ABOVE FOR INSIDE THIS FUNCTION CALL.
     # Notice that the `pkgs` has been ellipsed (...) on line 1 of this file.
     let 
       # When `isCross` is `true`, it means that we are cross-compiling the project.
+      # NOTE: YOU MUST USE THE `pkgs` ABOVE INSIDE THE BODY OF cabalProject'.
       isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
     in 
     {
@@ -15,7 +15,7 @@ let
       # shell.withHoogle = false;
 
       inputMap = {
-        "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.CHaP;
+        "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.iogx.inputs.CHaP;
       };
 
       name = "my-project";
@@ -57,7 +57,7 @@ let
       
       shellArgs = repoRoot.nix.shell;
 
-      # enableCrossCompileMingwW64 = false; 
+      # includeMingwW64HydraJobs = false; 
 
       # readTheDocs = {
       #   enable = false;

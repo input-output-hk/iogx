@@ -15,7 +15,8 @@ let
 
     name = "cabal-install";
 
-    inherit version;
+    # inherit version;
+    version = "3.10.1.0";
 
     compiler-nix-name = ghc;
 

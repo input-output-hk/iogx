@@ -9,7 +9,7 @@
       inputs.hackage.follows = "hackage";
     };
 
-    nixpkgs.follows = "haskell-nix/nixpkgs-2305";
+    nixpkgs.follows = "haskell-nix/nixpkgs";
 
     hackage = {
       url = "github:input-output-hk/hackage.nix";
@@ -45,6 +45,22 @@
   outputs = inputs:
     let
       mkFlake = import ./src/mkFlake.nix inputs;
+
+      mkDevShell = lib: ghc: lib.iogx.mkShell {
+        tools.haskellCompilerVersion = ghc;
+        preCommit = {
+          cabal-fmt.enable = true;
+          stylish-haskell.enable = true;
+          fourmolu.enable = true;
+          hlint.enable = true;
+          shellcheck.enable = true;
+          prettier.enable = true;
+          editorconfig-checker.enable = true;
+          nixpkgs-fmt.enable = true;
+          optipng.enable = true;
+          purs-tidy.enable = true;
+        };
+      };
     in
     mkFlake rec {
       inherit inputs;
@@ -80,18 +96,26 @@
         options = import ./src/options inputs;
       };
 
-      outputs = { repoRoot, pkgs, lib, ... }: [{
+      outputs = { repoRoot, inputs, pkgs, lib, ... }: [{
 
         _repoRoot = repoRoot;
 
         packages.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
 
-        hydraJobs.required = lib.iogx.mkHydraRequiredJob {};
-        hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference; 
+        hydraJobs.devShells.ghc810 = mkDevShell "ghc810";
+        hydraJobs.devShells.ghc92 = mkDevShell "ghc92";
+        hydraJobs.devShells.ghc96 = mkDevShell "ghc96";
+        hydraJobs.devShells.ghc98 = mkDevShell "ghc98";
+        hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+        hydraJobs.required = lib.iogx.mkHydraRequiredJob { };
 
         devShells.default = lib.iogx.mkShell {
           name = "iogx";
           packages = [ pkgs.github-cli pkgs.python39 ];
+          preCommit = {
+            editorconfig-checker.enable = true;
+            nixpkgs-fmt.enable = true;
+          };
           scripts.render-iogx-api-reference = {
             group = "iogx";
             description = "Produce ./doc/options.md";

@@ -36,13 +36,13 @@ let
   };
 
 
-  ghc = 
-    if shell.tools.haskellCompilerVersion == null 
-    then "ghc8107" 
+  ghc =
+    if shell.tools.haskellCompilerVersion == null
+    then "ghc8107"
     else shell.tools.haskellCompilerVersion;
 
 
-  hls = repoRoot.src.ext."haskell-language-server-project-${ghc}";
+  hls = repoRoot.src.ext.haskell-language-server-project ghc;
 
 
   purescript = pkgs.callPackage iogx-inputs.easy-purescript-nix { };
@@ -171,7 +171,7 @@ let
 
   mkPreCommitHook = name: hook: lib.mkForce {
     entry =
-      "${lib.getExe hook.package} " +
+      "${lib.getExe' hook.package name} " +
       "${utils.getAttrWithDefault "options" "" hook} " +
       "${utils.getAttrWithDefault "extraOptions" "" hook}";
 
@@ -187,10 +187,10 @@ let
   };
 
 
-  toolchain-profile = 
-    let 
-      should-include-haskell-tools = 
-        shell.tools.haskellCompilerVersion != null || 
+  toolchain-profile =
+    let
+      should-include-haskell-tools =
+        shell.tools.haskellCompilerVersion != null ||
         pre-commit-hooks.cabal-fmt.enable ||
         pre-commit-hooks.stylish-haskell.enable ||
         pre-commit-hooks.fourmolu.enable ||
@@ -198,7 +198,7 @@ let
 
       haskell-tools = [
         shell-tools.haskell-language-server
-        shell-tools.haskell-language-server-wrapper 
+        shell-tools.haskell-language-server-wrapper
         shell-tools.cabal-install
         shell-tools.cabal-fmt
         shell-tools.stylish-haskell
@@ -206,15 +206,15 @@ let
         shell-tools.hlint
       ];
 
-      pre-commit-packages = 
+      pre-commit-packages =
         let getPkg = _: hook: if hook.enable then hook.package else null;
-        in lib.mapAttrsToList getPkg pre-commit-hooks; 
+        in lib.mapAttrsToList getPkg pre-commit-hooks;
 
-      packages = 
-        pre-commit-packages ++ 
+      packages =
+        pre-commit-packages ++
         lib.optional should-include-haskell-tools haskell-tools;
-    in 
-      { inherit packages; };
+    in
+    { inherit packages; };
 
 
   pre-commit-check = iogx-inputs.pre-commit-hooks-nix.lib.${system}.run {
@@ -223,9 +223,12 @@ let
   };
 
 
-  pre-commit-profile-packages = lib.mapAttrsToList (name: hook:
-    if hook.enable then hook.package else null
-  ) pre-commit-hooks;
+  pre-commit-profile-packages = lib.mapAttrsToList
+    (name: hook:
+      if hook.enable then hook.package else null
+    )
+    pre-commit-hooks;
+
 
   pre-commit-profile = {
     packages = [ pkgs.pre-commit ];
@@ -255,7 +258,7 @@ let
 
 
   base-profile = repoRoot.src.core.mkMergedShellProfiles (
-    extra-shell-profiles ++ 
+    extra-shell-profiles ++
     [
       pre-commit-profile
       shell-as-shell-profile
@@ -271,9 +274,9 @@ let
   };
 
 
-  final-profile = repoRoot.src.core.mkMergedShellProfiles [ 
-    base-profile 
-    utility-scripts-profile 
+  final-profile = repoRoot.src.core.mkMergedShellProfiles [
+    base-profile
+    utility-scripts-profile
   ];
 
 

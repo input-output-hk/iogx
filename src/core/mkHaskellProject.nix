@@ -20,8 +20,8 @@ let
 
   readTheDocs = lib.recursiveUpdate haskellProject.readTheDocs {
 
-    sphinxToolchain = 
-      if haskellProject.readTheDocs.sphinxToolchain == null 
+    sphinxToolchain =
+      if haskellProject.readTheDocs.sphinxToolchain == null
       then repoRoot.src.ext.sphinx-toolchain
       else haskellProject.readTheDocs.sphinxToolchain;
   };
@@ -51,9 +51,9 @@ let
         if lib.length duplicates == 0 then
           makeAliasesForGroup group
         else
-          warnDuplicateComponentNames duplicates { };
+          errorDuplicateComponentNames duplicates { };
 
-      warnDuplicateComponentNames = duplicates: utils.iogxThrow ''
+      errorDuplicateComponentNames = duplicates: utils.iogxThrow ''
         There are multiple components with the same name across your cabal files:
 
           ${lib.concatStringsSep " " duplicates}
@@ -78,8 +78,8 @@ let
     in
     { inherit packages env; };
 
-  
-  mkProjectDevShell = project: 
+
+  mkProjectDevShell = project:
     let
       read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile readTheDocs;
       cabal-project-profile = mkProjectShellProfile project;
@@ -88,13 +88,13 @@ let
       tools-args = { tools.haskellCompilerVersion = project.args.compiler-nix-name; };
       project-args = haskellProject.shellArgs project;
       shell-args = lib.recursiveUpdate tools-args project-args;
-    in 
-      repoRoot.src.core.mkShellWith shell-args shell-profiles;
+    in
+    repoRoot.src.core.mkShellWith shell-args shell-profiles;
 
 
   mkProjectVariantOutputs = project:
-    let 
-      devShell = mkProjectDevShell project; 
+    let
+      devShell = mkProjectDevShell project;
       devShells.default = devShell;
 
       originalFlake = pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };
@@ -109,7 +109,7 @@ let
       combined-haddock = repoRoot.src.core.mkCombinedHaddock project haskellProject.combinedHaddock;
       read-the-docs-site = repoRoot.src.core.mkReadTheDocsSite readTheDocs combined-haddock;
       pre-commit-check = devShell.pre-commit-check;
-    in 
+    in
     {
       cabalProject = project;
       inherit apps checks packages devShells devShell hydraJobs;
@@ -117,34 +117,34 @@ let
     };
 
 
-  mkCrossVariantOutputs = project: 
-    let 
-      flake = pkgs.haskell-nix.haskellLib.mkFlake project {};
+  mkCrossVariantOutputs = project:
+    let
+      flake = pkgs.haskell-nix.haskellLib.mkFlake project { };
       hydraJobs = removeAttrs flake.hydraJobs [ "devShell" "devShells" ];
-    in 
-    { 
+    in
+    {
       cabalProject = project;
-      inherit hydraJobs; 
+      inherit hydraJobs;
     };
 
 
   iogx-project =
-    let 
+    let
       base = haskellProject.cabalProject;
 
-      mkProjectVariant = project: 
-        ( mkProjectVariantOutputs project ) // 
+      mkProjectVariant = project:
+        (mkProjectVariantOutputs project) //
         { cross = utils.mapAttrValues mkCrossVariantOutputs project.projectCross; };
 
       # { cabalProject, cross, variants
       # , combined-haddock, read-the-docs-site pre-commit-check
       # , packages/checks/apps/devShells/hydraJobs }
-      project = 
-        ( mkProjectVariant base ) //
-        { variants = utils.mapAttrValues mkProjectVariant base.projectVariants; }; 
-      
-      extra-packages = { 
-        inherit (project) combined-haddock read-the-docs-site pre-commit-check; 
+      project =
+        (mkProjectVariant base) //
+        { variants = utils.mapAttrValues mkProjectVariant base.projectVariants; };
+
+      extra-packages = {
+        inherit (project) combined-haddock read-the-docs-site pre-commit-check;
       };
 
       flake = {
@@ -152,16 +152,16 @@ let
         _iogx = project;
         packages = project.packages // extra-packages;
         hydraJobs = # TODO profiled
-          project.hydraJobs // 
-          extra-packages // 
+          project.hydraJobs //
+          extra-packages //
           utils.mapAttrValues (project: project.hydraJobs) project.variants //
-          { required = repoRoot.src.core.mkHydraRequiredJob {}; } //
-          lib.optionalAttrs 
+          { required = repoRoot.src.core.mkHydraRequiredJob { }; } //
+          lib.optionalAttrs
             (system == "x86_64-linux" && haskellProject.includeMingwW64HydraJobs)
-            { mingwW64 = project.cross.mingwW64.hydraJobs; }; 
+            { mingwW64 = project.cross.mingwW64.hydraJobs; };
       };
-    in 
-      project // { inherit flake; };
+    in
+    project // { inherit flake; };
 
 in
 

@@ -4,12 +4,12 @@ let
 
   evaluated-modules = lib.evalModules {
     modules = [{
-      options = { 
-        inherit (inputs.self.lib.options) 
+      options = {
+        inherit (inputs.self.lib.options)
           # Note: the `.<in>` submodules are rendered implicitly.
-          "flake.nix" 
-          mkFlake 
-          mkHaskellProject 
+          "flake.nix"
+          mkFlake
+          mkHaskellProject
           mkShell;
       };
     }];
@@ -30,10 +30,10 @@ let
       (lib.mapAttrsToList mkMarkdownForOption options-doc-nix);
 
 
-  cleanupName = name: 
-    lib.replaceStrings 
-      [ "\"<in>\"" "\"<out>\"" "<function body>" ] 
-      [ "<in>" "<out>" "<func>" ] 
+  cleanupName = name:
+    lib.replaceStrings
+      [ "\"<in>\"" "\"<out>\"" "<function body>" ]
+      [ "<in>" "<out>" "<func>" ]
       name;
 
 
@@ -82,20 +82,21 @@ let
 
 in
 
-lib.toFile "api.md" ''
+pkgs.writeText "api.md" ''
 
-  # API Reference 
+    # API Reference 
 
-  1. ${lib.iogx.utils.headerToLocalMarkDownLink "./flake.nix" "flake.nix"} 
-      - Top-level ./flake.nix file.
-  2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
-      - Makes your flake outputs.
-  3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
-      - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
-  4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
-      - Makes a `devShell` with `pre-commit-check` and tools.
+    1. ${lib.iogx.utils.headerToLocalMarkDownLink "./flake.nix" "flake.nix"} 
+        - Top-level ./flake.nix file.
+    2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
+        - Makes your flake outputs.
+    3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
+        - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
+    4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
+        - Makes a `devShell` with `pre-commit-check` and tools.
 
-  ${options-doc-markdown}
-''
+    ${options-doc-markdown}
+  ''
+
 
 

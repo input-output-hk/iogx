@@ -68,9 +68,6 @@ pkgs.haskell-nix.cabalProject' {
     # See https://github.com/haskell/haskell-language-server/pull/1382#issuecomment-780472005
     packages.ghcide.flags.ghc-patched-unboxed-bytecode = true;
 
-    packages.haskell-language-server.components.exes.haskell-language-server.dontStrip = false;
-    packages.haskell-language-server.components.exes.haskell-language-server-wrapper.dontStrip = false;
-    packages.stylish-haskell.components.exes.stylish-haskell.dontStrip = false;
-    packages.hlint.components.exes.hlint.dontStrip = false;
+    dontStrip = false;
   }];
 }

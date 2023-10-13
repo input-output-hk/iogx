@@ -14,6 +14,10 @@ let
     cabalProjectLocal = '' 
       constraints: aeson==2.1.2.1
     '';
+
+    modules = [{
+      packages.fourmolu.components.exes.fourmolu.dontStrip = false;
+    }];
   };
 
 in

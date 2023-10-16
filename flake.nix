@@ -105,7 +105,6 @@
         hydraJobs.devShells.ghc810 = mkDevShell lib "ghc810";
         hydraJobs.devShells.ghc92 = mkDevShell lib "ghc92";
         hydraJobs.devShells.ghc96 = mkDevShell lib "ghc96";
-        # hydraJobs.devShells.ghc98 = mkDevShell lib "ghc98";
         hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
         hydraJobs.required = lib.iogx.mkHydraRequiredJob { };
 
@@ -127,6 +126,26 @@
               set -e
               nix build .#render-iogx-api-reference --show-trace "$@"
               cp result doc/api.md
+            '';
+          };
+          scripts.find-repos-that-use-iogx = {
+            group = "iogx";
+            description = "Find consumers of iogx in input-output-hk";
+            exec = ''
+              GITHUB_TOKEN=$1 
+              repos=$(gh repo list input-output-hk --json name --source --limit 1000 | jq -c '.[]')
+              for repo in $repos; do
+                repo_name=$(echo $repo | jq -r .name)
+                curl \
+                  -O \
+                  -s \
+                  -H "\'Authorization: token $GITHUB_TOKEN\'" \
+                  -H 'Accept: application/vnd.github.v3.raw' \
+                  -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.nix"
+                if cat flake.nix | grep -q "input-output-hk/iogx"; then 
+                  echo "input-output-hk/$repo_name"
+                fi
+              done
             '';
           };
         };

@@ -1,6 +1,7 @@
 { repoRoot, inputs, pkgs, lib, system }:
 
-{
+lib.iogx.mkShell {
+
   name = "nix-shell";
 
   # prompt = null;

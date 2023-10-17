@@ -46,7 +46,7 @@ If your project needs a [Read The Docs](https://readthedocs.org) site then IOGX 
 
 # 3. API Reference 
 
-The `flake.nix` file and all library functions are documented in the [API Reference](./doc/options.md).
+The `flake.nix` file and all library functions are documented in the [API Reference](./doc/api.md).
 
 # 4. Future Work
 

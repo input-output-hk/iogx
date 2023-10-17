@@ -1,14 +1,13 @@
-{ repoRoot, inputs, pkgs, lib, system }:
+{ repoRoot, inputs, pkgs, system, lib }:
 
 let
 
-  cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }: 
-    # Notice that the `pkgs` has been ellipsed (...) on line 1 of this file.
-    let 
+  cabalProject = pkgs.haskell-nix.cabalProject' ({ pkgs, config, ... }:
+    let
       # When `isCross` is `true`, it means that we are cross-compiling the project.
-      # NOTE: YOU MUST USE THE `pkgs` ABOVE INSIDE THE BODY OF cabalProject'.
+      # WARNING You must use the `pkgs` coming from cabalProject' for `isCross` to work.
       isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
-    in 
+    in
     {
       src = ../.;
 
@@ -49,28 +48,28 @@ let
     });
 
 
-    cabalProject = cabalProject'.appendOverlays [ ];
+  cabalProject = cabalProject'.appendOverlays [ ];
 
 
-    project = lib.iogx.mkHaskellProject {
-      inherit cabalProject;
-      
-      shellArgs = repoRoot.nix.shell;
+  project = lib.iogx.mkHaskellProject {
+    inherit cabalProject;
 
-      # includeMingwW64HydraJobs = false; 
+    shellArgs = repoRoot.nix.shell;
 
-      # readTheDocs = {
-      #   enable = false;
-      #   siteFolder = "doc/read-the-docs-site";
-      #   sphinxToolchain = null;
-      # };
+    # includeMingwW64HydraJobs = false; 
 
-      # combinedHaddock = {
-      #   enable = false;
-      #   prologue = "";
-      #   packages = [];
-      # };
-    };
+    # readTheDocs = {
+    #   enable = false;
+    #   siteFolder = "doc/read-the-docs-site";
+    #   sphinxToolchain = null;
+    # };
+
+    # combinedHaddock = {
+    #   enable = false;
+    #   prologue = "";
+    #   packages = [];
+    # };
+  };
 
 in
 

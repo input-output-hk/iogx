@@ -1,17 +1,21 @@
-{ l }:
+iogx-inputs:
 
 { root, module, args, debug ? false }:
 
 let
 
+  l = builtins // iogx-inputs.nixpkgs.lib;
+
+
   fileToModule = dir: path:
     if !l.pathExists "${dir}/${path}" then
-      l.pthrow ("[modularise] there is no file/folder named ${path} in directory ${dir}")
+      l.pthrow ("[modularise.nix] there is no file/folder named ${path} in directory ${dir}")
     else if l.hasSuffix ".nix" path then
       let
         name = l.removeSuffix ".nix" path;
+        # TODO check that import "${dir}/${path}" is a function and warn otherwise
         value = import "${dir}/${path}" (args // { ${module} = __module__; });
-        trace = l.ptrace ("[modularise] importing ${dir}/${path}");
+        trace = l.ptrace ("[modularise.nix] importing ${dir}/${path}");
         value' = if debug then trace value else value;
       in
       l.nameValuePair name value
@@ -33,12 +37,12 @@ let
     else if type == "regular" then
       fileToModule dir path
     else
-      l.pthrow "[modularise] unexpected file ${dir}/${path} of type ${type}.";
+      l.pthrow "[modularise.nix] unexpected file ${dir}/${path} of type ${type}";
 
 
   mkModule = path:
     if !l.pathExists path then
-      l.pthrow "[modularise] path ${path} does not exist."
+      l.pthrow "[modularise.nix] path ${path} does not exist"
     else
       (dirToModule "" path).value;
 

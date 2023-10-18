@@ -135,27 +135,27 @@ let
     ansiColor = text: fg: style:
       let
         colors = {
-          black = "30";
-          red = "31";
-          green = "32";
-          yellow = "33";
-          blue = "34";
-          purple = "35";
-          cyan = "36";
-          white = "37";
+          black = ";30";
+          red = ";31";
+          green = ";32";
+          yellow = ";33";
+          blue = ";34";
+          purple = ";35";
+          cyan = ";36";
+          white = ";37";
         };
 
-        colorBit = getAttrWithDefault fg "white" colors;
+        colorBit = getAttrWithDefault fg "" colors;
 
         boldBit = if style == "bold" then "1" else "0";
       in
-      "\\033[${boldBit};${colorBit}m${text}\\033[0m";
+      "\\033[${boldBit}${colorBit}m${text}\\033[0m";
 
 
     shellEscape = s: (l.replaceStrings [ "\\" ] [ "\\\\" ] s);
 
 
-    ansiBold = text: ansiColor text "white" "bold";
+    ansiBold = text: ansiColor text "" "bold";
 
 
     ansiColorEscaped = text: fg: style: shellEscape (ansiColor text fg style);

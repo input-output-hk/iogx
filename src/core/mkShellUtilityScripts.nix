@@ -28,7 +28,7 @@ let
             commands = lib.mapAttrsToList mkCommand user-inputs.self.${group}.${system};
           in
           ''
-            ${utils.ansiColor group "yellow" "bold"}
+            ${utils.ansiColor group "purple" "bold"}
 
             ${lib.concatStringsSep "\n" commands}''
         else
@@ -72,7 +72,7 @@ let
           formatted-group = lib.concatStrings (lib.mapAttrsToList formatScript scripts);
         in
         ''
-          ${utils.ansiColor "λ ${group}" "yellow" "bold"}
+          ${utils.ansiColor "λ ${group}" "purple" "bold"}
           ${formatted-group}
         '';
 

@@ -8,8 +8,10 @@
       inputs.hackage.follows = "hackage";
       inputs.CHaP.follows = "CHaP";
       inputs.haskell-nix.follows = "haskell-nix";
-      inputs.nixpkgs.follows = "haskell-nix/nixpkgs-2305";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixpkgs.follows = "haskell-nix/nixpkgs";
 
     hackage = {
       url = "github:input-output-hk/hackage.nix";

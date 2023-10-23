@@ -151,14 +151,16 @@ let
         inherit (project) devShell devShells apps checks cabalProject;
         _iogx = project;
         packages = project.packages // extra-packages;
-        hydraJobs = # TODO profiled
+        hydraJobs = lib.optionalAttrs (system != "aarch64-linux") (
+          # TODO profiled
           project.hydraJobs //
           extra-packages //
           utils.mapAttrValues (project: project.hydraJobs) project.variants //
           { required = repoRoot.src.core.mkHydraRequiredJob { }; } //
           lib.optionalAttrs
             (system == "x86_64-linux" && haskellProject.includeMingwW64HydraJobs)
-            { mingwW64 = project.cross.mingwW64.hydraJobs; };
+            { mingwW64 = project.cross.mingwW64.hydraJobs; }
+        );
       };
     in
     project // { inherit flake; };

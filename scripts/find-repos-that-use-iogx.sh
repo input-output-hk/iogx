@@ -14,6 +14,7 @@ check_one_repo() {
 
   curl \
     --max-time 5 \
+    -s \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H 'Accept: application/vnd.github.v3.raw' \
     -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.lock" \
@@ -21,6 +22,7 @@ check_one_repo() {
 
   curl \
     --max-time 5 \
+    -s \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H 'Accept: application/vnd.github.v3.raw' \
     -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.nix" \
@@ -50,7 +52,7 @@ check_all_repos() {
   done
 }
 
-
-check_all_repos
+printf "%-64s   %-40s   %-10s   %s\n" "repo" "iogx gitrev" "iogx time" "depend"
+check_all_repos | sort -rk3
 
 wait 

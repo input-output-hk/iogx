@@ -123,39 +123,12 @@
           scripts.render-iogx-api-reference = {
             group = "iogx";
             description = "Produce ./doc/options.md";
-            exec = ''
-              set -e
-              nix build .#render-iogx-api-reference --show-trace "$@"
-              cp result doc/api.md
-            '';
+            exec = repoRoot.scripts."render-iogx-api-reference.sh";
           };
           scripts.find-repos-that-use-iogx = {
             group = "iogx";
             description = "Find consumers of iogx in input-output-hk";
-            exec = ''
-              if [ -z "$1" ]; then
-                echo "usage: find-repos-that-use-iogx GITHUB_TOKEN"
-                exit 1
-              fi
-              GITHUB_TOKEN="$1"
-              flake_lock=$(mktemp)
-              repos=$(gh repo list input-output-hk --json name --source --limit 1000 | jq -c '.[]')
-              for repo in $repos; do
-                repo_name=$(echo $repo | jq -r .name)
-                curl \
-                  -s \
-                  -H "Authorization: token $GITHUB_TOKEN" \
-                  -H 'Accept: application/vnd.github.v3.raw' \
-                  -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.lock" \
-                  > $flake_lock
-                hash="$(jq -r '.nodes.iogx.locked.rev' $flake_lock)"
-                if [ "$hash" != "null" ]; then
-                  timestamp="$(jq -r '.nodes.iogx.locked.lastModified' $flake_lock)"
-                  datetime=$(date -d "@$timestamp" "+%Y-%m-%d %H:%M:%S")
-                  printf "%-64s -> %s (%s)\n" "https://www.github.com/input-output-hk/$repo_name" "$hash" "$datetime"
-                fi
-              done
-            '';
+            exec = repoRoot.scripts."find-repos-that-use-iogx.sh";
           };
         };
       }];

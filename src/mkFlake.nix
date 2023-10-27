@@ -19,7 +19,7 @@ let
   # TODO when we bump haskell-nix, check if this is still needed.
   prefetch-npm-deps-overlay = prev: _:
     let
-      stable-pkgs = import iogx-inputs.nixpkgs-stables { inherit (prev) system; };
+      stable-pkgs = import iogx-inputs.nixpkgs-stable { inherit (prev) system; };
     in
     {
       prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;

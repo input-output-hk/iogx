@@ -706,6 +706,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-with-working-prefetch-npm-deps": {
+      "locked": {
+        "lastModified": 1690680713,
+        "narHash": "sha256-NXCWA8N+GfSQyoN7ZNiOgq/nDJKOp5/BHEpiZP8sUZw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b81af66deb21f73a70c67e5ea189568af53b1e8c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b81af66deb21f73a70c67e5ea189568af53b1e8c",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1689261696,
@@ -773,6 +789,7 @@
           "haskell-nix",
           "nixpkgs"
         ],
+        "nixpkgs-with-working-prefetch-npm-deps": "nixpkgs-with-working-prefetch-npm-deps",
         "pre-commit-hooks-nix": "pre-commit-hooks-nix",
         "sphinxcontrib-haddock": "sphinxcontrib-haddock"
       }

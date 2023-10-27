@@ -13,6 +13,16 @@ let
   };
 
 
+  # prefetch-npm-deps is broken in the current version of nixpkgs (which is 
+  # nixpkgs-unstable coming from haskell.nix), so we need this hack.
+  # TODO when we bump haskell-nix, check if this is still needed.
+  prefetch-npm-deps-overlay = prev: _: {
+    prefetch-npm-deps =
+      let pkgs = import iogx-inputs.nixpkgs-with-working-prefetch-npm-deps { inherit (prev) system; };
+      in pkgs.prefetch-npm-deps;
+  };
+
+
   mkNixpkgs = user-inputs: system: args:
     import iogx-inputs.nixpkgs {
       inherit system;
@@ -29,6 +39,7 @@ let
           # and so must be after them in the list of overlays to nixpkgs.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
           (mkGitRevOverlay user-inputs)
+          prefetch-npm-deps-overlay
         ]
         ++ (args.overlays or [ ]);
     };

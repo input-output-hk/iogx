@@ -11,6 +11,8 @@
 
     nixpkgs.follows = "haskell-nix/nixpkgs";
 
+    nixpkgs-with-working-prefetch-npm-deps.url = "github:NixOS/nixpkgs/b81af66deb21f73a70c67e5ea189568af53b1e8c";
+
     hackage = {
       url = "github:input-output-hk/hackage.nix";
       flake = false;

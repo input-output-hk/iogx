@@ -16,7 +16,7 @@ let
     in
     {
       prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;
-      dockerTools = stable-pkgs.docker-tools;
+      dockerTools = stable-pkgs.dockerTools;
 
       # `self.rev` is only defined when the git tree is not dirty
       gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";

@@ -15,12 +15,16 @@ let
 
   # prefetch-npm-deps is broken in the current version of nixpkgs (which is 
   # nixpkgs-unstable coming from haskell.nix), so we need this hack.
+  # Same for dockerTools
   # TODO when we bump haskell-nix, check if this is still needed.
-  prefetch-npm-deps-overlay = prev: _: {
-    prefetch-npm-deps =
-      let pkgs = import iogx-inputs.nixpkgs-with-working-prefetch-npm-deps { inherit (prev) system; };
-      in pkgs.prefetch-npm-deps;
-  };
+  prefetch-npm-deps-overlay = prev: _:
+    let
+      pkgs = import iogx-inputs.nixpkgs-with-working-prefetch-npm-deps { inherit (prev) system; };
+    in
+    {
+      prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;
+      dockerTools = stable-pkgs.docker-tools;
+    };
 
 
   mkNixpkgs = user-inputs: system: args:

@@ -6,21 +6,21 @@ let
   modularise = import ./lib/modularise.nix iogx-inputs;
   options = import ./options iogx-inputs;
 
-
-  mkGitRevOverlay = user-inputs: _: _: {
-    # `self.rev` is only defined when the git tree is not dirty
-    gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
-  };
-
-
   # prefetch-npm-deps is broken in the current version of nixpkgs (which is 
   # nixpkgs-unstable coming from haskell.nix), so we need this hack.
+  # Same for dockerTools
   # TODO when we bump haskell-nix, check if this is still needed.
-  prefetch-npm-deps-overlay = prev: _: {
-    prefetch-npm-deps =
-      let pkgs = import iogx-inputs.nixpkgs-with-working-prefetch-npm-deps { inherit (prev) system; };
-      in pkgs.prefetch-npm-deps;
-  };
+  mkCustomNixpkgsOverlay = user-inputs: prev: _:
+    let
+      stable-pkgs = import iogx-inputs.nixpkgs-stable { inherit (prev) system; };
+    in
+    {
+      prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;
+      dockerTools = stable-pkgs.dockerTools;
+
+      # `self.rev` is only defined when the git tree is not dirty
+      gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
+    };
 
 
   mkNixpkgs = user-inputs: system: args:
@@ -38,8 +38,7 @@ let
           # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
           # and so must be after them in the list of overlays to nixpkgs.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-          (mkGitRevOverlay user-inputs)
-          prefetch-npm-deps-overlay
+          (mkCustomNixpkgsOverlay user-inputs)
         ]
         ++ (args.overlays or [ ]);
     };

@@ -140,7 +140,7 @@ let
         (system == "x86_64-linux" && haskellProject.includeMingwW64HydraJobs)
         { mingwW64 = project.cross.mingwW64.hydraJobs; };
 
-      variants-job =
+      variants-jobs =
         let all = utils.mapAttrValues (project: project.hydraJobs) project.variants;
         in if haskellProject.includeProfiledHydraJobs then all else removeAttrs all [ "profiled" ];
 

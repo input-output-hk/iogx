@@ -865,7 +865,7 @@ in
 
 When set to `true` then [`mkHaskellProject.<out>.flake`](#mkhaskellprojectoutflake) will include:
 ```nix 
-hydraJobs.mingwW66 = project.cross.mingwW64
+hydraJobs.mingwW66 = project.cross.mingwW64.hydraJobs
 ```
 
 This is just a convenience option, you can always reference the jobs directly:
@@ -883,6 +883,60 @@ in
   }
 ]
 ```
+
+
+---
+
+### `mkHaskellProject.<in>.includeProfiledHydraJobs`
+
+**Type**: boolean
+
+**Default**: `false`
+
+
+**Example**: 
+```nix
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  project = lib.iogx.mkHaskellProject {
+    includeProfiledHydraJobs = true;
+  };
+in 
+[
+  (
+    project.flake 
+    # ^^^^^ Includes: hydraJobs.profiled = project.variants.profiled.hydraJobs;
+  )
+]
+```
+
+```
+
+
+When set to `true` then [`mkHaskellProject.<out>.flake`](#mkhaskellprojectoutflake) will include:
+```nix 
+hydraJobs.profiled = project.variants.profiled.hydraJobs;
+```
+
+This is just a convenience option, you can always reference the jobs directly:
+```nix
+# outputs.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+let 
+  project = lib.iogx.mkHaskellProject {
+    includeProfiledHydraJobs = false;
+  };
+in 
+[
+  {
+    hydraJobs.profiled = project.variants.profiled.hydraJobs;
+  }
+]
+```
+
+This option assumes that you have defined a flake variant called `profiled` in your
+haskell.nix `cabalProject` (see the example above).
 
 
 ---

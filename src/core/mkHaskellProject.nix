@@ -128,6 +128,42 @@ let
     };
 
 
+  mkDefaultFlake = project:
+    let
+      extra-packages = {
+        combined-haddock = project.combined-haddock;
+        read-the-docs-site = project.read-the-docs-site;
+        pre-commit-check = project.pre-commit-check;
+      };
+
+      mingwW64-jobs = lib.optionalAttrs
+        (system == "x86_64-linux" && haskellProject.includeMingwW64HydraJobs)
+        { mingwW64 = project.cross.mingwW64.hydraJobs; };
+
+      variants-jobs =
+        let all = utils.mapAttrValues (project: project.hydraJobs) project.variants;
+        in if haskellProject.includeProfiledHydraJobs then all else removeAttrs all [ "profiled" ];
+
+      required-job = { required = repoRoot.src.core.mkHydraRequiredJob { }; };
+    in
+    {
+      devShell = project.devShell;
+      devShells = project.devShells;
+      apps = project.apps;
+      checks = project.checks;
+      cabalProject = project.cabalProject;
+
+      packages = project.packages // extra-packages;
+
+      hydraJobs =
+        required-job //
+        project.hydraJobs //
+        extra-packages //
+        variants-jobs //
+        mingwW64-jobs;
+    };
+
+
   iogx-project =
     let
       base = haskellProject.cabalProject;
@@ -143,25 +179,7 @@ let
         (mkProjectVariant base) //
         { variants = utils.mapAttrValues mkProjectVariant base.projectVariants; };
 
-      extra-packages = {
-        inherit (project) combined-haddock read-the-docs-site pre-commit-check;
-      };
-
-      flake = {
-        inherit (project) devShell devShells apps checks cabalProject;
-        _iogx = project;
-        packages = project.packages // extra-packages;
-        hydraJobs = lib.optionalAttrs (system != "aarch64-linux") (
-          # TODO profiled
-          project.hydraJobs //
-          extra-packages //
-          utils.mapAttrValues (project: project.hydraJobs) project.variants //
-          { required = repoRoot.src.core.mkHydraRequiredJob { }; } //
-          lib.optionalAttrs
-            (system == "x86_64-linux" && haskellProject.includeMingwW64HydraJobs)
-            { mingwW64 = project.cross.mingwW64.hydraJobs; }
-        );
-      };
+      flake = mkDefaultFlake project;
     in
     project // { inherit flake; };
 

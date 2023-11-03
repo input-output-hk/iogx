@@ -180,9 +180,55 @@ let
         '';
       };
 
+      includeProfiledHydraJobs = l.mkOption {
+        type = l.types.bool;
+        default = false;
+        example = l.literalExpression ''
+          # outputs.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          let 
+            project = lib.iogx.mkHaskellProject {
+              includeProfiledHydraJobs = true;
+            };
+          in 
+          [
+            (
+              project.flake 
+              # ^^^^^ Includes: hydraJobs.profiled = project.variants.profiled.hydraJobs;
+            )
+          ]
+          ```
+        '';
+        description = ''
+          When set to `true` then ${link "mkHaskellProject.<out>.flake"} will include:
+          ```nix 
+          hydraJobs.profiled = project.variants.profiled.hydraJobs;
+          ```
+
+          This is just a convenience option, you can always reference the jobs directly:
+          ```nix
+          # outputs.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          let 
+            project = lib.iogx.mkHaskellProject {
+              includeProfiledHydraJobs = false;
+            };
+          in 
+          [
+            {
+              hydraJobs.profiled = project.variants.profiled.hydraJobs;
+            }
+          ]
+          ```
+
+          This option assumes that you have defined a flake variant called `profiled` in your
+          haskell.nix `cabalProject` (see the example above).
+        '';
+      };
+
       includeMingwW64HydraJobs = l.mkOption {
         type = l.types.bool;
-        default = false; 
+        default = false;
         example = l.literalExpression ''
           # outputs.nix 
           { repoRoot, inputs, pkgs, lib, system }:
@@ -202,7 +248,7 @@ let
         description = ''
           When set to `true` then ${link "mkHaskellProject.<out>.flake"} will include:
           ```nix 
-          hydraJobs.mingwW66 = project.cross.mingwW64
+          hydraJobs.mingwW66 = project.cross.mingwW64.hydraJobs
           ```
 
           This is just a convenience option, you can always reference the jobs directly:

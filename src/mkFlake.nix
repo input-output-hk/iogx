@@ -115,8 +115,13 @@ let
               args.outputs args-for-user-outputs;
 
           flake = utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
+
+          flake-without-hydraJobs = removeAttrs flake [ "hydraJobs" ];
+
+          # We don't support hydraJobs on aarch64-linux
+          flake' = if system == "aarch64-linux" then flake else flake-without-hydraJobs;
         in
-        flake;
+        flake';
 
       flake = iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
 

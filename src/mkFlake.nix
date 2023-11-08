@@ -116,7 +116,7 @@ let
 
           flake = utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
 
-          flake-without-hydraJobs = removeAttrs flake [ "hydraJobs" ];
+          flake-without-hydraJobs = flake // { hydraJobs = { }; };
 
           # We don't support hydraJobs on aarch64-linux
           flake' = if system == "aarch64-linux" then flake else flake-without-hydraJobs;

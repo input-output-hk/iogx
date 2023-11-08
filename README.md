@@ -20,7 +20,7 @@ nix flake init --template github:input-output-hk/iogx#vanilla
 
 These will generates a `flake.nix` and a `nix` folder in your repository root.
 
-You may now move on to the [API Reference](./doc/options.md).
+You may now move on to the [API Reference](./doc/api.md).
 
 # 2. Features
 

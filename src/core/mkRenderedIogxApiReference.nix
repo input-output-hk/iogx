@@ -87,7 +87,7 @@ pkgs.writeText "api.md" ''
     # API Reference 
 
     1. ${lib.iogx.utils.headerToLocalMarkDownLink "./flake.nix" "flake.nix"} 
-        - Top-level ./flake.nix file.
+        - Top-level `flake.nix` file.
     2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
         - Makes your flake outputs.
     3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 

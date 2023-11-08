@@ -94,7 +94,15 @@ let
 
           ```bash
           nix flake lock --update-input iogx 
-          nix flake lock --update-input haskell-nix 
+          ```
+
+          When working with Haskell, the package snapshots in `hackage` and
+          `CHaP` are updated together, while `haskell-nix` provides the 
+          infrastructure necessary to build the project with nix.
+
+          If you cannot enter the nix shell after updating the `index-state` in 
+          your `cabal.project`, you might need to update `hackage` and `CHaP`:
+          ```
           nix flake lock --update-input hackage 
           nix flake lock --update-input CHaP 
           ```
@@ -173,23 +181,15 @@ let
         description = ''
           Unless you know what you are doing, you should not change `nixConfig`.
 
-          You could always add new `extra-substituters` and `extra-trusted-public-keys`, but do not delete the existing ones, or you won't have access to IOG caches. 
+          You could add new `extra-substituters` and 
+          `extra-trusted-public-keys`, but do not delete the existing ones, or 
+          you won't have access to our binary caches. 
+         
+          Leave `allow-import-from-derivation` set to `true` for `haskell.nix` 
+          for work correctly.
 
-          For the caches to work properly, it is sufficient that the following two lines be included in your `/etc/nix/nix.conf`:
-          ```txt
-          trusted-users = USER
-          experimental-features = nix-command flakes
-          ```
-          Replace `USER` with the result of running `whoami`. 
-
-          You may need to reload the nix daemon on Darwin for changes to `/etc/nix/nix.conf` to take effect:
-          ```bash
-          sudo launchctl stop org.nixos.nix-daemon
-          sudo launchctl start org.nixos.nix-daemon
-          ```
-          Leave `allow-import-from-derivation` set to `true` for `haskell.nix` for work correctly.
-
-          If Nix starts building `GHC` or other large artifacts that means that your caches have not been configured properly.
+          Make sure that you have configured your nix installation correctly by 
+          following the instructions in ${link "\"flake.nix\""}.
         '';
         example = l.literalExpression ''
           # flake.nix 
@@ -213,7 +213,56 @@ let
   flake-dot-nix = l.mkOption {
     type = flake-dot-nix-submodule;
     description = ''
-      The `flake.nix` file for your project.
+      This section of the manual documents the `flake.nix` file, which is the 
+      entrypoint of all nix code, and should be located in the top-level folder 
+      of your repository. 
+
+      Here you will also find instructions on how to install, upgrade and 
+      configure nix; how to enable access the IOG binary caches, and how to keep 
+      your flake inputs up to date.
+
+      If you don't have nix installed, follow the instructions on the 
+      [official website](https://nixos.org/download).
+
+      If you already have nix installed, you are advised to 
+      [upgrade](https://nixos.org/manual/nix/stable/installation/upgrading) to 
+      the latest version.
+
+      Once you have installed nix, you ought to enable access to our binary 
+      caches. To do so, it is sufficient that the following two lines be 
+      included in your `/etc/nix/nix.conf`:
+      ```txt
+      trusted-users = USER
+      experimental-features = nix-command flakes
+      ```
+      **Replace `USER` with the result of running `whoami`.**
+      
+      If you are running on Apple Silicon, append the following line to your 
+      `/etc/nix/nix.conf`:
+      ```txt
+      extra-platforms = x86_64-darwin aarch64-darwin
+      ```
+      And remember to add the flag `--system x86_64-darwin` to all your nix 
+      commands, if no `aarch64-darwin` derivation is available:
+      ```bash
+      nix (develop|build|run|check) --system x86_64-darwin # Will use the x86_64-darwin derivation
+      nix (develop|build|run|check) # Will use the aarch64-darwin derivation, if available
+      ```
+
+      You may need to reload the nix daemon on Darwin for changes to 
+      `/etc/nix/nix.conf` to take effect:
+      ```bash
+      sudo launchctl stop org.nixos.nix-daemon
+      sudo launchctl start org.nixos.nix-daemon
+      ```
+
+      When working with IOG projects, you will want to make sure that you do 
+      have access to our binary caches. If nix starts building `GHC` or other 
+      large artifacts, that means that your caches have not been configured 
+      properly and you should review this documentation carefully.
+
+      Once you have nix installed and configured, you can generate a 
+      `flake.nix` file using one of the available templates:
 
       For [Haskell Projects](../templates/haskell/flake.nix):
       ```bash
@@ -221,11 +270,13 @@ let
       ```
 
       For [Other Projects](../templates/vanilla/flake.nix):
-      ```nix
+      ```bash
       nix flake init --template github:input-output-hk/iogx#vanilla
       ```
-
-      Below is a description of each of its attributes.
+      
+      When working with Haskell projects, you will want to know how to keep your 
+      flake inputs up to date. You will find that information in the 
+      documentation for the ${link "\"flake.nix\".inputs"} attribute.
     '';
   };
 
@@ -233,5 +284,6 @@ let
 in
 
 {
-  "flake.nix" = flake-dot-nix; 
+  "flake.nix" = flake-dot-nix;
 }
+

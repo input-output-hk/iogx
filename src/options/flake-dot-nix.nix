@@ -189,7 +189,7 @@ let
           for work correctly.
 
           Make sure that you have configured your nix installation correctly by 
-          following the instructions in ${link "\"flake.nix\""}.
+          following the instructions in ${link "flake.nix"}.
         '';
         example = l.literalExpression ''
           # flake.nix 
@@ -276,7 +276,7 @@ let
       
       When working with Haskell projects, you will want to know how to keep your 
       flake inputs up to date. You will find that information in the 
-      documentation for the ${link "\"flake.nix\".inputs"} attribute.
+      documentation for the ${utils.headerToLocalMarkDownLink "inputs" "flake.nix.inputs"} attribute.
     '';
   };
 

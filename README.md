@@ -9,6 +9,8 @@
 
 IOGX is a Nix library of functions and templates for structuring your Nix code and comes with a number of common DevX facilities to help develop your project.
 
+Make sure that you have [installed and configured](./doc/nix-setup-guide.md) nix on your system.
+
 To get started run: 
 ```bash
 # For Haskell Projects

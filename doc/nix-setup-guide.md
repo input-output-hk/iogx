@@ -75,7 +75,7 @@ Apple Silicon users can run any Intel binary out-of-the-box thanks to Rosetta
 emulation, but when working with nix flakes, the `aarch64-darwin` system will be
 selected by default.
 
-However, some projects at IOG cannot be build natively on `aarch64-darwin`.
+However, some projects at IOG cannot be built natively on `aarch64-darwin`.
 
 Therefore you must specify the `--system` explicitly to target `x86_64-darwin`.
 ```bash

@@ -28,7 +28,7 @@ nix flake init --template github:input-output-hk/iogx#haskell
 ```
 
 For [Other Projects](../templates/vanilla/flake.nix):
-```nix
+```bash
 nix flake init --template github:input-output-hk/iogx#vanilla
 ```
 

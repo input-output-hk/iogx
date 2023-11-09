@@ -83,7 +83,7 @@ nix flake init --template github:input-output-hk/iogx#vanilla
 
 When working with Haskell projects, you will want to know how to keep your 
 flake inputs up to date. You will find that information in the 
-documentation for the [`inputs`](#flakenixinputs) attribute.
+documentation for the [`"flake.nix".inputs`](#"flakenix"inputs) attribute.
 
 
 ---
@@ -272,7 +272,7 @@ Leave `allow-import-from-derivation` set to `true` for `haskell.nix`
 for work correctly.
 
 Make sure that you have configured your nix installation correctly by 
-following the instructions in [`flake.nix`](#flakenix).
+following the instructions in [`"flake.nix"`](#"flakenix").
 
 
 ---

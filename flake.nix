@@ -78,7 +78,7 @@
         description = "Flake Template for Haskell Projects";
         welcomeText = ''
           # Flake Template for Haskell Projects
-          Open flake.nix to get started.
+          Edit your cabal.project and run `nix develop` to enter the shell.
         '';
       };
 
@@ -87,7 +87,7 @@
         description = "Flake Template for Vanilla Projects";
         welcomeText = ''
           # Flake Template for Vanilla Projects
-          Open flake.nix to get started.
+          Run `nix develop` to enter the shell.
         '';
       };
 

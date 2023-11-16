@@ -1,6 +1,6 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-shell'':
+shellCfg:
 # The shell config provided by the user (mkShell-IN).
 
 extra-shell-profiles:
@@ -14,7 +14,7 @@ let
   evaluated-shell-module = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config."mkShell.<in>" = shell'';
+      config."mkShell.<in>" = shellCfg;
     }];
   };
 

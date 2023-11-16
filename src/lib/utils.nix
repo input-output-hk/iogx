@@ -10,9 +10,9 @@ let
     headerToLocalMarkDownLink = tag: name:
       let
         name' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] name;
-        name'' = l.strings.toLower name';
+        nameLower = l.strings.toLower name';
       in
-      "[`${tag}`](#${name''})";
+      "[`${tag}`](#${nameLower})";
 
 
     composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;

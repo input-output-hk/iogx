@@ -24,17 +24,14 @@ let
         cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
         configureArgs = "--disable-benchmarks";
       }
-    else if lib.hasInfix "ghc98" ghc then
+    else # ghc98 and above 
       {
         rev = "2.4.0.0";
         sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
         cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
-      }
-    else
-      {
-        rev = "2.4.0.0";
-        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
-        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
+        configureArgs = "--disable-benchmarks";
+        # TODO remove me as soon as we can build hls with ghc98
+        compiler-nix-name = "ghc96";
       };
 
 in
@@ -62,7 +59,7 @@ pkgs.haskell-nix.cabalProject' {
     inherit (config) rev sha256;
   };
 
-  compiler-nix-name = ghc;
+  compiler-nix-name = config.compiler-nix-name or ghc;
 
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line

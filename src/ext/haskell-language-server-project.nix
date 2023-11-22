@@ -31,7 +31,11 @@ let
         cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
       }
     else
-      lib.iogx.utils.iogxThrow "\nUnsupported GHC version: ${ghc}";
+      {
+        rev = "2.4.0.0";
+        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
+        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
+      };
 
 in
 

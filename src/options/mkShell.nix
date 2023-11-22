@@ -97,25 +97,18 @@ let
     options = {
       haskellCompilerVersion = l.mkOption {
         default = null;
-        type = l.types.nullOr (l.types.enum [
-          "ghc810"
-          "ghc8107"
-          "ghc92"
-          "ghc927"
-          "ghc928"
-          "ghc96"
-          "ghc962"
-          "ghc981"
-        ]);
+        type = l.types.nullOr l.types.str;
         description = ''
           The haskell compiler version.
+          
+          Any value that is accepected by `haskell.nix:compiler-nix-name` is valid, e.g: `ghc8107`, `ghc92`, `ghc963`.
           
           This determines the version of other tools like `cabal-install` and `haskell-language-server`.
 
           If this option is unset of null, then no Haskell tools will be made available in the shell.
 
           However if you enable some Haskell-specific ${link "mkShell.<in>.preCommit"} hooks, then 
-          that Haskell tools will be installed automatically using `ghc8107` as the default compiler version.
+          that Haskell tool will be installed automatically using `ghc8107` as the default compiler version.
 
           When using ${link "mkHaskellProject.<in>.shellArgs"}, this option is automatically set to 
           the same value as the project's (or project variant's) `compiler-nix-name`.

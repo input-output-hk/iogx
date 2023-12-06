@@ -41,6 +41,8 @@
     };
 
     flake-utils.url = "github:numtide/flake-utils";
+
+    nix2container.url = "github:nlewo/nix2container";
   };
 
 

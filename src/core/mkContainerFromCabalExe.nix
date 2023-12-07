@@ -19,9 +19,29 @@ let
       userConfig.exe.exeName
     else
       userConfig.name;
+
+  license =
+    let
+      ls = userConfig.exe.meta.license;
+    in
+    if (lib.isAttrs ls) then
+      ls.spdxId
+    else if (lib.isList ls && [ ] != ls) then
+      let
+        l = (lib.head ls);
+      in
+      if lib.isAttrs l then
+        l.spdxId
+      else
+        null
+    else null;
 in
 nix2container.buildImage {
   inherit name;
 
-  config.entryPoint = lib.singleton (lib.getExe userConfig.exe);
+  config = {
+    entryPoint = lib.singleton (lib.getExe userConfig.exe);
+  } // lib.optionalAttrs (license != null) {
+    Labels."org.opencontainers.image.license" = license;
+  };
 }

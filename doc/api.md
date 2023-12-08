@@ -342,6 +342,7 @@ For NixOS, the default value for this option includes at least this argument:
     name = "bizz";
     description = "Test container";
     packages = [ pkgs.jq ];
+    sourceUrl = "https://github.com/input-output-hk/example";
   };
 }
 
@@ -429,6 +430,21 @@ Name of the container produced.
 
 Packages to add to the container's filesystem.
 > Note: Only the `/bin` directly will be linked from packages into the containers root filesystem.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.sourceUrl`
+
+**Type**: null or string
+
+**Default**: `null`
+
+
+
+
+Sets the `org.opencontainers.image.source` annotate key in the container.
+See https://github.com/opencontainers/image-spec/blob/main/annotations.md
 
 
 ---

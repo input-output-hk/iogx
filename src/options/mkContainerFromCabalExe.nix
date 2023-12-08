@@ -43,6 +43,15 @@ let
           > Note: Only the `/bin` directly will be linked from packages into the containers root filesystem.
         '';
       };
+
+      sourceUrl = l.mkOption {
+        type = l.types.nullOr l.types.str;
+        default = null;
+        description = ''
+          Sets the `org.opencontainers.image.source` annotate key in the container.
+          See https://github.com/opencontainers/image-spec/blob/main/annotations.md
+        '';
+      };
     };
   };
 
@@ -89,6 +98,7 @@ let
           name = "bizz";
           description = "Test container";
           packages = [ pkgs.jq ];
+          sourceUrl = "https://github.com/input-output-hk/example";
         };
       }
 

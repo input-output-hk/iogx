@@ -40,6 +40,7 @@ let
     {
       inherit license;
       inherit (userConfig) description;
+      source = userConfig.sourceUrl;
     }
     [
       (lib.filterAttrs (k: v: v != null))

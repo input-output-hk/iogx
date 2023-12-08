@@ -340,6 +340,7 @@ For NixOS, the default value for this option includes at least this argument:
   barContainer = lib.iogx.mkContainerFromCabalExe {
     exe = inputs.self.packages.barExe;
     name = "bizz";
+    description = "Test container";
   };
 }
 
@@ -365,6 +366,21 @@ See. https://github.com/nlewo/nix2container
 
 In this document:
   - Options for the input attrset are prefixed by `mkContainerFromCabalExe.<in>`.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.description`
+
+**Type**: null or string
+
+**Default**: `null`
+
+
+
+
+Sets the `org.opencontainers.image.description` annotate key in the container.
+See https://github.com/opencontainers/image-spec/blob/main/annotations.md
 
 
 ---

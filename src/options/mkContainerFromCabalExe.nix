@@ -25,6 +25,15 @@ let
           Name of the container produced.
         '';
       };
+
+      description = l.mkOption {
+        type = l.types.nullOr l.types.str;
+        default = null;
+        description = ''
+          Sets the `org.opencontainers.image.description` annotate key in the container.
+          See https://github.com/opencontainers/image-spec/blob/main/annotations.md
+        '';
+      };
     };
   };
 
@@ -69,6 +78,7 @@ let
         barContainer = lib.iogx.mkContainerFromCabalExe {
           exe = inputs.self.packages.barExe;
           name = "bizz";
+          description = "Test container";
         };
       }
 

@@ -35,13 +35,23 @@ let
       else
         null
     else null;
+
+  labels = lib.pipe
+    {
+      inherit license;
+      inherit (userConfig) description;
+    }
+    [
+      (lib.filterAttrs (k: v: v != null))
+      (lib.mapAttrs' (k: v: lib.nameValuePair "org.opencontainers.image.${k}" v))
+    ];
 in
 nix2container.buildImage {
   inherit name;
 
   config = {
     entryPoint = lib.singleton (lib.getExe userConfig.exe);
-  } // lib.optionalAttrs (license != null) {
-    Labels."org.opencontainers.image.license" = license;
+  } // lib.optionalAttrs (labels != { }) {
+    Labels = labels;
   };
 }

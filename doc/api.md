@@ -336,6 +336,11 @@ For NixOS, the default value for this option includes at least this argument:
   fooContainer = lib.iogx.mkContainerFromCabalExe {
     exe = inputs.self.packages.fooExe;
   };
+
+  barContainer = lib.iogx.mkContainerFromCabalExe {
+    exe = inputs.self.packages.barExe;
+    name = "bizz";
+  };
 }
 
 # nix/outputs.nix
@@ -378,6 +383,20 @@ project.packages.fooExe
 
 
 The exe produced by haskell.nix that you want to wrap in a container.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.name`
+
+**Type**: null or string
+
+**Default**: `exe.exeName`
+
+
+
+
+Name of the container produced.
 
 
 ---

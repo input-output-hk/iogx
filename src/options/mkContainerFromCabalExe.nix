@@ -16,6 +16,15 @@ let
           project.packages.fooExe
         '';
       };
+
+      name = l.mkOption {
+        type = l.types.nullOr l.types.str;
+        default = null;
+        defaultText = l.literalExpression "exe.exeName";
+        description = ''
+          Name of the container produced.
+        '';
+      };
     };
   };
 
@@ -55,6 +64,11 @@ let
       {
         fooContainer = lib.iogx.mkContainerFromCabalExe {
           exe = inputs.self.packages.fooExe;
+        };
+
+        barContainer = lib.iogx.mkContainerFromCabalExe {
+          exe = inputs.self.packages.barExe;
+          name = "bizz";
         };
       }
 

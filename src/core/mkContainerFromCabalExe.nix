@@ -13,9 +13,15 @@ let
   };
 
   userConfig = evaluated-modules.config."mkContainerFromCabalExe.<in>";
+
+  name =
+    if lib.isNull userConfig.name then
+      userConfig.exe.exeName
+    else
+      userConfig.name;
 in
 nix2container.buildImage {
-  name = userConfig.exe.exeName;
+  inherit name;
 
   config.entryPoint = lib.singleton (lib.getExe userConfig.exe);
 }

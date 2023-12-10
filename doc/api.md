@@ -341,6 +341,7 @@ For NixOS, the default value for this option includes at least this argument:
     exe = inputs.self.packages.barExe;
     name = "bizz";
     description = "Test container";
+    packages = [ pkgs.jq ];
   };
 }
 
@@ -413,6 +414,21 @@ The exe produced by haskell.nix that you want to wrap in a container.
 
 
 Name of the container produced.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.packages`
+
+**Type**: null or (list of package)
+
+**Default**: `null`
+
+
+
+
+Packages to add to the container's filesystem.
+> Note: Only the `/bin` directly will be linked from packages into the containers root filesystem.
 
 
 ---

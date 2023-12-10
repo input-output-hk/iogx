@@ -45,8 +45,19 @@ let
       (lib.filterAttrs (k: v: v != null))
       (lib.mapAttrs' (k: v: lib.nameValuePair "org.opencontainers.image.${k}" v))
     ];
+
+  rootEnv =
+    if (!lib.isNull userConfig.packages && userConfig.packages != [ ]) then
+      pkgs.buildEnv
+        {
+          name = "root";
+          paths = userConfig.packages;
+          pathsToLink = [ "/bin" ];
+        }
+    else
+      null;
 in
-nix2container.buildImage {
+nix2container.buildImage ({
   inherit name;
 
   config = {
@@ -54,4 +65,6 @@ nix2container.buildImage {
   } // lib.optionalAttrs (labels != { }) {
     Labels = labels;
   };
-}
+} // lib.optionalAttrs (rootEnv != null) {
+  copyToRoot = [ rootEnv ];
+})

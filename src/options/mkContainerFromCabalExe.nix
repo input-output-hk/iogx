@@ -34,6 +34,15 @@ let
           See https://github.com/opencontainers/image-spec/blob/main/annotations.md
         '';
       };
+
+      packages = l.mkOption {
+        type = l.types.nullOr (l.types.listOf l.types.package);
+        default = null;
+        description = ''
+          Packages to add to the container's filesystem.
+          > Note: Only the `/bin` directly will be linked from packages into the containers root filesystem.
+        '';
+      };
     };
   };
 
@@ -79,6 +88,7 @@ let
           exe = inputs.self.packages.barExe;
           name = "bizz";
           description = "Test container";
+          packages = [ pkgs.jq ];
         };
       }
 

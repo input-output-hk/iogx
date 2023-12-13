@@ -48,6 +48,17 @@ let
     ];
 
   rootPackages = [
+    # Provide some tools for users who want to enter a shell in the running
+    # container.
+    (pkgs.buildEnv {
+      name = "base";
+      paths = [
+        pkgs.bashInteractive
+        pkgs.coreutils
+      ];
+      pathsToLink = [ "/bin" ];
+    })
+
     # Some networked applications need cacerts on the machine
     pkgs.cacert
 

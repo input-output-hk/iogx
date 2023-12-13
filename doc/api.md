@@ -9,6 +9,8 @@
     - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
 4. [`pkgs.lib.iogx.mkShell`](#mkshell)
     - Makes a `devShell` with `pre-commit-check` and tools.
+5. [`pkgs.lib.iogx.mkContainerFromCabalExe`](#mkcontainerfromcabalexe)
+    - Makes a OCI compliant container using an exe defined with cabal.
 
 ---
 
@@ -316,6 +318,133 @@ following *cannot* be changed with this option:
 For NixOS, the default value for this option includes at least this argument:
 - {var}`pkgs`: The nixpkgs package set according to
   the {option}`nixpkgs.pkgs` option.
+
+
+---
+
+### `mkContainerFromCabalExe`
+
+**Type**: Core API Function
+
+
+
+**Example**: 
+```nix
+# nix/containers.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+{
+  fooContainer = lib.iogx.mkContainerFromCabalExe {
+    exe = inputs.self.packages.fooExe;
+  };
+
+  barContainer = lib.iogx.mkContainerFromCabalExe {
+    exe = inputs.self.packages.barExe;
+    name = "bizz";
+    description = "Test container";
+    packages = [ pkgs.jq ];
+    sourceUrl = "https://github.com/input-output-hk/example";
+  };
+}
+
+# nix/outputs.nix
+{ repoRoot, inputs, pkgs, lib, system }:
+let
+  containers = repoRoot.nix.containers;
+in
+[
+  {
+    inherit containers;
+  }
+]
+
+```
+
+
+The `lib.iogx.mkContainerFromCabalExe` function builds a portable container for use with docker and similar tools.
+
+It outputs the results from running nix2container's buildImage function.
+
+See. https://github.com/nlewo/nix2container
+
+In this document:
+  - Options for the input attrset are prefixed by `mkContainerFromCabalExe.<in>`.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.description`
+
+**Type**: null or string
+
+**Default**: `null`
+
+
+
+
+Sets the `org.opencontainers.image.description` annotate key in the container.
+See https://github.com/opencontainers/image-spec/blob/main/annotations.md
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.exe`
+
+**Type**: package
+
+
+
+**Example**: 
+```nix
+project.packages.fooExe
+
+```
+
+
+The exe produced by haskell.nix that you want to wrap in a container.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.name`
+
+**Type**: null or string
+
+**Default**: `exe.exeName`
+
+
+
+
+Name of the container produced.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.packages`
+
+**Type**: null or (list of package)
+
+**Default**: `null`
+
+
+
+
+Packages to add to the container's filesystem.
+> Note: Only the `/bin` directly will be linked from packages into the containers root filesystem.
+
+
+---
+
+### `mkContainerFromCabalExe.<in>.sourceUrl`
+
+**Type**: null or string
+
+**Default**: `null`
+
+
+
+
+Sets the `org.opencontainers.image.source` annotate key in the container.
+See https://github.com/opencontainers/image-spec/blob/main/annotations.md
 
 
 ---

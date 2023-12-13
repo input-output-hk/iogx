@@ -10,7 +10,8 @@ let
           "flake.nix"
           mkFlake
           mkHaskellProject
-          mkShell;
+          mkShell
+          mkContainerFromCabalExe;
       };
     }];
   };
@@ -94,6 +95,8 @@ pkgs.writeText "api.md" ''
         - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
     4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
         - Makes a `devShell` with `pre-commit-check` and tools.
+    5. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkContainerFromCabalExe" "mkContainerFromCabalExe"}
+        - Makes a OCI compliant container using an exe defined with cabal.
 
     ${options-doc-markdown}
   ''

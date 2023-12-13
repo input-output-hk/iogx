@@ -47,16 +47,18 @@ let
       (lib.mapAttrs' (k: v: lib.nameValuePair "org.opencontainers.image.${k}" v))
     ];
 
-  rootEnv =
-    if (!lib.isNull userConfig.packages && userConfig.packages != [ ]) then
-      pkgs.buildEnv
-        {
-          name = "root";
-          paths = userConfig.packages;
-          pathsToLink = [ "/bin" ];
-        }
-    else
-      null;
+  rootPackages = [
+    # Some networked applications need cacerts on the machine
+    pkgs.cacert
+
+    # Fixes networking on some platforms
+    pkgs.fakeNss
+  ] ++ lib.optional (!lib.isNull userConfig.packages && userConfig.packages != [ ])
+    (pkgs.buildEnv {
+      name = "user";
+      paths = userConfig.packages;
+      pathsToLink = [ "/bin" ];
+    });
 in
 nix2container.buildImage ({
   inherit name;
@@ -66,6 +68,6 @@ nix2container.buildImage ({
   } // lib.optionalAttrs (labels != { }) {
     Labels = labels;
   };
-} // lib.optionalAttrs (rootEnv != null) {
-  copyToRoot = [ rootEnv ];
+
+  copyToRoot = rootPackages;
 })

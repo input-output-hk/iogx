@@ -26,12 +26,10 @@ let
       }
     else # ghc98 and above 
       {
-        rev = "2.4.0.0";
-        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
+        rev = "2.5.0.0";
+        sha256 = "sha256-fyiR9TaHGJIIR0UmcCb73Xv9TJq3ht2ioxQ2mT7kVdc=";
         cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
         configureArgs = "--disable-benchmarks";
-        # TODO remove me as soon as we can build hls with ghc98
-        compiler-nix-name = "ghc96";
       };
 
 in

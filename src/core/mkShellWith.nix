@@ -50,8 +50,8 @@ let
 
 
   getHlsTool = name:
-    let hls = if lib.hasInfix ghc "ghc98" then hls96 else hls;
-    in hls.hsPkgs.${name}.components.exes.${name};
+    let hls' = if lib.hasInfix ghc "ghc98" then hls96 else hls;
+    in hls'.hsPkgs.${name}.components.exes.${name};
 
 
   default-tools = {

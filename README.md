@@ -59,3 +59,4 @@ In the future we plan to develop the following features:
 - Automatic Benchmarking in CI
 - Broken Link Detection 
 - Option to exclude specific jobs from the `required` aggregated job.
+

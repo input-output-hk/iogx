@@ -1,5 +1,7 @@
 { lib, pkgs, ... }:
 
+# Builds haskell-language-server using the given ghc version.
+
 ghc:
 
 let

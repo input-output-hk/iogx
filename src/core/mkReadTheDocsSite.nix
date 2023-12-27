@@ -1,6 +1,11 @@
 { repoRoot, pkgs, lib, user-inputs, ... }:
 
+# Derivation for a read-the-docs site.
+
+# The readTheDocs submodule in mkHaskellProject-IN
 readTheDocs:
+
+# Derivation comptuted by mkCombinedHaddock.nix
 combined-haddock:
 
 let

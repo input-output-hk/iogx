@@ -1,7 +1,7 @@
 
 # API Reference 
 
-1. [`./flake.nix`](#flakenix) 
+1. [`flake.nix`](#flakenix) 
     - Top-level `flake.nix` file.
 2. [`inputs.iogx.lib.mkFlake`](#mkflake) 
     - Makes your flake outputs.
@@ -1038,7 +1038,6 @@ in
     # ^^^^^ Includes: hydraJobs.profiled = project.variants.profiled.hydraJobs;
   )
 ]
-```
 
 ```
 

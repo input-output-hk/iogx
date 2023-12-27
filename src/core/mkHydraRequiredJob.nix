@@ -1,5 +1,7 @@
 { user-inputs, pkgs, lib, system, ... }:
 
+# The required job is a special job that succeeds when all other hydraJobs succeed.
+
 { ... }:
 
 let

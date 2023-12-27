@@ -1,10 +1,12 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-shellCfg:
-# The shell config provided by the user (mkShell-IN).
+# Create an actual nix devShell with a bunch of tools and utilities.
 
-extra-shell-profiles:
+# The shell config provided by the user.
+mkShell-IN:
+
 # Extra profiles. Internally these will be read-the-docs and haskell-nix.
+extra-shell-profiles:
 
 let
 
@@ -14,7 +16,7 @@ let
   evaluated-shell-module = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config."mkShell.<in>" = shellCfg;
+      config."mkShell.<in>" = mkShell-IN;
     }];
   };
 

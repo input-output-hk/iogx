@@ -6,10 +6,10 @@ let
   modularise = import ./lib/modularise.nix iogx-inputs;
   options = import ./options iogx-inputs;
 
-  # prefetch-npm-deps is broken in the current version of nixpkgs (which is 
-  # nixpkgs-unstable coming from haskell.nix), so we need this hack.
-  # Same for dockerTools
-  # TODO when we bump haskell-nix, check if this is still needed.
+  # prefetch-npm-deps is broken (hangs indefinitely) in the current version of 
+  # nixpkgs (which is nixpkgs-unstable coming from haskell.nix), so we need this 
+  # hack. Same for dockerTools (fails to add layers with an out-of-disk error on
+  # /tmp). TODO when we bump haskell-nix, check if this is still needed.
   mkCustomNixpkgsOverlay = user-inputs: prev: _:
     let
       stable-pkgs = import iogx-inputs.nixpkgs-stable { inherit (prev) system; };
@@ -18,7 +18,9 @@ let
       prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;
       dockerTools = stable-pkgs.dockerTools;
 
-      # `self.rev` is only defined when the git tree is not dirty
+      # NOTE: `self.rev` is only defined when the git tree is not dirty.
+      # `gitref` is useful when wanting to embed the current git commit hash in
+      # your binary or other build outputs.
       gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
     };
 
@@ -37,6 +39,7 @@ let
           # The iohk-nix.overlays.haskell-nix-crypto depends on both the 
           # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
           # and so must be after them in the list of overlays to nixpkgs.
+          # TODO check if this constraint still applies in the latest haskell.nix.
           iogx-inputs.iohk-nix.overlays.haskell-nix-extra
           (mkCustomNixpkgsOverlay user-inputs)
         ]
@@ -48,6 +51,7 @@ let
   mkIogxLib = desystemized-user-inputs: pkgs:
     let
       iogx = { inherit utils modularise options; };
+
       repoRoot = modularise {
         root = ../.;
         module = "repoRoot";
@@ -65,8 +69,7 @@ let
       mkHaskellProject = repoRoot.src.core.mkHaskellProject;
       mkHydraRequiredJob = repoRoot.src.core.mkHydraRequiredJob;
       mkContainerFromCabalExe = repoRoot.src.core.mkContainerFromCabalExe;
-
-      inherit (iogx) utils modularise options;
+      inherit utils modularise options;
     };
 
 

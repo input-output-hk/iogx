@@ -4,6 +4,7 @@
 
   inputs = {
 
+
     haskell-nix = {
       url = "github:input-output-hk/haskell.nix";
       inputs.hackage.follows = "hackage";
@@ -109,8 +110,11 @@
         hydraJobs.devShells.ghc810 = mkDevShell lib "ghc810";
         hydraJobs.devShells.ghc92 = mkDevShell lib "ghc92";
         hydraJobs.devShells.ghc96 = mkDevShell lib "ghc96";
+        hydraJobs.devShells.ghc98 = mkDevShell lib "ghc98";
         hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
         hydraJobs.required = lib.iogx.mkHydraRequiredJob { };
+
+        _test_hls98 = repoRoot.src.ext.haskell-language-server-project "ghc98";
 
         devShells.default = lib.iogx.mkShell {
           name = "iogx";

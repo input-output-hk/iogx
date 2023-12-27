@@ -43,9 +43,15 @@ let
 
 
   hls = repoRoot.src.ext.haskell-language-server-project ghc;
+  hls96 = repoRoot.src.ext.haskell-language-server-project "ghc96";
 
 
   purescript = pkgs.callPackage iogx-inputs.easy-purescript-nix { };
+
+
+  getHlsTool = name:
+    let hls' = if lib.hasInfix ghc "ghc98" then hls96 else hls;
+    in hls'.hsPkgs.${name}.components.exes.${name};
 
 
   default-tools = {
@@ -53,10 +59,10 @@ let
     haskell-language-server = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
     haskell-language-server-wrapper = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
 
-    stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
+    stylish-haskell = getHlsTool "stylish-haskell";
+    hlint = getHlsTool "hlint";
     cabal-fmt = repoRoot.src.ext.cabal-fmt;
     fourmolu = repoRoot.src.ext.fourmolu;
-    hlint = hls.hsPkgs.hlint.components.exes.hlint;
 
     shellcheck = pkgs.shellcheck;
     prettier = pkgs.nodePackages.prettier;

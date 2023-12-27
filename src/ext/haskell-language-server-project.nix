@@ -26,16 +26,20 @@ let
       }
     else if lib.hasInfix "ghc98" ghc then
       {
-        rev = "2.4.0.0";
-        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
-        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
+        rev = "2.5.0.0";
+        sha256 = "sha256-fyiR9TaHGJIIR0UmcCb73Xv9TJq3ht2ioxQ2mT7kVdc=";
+        configureArgs = "--disable-benchmarks";
       }
     else
-      {
-        rev = "2.4.0.0";
-        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
-        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
-      };
+      lib.trace
+        ''
+          Unsupported GHC version ${ghc}, defaulting to ghc810 for haskell-language-server
+        ''
+        {
+          rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0
+          sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
+          cabalProjectLocal = "constraints: stylish-haskell==0.13.0.0, hlint==3.2.8";
+        };
 
 in
 

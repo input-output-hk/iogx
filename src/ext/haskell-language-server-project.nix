@@ -24,13 +24,22 @@ let
         cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
         configureArgs = "--disable-benchmarks";
       }
-    else # ghc98 and above 
+    else if lib.hasInfix "ghc98" ghc then
       {
         rev = "2.5.0.0";
         sha256 = "sha256-fyiR9TaHGJIIR0UmcCb73Xv9TJq3ht2ioxQ2mT7kVdc=";
-        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
         configureArgs = "--disable-benchmarks";
-      };
+      }
+    else
+      lib.trace
+        ''
+          Unsupported GHC version ${ghc}, defaulting to ghc810 for haskell-language-server
+        ''
+        {
+          rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0
+          sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
+          cabalProjectLocal = "constraints: stylish-haskell==0.13.0.0, hlint==3.2.8";
+        };
 
 in
 
@@ -57,7 +66,7 @@ pkgs.haskell-nix.cabalProject' {
     inherit (config) rev sha256;
   };
 
-  compiler-nix-name = config.compiler-nix-name or ghc;
+  compiler-nix-name = ghc;
 
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line

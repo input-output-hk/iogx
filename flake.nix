@@ -113,7 +113,6 @@
         hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
         hydraJobs.required = lib.iogx.mkHydraRequiredJob { };
 
-        _test_cabal98 = repoRoot.src.ext.cabal-install "ghc98";
         _test_hls98 = repoRoot.src.ext.haskell-language-server-project "ghc98";
 
         devShells.default = lib.iogx.mkShell {

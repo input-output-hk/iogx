@@ -4,6 +4,7 @@
 
   inputs = {
 
+
     haskell-nix = {
       url = "github:input-output-hk/haskell.nix";
       inputs.hackage.follows = "hackage";

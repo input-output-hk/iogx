@@ -51,6 +51,7 @@ let
   cabalProject = cabalProject'.appendOverlays [ ];
 
 
+  # Docs for mkHaskellProject: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkhaskellproject
   project = lib.iogx.mkHaskellProject {
     inherit cabalProject;
 

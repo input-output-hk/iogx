@@ -1,5 +1,6 @@
 { repoRoot, inputs, pkgs, lib, system }:
 
+# Docs for mkShell: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkshell
 lib.iogx.mkShell {
 
   name = "nix-shell";

@@ -1,5 +1,7 @@
 { pkgs, lib, ... }:
 
+# Builds cabal-install using the given ghc version.
+
 ghc:
 
 let

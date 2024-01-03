@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-# TODO(std) Remove this patch once the PR makes it into a hackage release.
+# TODO Remove this patch once the PR makes it into a hackage release.
 # See https://github.com/phadej/cabal-fmt/pull/68
 let
 

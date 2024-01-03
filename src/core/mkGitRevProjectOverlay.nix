@@ -1,27 +1,27 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-args: 
+mkGitRevProjectOverlay-IN:
 
-let 
+let
 
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config.mkGitRevProjectOverlay-IN = args;
+      config."mkGitRevProjectOverlay.<in>" = mkGitRevProjectOverlay-IN;
     }];
   };
 
 
-  args = evaluated-modules.config.mkGitRevProjectOverlay-IN;
+  args = evaluated-modules.config."mkGitRevProjectOverlay.<in>";
 
 
   overlay = _: prev: {
-    hsPkgs = prev.pkgs.pkgsHostTarget.setGitRevForPaths 
-      prev.pkgs.gitrev 
-      args.exePaths 
+    hsPkgs = prev.pkgs.pkgsHostTarget.setGitRevForPaths
+      prev.pkgs.gitrev
+      args.exePaths
       prev.hsPkgs;
   };
 
-in 
+in
 
-  args.project.appendOverlays [overlay]
+args.project.appendOverlays [ overlay ]

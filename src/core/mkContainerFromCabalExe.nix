@@ -1,6 +1,6 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-userConfig':
+mkContainerFromCabalExe-IN:
 
 let
   inherit (iogx-inputs.nix2container.packages) nix2container;
@@ -8,7 +8,7 @@ let
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config."mkContainerFromCabalExe.<in>" = userConfig';
+      config."mkContainerFromCabalExe.<in>" = mkContainerFromCabalExe-IN;
     }];
   };
 

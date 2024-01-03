@@ -1,6 +1,9 @@
 { pkgs, lib, user-inputs, system, ... }:
 
-shell:
+# Create a bunch of general-purpose scripts that can be added to the shell.
+
+# A valid shell.
+mkShell-IN:
 
 let
 
@@ -59,7 +62,7 @@ let
       all-scripts =
         let
           filterDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
-          shell-scripts = filterDisabled (utils.getAttrWithDefault "scripts" { } shell);
+          shell-scripts = filterDisabled (utils.getAttrWithDefault "scripts" { } mkShell-IN);
           extra-scripts = { inherit info list-flake-outputs; };
         in
         shell-scripts // extra-scripts;
@@ -88,7 +91,7 @@ let
             "CABAL_CONFIG"
             "LOCALE_ARCHIVE"
           ];
-          shell-env = utils.getAttrWithDefault "env" { } shell;
+          shell-env = utils.getAttrWithDefault "env" { } mkShell-IN;
           final-env = removeAttrs shell-env internal-vars;
           formatVar = var: val: ''
             — ${utils.ansiBold var} ∷ ${val}

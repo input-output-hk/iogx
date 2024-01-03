@@ -1,5 +1,8 @@
 { pkgs, lib, inputs, ... }:
 
+# Generate custom markdown documentation for the options of iogx, using the 
+# nixosOptionsDoc function from nix.
+
 let
 
   evaluated-modules = lib.evalModules {
@@ -87,15 +90,15 @@ pkgs.writeText "api.md" ''
 
     # API Reference 
 
-    1. ${lib.iogx.utils.headerToLocalMarkDownLink "./flake.nix" "flake.nix"} 
+    1. ${lib.iogx.utils.headerToMarkDownLink "flake.nix" "flake.nix"} 
         - Top-level `flake.nix` file.
-    2. ${lib.iogx.utils.headerToLocalMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
+    2. ${lib.iogx.utils.headerToMarkDownLink "inputs.iogx.lib.mkFlake" "mkFlake"} 
         - Makes your flake outputs.
-    3. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
+    3. ${lib.iogx.utils.headerToMarkDownLink "pkgs.lib.iogx.mkHaskellProject" "mkHaskellProject"} 
         - Makes a [`haskell.nix`](https://github.com/input-output-hk/haskell.nix) project.
-    4. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
+    4. ${lib.iogx.utils.headerToMarkDownLink "pkgs.lib.iogx.mkShell" "mkShell"}
         - Makes a `devShell` with `pre-commit-check` and tools.
-    5. ${lib.iogx.utils.headerToLocalMarkDownLink "pkgs.lib.iogx.mkContainerFromCabalExe" "mkContainerFromCabalExe"}
+    5. ${lib.iogx.utils.headerToMarkDownLink "pkgs.lib.iogx.mkContainerFromCabalExe" "mkContainerFromCabalExe"}
         - Makes a OCI compliant container using an exe defined with cabal.
 
     ${options-doc-markdown}

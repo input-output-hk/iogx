@@ -1,9 +1,8 @@
 {
-  description = "Flake Template for Haskell Projects at IOG";
+  description = "Flake Templates for Projects at IOG";
 
 
   inputs = {
-
 
     haskell-nix = {
       url = "github:input-output-hk/haskell.nix";
@@ -12,6 +11,7 @@
 
     nixpkgs.follows = "haskell-nix/nixpkgs";
 
+    # We use this to replace broken packages in haskell-nix/nixpkgs.
     nixpkgs-stable.url = "github:NixOS/nixpkgs/b81af66deb21f73a70c67e5ea189568af53b1e8c";
 
     hackage = {
@@ -44,6 +44,10 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     nix2container.url = "github:nlewo/nix2container";
+
+    # By referencing our templates as flake inputs, we can write tests for them.
+    iogx-template-vanilla.url = path:templates/vanilla;
+    iogx-template-haskell.url = path:templates/haskell;
   };
 
 
@@ -51,7 +55,7 @@
     let
       mkFlake = import ./src/mkFlake.nix inputs;
 
-      mkDevShell = lib: ghc: lib.iogx.mkShell {
+      mkTestShell = lib: ghc: lib.iogx.mkShell {
         tools.haskellCompilerVersion = ghc;
         preCommit = {
           cabal-fmt.enable = true;
@@ -67,6 +71,7 @@
         };
       };
     in
+
     mkFlake rec {
       inherit inputs;
 
@@ -87,9 +92,9 @@
 
       flake.templates.vanilla = {
         path = ./templates/vanilla;
-        description = "Flake Template for Vanilla Projects";
+        description = "Flake Template for Blank Projects";
         welcomeText = ''
-          # Flake Template for Vanilla Projects
+          # Flake Template for Blank Projects
           Run `nix develop` to enter the shell.
         '';
       };
@@ -103,18 +108,19 @@
 
       outputs = { repoRoot, inputs, pkgs, lib, ... }: [{
 
-        inherit repoRoot;
+        inherit repoRoot; # For debugging 
 
-        packages.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+        packages.rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
 
-        hydraJobs.devShells.ghc810 = mkDevShell lib "ghc810";
-        hydraJobs.devShells.ghc92 = mkDevShell lib "ghc92";
-        hydraJobs.devShells.ghc96 = mkDevShell lib "ghc96";
-        hydraJobs.devShells.ghc98 = mkDevShell lib "ghc98";
-        hydraJobs.render-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
-        hydraJobs.required = lib.iogx.mkHydraRequiredJob { };
-
-        _test_hls98 = repoRoot.src.ext.haskell-language-server-project "ghc98";
+        hydraJobs = {
+          ghc810-shell = mkTestShell lib "ghc810";
+          ghc92-shell = mkTestShell lib "ghc92";
+          ghc96-shell = mkTestShell lib "ghc96";
+          ghc98-shell = mkTestShell lib "ghc98";
+          rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+          testsuite = repoRoot.testsuite.main;
+          required = lib.iogx.mkHydraRequiredJob { };
+        };
 
         devShells.default = lib.iogx.mkShell {
           name = "iogx";
@@ -130,12 +136,12 @@
           };
           scripts.render-iogx-api-reference = {
             group = "iogx";
-            description = "Produce ./doc/options.md";
+            description = "Generate ./doc/api.md";
             exec = repoRoot.scripts."render-iogx-api-reference.sh";
           };
           scripts.find-repos-that-use-iogx = {
             group = "iogx";
-            description = "Find consumers of iogx in input-output-hk";
+            description = "Find repos in input-output-hk that use iogx";
             exec = repoRoot.scripts."find-repos-that-use-iogx.sh";
           };
         };

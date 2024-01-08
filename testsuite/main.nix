@@ -5,14 +5,17 @@
 
 let
 
+  getLocalFlake = path: builtins.getFlake (builtins.toPath path);
+
+
   testsuite = {
 
     templates = {
       vanilla = {
-        inherit (inputs.iogx-template-vanilla) devShells;
+        inherit (getLocalFlake ../templates/vanilla) devShells;
       };
       haskell = {
-        inherit (inputs.iogx-template-haskell) devShells packages checks hydraJobs;
+        inherit (getLocalFlake ../templates/haskell) devShells packages checks hydraJobs;
       };
     };
   };

@@ -17,9 +17,20 @@ cabalProject:
 
   # packages = [];
 
-  # scripts = {};
+  # scripts = {
+  #   foo = {
+  #      description = "";
+  #      group = "general";
+  #      enabled = true;
+  #      exec = ''
+  #        echo "Hello, World!"
+  #      '';
+  #    };
+  # };
 
-  # env = {};
+  # env = {
+  #   KEY = "VALUE";
+  # };
 
   # shellHook = "";
 

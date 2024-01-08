@@ -1554,11 +1554,11 @@
         "sphinxcontrib-haddock": "sphinxcontrib-haddock"
       },
       "locked": {
-        "lastModified": 1703677334,
-        "narHash": "sha256-kBr5jKiD23GRo1VKHTMXg9lvyTsTa6HXqXpkXIWP4Hs=",
+        "lastModified": 1703707592,
+        "narHash": "sha256-IPTTUZ0IH2iDISzOL5fsrhHbs4ieY0MD95mzH3VfT34=",
         "owner": "input-output-hk",
         "repo": "iogx",
-        "rev": "13dbfa6cc0c9107b19511e872f17c39d14893951",
+        "rev": "1184f82100ecfdc5eebd64cb1862e5aca1784abb",
         "type": "github"
       },
       "original": {
@@ -1573,7 +1573,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-Cx3JnG1tfuDsZEAhML448r1bKgx2Ab2vycuKVHsO7O4=",
+        "narHash": "sha256-M3xlu7bsl9IfJN0oOMAPaUh4KNE00exej6+yss9eSnA=",
         "path": "templates/haskell",
         "type": "path"
       },
@@ -1588,7 +1588,7 @@
       },
       "locked": {
         "lastModified": 1,
-        "narHash": "sha256-e5gAa9hOH5aaCyVIuGCBP60wSTIb/9Yc9pkfwgi1k00=",
+        "narHash": "sha256-KpBQGIw1+d2FCSRBxWKMwLFh7rIJqWm8pf+MP6gqT1Q=",
         "path": "templates/vanilla",
         "type": "path"
       },
@@ -1617,11 +1617,11 @@
         "sphinxcontrib-haddock": "sphinxcontrib-haddock_2"
       },
       "locked": {
-        "lastModified": 1703677334,
-        "narHash": "sha256-kBr5jKiD23GRo1VKHTMXg9lvyTsTa6HXqXpkXIWP4Hs=",
+        "lastModified": 1703707592,
+        "narHash": "sha256-IPTTUZ0IH2iDISzOL5fsrhHbs4ieY0MD95mzH3VfT34=",
         "owner": "input-output-hk",
         "repo": "iogx",
-        "rev": "13dbfa6cc0c9107b19511e872f17c39d14893951",
+        "rev": "1184f82100ecfdc5eebd64cb1862e5aca1784abb",
         "type": "github"
       },
       "original": {

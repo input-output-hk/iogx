@@ -13,6 +13,7 @@ let
     enable = false;
     extraOptions = "";
     package = null;
+    include = null;
   };
 
 
@@ -61,6 +62,28 @@ let
             preCommit = {
               cabal-fmt.enable = true;
               cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+            };
+          }
+        '';
+      };
+
+      include = l.mkOption {
+        type = l.types.listOf l.types.string;
+        default = null;
+        description = ''
+          The list of file extensions that this hook should run on.
+
+          If unset or `null`, the default file extensions will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            preCommit = {
+              prettier.enable = true;
+              prettier.include = [
+                "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+              ];
             };
           }
         '';

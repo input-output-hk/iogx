@@ -98,13 +98,19 @@ let
   };
 
 
+  getPreCommitIncludeList = name: default:
+    if shell.preCommit.${name}.include == null
+    then default
+    else shell.preCommit.${name}.include;
+
+
   pre-commit-hooks = {
     cabal-fmt = {
       enable = shell.preCommit.cabal-fmt.enable;
       extraOptions = shell.preCommit.cabal-fmt.extraOptions;
       package = shell-tools.cabal-fmt;
       options = "--inplace";
-      include = [ "cabal" ];
+      include = getPreCommitIncludeList "cabal-fmt" [ "cabal" ];
     };
 
     stylish-haskell = {
@@ -112,7 +118,7 @@ let
       extraOptions = shell.preCommit.stylish-haskell.extraOptions;
       package = shell-tools.stylish-haskell;
       options = "--inplace --config .stylish-haskell.yaml";
-      include = [ "hs" "lhs" ];
+      include = getPreCommitIncludeList "stylish-haskell" [ "hs" "lhs" ];
     };
 
     fourmolu = {
@@ -120,7 +126,7 @@ let
       extraOptions = shell.preCommit.fourmolu.extraOptions;
       package = shell-tools.fourmolu;
       options = "--mode inplace";
-      include = [ "hs" "lhs" ];
+      include = getPreCommitIncludeList "fourmolu" [ "hs" "lhs" ];
     };
 
     hlint = {
@@ -128,21 +134,21 @@ let
       extraOptions = shell.preCommit.hlint.extraOptions;
       package = shell-tools.hlint;
       options = "--hint=.hlint.yaml";
-      include = [ "hs" "lhs" ];
+      include = getPreCommitIncludeList "hlint" [ "hs" "lhs" ];
     };
 
     shellcheck = {
       enable = shell.preCommit.shellcheck.enable;
       extraOptions = shell.preCommit.shellcheck.extraOptions;
       package = shell-tools.shellcheck;
-      include = [ "sh" ];
+      include = getPreCommitIncludeList "shellcheck" [ "sh" ];
     };
 
     prettier = {
       enable = shell.preCommit.prettier.enable;
       extraOptions = shell.preCommit.prettier.extraOptions;
       package = shell-tools.prettier;
-      include = [ "js" "css" "html" ];
+      include = getPreCommitIncludeList "prettier" [ "js" "css" "html" ];
     };
 
     editorconfig-checker = {
@@ -157,14 +163,14 @@ let
       enable = shell.preCommit.nixpkgs-fmt.enable;
       extraOptions = shell.preCommit.nixpkgs-fmt.extraOptions;
       package = shell-tools.nixpkgs-fmt;
-      include = [ "nix" ];
+      include = getPreCommitIncludeList "nixpkgs-fmt" [ "nix" ];
     };
 
     optipng = {
       enable = shell.preCommit.optipng.enable;
       extraOptions = shell.preCommit.optipng.extraOptions;
       package = shell-tools.optipng;
-      include = [ "png" ];
+      include = getPreCommitIncludeList "optipng" [ "png" ];
     };
 
     purs-tidy = {
@@ -172,7 +178,7 @@ let
       extraOptions = shell.preCommit.purs-tidy.extraOptions;
       options = "format-in-place";
       package = shell-tools.purs-tidy;
-      include = [ "purs" ];
+      include = getPreCommitIncludeList "purs-tidy" [ "purs" ];
     };
   };
 

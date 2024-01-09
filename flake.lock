@@ -1572,16 +1572,14 @@
         "iogx": "iogx"
       },
       "locked": {
-        "dir": "templates/haskell",
-        "lastModified": 1704779009,
-        "narHash": "sha256-ph/gZgJKjyzrsY1udPAyGYP/Z5AV1y/3uj+sdyYUBtY=",
-        "type": "git",
-        "url": "file:./?dir=templates/haskell"
+        "lastModified": 1,
+        "narHash": "sha256-M3xlu7bsl9IfJN0oOMAPaUh4KNE00exej6+yss9eSnA=",
+        "path": "templates/haskell",
+        "type": "path"
       },
       "original": {
-        "dir": "templates/haskell",
-        "type": "git",
-        "url": "file:./?dir=templates/haskell"
+        "path": "templates/haskell",
+        "type": "path"
       }
     },
     "iogx-template-vanilla": {
@@ -1589,16 +1587,14 @@
         "iogx": "iogx_2"
       },
       "locked": {
-        "dir": "templates/vanilla",
-        "lastModified": 1704779009,
-        "narHash": "sha256-ph/gZgJKjyzrsY1udPAyGYP/Z5AV1y/3uj+sdyYUBtY=",
-        "type": "git",
-        "url": "file:./?dir=templates/vanilla"
+        "lastModified": 1,
+        "narHash": "sha256-KpBQGIw1+d2FCSRBxWKMwLFh7rIJqWm8pf+MP6gqT1Q=",
+        "path": "templates/vanilla",
+        "type": "path"
       },
       "original": {
-        "dir": "templates/vanilla",
-        "type": "git",
-        "url": "file:./?dir=templates/vanilla"
+        "path": "templates/vanilla",
+        "type": "path"
       }
     },
     "iogx_2": {

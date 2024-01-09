@@ -12,10 +12,12 @@ let
 
     templates = {
       vanilla = {
-        inherit (getLocalFlake ../templates/vanilla) devShells;
+        inherit (inputs.iogx-template-vanilla) devShells;
+        # inherit (getL/ocalFlake ../templates/vanilla) devShells;
       };
       haskell = {
-        inherit (getLocalFlake ../templates/haskell) devShells packages checks hydraJobs;
+        inherit (inputs.iogx-template-haskell) devShells packages checks hydraJobs;
+        # inherit (getLocalFlake ../templates/haskell) devShells packages checks hydraJobs;
       };
     };
   };

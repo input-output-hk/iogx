@@ -1691,7 +1691,7 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -1738,7 +1738,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.cabal-fmt.exclude`
+### `mkShell.<in>.preCommit.cabal-fmt.excludes`
 
 **Type**: list of string
 
@@ -1752,7 +1752,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -1868,7 +1868,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -1915,7 +1915,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.editorconfig-checker.exclude`
+### `mkShell.<in>.preCommit.editorconfig-checker.excludes`
 
 **Type**: list of string
 
@@ -1929,7 +1929,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2045,7 +2045,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2092,7 +2092,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.fourmolu.exclude`
+### `mkShell.<in>.preCommit.fourmolu.excludes`
 
 **Type**: list of string
 
@@ -2106,7 +2106,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2222,7 +2222,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2269,7 +2269,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.hlint.exclude`
+### `mkShell.<in>.preCommit.hlint.excludes`
 
 **Type**: list of string
 
@@ -2283,7 +2283,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2399,7 +2399,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2446,7 +2446,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.nixpkgs-fmt.exclude`
+### `mkShell.<in>.preCommit.nixpkgs-fmt.excludes`
 
 **Type**: list of string
 
@@ -2460,7 +2460,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2576,7 +2576,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2623,7 +2623,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.optipng.exclude`
+### `mkShell.<in>.preCommit.optipng.excludes`
 
 **Type**: list of string
 
@@ -2637,7 +2637,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2753,7 +2753,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2800,7 +2800,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.prettier.exclude`
+### `mkShell.<in>.preCommit.prettier.excludes`
 
 **Type**: list of string
 
@@ -2814,7 +2814,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -2930,7 +2930,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -2977,7 +2977,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.purs-tidy.exclude`
+### `mkShell.<in>.preCommit.purs-tidy.excludes`
 
 **Type**: list of string
 
@@ -2991,7 +2991,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -3107,7 +3107,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -3154,7 +3154,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.shellcheck.exclude`
+### `mkShell.<in>.preCommit.shellcheck.excludes`
 
 **Type**: list of string
 
@@ -3168,7 +3168,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 
@@ -3284,7 +3284,7 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
-  exclude = [ ];
+  excludes = [ ];
   extraOptions = "";
   include = null;
   package = null;
@@ -3331,7 +3331,7 @@ pre-commit run <hook-name>
 
 ---
 
-### `mkShell.<in>.preCommit.stylish-haskell.exclude`
+### `mkShell.<in>.preCommit.stylish-haskell.excludes`
 
 **Type**: list of string
 
@@ -3345,7 +3345,7 @@ pre-commit run <hook-name>
 lib.iogx.mkShell {
   preCommit = {
     prettier.enable = true;
-    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+    prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
   };
 }
 

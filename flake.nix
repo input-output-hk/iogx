@@ -46,8 +46,8 @@
     nix2container.url = "github:nlewo/nix2container";
 
     # By referencing our templates as flake inputs, we can write tests for them.
-    iogx-template-vanilla.url = "git+file:./?dir=templates/vanilla";
-    iogx-template-haskell.url = "git+file:./?dir=templates/haskell";
+    iogx-template-vanilla.url = "path:templates/vanilla";
+    iogx-template-haskell.url = "path:templates/haskell";
   };
 
 

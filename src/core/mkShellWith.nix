@@ -205,6 +205,7 @@ let
       else "";
 
     enable = hook.enable;
+    excludes = hook.excludes;
     name = name;
     pass_filenames = true;
     types = utils.getAttrWithDefault "types" [ ] hook;

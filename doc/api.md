@@ -1691,7 +1691,9 @@ Each tool knows which file extensions to look for, which files to ignore, and ho
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -1736,6 +1738,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.cabal-fmt.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.cabal-fmt.extraOptions`
 
 **Type**: string
@@ -1764,6 +1794,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.cabal-fmt.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -1808,7 +1868,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -1853,6 +1915,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.editorconfig-checker.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.editorconfig-checker.extraOptions`
 
 **Type**: string
@@ -1881,6 +1971,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.editorconfig-checker.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -1925,7 +2045,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -1970,6 +2092,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.fourmolu.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.fourmolu.extraOptions`
 
 **Type**: string
@@ -1998,6 +2148,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.fourmolu.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2042,7 +2222,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2087,6 +2269,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.hlint.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.hlint.extraOptions`
 
 **Type**: string
@@ -2115,6 +2325,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.hlint.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2159,7 +2399,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2204,6 +2446,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.nixpkgs-fmt.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.nixpkgs-fmt.extraOptions`
 
 **Type**: string
@@ -2232,6 +2502,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.nixpkgs-fmt.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2276,7 +2576,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2321,6 +2623,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.optipng.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.optipng.extraOptions`
 
 **Type**: string
@@ -2349,6 +2679,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.optipng.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2393,7 +2753,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2438,6 +2800,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.prettier.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.prettier.extraOptions`
 
 **Type**: string
@@ -2466,6 +2856,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.prettier.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2510,7 +2930,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2555,6 +2977,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.purs-tidy.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.purs-tidy.extraOptions`
 
 **Type**: string
@@ -2583,6 +3033,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.purs-tidy.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2627,7 +3107,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2672,6 +3154,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.shellcheck.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.shellcheck.extraOptions`
 
 **Type**: string
@@ -2700,6 +3210,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.shellcheck.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---
@@ -2744,7 +3284,9 @@ In general you don't want to override this, especially for the Haskell tools, be
 ```nix
 {
   enable = false;
+  exclude = [ ];
   extraOptions = "";
+  include = null;
   package = null;
 }
 ```
@@ -2789,6 +3331,34 @@ pre-commit run <hook-name>
 
 ---
 
+### `mkShell.<in>.preCommit.stylish-haskell.exclude`
+
+**Type**: list of string
+
+**Default**: `[ ]`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.exclude = [ "jsdelivr-npm-importmap.js\\.c" ];
+  };
+}
+
+```
+
+
+Exclude files that are matched by these patterns.
+
+By default all files with the relevant extensions are included. 
+
+
+---
+
 ### `mkShell.<in>.preCommit.stylish-haskell.extraOptions`
 
 **Type**: string
@@ -2817,6 +3387,36 @@ Extra command line options to be passed to the hook.
 Each hooks knows how run itself, and will be called with the correct command line arguments.
 
 However you can *append* additional options to a tool's command by setting this field.
+
+
+---
+
+### `mkShell.<in>.preCommit.stylish-haskell.include`
+
+**Type**: null or (list of string)
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  preCommit = {
+    prettier.enable = true;
+    prettier.include = [
+      "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+    ];
+  };
+}
+
+```
+
+
+The list of file extensions that this hook should run on.
+
+If unset or `null`, the default file extensions will be used.
 
 
 ---

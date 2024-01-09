@@ -69,7 +69,7 @@ let
       };
 
       include = l.mkOption {
-        type = l.types.nullOr (l.types.listOf l.types.string);
+        type = l.types.nullOr (l.types.listOf l.types.str);
         default = null;
         description = ''
           The list of file extensions that this hook should run on.

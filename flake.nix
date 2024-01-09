@@ -133,7 +133,8 @@
           preCommit = {
             editorconfig-checker.enable = true;
             nixpkgs-fmt.enable = true;
-          };
+            nixpkgs-fmt.excludes = [ "flake\\.nix" ];
+          }; 
           scripts.render-iogx-api-reference = {
             group = "iogx";
             description = "Generate ./doc/api.md";

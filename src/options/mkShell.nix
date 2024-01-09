@@ -12,8 +12,9 @@ let
   default-pre-commit-hook = {
     enable = false;
     extraOptions = "";
-    package = null;
+    excludes = [ ];
     include = null;
+    package = null;
   };
 
 
@@ -68,7 +69,7 @@ let
       };
 
       include = l.mkOption {
-        type = l.types.listOf l.types.string;
+        type = l.types.nullOr (l.types.listOf l.types.string);
         default = null;
         description = ''
           The list of file extensions that this hook should run on.
@@ -84,6 +85,26 @@ let
               prettier.include = [
                 "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
               ];
+            };
+          }
+        '';
+      };
+
+      excludes = l.mkOption {
+        type = l.types.listOf l.types.str;
+        default = [ ];
+        description = ''
+          Exclude files that are matched by these patterns.
+
+          By default all files with the relevant extensions are included. 
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            preCommit = {
+              prettier.enable = true;
+              prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
             };
           }
         '';

@@ -109,6 +109,7 @@ let
       enable = shell.preCommit.cabal-fmt.enable;
       extraOptions = shell.preCommit.cabal-fmt.extraOptions;
       package = shell-tools.cabal-fmt;
+      excludes = shell.preCommit.cabal-fmt.excludes;
       options = "--inplace";
       include = getPreCommitIncludeList "cabal-fmt" [ "cabal" ];
     };
@@ -117,6 +118,7 @@ let
       enable = shell.preCommit.stylish-haskell.enable;
       extraOptions = shell.preCommit.stylish-haskell.extraOptions;
       package = shell-tools.stylish-haskell;
+      excludes = shell.preCommit.stylish-haskell.excludes;
       options = "--inplace --config .stylish-haskell.yaml";
       include = getPreCommitIncludeList "stylish-haskell" [ "hs" "lhs" ];
     };
@@ -125,6 +127,7 @@ let
       enable = shell.preCommit.fourmolu.enable;
       extraOptions = shell.preCommit.fourmolu.extraOptions;
       package = shell-tools.fourmolu;
+      excludes = shell.preCommit.fourmolu.excludes;
       options = "--mode inplace";
       include = getPreCommitIncludeList "fourmolu" [ "hs" "lhs" ];
     };
@@ -133,6 +136,7 @@ let
       enable = shell.preCommit.hlint.enable;
       extraOptions = shell.preCommit.hlint.extraOptions;
       package = shell-tools.hlint;
+      excludes = shell.preCommit.hlint.excludes;
       options = "--hint=.hlint.yaml";
       include = getPreCommitIncludeList "hlint" [ "hs" "lhs" ];
     };
@@ -142,6 +146,7 @@ let
       extraOptions = shell.preCommit.shellcheck.extraOptions;
       package = shell-tools.shellcheck;
       include = getPreCommitIncludeList "shellcheck" [ "sh" ];
+      excludes = shell.preCommit.shellcheck.excludes;
     };
 
     prettier = {
@@ -149,12 +154,14 @@ let
       extraOptions = shell.preCommit.prettier.extraOptions;
       package = shell-tools.prettier;
       include = getPreCommitIncludeList "prettier" [ "js" "css" "html" ];
+      excludes = shell.preCommit.prettier.excludes;
     };
 
     editorconfig-checker = {
       enable = shell.preCommit.editorconfig-checker.enable;
       extraOptions = shell.preCommit.editorconfig-checker.extraOptions;
       package = shell-tools.editorconfig-checker;
+      excludes = shell.preCommit.editorconfig-checker.excludes;
       options = "-config .editorconfig";
       types = [ "file" ];
     };
@@ -164,6 +171,7 @@ let
       extraOptions = shell.preCommit.nixpkgs-fmt.extraOptions;
       package = shell-tools.nixpkgs-fmt;
       include = getPreCommitIncludeList "nixpkgs-fmt" [ "nix" ];
+      excludes = shell.preCommit.nixpkgs-fmt.excludes;
     };
 
     optipng = {
@@ -171,6 +179,7 @@ let
       extraOptions = shell.preCommit.optipng.extraOptions;
       package = shell-tools.optipng;
       include = getPreCommitIncludeList "optipng" [ "png" ];
+      excludes = shell.preCommit.optipng.excludes;
     };
 
     purs-tidy = {
@@ -179,6 +188,7 @@ let
       options = "format-in-place";
       package = shell-tools.purs-tidy;
       include = getPreCommitIncludeList "purs-tidy" [ "purs" ];
+      excludes = shell.preCommit.purs-tidy.excludes;
     };
   };
 

@@ -1,5 +1,8 @@
 { repoRoot, pkgs, ... }:
 
+# Return an attrset containing packages and scripts for developing a RTD site.
+
+# The readTheDocs submodule in mkHaskellProject-IN
 readTheDocs:
 
 let
@@ -46,6 +49,6 @@ let
 
 in
 
-if readTheDocs.enable then shell-profile else {} 
+if readTheDocs.enable then shell-profile else { } 
 
 

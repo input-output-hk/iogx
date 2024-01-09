@@ -1,3 +1,6 @@
+# This file contains utility functions that are used by the iogx codebase.
+# The iogx flake exports it in `inputs.iogx.lib.utils`.
+
 iogx-inputs:
 
 let
@@ -7,33 +10,24 @@ let
 
   utils = rec {
 
-    headerToLocalMarkDownLink = tag: name:
+    # When rendered, each header in and .md file gets its own url. 
+    # The url is constructed by sanitizing the header's text.
+    # This function takes the desired link's display text and the header's text
+    # and returns a valid markdown link.
+    headerToMarkDownLink = tag: text:
       let
-        name' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] name;
-        nameLower = l.strings.toLower name';
+        text' = l.replaceStrings [ "<" ">" "." " " ] [ "" "" "" "-" ] text;
+        text-lower = l.strings.toLower text';
       in
-      "[`${tag}`](#${nameLower})";
-
-
-    composeManyLeft = y: xs: l.foldl' (x: f: f x) xs y;
+      "[`${tag}`](#${text-lower})";
 
 
     recursiveUpdateMany = l.foldl' l.recursiveUpdate { };
 
 
-    mapAndRecursiveUpdateMany = xs: f: recursiveUpdateMany (map f xs);
-
-
     ptrace = x: y: l.trace (valueToString x) y;
-
-
     ptraceAttrNames = s: l.trace (l.attrNames s) s;
-
-
     ptraceShow = x: ptrace x x;
-
-
-    hasAttrByPathString = p: s: l.hasAttrByPath (l.splitString "." p) s;
 
 
     valueToString = x:
@@ -53,83 +47,12 @@ let
         toString x;
 
 
-    mergeDisjointAttrsOrThrow = s1: s2: mkErrmsg:
-      let
-        duplicates = l.intersectLists (l.attrNames s1) (l.attrNames s2);
-        n = l.length duplicates;
-      in
-      if n > 0 then
-        pthrow (mkErrmsg { inherit n duplicates; })
-      else
-        s1 // s2;
-
-
-    allEquals = xs:
-      if l.length xs > 0 then
-        let
-          ts = map l.typeOf xs;
-          ht = l.head ts;
-          hx = l.head xs;
-        in
-        l.all (t: t == ht) ts && l.all (x: x == hx) ts
-      else
-        true;
-
-
     # Is this not in the stdlib?
     getAttrWithDefault = name: def: set:
       if l.hasAttr name set then
         l.getAttr name set
       else
         def;
-
-
-    getAttrByPathString = path: l.getAttrFromPath (l.splitString "." path);
-
-
-    restrictManyAttrsByPathString = paths: set:
-      let
-        parts = map (l.flip restrictAttrByPathString set) paths;
-      in
-      recursiveUpdateMany parts;
-
-
-    restrictAttrByPath = path: set:
-      if l.hasAttrByPath path set then
-        l.setAttrByPath path (l.getAttrFromPath path set)
-      else
-        { };
-
-
-    restrictAttrByPathString = path: restrictAttrByPath (l.splitString "." path);
-
-
-    deleteManyAttrsByPathString = paths: set: l.foldl' (l.flip deleteAttrByPathString) set paths;
-
-
-    deleteAttrByPathString = path: deleteAttrByPath (l.splitString "." path);
-
-
-    deleteAttrByPath = path: set:
-      if l.length path == 0 then
-        set
-      else if l.length path == 1 then
-        let
-          name = builtins.head path;
-        in
-        if l.hasAttr name set then
-          removeAttrs set [ name ]
-        else
-          set
-      else
-        let
-          name = builtins.head path;
-          rest = builtins.tail path;
-        in
-        if l.hasAttr name set then
-          set // { ${name} = deleteAttrByPath rest set.${name}; }
-        else
-          set;
 
 
     ansiColor = text: fg: style:
@@ -152,28 +75,10 @@ let
       "\\033[${boldBit}${colorBit}m${text}\\033[0m";
 
 
-    shellEscape = s: (l.replaceStrings [ "\\" ] [ "\\\\" ] s);
-
-
     ansiBold = text: ansiColor text "" "bold";
 
 
-    ansiColorEscaped = text: fg: style: shellEscape (ansiColor text fg style);
-
-
-    pkgToExec = pkg: ''
-      ${l.getExe pkg} "$@"
-    '';
-
-
-    plural = n: s: if n == -1 || n == 1 then s else "${s}s";
-
-
     mapAttrValues = f: l.mapAttrs (_: f);
-
-
-    pthrow = text:
-      l.throw "\n${text}";
 
 
     iogxThrow = errmsg:

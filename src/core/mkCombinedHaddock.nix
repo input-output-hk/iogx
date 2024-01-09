@@ -1,6 +1,9 @@
 { repoRoot, iogx-inputs, pkgs, lib, ... }:
 
+# The haskell.nix cabalProject (or one of its flake variants)
 cabalProject:
+
+# The combinedHaddock submodule in mkHaskellProject-IN
 combinedHaddock:
 
 let

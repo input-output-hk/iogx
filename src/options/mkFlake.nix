@@ -6,7 +6,7 @@ let
 
   utils = import ../lib/utils.nix iogx-inputs;
 
-  link = x: utils.headerToLocalMarkDownLink x x;
+  link = x: utils.headerToMarkDownLink x x;
 
 
   mkFlake-IN-submodule = l.types.submodule {

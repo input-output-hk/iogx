@@ -1,5 +1,6 @@
+# Docs for this file: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#flakenix
 {
-  description = "Change the description field in your ./flake.nix";
+  description = "Change the description field in your flake.nix";
 
 
   inputs = {
@@ -7,6 +8,7 @@
   };
 
 
+  # Docs for mkFlake: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkflake
   outputs = inputs: inputs.iogx.lib.mkFlake {
 
     inherit inputs;

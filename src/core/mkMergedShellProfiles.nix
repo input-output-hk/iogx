@@ -1,5 +1,7 @@
 { lib, pkgs, ... }:
 
+# A simple utility to merge two shell profiles together. 
+
 let
   utils = lib.iogx.utils;
 

@@ -1,3 +1,6 @@
+# Scans all repositories in the input-output-hk GitHub organization and prints
+# those that use iogx flake as a direct or indirect dependency.
+
 if [ -z "$1" ]; then
   echo "usage: find-repos-that-use-iogx GITHUB_TOKEN"
   exit 1

@@ -1,1 +1,0 @@
-# Dummy conf.py file needed by the tests

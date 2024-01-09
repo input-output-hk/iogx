@@ -1,6 +1,7 @@
 { repoRoot, iogx-inputs, user-inputs, pkgs, lib, system, ... }:
 
-haskellProject':
+# The project config provided by the user.
+mkHaskellProject-IN:
 
 let
 
@@ -10,7 +11,7 @@ let
   evaluated-modules = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
-      config."mkHaskellProject.<in>" = haskellProject';
+      config."mkHaskellProject.<in>" = mkHaskellProject-IN;
     }];
   };
 

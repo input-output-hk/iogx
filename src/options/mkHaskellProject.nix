@@ -6,7 +6,7 @@ let
 
   utils = import ../lib/utils.nix iogx-inputs;
 
-  link = x: utils.headerToLocalMarkDownLink x x;
+  link = x: utils.headerToMarkDownLink x x;
 
 
   combined-haddock-submodule = l.types.submodule {
@@ -197,7 +197,6 @@ let
               # ^^^^^ Includes: hydraJobs.profiled = project.variants.profiled.hydraJobs;
             )
           ]
-          ```
         '';
         description = ''
           When set to `true` then ${link "mkHaskellProject.<out>.flake"} will include:

@@ -10,11 +10,33 @@ let
 
 
   default-pre-commit-hook = {
-    enable = false;
-    extraOptions = "";
-    excludes = [ ];
-    include = null;
-    package = null;
+    # https://github.com/cachix/pre-commit-hooks.nix#custom-hooks
+    enable = true;
+    # The name of the hook (appears on the report table):
+    name = "Unit tests";
+    # The command to execute (mandatory):
+    entry = "make check";
+    # The pattern of files to run on (default: "" (all))
+    # see also https://pre-commit.com/#hooks-files
+    files = "\\.(c|h)$";
+    # List of file types to run on (default: [ "file" ] (all files))
+    # see also https://pre-commit.com/#filtering-files-with-types
+    # You probably only need to specify one of `files` or `types`:
+    types = [ "text" "c" ];
+    # Exclude files that were matched by these patterns (default: [ ] (none)):
+    excludes = [ "irrelevant\\.c" ];
+    # The language of the hook - tells pre-commit
+    # how to install the hook (default: "system")
+    # see also https://pre-commit.com/#supported-languages
+    language = "system";
+    # Set this to false to not pass the changed files
+    # to the command (default: true):
+    pass_filenames = false;
+    # enable = false;
+    # extraOptions = "";
+    # excludes = [ ];
+    # include = null;
+    # package = null;
   };
 
 
@@ -24,7 +46,7 @@ let
         type = l.types.bool;
         default = false;
         description = ''
-          Whether to enable this pre-commit hook.
+          Whether to enable this hook.
 
           If `false`, the hook will not be installed.
 
@@ -32,6 +54,8 @@ let
           ```bash 
           pre-commit run <hook-name>
           ```
+
+          This will be passed verbatim to (pre-commit-hooks.nix)[https://github.com/cachix/pre-commit-hooks.nix#custom-hooks]
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -44,96 +68,117 @@ let
         '';
       };
 
-      package = l.mkOption {
-        type = l.types.nullOr l.types.package;
-        default = null;
-        description = ''
-          The package that provides the hook.
+      name = l.mkOption
+        {
+          type = l.types.str;
+          default = "";
+          description = ''
+            The name of the hook - shown during hook execution.
 
-          The `nixpkgs.lib.getExe` function will be used to extract the program to run.
+            Whether to enable this pre-commit hook.
 
-          If unset or `null`, the default package will be used.
+            If `false`, the hook will not be installed.
 
-          In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
-        '';
-        example = l.literalExpression ''
-          # shell.nix 
-          { repoRoot, inputs, pkgs, lib, system }:
-          lib.iogx.mkShell {
-            preCommit = {
-              cabal-fmt.enable = true;
-              cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
-            };
-          }
-        '';
-      };
+            If `true`, the hook will become available in the shell: 
+            ```bash 
+            pre-commit run <hook-name>
+            ```
 
-      include = l.mkOption {
-        type = l.types.nullOr (l.types.listOf l.types.str);
-        default = null;
-        description = ''
-          The list of file extensions that this hook should run on.
+            This will be passed verbatim to (pre-commit-hooks.nix)[https://github.com/cachix/pre-commit-hooks.nix#custom-hooks]
+          '';
+          name = "Unit tests";
+        }
 
-          If unset or `null`, the default file extensions will be used.
-        '';
-        example = l.literalExpression ''
-          # shell.nix 
-          { repoRoot, inputs, pkgs, lib, system }:
-          lib.iogx.mkShell {
-            preCommit = {
-              prettier.enable = true;
-              prettier.include = [
-                "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
-              ];
-            };
-          }
-        '';
-      };
+        package = l.mkOption {
+      type = l.types.nullOr l.types.package;
+      default = null;
+      description = ''
+        The package that provides the hook.
 
-      excludes = l.mkOption {
-        type = l.types.listOf l.types.str;
-        default = [ ];
-        description = ''
-          Exclude files that are matched by these patterns.
+        The `nixpkgs.lib.getExe` function will be used to extract the program to run.
 
-          By default all files with the relevant extensions are included. 
-        '';
-        example = l.literalExpression ''
-          # shell.nix 
-          { repoRoot, inputs, pkgs, lib, system }:
-          lib.iogx.mkShell {
-            preCommit = {
-              prettier.enable = true;
-              prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
-            };
-          }
-        '';
-      };
+        If unset or `null`, the default package will be used.
 
-      extraOptions = l.mkOption {
-        type = l.types.str;
-        default = "";
-        description = ''
-          Extra command line options to be passed to the hook.
-
-          Each hooks knows how run itself, and will be called with the correct command line arguments.
-          
-          However you can *append* additional options to a tool's command by setting this field.
-        '';
-        example = l.literalExpression ''
-          # shell.nix 
-          { repoRoot, inputs, pkgs, lib, system }:
-          lib.iogx.mkShell {
-            preCommit = {
-              cabal-fmt.enable = true;
-              cabal-fmt.extraOptions = "--no-tabular";
-              fourmolu.enable = false;
-              fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
-            };
-          }
-        '';
-      };
+        In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
+      '';
+      example = l.literalExpression ''
+        # shell.nix 
+        { repoRoot, inputs, pkgs, lib, system }:
+        lib.iogx.mkShell {
+          preCommit = {
+            cabal-fmt.enable = true;
+            cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
+          };
+        }
+      '';
     };
+
+    include = l.mkOption {
+      type = l.types.nullOr (l.types.listOf l.types.str);
+      default = null;
+      description = ''
+        The list of file extensions that this hook should run on.
+
+        If unset or `null`, the default file extensions will be used.
+      '';
+      example = l.literalExpression ''
+        # shell.nix 
+        { repoRoot, inputs, pkgs, lib, system }:
+        lib.iogx.mkShell {
+          preCommit = {
+            prettier.enable = true;
+            prettier.include = [
+              "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
+            ];
+          };
+        }
+      '';
+    };
+
+    excludes = l.mkOption {
+      type = l.types.listOf l.types.str;
+      default = [ ];
+      description = ''
+        Exclude files that are matched by these patterns.
+
+        By default all files with the relevant extensions are included. 
+      '';
+      example = l.literalExpression ''
+        # shell.nix 
+        { repoRoot, inputs, pkgs, lib, system }:
+        lib.iogx.mkShell {
+          preCommit = {
+            prettier.enable = true;
+            prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
+          };
+        }
+      '';
+    };
+
+    extraOptions = l.mkOption {
+      type = l.types.str;
+      default = "";
+      description = ''
+        Extra command line options to be passed to the hook.
+
+        Each hooks knows how run itself, and will be called with the correct command line arguments.
+          
+        However you can *append* additional options to a tool's command by setting this field.
+      '';
+      example = l.literalExpression ''
+        # shell.nix 
+        { repoRoot, inputs, pkgs, lib, system }:
+        lib.iogx.mkShell {
+          preCommit = {
+            cabal-fmt.enable = true;
+            cabal-fmt.extraOptions = "--no-tabular";
+            fourmolu.enable = false;
+            fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
+          };
+        }
+      '';
+    };
+  };
   };
 
 

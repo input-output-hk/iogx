@@ -249,9 +249,7 @@ let
 
 
   pre-commit-profile-packages = lib.mapAttrsToList
-    (name: hook:
-      if hook.enable then hook.package else null
-    )
+    (name: hook: if hook.enable then hook.package else null)
     pre-commit-hooks;
 
 

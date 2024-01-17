@@ -9,7 +9,8 @@ fi
 GITHUB_TOKEN="$1"
 
 check_one_repo() {
-  local repo_obj="$1" 
+  local org_name="$1" 
+  local repo_obj="$2" 
   local repo_name="$(echo "$repo_obj" | jq -r .name)"
 
   local flake_lock="$(mktemp)"
@@ -20,7 +21,7 @@ check_one_repo() {
     -s \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H 'Accept: application/vnd.github.v3.raw' \
-    -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.lock" \
+    -L "https://api.github.com/repos/$org_name/$repo_name/contents/flake.lock" \
     > "$flake_lock"
 
   curl \
@@ -28,7 +29,7 @@ check_one_repo() {
     -s \
     -H "Authorization: token $GITHUB_TOKEN" \
     -H 'Accept: application/vnd.github.v3.raw' \
-    -L "https://api.github.com/repos/input-output-hk/$repo_name/contents/flake.nix" \
+    -L "https://api.github.com/repos/$org_name/$repo_name/contents/flake.nix" \
     > "$flake_nix"
 
   local iogx_flake_hash="$(jq -r '.nodes.iogx.locked.rev' "$flake_lock")"
@@ -39,7 +40,7 @@ check_one_repo() {
     local datetime=$(date -d "@$timestamp" "+%Y-%m-%d")
     printf \
       "%-64s   %s   %s   %s\n" \
-      "https://www.github.com/input-output-hk/$repo_name" \
+      "https://www.github.com/$org_name/$repo_name" \
       "$iogx_flake_hash" \
       "$datetime" \
       "$direct_dep"
@@ -48,14 +49,22 @@ check_one_repo() {
 
 
 check_all_repos() {
-  local repos=$(gh repo list input-output-hk --json name --source --limit 1000 | jq -c '.[]')
+  local org_name="$1" 
+  local repos=$(gh repo list "$org_name" --json name --source --limit 1000 | jq -c '.[]')
 
   for repo in $repos; do
-    check_one_repo "$repo" &
+    check_one_repo "$org_name" "$repo" &
   done
 }
 
+
+check_all_organizations() {
+  check_all_repos "input-output-hk"
+  check_all_repos "IntersectMBO"
+}
+
+
 printf "%-64s   %-40s   %-10s   %s\n" "repo" "iogx gitrev" "iogx time" "depend"
-check_all_repos | sort -rk3
+check_all_organizations | sort -rk3
 
 wait 

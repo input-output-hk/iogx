@@ -121,7 +121,7 @@ let
     };
 
     stylish-haskell = {
-      options = "--inplace--config .stylish-haskell.yaml";
+      options = "--inplace --config .stylish-haskell.yaml";
       include = [ "hs" "lhs" ];
     };
 

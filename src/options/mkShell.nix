@@ -9,179 +9,6 @@ let
   link = x: utils.headerToMarkDownLink x x;
 
 
-  default-pre-commit-hook = {
-    # https://github.com/cachix/pre-commit-hooks.nix#custom-hooks
-    enable = true;
-    # The name of the hook (appears on the report table):
-    name = "Unit tests";
-    # The command to execute (mandatory):
-    entry = "make check";
-    # The pattern of files to run on (default: "" (all))
-    # see also https://pre-commit.com/#hooks-files
-    files = "\\.(c|h)$";
-    # List of file types to run on (default: [ "file" ] (all files))
-    # see also https://pre-commit.com/#filtering-files-with-types
-    # You probably only need to specify one of `files` or `types`:
-    types = [ "text" "c" ];
-    # Exclude files that were matched by these patterns (default: [ ] (none)):
-    excludes = [ "irrelevant\\.c" ];
-    # The language of the hook - tells pre-commit
-    # how to install the hook (default: "system")
-    # see also https://pre-commit.com/#supported-languages
-    language = "system";
-    # Set this to false to not pass the changed files
-    # to the command (default: true):
-    pass_filenames = false;
-    # enable = false;
-    # extraOptions = "";
-    # excludes = [ ];
-    # include = null;
-    # package = null;
-  };
-
-
-  pre-commit-hook-submodule = l.types.submodule {
-    options = {
-      enable = l.mkOption {
-        type = l.types.bool;
-        default = false;
-        description = ''
-          Whether to enable this hook.
-
-          If `false`, the hook will not be installed.
-
-          If `true`, the hook will become available in the shell: 
-          ```bash 
-          pre-commit run <hook-name>
-          ```
-
-          This will be passed verbatim to (pre-commit-hooks.nix)[https://github.com/cachix/pre-commit-hooks.nix#custom-hooks]
-        '';
-        example = l.literalExpression ''
-          # shell.nix 
-          { repoRoot, inputs, pkgs, lib, system }:
-          lib.iogx.mkShell {
-            preCommit = {
-              cabal-fmt.enable = system != "x86_64-darwin";
-            };
-          }
-        '';
-      };
-
-      name = l.mkOption
-        {
-          type = l.types.str;
-          default = "";
-          description = ''
-            The name of the hook - shown during hook execution.
-
-            Whether to enable this pre-commit hook.
-
-            If `false`, the hook will not be installed.
-
-            If `true`, the hook will become available in the shell: 
-            ```bash 
-            pre-commit run <hook-name>
-            ```
-
-            This will be passed verbatim to (pre-commit-hooks.nix)[https://github.com/cachix/pre-commit-hooks.nix#custom-hooks]
-          '';
-          name = "Unit tests";
-        }
-
-        package = l.mkOption {
-      type = l.types.nullOr l.types.package;
-      default = null;
-      description = ''
-        The package that provides the hook.
-
-        The `nixpkgs.lib.getExe` function will be used to extract the program to run.
-
-        If unset or `null`, the default package will be used.
-
-        In general you don't want to override this, especially for the Haskell tools, because the default package will be the one that matches the compiler used by your project.
-      '';
-      example = l.literalExpression ''
-        # shell.nix 
-        { repoRoot, inputs, pkgs, lib, system }:
-        lib.iogx.mkShell {
-          preCommit = {
-            cabal-fmt.enable = true;
-            cabal-fmt.package = repoRoot.nix.patched-cabal-fmt;
-          };
-        }
-      '';
-    };
-
-    include = l.mkOption {
-      type = l.types.nullOr (l.types.listOf l.types.str);
-      default = null;
-      description = ''
-        The list of file extensions that this hook should run on.
-
-        If unset or `null`, the default file extensions will be used.
-      '';
-      example = l.literalExpression ''
-        # shell.nix 
-        { repoRoot, inputs, pkgs, lib, system }:
-        lib.iogx.mkShell {
-          preCommit = {
-            prettier.enable = true;
-            prettier.include = [
-              "css" "html" "js" "json" "jsx" "md" "mdx" "scss" "ts" "yaml" "toml"
-            ];
-          };
-        }
-      '';
-    };
-
-    excludes = l.mkOption {
-      type = l.types.listOf l.types.str;
-      default = [ ];
-      description = ''
-        Exclude files that are matched by these patterns.
-
-        By default all files with the relevant extensions are included. 
-      '';
-      example = l.literalExpression ''
-        # shell.nix 
-        { repoRoot, inputs, pkgs, lib, system }:
-        lib.iogx.mkShell {
-          preCommit = {
-            prettier.enable = true;
-            prettier.excludes = [ "jsdelivr-npm-importmap.js\\.c" ];
-          };
-        }
-      '';
-    };
-
-    extraOptions = l.mkOption {
-      type = l.types.str;
-      default = "";
-      description = ''
-        Extra command line options to be passed to the hook.
-
-        Each hooks knows how run itself, and will be called with the correct command line arguments.
-          
-        However you can *append* additional options to a tool's command by setting this field.
-      '';
-      example = l.literalExpression ''
-        # shell.nix 
-        { repoRoot, inputs, pkgs, lib, system }:
-        lib.iogx.mkShell {
-          preCommit = {
-            cabal-fmt.enable = true;
-            cabal-fmt.extraOptions = "--no-tabular";
-            fourmolu.enable = false;
-            fourmolu.extraOptions = "-o -XTypeApplications -o XScopedTypeVariables";
-          };
-        }
-      '';
-    };
-  };
-  };
-
-
   tools-submodule = l.types.submodule {
     options = {
       haskellCompilerVersion = l.mkOption {
@@ -453,91 +280,6 @@ let
   };
 
 
-  pre-commit-submodule = l.types.submodule {
-    options = {
-      cabal-fmt = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `cabal-fmt` pre-commit hook.
-        '';
-      };
-
-      stylish-haskell = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `stylish-haskell` pre-commit hook.
-        '';
-      };
-
-      fourmolu = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `fourmolu` pre-commit hook.
-        '';
-      };
-
-      hlint = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `hlint` pre-commit hook.
-        '';
-      };
-
-      shellcheck = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `shellcheck` pre-commit hook.
-        '';
-      };
-
-      prettier = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `prettier` pre-commit hook.
-        '';
-      };
-
-      editorconfig-checker = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `editorconfig-checker` pre-commit hook.
-        '';
-      };
-
-      nixpkgs-fmt = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `nixpkgs-fmt` pre-commit hook.
-        '';
-      };
-
-      optipng = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `optipng` pre-commit hook.
-        '';
-      };
-
-      purs-tidy = l.mkOption {
-        type = pre-commit-hook-submodule;
-        default = default-pre-commit-hook;
-        description = ''
-          The `purs-tidy` pre-commit hook.
-        '';
-      };
-    };
-  };
-
-
   script-submodule = l.types.submodule {
     options = {
       exec = l.mkOption {
@@ -786,20 +528,35 @@ let
       };
 
       preCommit = l.mkOption {
-        type = pre-commit-submodule;
+        type = l.types.lazyAttrsOf l.types.attrs;
         default = { };
         description = ''
-          Configuration for pre-commit hooks, including code formatters and linters.
+          Configuration for arbitrary pre-commit hooks, passed verbatim to [`pre-commit-hooks-nix`](https://github.com/cachix/pre-commit-hooks.nix#custom-hooks).
 
-          These are fed to [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix), which is run whenever you `git commit`.
+          This is an attrset where each attribute name is the name of the hook, and each attribute value is the attrset of options for a [`custom-hook`](https://github.com/cachix/pre-commit-hooks.nix#custom-hooks).
 
-          The `pre-commit` executable will be made available in the shell.
+          There is an additional string option named `extraOptions` for convenience, which is appended to [`entry`](https://github.com/cachix/pre-commit-hooks.nix/blob/ffa9a5b90b0acfaa03b1533b83eaf5dead819a05/modules/pre-commit.nix#L54).
 
-          All the hooks are disabled by default.
+          The `pre-commit` executable will be made available in the shell, and should be used to test and run your hooks.
 
-          It is sufficient to set the `enable` flag to `true` to make the hook active.
+          Some hooks are pre-configured by default and can be enabled by setting the `enable` option to `true`.
 
-          When enabled, some hooks expect to find a configuration file in the root of the repository:
+          For these hooks, the `extraOptions` option becomes especially relevant.
+          
+          The list of pre-configured hooks is presented below: 
+
+          - `cabal-fmt`
+          - `stylish-haskell`
+          - `shellcheck`
+          - `prettier`
+          - `editorconfig-checker`
+          - `nixpkgs-fmt`
+          - `optipng`
+          - `fourmolu`
+          - `hlint`
+          - `purs-tidy`
+
+          When enabled, some of the above hooks expect to find a configuration file in the root of the repository:
 
           | Hook Name | Config File | 
           | --------- | ----------- |
@@ -811,7 +568,7 @@ let
 
           Currently there is no way to change the location of the configuration files.
 
-          Each tool knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
+          Each pre-configured hook knows which file extensions to look for, which files to ignore, and how to modify the files in-place.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -819,26 +576,49 @@ let
 
           lib.iogx.mkShell {
             preCommit = {
-              cabal-fmt.enable = false;
-              cabal-fmt.extraOptions = "";
+              cabal-fmt.enable = true;
+              cabal-fmt.extraOptions = "--tabular";
+
               stylish-haskell.enable = false;
               stylish-haskell.extraOptions = "";
+
               shellcheck.enable = false;
               shellcheck.extraOptions = "";
+
               prettier.enable = false;
               prettier.extraOptions = "";
+
               editorconfig-checker.enable = false;
               editorconfig-checker.extraOptions = "";
+
               nixpkgs-fmt.enable = false;
               nixpkgs-fmt.extraOptions = "";
+
               optipng.enable = false;
               optipng.extraOptions = "";
-              fourmolu.enable = false;
-              fourmolu.extraOptions = "";
+
+              fourmolu.enable = true;
+              fourmolu.extraOptions = "--ghc-option -XOverloadedStrings";
+
               hlint.enable = false;
               hlint.extraOptions = "";
+
               purs-tidy.enable = false;
               purs-tidy.extraOptions = "";
+
+              # https://github.com/cachix/pre-commit-hooks.nix#custom-hooks
+              my-custom-hook = {
+                extraOptions = [ "--foo" "--bar" ];
+
+                enable = true;
+                name = "Unit tests";
+                entry = "make check";
+                files = "\\.(c|h)$";
+                types = [ "text" "c" ];
+                excludes = [ "irrelevant\\.c" ];
+                language = "system";
+                pass_filenames = false;
+              };
             };
           }
         '';

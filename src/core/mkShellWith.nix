@@ -25,7 +25,6 @@ let
 
 
   shell = lib.recursiveUpdate shell' {
-
     prompt =
       if shell'.prompt == null
       then "\n\\[\\033[1;32m\\][${shell'.name}:\\w]\\$\\[\\033[0m\\] "
@@ -98,128 +97,106 @@ let
   };
 
 
-  getPreCommitIncludeList = name: default:
-    if shell.preCommit.${name}.include == null
-    then default
-    else shell.preCommit.${name}.include;
+  mkBuiltinPreCommitHook = name: hook: rec {
+    package = shell-tools.${name};
 
-
-  pre-commit-hooks = {
-    cabal-fmt = {
-      enable = shell.preCommit.cabal-fmt.enable;
-      extraOptions = shell.preCommit.cabal-fmt.extraOptions;
-      package = shell-tools.cabal-fmt;
-      excludes = shell.preCommit.cabal-fmt.excludes;
-      options = "--inplace";
-      include = getPreCommitIncludeList "cabal-fmt" [ "cabal" ];
-    };
-
-    stylish-haskell = {
-      enable = shell.preCommit.stylish-haskell.enable;
-      extraOptions = shell.preCommit.stylish-haskell.extraOptions;
-      package = shell-tools.stylish-haskell;
-      excludes = shell.preCommit.stylish-haskell.excludes;
-      options = "--inplace --config .stylish-haskell.yaml";
-      include = getPreCommitIncludeList "stylish-haskell" [ "hs" "lhs" ];
-    };
-
-    fourmolu = {
-      enable = shell.preCommit.fourmolu.enable;
-      extraOptions = shell.preCommit.fourmolu.extraOptions;
-      package = shell-tools.fourmolu;
-      excludes = shell.preCommit.fourmolu.excludes;
-      options = "--mode inplace";
-      include = getPreCommitIncludeList "fourmolu" [ "hs" "lhs" ];
-    };
-
-    hlint = {
-      enable = shell.preCommit.hlint.enable;
-      extraOptions = shell.preCommit.hlint.extraOptions;
-      package = shell-tools.hlint;
-      excludes = shell.preCommit.hlint.excludes;
-      options = "--hint=.hlint.yaml";
-      include = getPreCommitIncludeList "hlint" [ "hs" "lhs" ];
-    };
-
-    shellcheck = {
-      enable = shell.preCommit.shellcheck.enable;
-      extraOptions = shell.preCommit.shellcheck.extraOptions;
-      package = shell-tools.shellcheck;
-      include = getPreCommitIncludeList "shellcheck" [ "sh" ];
-      excludes = shell.preCommit.shellcheck.excludes;
-    };
-
-    prettier = {
-      enable = shell.preCommit.prettier.enable;
-      extraOptions = shell.preCommit.prettier.extraOptions;
-      package = shell-tools.prettier;
-      include = getPreCommitIncludeList "prettier" [ "js" "css" "html" ];
-      excludes = shell.preCommit.prettier.excludes;
-    };
-
-    editorconfig-checker = {
-      enable = shell.preCommit.editorconfig-checker.enable;
-      extraOptions = shell.preCommit.editorconfig-checker.extraOptions;
-      package = shell-tools.editorconfig-checker;
-      excludes = shell.preCommit.editorconfig-checker.excludes;
-      options = "-config .editorconfig";
-      types = [ "file" ];
-    };
-
-    nixpkgs-fmt = {
-      enable = shell.preCommit.nixpkgs-fmt.enable;
-      extraOptions = shell.preCommit.nixpkgs-fmt.extraOptions;
-      package = shell-tools.nixpkgs-fmt;
-      include = getPreCommitIncludeList "nixpkgs-fmt" [ "nix" ];
-      excludes = shell.preCommit.nixpkgs-fmt.excludes;
-    };
-
-    optipng = {
-      enable = shell.preCommit.optipng.enable;
-      extraOptions = shell.preCommit.optipng.extraOptions;
-      package = shell-tools.optipng;
-      include = getPreCommitIncludeList "optipng" [ "png" ];
-      excludes = shell.preCommit.optipng.excludes;
-    };
-
-    purs-tidy = {
-      enable = shell.preCommit.purs-tidy.enable;
-      extraOptions = shell.preCommit.purs-tidy.extraOptions;
-      options = "format-in-place";
-      package = shell-tools.purs-tidy;
-      include = getPreCommitIncludeList "purs-tidy" [ "purs" ];
-      excludes = shell.preCommit.purs-tidy.excludes;
-    };
-  };
-
-
-  mkPreCommitHook = name: hook: lib.mkForce {
-    entry =
-      "${lib.getExe' hook.package name} " +
-      "${utils.getAttrWithDefault "options" "" hook} " +
-      "${utils.getAttrWithDefault "extraOptions" "" hook}";
+    pass_filenames = true;
 
     files =
       if hook ? include
       then "\\.(${lib.concatStringsSep "|" hook.include})$"
       else "";
 
-    enable = hook.enable;
-    excludes = hook.excludes;
-    name = name;
-    pass_filenames = true;
-    types = utils.getAttrWithDefault "types" [ ] hook;
+    entry =
+      lib.getExe' package name +
+      " " +
+      utils.getAttrWithDefault "options" "" hook;
   };
+
+
+  builtin-pre-commit-hooks = lib.mapAttrs mkBuiltinPreCommitHook {
+    cabal-fmt = {
+      options = "--inplace";
+      include = [ "cabal" ];
+    };
+
+    stylish-haskell = {
+      options = "--inplace--config .stylish-haskell.yaml";
+      include = [ "hs" "lhs" ];
+    };
+
+    fourmolu = {
+      options = "mode inplace";
+      include = [ "hs" "lhs" ];
+    };
+
+    hlint = {
+      options = "hint=.hlnt.yaml";
+      include = [ "hs" "lhs" ];
+    };
+
+    shellcheck = {
+      include = [ "sh" ];
+    };
+
+    prettier = {
+      include = [ "ts" "js" "css" "html" ];
+    };
+
+    editorconfig-checker = {
+      options = "-config .editorconig";
+    };
+
+    nixpkgs-fmt = {
+      include = [ "nix" ];
+    };
+
+    optipng = {
+      include = [ "png" ];
+    };
+
+    purs-tidy = {
+      options = "format-in-place";
+      files = [ "purs" ];
+    };
+  };
+
+
+  # Note that this is a bit of a hack, this attrses is a valid pre-commit-hook 
+  # minus extra fields "extraOptions", "package", which 
+  # are only used internally by this module, however `extraOptions` can also be 
+  # provided by the user.
+  mkAugmentedPreCommitHook = name: hook: {
+    package = utils.getAttrWithDefault "package" null hook;
+
+    entry =
+      utils.getAttrWithDefault "entry" "" hook +
+      " " +
+      utils.getAttrWithDefault "extraOptions" "" hook;
+
+    enable = utils.getAttrWithDefault "enable" false hook;
+    name = utils.getAttrWithDefault "name" name hook;
+    types = utils.getAttrWithDefault "types" [ "file" ] hook;
+    files = utils.getAttrWithDefault "files" "" hook;
+    excludes = utils.getAttrWithDefault "excludes" [ ] hook;
+    language = utils.getAttrWithDefault "language" "system" hook;
+    pass_filenames = utils.getAttrWithDefault "pass_filenames" false hook;
+  };
+
+
+  augmented-pre-commit-hooks =
+    lib.mapAttrs mkAugmentedPreCommitHook
+      (lib.recursiveUpdate builtin-pre-commit-hooks shell.preCommit);
 
 
   toolchain-profile =
     let
       should-include-haskell-tools =
         shell.tools.haskellCompilerVersion != null ||
-        pre-commit-hooks.cabal-fmt.enable ||
-        pre-commit-hooks.stylish-haskell.enable ||
-        pre-commit-hooks.fourmolu.enable ||
-        pre-commit-hooks.hlint.enable;
+        augmented-pre-commit-hooks.cabal-fmt.enable ||
+        augmented-pre-commit-hooks.stylish-haskell.enable ||
+        augmented-pre-commit-hooks.fourmolu.enable ||
+        augmented-pre-commit-hooks.hlint.enable;
 
       haskell-tools = [
         shell-tools.haskell-language-server
@@ -233,7 +210,7 @@ let
 
       pre-commit-packages =
         let getPkg = _: hook: if hook.enable then hook.package else null;
-        in lib.mapAttrsToList getPkg pre-commit-hooks;
+        in lib.mapAttrsToList getPkg augmented-pre-commit-hooks;
 
       packages =
         pre-commit-packages ++
@@ -242,15 +219,15 @@ let
     { inherit packages; };
 
 
+  toValidPreCommitHook = name: hook: lib.mkForce
+    (removeAttrs hook [ "extraOptions" "package" ]);
+
+
   pre-commit-check = iogx-inputs.pre-commit-hooks-nix.lib.${system}.run {
     src = lib.cleanSource user-inputs.self;
-    hooks = lib.mapAttrs mkPreCommitHook pre-commit-hooks;
+    hooks = lib.mapAttrs toValidPreCommitHook augmented-pre-commit-hooks;
+    # options = {}; # TODO users might want to set this...
   };
-
-
-  pre-commit-profile-packages = lib.mapAttrsToList
-    (name: hook: if hook.enable then hook.package else null)
-    pre-commit-hooks;
 
 
   pre-commit-profile = {

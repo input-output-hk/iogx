@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 create_draft_pr="no"
-custom_iogx_branch=""
+custom_iogx_branch="custom-precommit-hooks"
 vbump_tag="2024-01-17"
 
 

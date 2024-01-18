@@ -126,12 +126,12 @@ let
     };
 
     fourmolu = {
-      options = "mode inplace";
+      options = "mode --inplace";
       include = [ "hs" "lhs" ];
     };
 
     hlint = {
-      options = "hint=.hlnt.yaml";
+      options = "--hint=.hlint.yaml";
       include = [ "hs" "lhs" ];
     };
 

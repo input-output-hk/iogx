@@ -68,6 +68,12 @@
           nixpkgs-fmt.enable = true;
           optipng.enable = true;
           purs-tidy.enable = true;
+          custom-hook = {
+            enable = true;
+            entry = "echo 'Running custom hook' ; exit 1";
+            pass_filenames = false;
+            language = "fail";
+          };
         };
       };
     in

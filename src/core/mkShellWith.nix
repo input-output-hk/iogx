@@ -126,7 +126,7 @@ let
     };
 
     fourmolu = {
-      options = "mode --inplace";
+      options = "--mode inplace";
       include = [ "hs" "lhs" ];
     };
 
@@ -144,7 +144,7 @@ let
     };
 
     editorconfig-checker = {
-      options = "-config .editorconig";
+      options = "-config .editorconfig";
     };
 
     nixpkgs-fmt = {

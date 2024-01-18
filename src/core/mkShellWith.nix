@@ -157,7 +157,7 @@ let
 
     purs-tidy = {
       options = "format-in-place";
-      files = [ "purs" ];
+      include = [ "purs" ];
     };
   };
 

@@ -150,6 +150,11 @@
             description = "Find repos in input-output-hk that use iogx";
             exec = repoRoot.scripts."find-repos-that-use-iogx.sh";
           };
+          scripts.bump-iogx-everywhere = {
+            group = "iogx";
+            description = "Create or update a PR to bump iogx in various repos";
+            exec = repoRoot.scripts."bump-iogx-everywhere.sh";
+          };
         };
       }];
     };

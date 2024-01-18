@@ -30,9 +30,9 @@ iogx_vbump_repo() {
   git push --force
   if [ "$create_draft_pr" == "yes" ]; then
     if [ "$add_no_changelog_required_label" == "yes" ]; then
-      gh pr create --title "Bump IOGX $vbump_tag" --body "Automated version bump" --draft --label "No Changelog Required"
+      gh pr create --title "Bump IOGX $vbump_tag" --body "Ordinary version bump" --draft --label "No Changelog Required"
     else
-      gh pr create --title "Bump IOGX $vbump_tag" --body "Automated version bump" --draft 
+      gh pr create --title "Bump IOGX $vbump_tag" --body "Ordinary version bump" --draft 
     fi
   fi
 }

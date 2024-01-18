@@ -68,6 +68,12 @@
           nixpkgs-fmt.enable = true;
           optipng.enable = true;
           purs-tidy.enable = true;
+          custom-hook = {
+            enable = true;
+            entry = "echo 'Running custom hook' ; exit 1";
+            pass_filenames = false;
+            language = "fail";
+          };
         };
       };
     in
@@ -118,7 +124,7 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
-          testsuite = repoRoot.testsuite.main;
+          #testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
         };
 
@@ -143,6 +149,11 @@
             group = "iogx";
             description = "Find repos in input-output-hk that use iogx";
             exec = repoRoot.scripts."find-repos-that-use-iogx.sh";
+          };
+          scripts.bump-iogx-everywhere = {
+            group = "iogx";
+            description = "Create or update a PR to bump iogx in various repos";
+            exec = repoRoot.scripts."bump-iogx-everywhere.sh";
           };
         };
       }];

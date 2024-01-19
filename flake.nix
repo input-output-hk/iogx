@@ -45,6 +45,8 @@
 
     nix2container.url = "github:nlewo/nix2container";
 
+    release-tool.url = "github:input-output-hk/flake-release-tool";
+
     # By referencing our templates as flake inputs, we can write tests for them.
     iogx-template-vanilla.url = "path:templates/vanilla";
     iogx-template-haskell.url = "path:templates/haskell";

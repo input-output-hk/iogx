@@ -1,4 +1,4 @@
-{ pkgs, lib, user-inputs, system, ... }:
+{ pkgs, lib, user-inputs, system, iogx-inputs, ... }:
 
 # Create a bunch of general-purpose scripts that can be added to the shell.
 
@@ -20,6 +20,13 @@ let
       partitioned = lib.mapAttrs groupToScripts groups;
     in
     partitioned;
+
+
+  release-tool = {
+    group = "general";
+    description = "Create releaes";
+    exec = "${lib.getExe iogx-inputs.release-tool.packages.flake-release-tool} $@";
+  };
 
 
   list-flake-outputs =
@@ -63,7 +70,7 @@ let
         let
           filterDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
           shell-scripts = filterDisabled (utils.getAttrWithDefault "scripts" { } mkShell-IN);
-          extra-scripts = { inherit info list-flake-outputs; };
+          extra-scripts = { inherit info list-flake-outputs release-tool; };
         in
         shell-scripts // extra-scripts;
 
@@ -119,7 +126,7 @@ let
     script;
 
 
-  utility-scripts = { inherit info list-flake-outputs; };
+  utility-scripts = { inherit info list-flake-outputs release-tool; };
 
 in
 

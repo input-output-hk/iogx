@@ -93,9 +93,27 @@ let
     repoRoot.src.core.mkShellWith shell-args shell-profiles;
 
 
+  mkProjectDevShell2 = project:
+    let
+      read-the-docs-profile = repoRoot.src.core.mkReadTheDocsShellProfile readTheDocs;
+      tools-args = { tools.haskellCompilerVersion = project.args.compiler-nix-name; };
+      project-args = haskellProject.shellArgs project;
+      shell-args = lib.recursiveUpdate tools-args project-args;
+      iogx-shell = repoRoot.src.core.mkShellWith shell-args [ read-the-docs-profile ];
+      final-shell = project.shell.overrideAttrs (attrs: attrs // {
+        buildInputs = attrs.buildInputs ++ iogx-shell.buildInputs;
+        shellHook = "${attrs.shellHook}\n${iogx-shell.shellHook}";
+      });
+    in
+    final-shell;
+
+
   mkProjectVariantOutputs = project:
     let
-      devShell = mkProjectDevShell project;
+      # Replace mkProjectDevShell2 with mkProjectDevShell when this is merged:
+      # https://github.com/input-output-hk/haskell.nix/pull/2163
+      # Or keep mkProjectDevShell2 forever since it seems to be working fine.
+      devShell = mkProjectDevShell2 project;
       devShells.default = devShell;
 
       originalFlake = pkgs.haskell-nix.haskellLib.mkFlake project { inherit devShell; };

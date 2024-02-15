@@ -24,10 +24,12 @@ iogx_vbump_repo() {
       sed -i "s|github:input-output-hk/iogx|github:input-output-hk/iogx?ref=$custom_iogx_branch|" flake.nix
     fi
   fi
+
   nix flake lock --update-input iogx
   git add .
   git commit -m "Bump IOGX $vbump_tag" --no-verify || true
   git push --force
+
   if [ "$create_draft_pr" == "yes" ]; then
     if [ "$add_no_changelog_required_label" == "yes" ]; then
       gh pr create --title "Bump IOGX $vbump_tag" --body "Ordinary version bump" --draft --label "No Changelog Required"

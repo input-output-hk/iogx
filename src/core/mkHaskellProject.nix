@@ -105,7 +105,7 @@ let
         shellHook = "${attrs.shellHook}\n${iogx-shell.shellHook}";
       });
     in
-    final-shell;
+    final-shell // { inherit (iogx-shell) pre-commit-check tools; };
 
 
   mkProjectVariantOutputs = project:

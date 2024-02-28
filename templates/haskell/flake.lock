@@ -1567,11 +1567,11 @@
         "sphinxcontrib-haddock": "sphinxcontrib-haddock_3"
       },
       "locked": {
-        "lastModified": 1708614239,
-        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
+        "lastModified": 1709113743,
+        "narHash": "sha256-UbJxbbKKrpWczSbOdrtdoCoPHxt8xW4TtNXocDt/NgA=",
         "owner": "input-output-hk",
         "repo": "iogx",
-        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
+        "rev": "f2a9f01f59d95e12f8abae671033fea4df63bbcd",
         "type": "github"
       },
       "original": {
@@ -1585,14 +1585,19 @@
         "iogx": "iogx_2"
       },
       "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-M3xlu7bsl9IfJN0oOMAPaUh4KNE00exej6+yss9eSnA=",
-        "path": "templates/haskell",
-        "type": "path"
+        "dir": "templates/haskell",
+        "lastModified": 1708614239,
+        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
+        "type": "github"
       },
       "original": {
-        "path": "templates/haskell",
-        "type": "path"
+        "dir": "templates/haskell",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "type": "github"
       }
     },
     "iogx-template-vanilla": {
@@ -1600,14 +1605,19 @@
         "iogx": "iogx_3"
       },
       "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-KpBQGIw1+d2FCSRBxWKMwLFh7rIJqWm8pf+MP6gqT1Q=",
-        "path": "templates/vanilla",
-        "type": "path"
+        "dir": "templates/vanilla",
+        "lastModified": 1708614239,
+        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
+        "type": "github"
       },
       "original": {
-        "path": "templates/vanilla",
-        "type": "path"
+        "dir": "templates/vanilla",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "type": "github"
       }
     },
     "iogx_2": {

@@ -19,7 +19,7 @@ let
 
       name = "my-project";
 
-      compiler-nix-name = lib.mkDefault "ghc8107";
+      compiler-nix-name = lib.mkDefault "ghc964";
 
       # flake.variants.profiled = {
       #   modules = [{ 
@@ -32,8 +32,8 @@ let
       #   compiler-nix-name = "ghc928";
       # };
 
-      # flake.variants.ghc964 = {
-      #   compiler-nix-name = "ghc964";
+      # flake.variants.ghc8107 = {
+      #   compiler-nix-name = "ghc8107";
       # };
 
       modules =

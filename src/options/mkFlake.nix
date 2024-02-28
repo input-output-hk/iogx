@@ -36,8 +36,8 @@ let
 
           The ${link "mkFlake.<in>.outputs"} function will be called once for each system.
         '';
-        default = [ "x86_64-linux" "x86_64-darwin" ];
-        defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" ]'';
+        default = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
+        defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ]'';
       };
 
       outputs = l.mkOption {

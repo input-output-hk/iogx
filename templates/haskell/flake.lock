@@ -885,6 +885,7 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "pre-commit-hooks-nix",
@@ -908,6 +909,7 @@
     "gitignore_2": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "pre-commit-hooks-nix",
@@ -931,6 +933,7 @@
     "gitignore_3": {
       "inputs": {
         "nixpkgs": [
+          "iogx",
           "pre-commit-hooks-nix",
           "nixpkgs"
         ]
@@ -1009,6 +1012,7 @@
         "ghc98X": "ghc98X",
         "ghc99": "ghc99",
         "hackage": [
+          "iogx",
           "hackage"
         ],
         "hls-1.10": "hls-1.10",
@@ -1020,6 +1024,7 @@
         "hydra": "hydra",
         "iserv-proxy": "iserv-proxy",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "nixpkgs-unstable"
         ],
@@ -1060,6 +1065,7 @@
         "ghc98X": "ghc98X_2",
         "ghc99": "ghc99_2",
         "hackage": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "hackage"
@@ -1073,6 +1079,7 @@
         "hydra": "hydra_2",
         "iserv-proxy": "iserv-proxy_2",
         "nixpkgs": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "haskell-nix",
@@ -1115,6 +1122,7 @@
         "ghc98X": "ghc98X_3",
         "ghc99": "ghc99_3",
         "hackage": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "hackage"
@@ -1128,6 +1136,7 @@
         "hydra": "hydra_3",
         "iserv-proxy": "iserv-proxy_3",
         "nixpkgs": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "haskell-nix",
@@ -1465,6 +1474,7 @@
       "inputs": {
         "nix": "nix",
         "nixpkgs": [
+          "iogx",
           "haskell-nix",
           "hydra",
           "nix",
@@ -1488,6 +1498,7 @@
       "inputs": {
         "nix": "nix_2",
         "nixpkgs": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "haskell-nix",
@@ -1513,6 +1524,7 @@
       "inputs": {
         "nix": "nix_3",
         "nixpkgs": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "haskell-nix",
@@ -1536,6 +1548,70 @@
     },
     "iogx": {
       "inputs": {
+        "CHaP": "CHaP",
+        "easy-purescript-nix": "easy-purescript-nix",
+        "flake-utils": "flake-utils_2",
+        "hackage": "hackage",
+        "haskell-nix": "haskell-nix",
+        "iogx-template-haskell": "iogx-template-haskell",
+        "iogx-template-vanilla": "iogx-template-vanilla",
+        "iohk-nix": "iohk-nix_3",
+        "nix2container": "nix2container_3",
+        "nixpkgs": [
+          "iogx",
+          "haskell-nix",
+          "nixpkgs"
+        ],
+        "nixpkgs-stable": "nixpkgs-stable_5",
+        "pre-commit-hooks-nix": "pre-commit-hooks-nix_3",
+        "sphinxcontrib-haddock": "sphinxcontrib-haddock_3"
+      },
+      "locked": {
+        "lastModified": 1708614239,
+        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "type": "github"
+      }
+    },
+    "iogx-template-haskell": {
+      "inputs": {
+        "iogx": "iogx_2"
+      },
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-M3xlu7bsl9IfJN0oOMAPaUh4KNE00exej6+yss9eSnA=",
+        "path": "templates/haskell",
+        "type": "path"
+      },
+      "original": {
+        "path": "templates/haskell",
+        "type": "path"
+      }
+    },
+    "iogx-template-vanilla": {
+      "inputs": {
+        "iogx": "iogx_3"
+      },
+      "locked": {
+        "lastModified": 1,
+        "narHash": "sha256-KpBQGIw1+d2FCSRBxWKMwLFh7rIJqWm8pf+MP6gqT1Q=",
+        "path": "templates/vanilla",
+        "type": "path"
+      },
+      "original": {
+        "path": "templates/vanilla",
+        "type": "path"
+      }
+    },
+    "iogx_2": {
+      "inputs": {
         "CHaP": "CHaP_2",
         "easy-purescript-nix": "easy-purescript-nix_2",
         "flake-utils": "flake-utils_4",
@@ -1544,6 +1620,7 @@
         "iohk-nix": "iohk-nix",
         "nix2container": "nix2container",
         "nixpkgs": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "haskell-nix",
@@ -1567,47 +1644,7 @@
         "type": "github"
       }
     },
-    "iogx-template-haskell": {
-      "inputs": {
-        "iogx": "iogx"
-      },
-      "locked": {
-        "dir": "templates/haskell",
-        "lastModified": 1708614239,
-        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
-        "owner": "input-output-hk",
-        "repo": "iogx",
-        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
-        "type": "github"
-      },
-      "original": {
-        "dir": "templates/haskell",
-        "owner": "input-output-hk",
-        "repo": "iogx",
-        "type": "github"
-      }
-    },
-    "iogx-template-vanilla": {
-      "inputs": {
-        "iogx": "iogx_2"
-      },
-      "locked": {
-        "dir": "templates/vanilla",
-        "lastModified": 1708614239,
-        "narHash": "sha256-7SWCZzXdjyzCspdlawv3gWsF3Sc4ELuG359USBoSz78=",
-        "owner": "input-output-hk",
-        "repo": "iogx",
-        "rev": "b9d68c8e45b1dab0e1a762ac9d51d49d15b724a6",
-        "type": "github"
-      },
-      "original": {
-        "dir": "templates/vanilla",
-        "owner": "input-output-hk",
-        "repo": "iogx",
-        "type": "github"
-      }
-    },
-    "iogx_2": {
+    "iogx_3": {
       "inputs": {
         "CHaP": "CHaP_3",
         "easy-purescript-nix": "easy-purescript-nix_3",
@@ -1617,6 +1654,7 @@
         "iohk-nix": "iohk-nix_2",
         "nix2container": "nix2container_2",
         "nixpkgs": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "haskell-nix",
@@ -1644,6 +1682,7 @@
       "inputs": {
         "blst": "blst",
         "nixpkgs": [
+          "iogx",
           "iogx-template-haskell",
           "iogx",
           "nixpkgs"
@@ -1669,6 +1708,7 @@
       "inputs": {
         "blst": "blst_2",
         "nixpkgs": [
+          "iogx",
           "iogx-template-vanilla",
           "iogx",
           "nixpkgs"
@@ -1694,6 +1734,7 @@
       "inputs": {
         "blst": "blst_3",
         "nixpkgs": [
+          "iogx",
           "nixpkgs"
         ],
         "secp256k1": "secp256k1_3",
@@ -2720,22 +2761,7 @@
     },
     "root": {
       "inputs": {
-        "CHaP": "CHaP",
-        "easy-purescript-nix": "easy-purescript-nix",
-        "flake-utils": "flake-utils_2",
-        "hackage": "hackage",
-        "haskell-nix": "haskell-nix",
-        "iogx-template-haskell": "iogx-template-haskell",
-        "iogx-template-vanilla": "iogx-template-vanilla",
-        "iohk-nix": "iohk-nix_3",
-        "nix2container": "nix2container_3",
-        "nixpkgs": [
-          "haskell-nix",
-          "nixpkgs"
-        ],
-        "nixpkgs-stable": "nixpkgs-stable_5",
-        "pre-commit-hooks-nix": "pre-commit-hooks-nix_3",
-        "sphinxcontrib-haddock": "sphinxcontrib-haddock_3"
+        "iogx": "iogx"
       }
     },
     "secp256k1": {

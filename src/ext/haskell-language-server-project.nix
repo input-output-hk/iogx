@@ -21,15 +21,16 @@ let
       }
     else if lib.hasInfix "ghc96" ghc then
       {
-        rev = "2.4.0.0";
-        sha256 = "sha256-VOMf5+kyOeOmfXTHlv4LNFJuDGa7G3pDnOxtzYR40IU=";
-        cabalProjectLocal = "constraints: stylish-haskell==0.14.5.0, hlint==3.6.1";
+        rev = "2.7.0.0";
+        sha256 = "sha256-LfJ+TBcBFq/XKoiNI7pc4VoHg4WmuzsFxYJ3Fu+Jf+M=";
+        cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
         configureArgs = "--disable-benchmarks";
       }
     else if lib.hasInfix "ghc98" ghc then
       {
-        rev = "2.5.0.0";
-        sha256 = "sha256-fyiR9TaHGJIIR0UmcCb73Xv9TJq3ht2ioxQ2mT7kVdc=";
+        rev = "2.7.0.0";
+        sha256 = "sha256-LfJ+TBcBFq/XKoiNI7pc4VoHg4WmuzsFxYJ3Fu+Jf+M=";
+        cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
         configureArgs = "--disable-benchmarks";
       }
     else

@@ -246,7 +246,7 @@ If Nix starts building `GHC` or other large artifacts that means that your cache
 
     outputs = import ./nix/outputs.nix;
 
-    # systems = [ "x86_64-linux" "x86_64-darwin" ];
+    # systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
 
     # debug = false;
 
@@ -464,7 +464,7 @@ See https://github.com/opencontainers/image-spec/blob/main/annotations.md
     repoRoot = ./.;
     debug = false;
     nixpkgsArgs = {};
-    systems = [ "x86_64-linux" "x86_64-darwin" ];
+    systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
     outputs = { repoRoot, inputs, pkgs, lib, system }: [];
   };
 }
@@ -753,7 +753,7 @@ The root of your repository (most likely `./.`).
 
 **Type**: list of (one of "x86_64-linux", "x86_64-darwin", "aarch64-darwin", "aarch64-linux")
 
-**Default**: `[ "x86_64-linux" "x86_64-darwin" ]`
+**Default**: `[ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]`
 
 
 

@@ -13,11 +13,9 @@ let
     templates = {
       vanilla = {
         inherit (inputs.iogx-template-vanilla) devShells;
-        # inherit (getL/ocalFlake ../templates/vanilla) devShells;
       };
       haskell = {
         inherit (inputs.iogx-template-haskell) devShells packages checks hydraJobs;
-        # inherit (getLocalFlake ../templates/haskell) devShells packages checks hydraJobs;
       };
     };
   };

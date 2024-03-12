@@ -36,8 +36,8 @@ let
 
           The ${link "mkFlake.<in>.outputs"} function will be called once for each system.
         '';
-        default = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
-        defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ]'';
+        default = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
+        defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]'';
       };
 
       outputs = l.mkOption {
@@ -287,7 +287,7 @@ let
           repoRoot = ./.;
           debug = false;
           nixpkgsArgs = {};
-          systems = [ "x86_64-linux" "x86_64-darwin" ];
+          systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
           outputs = { repoRoot, inputs, pkgs, lib, system }: [];
         };
       }

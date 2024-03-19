@@ -4,7 +4,7 @@
 let
 
   devShell = lib.iogx.mkShell {
-    tools.haskellCompilerVersion = "ghc964";
+    tools.haskellCompilerVersion = "ghc962";
   };
 
   # This is an evil hack to allow us to have a docker container with a "similar" environment to

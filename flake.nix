@@ -49,7 +49,7 @@
     iogx-template-vanilla.url = "github:input-output-hk/iogx?dir=templates/vanilla";
     iogx-template-haskell.url = "github:input-output-hk/iogx?dir=templates/haskell";
 
-    plutus-tx-template.url = "github:input-output-hk/iogx?dir=plutus-tx-template";
+    plutus-tx-template.url = "github:input-output-hk/iogx?ref=plutus-tx-template&dir=plutus-tx-template";
   };
 
 

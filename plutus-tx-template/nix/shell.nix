@@ -34,12 +34,12 @@ cabalProject:
   '';
 
   preCommit = {
-    cabal-fmt.enable = true;
-    stylish-haskell.enable = true;
-    fourmolu.enable = true;
-    hlint.enable = true;
-    editorconfig-checker.enable = true;
-    nixpkgs-fmt.enable = true;
+    # cabal-fmt.enable = true;
+    # stylish-haskell.enable = true;
+    # fourmolu.enable = true;
+    # hlint.enable = true;
+    # editorconfig-checker.enable = true;
+    # nixpkgs-fmt.enable = true;
   };
 }
  

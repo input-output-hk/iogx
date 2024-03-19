@@ -12,7 +12,7 @@ in
     project.flake
   )
   (lib.optionalAttrs (system == "x86_64-linux") {
-    devcontainer-docker-image = repoRoot.nix.devcontainer-docker-image;
-    push-devcontainer-docker-image = repoRoot.nix.push-devcontainer-docker-image;
+    hydraJobs.devcontainer-docker-image = repoRoot.nix.devcontainer-docker-image;
+    hydraJobs.push-devcontainer-docker-image = repoRoot.nix.push-devcontainer-docker-image;
   })
 ]

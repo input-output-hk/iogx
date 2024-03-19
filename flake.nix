@@ -126,6 +126,7 @@
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
+          haskell-project-devcontainer = if system == "x86_64-linux" then repoRoot.src.core.mkHaskellProjectDevContainer else null;
         };
 
         devShells.default = lib.iogx.mkShell {

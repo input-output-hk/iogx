@@ -160,11 +160,4 @@ let
 
 in
 
-image // { meta = pkgs.nix.meta // image.meta; };
-
-# (lib.optionalAttrs (system == "x86_64-linux") {
-#   hydraJobs.devcontainer.docker-image = repoRoot.nix.devcontainer.docker-image;
-#   hydraJobs.devcontainer.push-docker-image = repoRoot.nix.devcontainer.push-docker-image;
-# })
-
-
+image // { meta = pkgs.nix.meta // image.meta; }

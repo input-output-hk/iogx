@@ -48,8 +48,6 @@
     # By referencing our templates as flake inputs, we can write tests for them.
     iogx-template-vanilla.url = "github:input-output-hk/iogx?dir=templates/vanilla";
     iogx-template-haskell.url = "github:input-output-hk/iogx?dir=templates/haskell";
-
-    plutus-tx-template.url = "github:input-output-hk/iogx?ref=plutus-tx-template&dir=plutus-tx-template";
   };
 
 
@@ -128,9 +126,6 @@
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
-          plutus-tx-template = {
-            inherit (inputs.plutus-tx-template) devShells packages checks hydraJobs;
-          };
         };
 
         devShells.default = lib.iogx.mkShell {
@@ -159,6 +154,11 @@
             group = "iogx";
             description = "Create or update a PR to bump iogx in various repos";
             exec = repoRoot.scripts."bump-iogx-everywhere.sh";
+          };
+          scripts.push-haskell-project-devcontainer = {
+            group = "iogx";
+            description = "Push the docker image for use with plutus-tx-template";
+            exec = repoRoot.scripts."push-haskell-project-devcontainer.sh";
           };
         };
       }];

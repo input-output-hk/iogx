@@ -1,8 +1,11 @@
-# This is a vscode devcontainer that can be used with the plutus-starter project (or probably the plutus project itself).
+# This is a vscode devcontainer that can be used with the plutus-tx-template project.
 { repoRoot, inputs, pkgs, lib, system }:
 
 let
-  project = repoRoot.nix.project;
+
+  devShell = lib.iogx.mkShell {
+    tools.haskellCompilerVersion = "ghc964";
+  };
 
   # This is an evil hack to allow us to have a docker container with a "similar" environment to
   # our haskell.nix shell without having it actually run nix develop. In particular, we need some
@@ -10,7 +13,7 @@ let
   # The result of this derivation is a file that can be sourced to set the variables we need.
   horrible-env-vars-hack = pkgs.runCommand "exfiltrate-env-vars"
     {
-      inherit (project.devShell) buildInputs nativeBuildInputs propagatedBuildInputs;
+      inherit (devShell) buildInputs nativeBuildInputs propagatedBuildInputs;
     }
     ''
       set | grep -v -E '^BASHOPTS=|^BASH_VERSINFO=|^EUID=|^PPID=|^SHELLOPTS=|^UID=|^HOME=|^TEMP=|^TMP=|^TEMPDIR=|^TMPDIR=|^NIX_ENFORCE_PURITY=' >> $out
@@ -89,10 +92,11 @@ let
         pkgs.which
 
         # Plutus Stuff
-        project.cabalProject.pkg-set.config.ghc.package
-        project.devShell.tools.haskell-language-server
-        project.devShell.tools.haskell-language-server-wrapper
-        project.devShell.tools.cabal-install
+        pkgs.haskell-nix.compiler.ghc964
+        # project.cabalProject.pkg-set.config.ghc.package
+        devShell.tools.haskell-language-server
+        devShell.tools.haskell-language-server-wrapper
+        devShell.tools.cabal-install
       ];
     };
 
@@ -153,5 +157,14 @@ let
       ];
     };
   };
+
 in
-image // { meta = pkgs.nix.meta // image.meta; }
+
+image // { meta = pkgs.nix.meta // image.meta; };
+
+# (lib.optionalAttrs (system == "x86_64-linux") {
+#   hydraJobs.devcontainer.docker-image = repoRoot.nix.devcontainer.docker-image;
+#   hydraJobs.devcontainer.push-docker-image = repoRoot.nix.devcontainer.push-docker-image;
+# })
+
+

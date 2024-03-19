@@ -5444,14 +5444,20 @@
         ]
       },
       "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-sogTnajfUl8IGSgGHOUSiS0HytXTmg9vui0QUJmK3ig=",
-        "path": "/nix/store/zlippnybbyp74kib75qiz8z5ra2kqr30-source/plutus-tx-template",
-        "type": "path"
+        "dir": "plutus-tx-template",
+        "lastModified": 1710842993,
+        "narHash": "sha256-O+YH9YKnBI+63d97uZN6cxAhzb2oG0v4POUixNefYDk=",
+        "owner": "input-output-hk",
+        "repo": "iogx",
+        "rev": "a7471533587d6b64c3b86ef6b7800ec14845e858",
+        "type": "github"
       },
       "original": {
-        "path": "/nix/store/zlippnybbyp74kib75qiz8z5ra2kqr30-source/plutus-tx-template",
-        "type": "path"
+        "dir": "plutus-tx-template",
+        "owner": "input-output-hk",
+        "ref": "plutus-tx-template",
+        "repo": "iogx",
+        "type": "github"
       }
     },
     "pre-commit-hooks-nix": {

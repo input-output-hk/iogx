@@ -92,7 +92,7 @@ let
         pkgs.which
 
         # Plutus Stuff
-        pkgs.haskell-nix.compiler.ghc964
+        pkgs.haskell-nix.compiler.ghc962
         # project.cabalProject.pkg-set.config.ghc.package
         devShell.tools.haskell-language-server
         devShell.tools.haskell-language-server-wrapper

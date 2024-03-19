@@ -5,9 +5,6 @@
 
 let
 
-  getLocalFlake = path: builtins.getFlake (builtins.toPath path);
-
-
   testsuite = {
 
     templates = {

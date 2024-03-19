@@ -114,7 +114,7 @@
         options = import ./src/options inputs;
       };
 
-      outputs = { repoRoot, inputs, pkgs, lib, ... }: [{
+      outputs = { repoRoot, inputs, pkgs, lib, system }: [{
 
         inherit repoRoot; # For debugging 
 
@@ -128,7 +128,9 @@
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
-          plutus-tx-template = inputs.plutus-tx-template;
+          plutus-tx-template = {
+            inherit (inputs.plutus-tx-template) devShells packages checks hydraJobs;
+          };
         };
 
         devShells.default = lib.iogx.mkShell {

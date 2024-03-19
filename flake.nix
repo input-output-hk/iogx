@@ -48,6 +48,8 @@
     # By referencing our templates as flake inputs, we can write tests for them.
     iogx-template-vanilla.url = "github:input-output-hk/iogx?dir=templates/vanilla";
     iogx-template-haskell.url = "github:input-output-hk/iogx?dir=templates/haskell";
+
+    plutus-tx-template.url = "github:input-output-hk/iogx?dir=plutus-tx-template";
   };
 
 
@@ -126,6 +128,7 @@
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
+          plutus-tx-template = inputs.plutus-tx-template;
         };
 
         devShells.default = lib.iogx.mkShell {

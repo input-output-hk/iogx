@@ -101,6 +101,8 @@ let
     };
 
     runAsRoot = ''
+      cd / 
+      
       # for /usr/bin/env
       mkdir usr
       ln -s ../bin usr/bin

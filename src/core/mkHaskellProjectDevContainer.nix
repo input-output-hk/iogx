@@ -4,7 +4,7 @@
 let
 
   devShell = lib.iogx.mkShell {
-    tools.haskellCompilerVersion = "ghc962";
+    tools.haskellCompilerVersion = "ghc963";
   };
 
   # This is an evil hack to allow us to have a docker container with a "similar" environment to
@@ -91,9 +91,8 @@ let
         pkgs.jq
         pkgs.which
 
-        # Plutus Stuff
-        pkgs.haskell-nix.compiler.ghc962
-        # project.cabalProject.pkg-set.config.ghc.package
+        # haskell stuff
+        pkgs.haskell-nix.compiler.ghc963
         devShell.tools.haskell-language-server
         devShell.tools.haskell-language-server-wrapper
         devShell.tools.cabal-install
@@ -102,7 +101,7 @@ let
 
     runAsRoot = ''
       cd / 
-      
+
       # for /usr/bin/env
       mkdir usr
       ln -s ../bin usr/bin
@@ -160,6 +159,63 @@ let
     };
   };
 
+  image' = image // { meta = pkgs.nix.meta // image.meta; };
+
+
+  shellImage = pkgs.dockerTools.buildNixShellImage {
+    drv = pkgs.mkShell {
+      buildInputs = [
+        nsswitch-conf
+
+        pkgs.coreutils
+        pkgs.procps
+        pkgs.gnugrep
+        pkgs.gnused
+        pkgs.less
+        pkgs.binutils
+        pkgs.pkg-config
+
+        # add /bin/sh
+        pkgs.bashInteractive
+
+        # runtime dependencies of nix
+        pkgs.cacert
+        pkgs.git
+        pkgs.gnutar
+        pkgs.gzip
+        pkgs.xz
+
+        # for haskell binaries
+        pkgs.iana-etc
+
+        # for user management
+        # pkgs.shadow linux 
+
+        # for the vscode extension
+        pkgs.gcc-unwrapped
+        pkgs.findutils
+        # pkgs.iproute linux
+
+        # nice-to-have tools
+        pkgs.curl
+        pkgs.jq
+        pkgs.which
+
+        # haskell stuff
+        pkgs.haskell-nix.compiler.ghc963
+        devShell.tools.haskell-language-server
+        devShell.tools.haskell-language-server-wrapper
+        devShell.tools.cabal-install
+      ];
+    };
+    name = "haskell-project-env";
+    tag = "latest";
+    uid = "1000";
+    homeDirectory = "/home/plutus";
+  };
+
 in
 
-image // { meta = pkgs.nix.meta // image.meta; }
+shellImage
+# image'
+

@@ -163,7 +163,11 @@ let
 
 
   shellImage = pkgs.dockerTools.buildNixShellImage {
+    shell = pkgs.bashInteractive + "/bin/bash";
     drv = pkgs.mkShell {
+      shellHook = ''
+        mkdir -p /build/.cabal/packages
+      '';
       buildInputs = [
         nsswitch-conf
 
@@ -211,11 +215,32 @@ let
     name = "haskell-project-env";
     tag = "latest";
     uid = "1000";
-    homeDirectory = "/home/plutus";
+    gid = "1000";
+    # homeDirectory = "/home/plutus";
+
+    # command = ''
+    #   mkdir -p /build/.cabal/packages
+    #   chown -R 1000:1000 /build/.cabal/packages
+    # '';
+    #   #groupadd --gid 1001 plutus
+    #   #useradd --uid 1001 --gid 1001 plutus
+    #   mkdir -p /build/.cabal/packages
+    #   chown -R plutus:plutus /home/plutus
+
+    #   # if [[ $- == *i* ]]; then
+    #   PS1='\[\033[0;32;40m\][devcontainer]$\[\033[0m\] '
+    #   #fi
+    #   # Because we map in the `./.cabal` folder from the users home directory,
+    #   # (see: https://github.com/input-output-hk/plutus-starter/blob/main/.devcontainer/devcontainer.json)
+    #   # and because docker won't let us map a volume not as root
+    #   # (see: https://github.com/moby/moby/issues/2259 link), we have to make the
+    #   # folder first and chown it ...
+    # '';
   };
 
 in
 
 shellImage
 # image'
+
 

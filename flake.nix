@@ -83,7 +83,7 @@
 
       repoRoot = ./.;
 
-      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
 
       flake.templates.default = flake.templates.vanilla;
 
@@ -117,6 +117,7 @@
         inherit repoRoot; # For debugging 
 
         packages.rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+        packages.haskell-project-devcontainer = repoRoot.src.core.mkHaskellProjectDevContainer;
 
         hydraJobs = {
           ghc810-shell = mkTestShell lib "ghc810";
@@ -137,6 +138,7 @@
             pkgs.github-cli
             pkgs.python39
             pkgs.nix-prefetch-github
+            pkgs.skopeo
           ];
           preCommit = {
             editorconfig-checker.enable = true;

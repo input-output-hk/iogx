@@ -163,10 +163,11 @@ let
 
 
   shellImage = pkgs.dockerTools.buildNixShellImage {
-    shell = pkgs.bashInteractive + "/bin/bash";
     drv = pkgs.mkShell {
       shellHook = ''
+        whoami
         mkdir -p /build/.cabal/packages
+        chown 1000:1000 -R /build/.cabal
       '';
       buildInputs = [
         nsswitch-conf

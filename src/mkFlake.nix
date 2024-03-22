@@ -69,6 +69,7 @@ let
       mkHaskellProject = repoRoot.src.core.mkHaskellProject;
       mkHydraRequiredJob = repoRoot.src.core.mkHydraRequiredJob;
       mkContainerFromCabalExe = repoRoot.src.core.mkContainerFromCabalExe;
+      mkHaskellProjectDevContainer = repoRoot.src.core.mkHaskellProjectDevContainer;
       inherit utils modularise options;
     };
 

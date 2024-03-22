@@ -1,0 +1,40 @@
+name: Deploy haskell-project-devcontainer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - uses: cachix/install-nix-action@v26
+        with:
+          extra_nix_config: |
+            accept-flake-config = true
+
+      - name: Build & Push Image
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+          nix build .#haskell-project-devcontainer
+
+          docker load -i result 
+
+          IMAGE_ID="ghcr.io/IntersectMBO/haskell-project-devcontainer"
+          VERSION="$(git rev-parse HEAD)"
+
+          docker tag plutus-tx-template "$IMAGE_ID:$VERSION"
+          docker tag plutus-tx-template "$IMAGE_ID:latest"
+
+          docker push "$IMAGE_ID:$VERSION"
+          docker push "$IMAGE_ID:latest"

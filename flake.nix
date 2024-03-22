@@ -127,7 +127,6 @@
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
-          # haskell-project-devcontainer = if system == "x86_64-linux" then repoRoot.src.core.mkHaskellProjectDevContainer else null;
           haskell-project-devcontainer = repoRoot.src.core.mkHaskellProjectDevContainer;
         };
 
@@ -139,6 +138,7 @@
             pkgs.python39
             pkgs.nix-prefetch-github
             pkgs.skopeo
+            pkgs.act
           ];
           preCommit = {
             editorconfig-checker.enable = true;
@@ -158,11 +158,6 @@
             group = "iogx";
             description = "Create or update a PR to bump iogx in various repos";
             exec = repoRoot.scripts."bump-iogx-everywhere.sh";
-          };
-          scripts.push-haskell-project-devcontainer = {
-            group = "iogx";
-            description = "Push the docker image for use with plutus-tx-template";
-            exec = repoRoot.scripts."push-haskell-project-devcontainer.sh";
           };
         };
       }];

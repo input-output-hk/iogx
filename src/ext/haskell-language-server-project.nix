@@ -36,7 +36,7 @@ let
     else
       lib.trace
         ''
-          Unsupported GHC version ${ghc}, defaulting to ghc810 for haskell-language-server
+          Unsupported GHC version ${ghc}, defaulting to ghc v8.10.7 for haskell-language-server v1.8.0.0
         ''
         {
           rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0

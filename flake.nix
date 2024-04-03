@@ -125,9 +125,6 @@
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           testsuite = repoRoot.testsuite.main;
-
-          hls = (repoRoot.src.ext.haskell-language-server-project "ghc98").hsPkgs.stylish-haskell.components.exes.stylish-haskell;
-
           required = lib.iogx.mkHydraRequiredJob { };
         };
 

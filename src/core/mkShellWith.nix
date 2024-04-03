@@ -54,6 +54,9 @@ let
     haskell-language-server = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
     haskell-language-server-wrapper = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
 
+    # When using mkHaskellProject, this will be overriden by the ghcWithPackages provided by haskell.nix's shell.
+    ghc = hls.pkg-set.config.ghc.package;
+
     stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
     hlint = hls.hsPkgs.hlint.components.exes.hlint;
     cabal-fmt = repoRoot.src.ext.cabal-fmt;
@@ -75,6 +78,7 @@ let
 
 
   shell-tools = {
+    ghc = getTool "ghc";
     cabal-install = getTool "cabal-install";
     cabal-fmt = getTool "cabal-fmt";
     stylish-haskell = getTool "stylish-haskell";
@@ -200,6 +204,7 @@ let
         shell-tools.stylish-haskell
         shell-tools.fourmolu
         shell-tools.hlint
+        shell-tools.ghc
       ];
 
       pre-commit-packages =

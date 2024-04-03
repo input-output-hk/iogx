@@ -192,7 +192,7 @@ let
         type = l.types.functionTo l.types.attrs;
         default = { };
         description = ''
-          A function to a flake-like attrset.
+          A function that returns a flake-like attrset.
 
           You can place additional flake outputs here, which will be recursively updated with the attrset from ${link "mkFlake.<in>.outputs"}.
 

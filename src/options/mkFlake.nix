@@ -189,16 +189,21 @@ let
       };
 
       flake = l.mkOption {
-        type = l.types.attrs;
+        type = l.types.functionTo l.types.attrs;
         default = { };
         description = ''
-          A flake-like attrset.
+          A function to a flake-like attrset.
 
           You can place additional flake outputs here, which will be recursively updated with the attrset from ${link "mkFlake.<in>.outputs"}.
 
           This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
+
+          Like ${link "mkFlake.<in>.outputs"}, this function takes an attrset as argument, containing both `repoRoot` and the original (non de-systemized) `inputs`.
+
+          Note that if you use `repoRoot` to reference nix files in this context, the nix files must also be functions from an `{ repoRoot, inputs }` attrset.
         '';
         example = l.literalExpression ''
+          { repoRoot, inputs }:
           {
             lib.bar = _: null;
 

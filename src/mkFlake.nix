@@ -112,11 +112,7 @@ let
             inherit pkgs lib system;
           };
 
-          evaluated-outputs =
-            if lib.typeOf args.outputs == "path" then
-              import args.outputs args-for-user-outputs
-            else
-              args.outputs args-for-user-outputs;
+          evaluated-outputs = args.outputs args-for-user-outputs;
 
           flake = utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
 
@@ -127,11 +123,31 @@ let
         in
         flake';
 
-      flake = iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
+      systemIndependentFlake =
+        let
+          modularised-user-repo-root = modularise {
+            debug = args.debug;
+            root = args.repoRoot;
+            module = "repoRoot";
+            args = {
+              inputs = args.inputs;
+            };
+          };
 
-      flake' = iogx-inputs.nixpkgs.lib.recursiveUpdate args.flake flake;
+          args-for-user-flake = {
+            repoRoot = modularised-user-repo-root;
+            inputs = args.inputs;
+          };
+
+          flake = args.flake args-for-user-flake;
+        in
+        flake;
+
+      perSystemFlake = iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
+
+      flake = iogx-inputs.nixpkgs.lib.recursiveUpdate systemIndependentFlake perSystemFlake;
     in
-    flake';
+    flake;
 
 in
 

@@ -26,7 +26,7 @@
     #   overlays = [];
     # };
 
-    # flake = {};
+    # flake = { repoRoot, inputs }: {};
   };
 
 

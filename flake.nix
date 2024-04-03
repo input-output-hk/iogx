@@ -85,36 +85,39 @@
 
       systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
 
-      flake.templates.default = flake.templates.vanilla;
+      flake = { repoRoot, inputs }: rec {
 
-      flake.templates.haskell = {
-        path = ./templates/haskell;
-        description = "Flake Template for Haskell Projects";
-        welcomeText = ''
-          # Flake Template for Haskell Projects
-          Edit your cabal.project and run `nix develop` to enter the shell.
-        '';
-      };
+        templates.default = templates.vanilla;
 
-      flake.templates.vanilla = {
-        path = ./templates/vanilla;
-        description = "Flake Template for Blank Projects";
-        welcomeText = ''
-          # Flake Template for Blank Projects
-          Run `nix develop` to enter the shell.
-        '';
-      };
+        templates.haskell = {
+          path = ./templates/haskell;
+          description = "Flake Template for Haskell Projects";
+          welcomeText = ''
+            # Flake Template for Haskell Projects
+            Edit your cabal.project and run `nix develop` to enter the shell.
+          '';
+        };
 
-      flake.lib = {
-        inherit mkFlake;
-        utils = import ./src/lib/utils.nix inputs;
-        modularise = import ./src/lib/modularise.nix inputs;
-        options = import ./src/options inputs;
+        templates.vanilla = {
+          path = ./templates/vanilla;
+          description = "Flake Template for Blank Projects";
+          welcomeText = ''
+            # Flake Template for Blank Projects
+            Run `nix develop` to enter the shell.
+          '';
+        };
+
+        lib = {
+          inherit mkFlake;
+          utils = import ./src/lib/utils.nix inputs;
+          modularise = import ./src/lib/modularise.nix inputs;
+          options = import ./src/options inputs;
+        };
       };
 
       outputs = { repoRoot, inputs, pkgs, lib, ... }: [{
 
-        inherit repoRoot; # For debugging 
+        inherit repoRoot pkgs; # For debugging 
 
         packages.rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
 

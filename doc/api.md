@@ -495,13 +495,14 @@ If enabled, IOGX will trace debugging info to standard output.
 
 ### `mkFlake.<in>.flake`
 
-**Type**: attribute set
+**Type**: function that evaluates to a(n) (attribute set)
 
 **Default**: `{ }`
 
 
 **Example**: 
 ```nix
+{ repoRoot, inputs }:
 {
   lib.bar = _: null;
 
@@ -517,11 +518,15 @@ If enabled, IOGX will trace debugging info to standard output.
 ```
 
 
-A flake-like attrset.
+A function to a flake-like attrset.
 
 You can place additional flake outputs here, which will be recursively updated with the attrset from [`mkFlake.<in>.outputs`](#mkflakeinoutputs).
 
 This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
+
+Like [`mkFlake.<in>.outputs`](#mkflakeinoutputs), this function takes an attrset as argument, containing both `repoRoot` and the original (non de-systemized) `inputs`.
+
+Note that if you use `repoRoot` to reference nix files in this context, the nix files must also be functions from an `{ repoRoot, inputs }` attrset.
 
 
 ---

@@ -54,8 +54,8 @@ let
     haskell-language-server = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
     haskell-language-server-wrapper = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
 
-    stylish-haskell = hls.hsPkgs.haskell-language-server.components.exes.stylish-haskell;
-    hlint = hls.hsPkgs.haskell-language-server.components.exes.hlint;
+    stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
+    hlint = hls.hsPkgs.hlint.components.exes.hlint;
     cabal-fmt = repoRoot.src.ext.cabal-fmt;
     fourmolu = repoRoot.src.ext.fourmolu;
 

@@ -9,7 +9,7 @@ let
   config =
     if lib.hasInfix "ghc810" ghc then
       {
-        version = "3.10.2.0";
+        version = "3.10.1.0";
       }
     else
       {
@@ -20,7 +20,7 @@ let
 
     name = "cabal-install";
 
-    version = config.version;
+    version = "3.10.3.0";
 
     compiler-nix-name = ghc;
 

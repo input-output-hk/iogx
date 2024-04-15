@@ -190,7 +190,7 @@ let
 
       flake = l.mkOption {
         type = l.types.functionTo l.types.attrs;
-        default = { };
+        default = _: { };
         description = ''
           A function that returns a flake-like attrset.
 

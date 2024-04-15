@@ -6,16 +6,6 @@ ghc:
 
 let
 
-  config =
-    if lib.hasInfix "ghc810" ghc then
-      {
-        version = "3.10.1.0";
-      }
-    else
-      {
-        version = "3.10.3.0";
-      };
-
   project = pkgs.haskell-nix.hackage-project {
 
     name = "cabal-install";

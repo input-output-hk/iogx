@@ -14,7 +14,7 @@ let
       shell.withHoogle = false;
 
       inputMap = {
-        "https://input-output-hk.github.io/cardano-haskell-packages" = inputs.iogx.inputs.CHaP;
+        "https://chap.intersectmbo.org/" = inputs.iogx.inputs.CHaP;
       };
 
       name = "my-project";
@@ -22,9 +22,9 @@ let
       compiler-nix-name = lib.mkDefault "ghc96";
 
       # flake.variants.profiled = {
-      #   modules = [{ 
-      #     enableProfiling = true; 
-      #     enableLibraryProfiling = true; 
+      #   modules = [{
+      #     enableProfiling = true;
+      #     enableLibraryProfiling = true;
       #   }];
       # };
 
@@ -57,9 +57,9 @@ let
 
     shellArgs = repoRoot.nix.shell;
 
-    # includeMingwW64HydraJobs = false; 
+    # includeMingwW64HydraJobs = false;
 
-    # includeProfiledHydraJobs = false; 
+    # includeProfiledHydraJobs = false;
 
     # readTheDocs = {
     #   enable = false;

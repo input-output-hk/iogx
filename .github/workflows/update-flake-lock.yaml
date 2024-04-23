@@ -1,0 +1,34 @@
+name: update-flake-lock
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1' # Runs weekly on Monday at 9:00am
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Update flake.lock
+        id: update
+        uses: DeterminateSystems/update-flake-lock@main
+        with:
+          pr-title: "Update flake.lock"
+          pr-assignees: zeme-wana
+          pr-reviewers: zeme-wana
+          inputs: |
+            haskell-nix
+            hackage
+            CHaP
+            iohk-nix
+            sphinxcontrib-haddock
+            pre-commit-hooks-nix
+            easy-purescript-nix
+            flake-utils
+            nix2container
+      - name: Print PR number
+        run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.

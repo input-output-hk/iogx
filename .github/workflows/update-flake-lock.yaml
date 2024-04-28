@@ -18,8 +18,6 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@main
         with:
           pr-title: "Update flake.lock"
-          pr-assignees: zeme-wana
-          pr-reviewers: zeme-wana
           inputs: |
             haskell-nix
             hackage

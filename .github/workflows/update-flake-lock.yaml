@@ -9,24 +9,38 @@ jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-      - name: Update flake.lock
-        id: update
-        uses: DeterminateSystems/update-flake-lock@main
+
+      - name: Update All flake.lock Files
+        run: | 
+          nix flake update --accept-flake-config
+
+          cd "$GITHUB_WORKSPACE/templates/haskell"
+          nix flake update --accept-flake-config
+
+          cd "$GITHUB_WORKSPACE/templates/vanilla"
+          nix flake update --accept-flake-config
+
+          cd "$GITHUB_WORKSPACE"
+          git add .
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
         with:
-          pr-title: "Update flake.lock"
-          inputs: |
-            haskell-nix
-            hackage
-            CHaP
-            iohk-nix
-            sphinxcontrib-haddock
-            pre-commit-hooks-nix
-            easy-purescript-nix
-            flake-utils
-            nix2container
-      - name: Print PR number
-        run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
+          title: Weekly Update of All flake.lock Files
+          commit-message: Weekly Update of All flake.lock Files
+          delete-branch: true 
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Pull Request Auto-Merge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
+          token: ${{ secrets.GITHUB_TOKEN }}

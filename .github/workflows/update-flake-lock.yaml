@@ -15,31 +15,15 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Echo $GITHUB_WORKSPACE
-        run: | 
-          echo $GITHUB_WORKSPACE
-
       - name: Update All flake.lock Files
         run: | 
-          nix flake lock --update-input haskell-nix
-          nix flake lock --update-input hackage
-          nix flake lock --update-input CHaP
-          nix flake lock --update-input iohk-nix
-
-          nix flake lock --update-input iogx-flake-vanilla
-          nix flake lock --update-input iogx-flake-haskell
-
-          nix flake lock --update-input sphinxcontrib-haddock
-          nix flake lock --update-input pre-commit-hooks-nix
-          nix flake lock --update-input easy-purescript-nix
-          nix flake lock --update-input flake-utils
-          nix flake lock --update-input nix2container
+          nix flake update 
 
           cd "$GITHUB_WORKSPACE/templates/haskell"
-          nix flake lock --update-input iogx 
+          nix flake update
 
           cd "$GITHUB_WORKSPACE/templates/vanilla"
-          nix flake lock --update-input iogx 
+          nix flake update
 
           cd "$GITHUB_WORKSPACE"
           git add .
@@ -51,12 +35,12 @@ jobs:
           title: Weekly Update of All flake.lock Files
           commit-message: Weekly Updated of All flake.lock Files
           delete-branch: true 
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Pull Request Automerge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
           merge-method: squash

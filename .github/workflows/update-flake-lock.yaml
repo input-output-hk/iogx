@@ -9,24 +9,54 @@ jobs:
   lockfile:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-      - name: Update flake.lock
-        id: update
-        uses: DeterminateSystems/update-flake-lock@main
+
+      - name: Echo $GITHUB_WORKSPACE
+        run: | 
+          echo $GITHUB_WORKSPACE
+
+      - name: Update All flake.lock Files
+        run: | 
+          nix flake lock --update-input haskell-nix
+          nix flake lock --update-input hackage
+          nix flake lock --update-input CHaP
+          nix flake lock --update-input iohk-nix
+
+          nix flake lock --update-input iogx-flake-vanilla
+          nix flake lock --update-input iogx-flake-haskell
+
+          nix flake lock --update-input sphinxcontrib-haddock
+          nix flake lock --update-input pre-commit-hooks-nix
+          nix flake lock --update-input easy-purescript-nix
+          nix flake lock --update-input flake-utils
+          nix flake lock --update-input nix2container
+
+          cd "$GITHUB_WORKSPACE/templates/haskell"
+          nix flake lock --update-input iogx 
+
+          cd "$GITHUB_WORKSPACE/templates/vanilla"
+          nix flake lock --update-input iogx 
+
+          cd "$GITHUB_WORKSPACE"
+          git add .
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
         with:
-          pr-title: "Update flake.lock"
-          inputs: |
-            haskell-nix
-            hackage
-            CHaP
-            iohk-nix
-            sphinxcontrib-haddock
-            pre-commit-hooks-nix
-            easy-purescript-nix
-            flake-utils
-            nix2container
-      - name: Print PR number
-        run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
+          title: Weekly Update of All flake.lock Files
+          commit-message: Weekly Updated of All flake.lock Files
+          delete-branch: true 
+          token: ${{ secrets.PAT }}
+
+      - name: Enable Pull Request Automerge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.PAT }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash

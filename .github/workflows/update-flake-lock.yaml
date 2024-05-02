@@ -33,7 +33,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           title: Weekly Update of All flake.lock Files
-          commit-message: Weekly Updated of All flake.lock Files
+          commit-message: Weekly Update of All flake.lock Files
           delete-branch: true 
           token: ${{ secrets.GITHUB_TOKEN }}
 

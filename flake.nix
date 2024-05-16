@@ -44,6 +44,8 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     nix2container.url = "github:nlewo/nix2container";
+
+    flake-compat.url = "github:edolstra/flake-compat";
   };
 
 
@@ -74,13 +76,13 @@
       };
 
       templates-outputs =
-        let getLocalFlake = path: builtins.getFlake (builtins.toString path); in
+        let getTemplate = src: (import inputs.flake-compat { inherit src; }).defaultNix; in
         {
           vanilla = {
-            inherit (getLocalFlake ./templates/vanilla) devShells;
+            inherit (getTemplate ./templates/vanilla) devShells;
           };
           haskell = {
-            inherit (getLocalFlake ./templates/haskell) devShells packages checks hydraJobs;
+            inherit (getTemplate ./templates/haskell) devShells packages checks hydraJobs;
           };
         };
 

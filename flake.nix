@@ -74,7 +74,7 @@
       };
 
       templates-outputs =
-        let getLocalFlake = path: builtins.getFlake (builtins.toPath path); in
+        let getLocalFlake = path: builtins.getFlake (builtins.toString path); in
         {
           vanilla = {
             inherit (getLocalFlake ./templates/vanilla) devShells;

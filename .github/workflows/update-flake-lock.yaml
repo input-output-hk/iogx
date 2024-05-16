@@ -24,16 +24,13 @@ jobs:
 
       - name: Update All flake.lock Files
         run: | 
-          rm flake.lock
-          nix flake update --accept-flake-config
+          rm flake.lock && nix flake lock --accept-flake-config
 
           cd "$GITHUB_WORKSPACE/templates/haskell"
-          rm flake.lock
-          nix flake update --accept-flake-config
+          rm flake.lock && nix flake lock --accept-flake-config
 
           cd "$GITHUB_WORKSPACE/templates/vanilla"
-          rm flake.lock
-          nix flake update --accept-flake-config
+          rm flake.lock && nix flake lock --accept-flake-config
 
           cd "$GITHUB_WORKSPACE"
           git add .

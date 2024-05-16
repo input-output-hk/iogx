@@ -1,10 +1,5 @@
 # This workflow automates the process of updating all flake inputs and generates 
 # a pull request (PR) that auto-merges if all checks pass successfully.
-# Note that the workflow begins by deleting the flake.lock file, which is 
-# usually unnecessary. However, we've found that this deletion helps prevent 
-# lock files from growing excessively large. 
-# This may be attributed to potential issues stemming from subflakes within the 
-# templates folder, which could potentially lead to recursive complexities.
 name: update-flake-lock
 
 on:
@@ -24,13 +19,13 @@ jobs:
 
       - name: Update All flake.lock Files
         run: | 
-          rm flake.lock && nix flake lock --accept-flake-config
+          nix flake update --accept-flake-config
 
           cd "$GITHUB_WORKSPACE/templates/haskell"
-          rm flake.lock && nix flake lock --accept-flake-config
+          nix flake update --accept-flake-config
 
           cd "$GITHUB_WORKSPACE/templates/vanilla"
-          rm flake.lock && nix flake lock --accept-flake-config
+          nix flake update --accept-flake-config
 
           cd "$GITHUB_WORKSPACE"
           git add .

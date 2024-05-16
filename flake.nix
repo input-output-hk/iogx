@@ -44,10 +44,6 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     nix2container.url = "github:nlewo/nix2container";
-
-    # By referencing our templates as flake inputs, we can write tests for them.
-    iogx-template-vanilla.url = "github:input-output-hk/iogx?dir=templates/vanilla";
-    iogx-template-haskell.url = "github:input-output-hk/iogx?dir=templates/haskell";
   };
 
 
@@ -127,7 +123,6 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
-          testsuite = repoRoot.testsuite.main;
           required = lib.iogx.mkHydraRequiredJob { };
         };
 

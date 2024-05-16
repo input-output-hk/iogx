@@ -497,7 +497,7 @@ If enabled, IOGX will trace debugging info to standard output.
 
 **Type**: function that evaluates to a(n) (attribute set)
 
-**Default**: `{ }`
+**Default**: `<function>`
 
 
 **Example**: 
@@ -518,7 +518,7 @@ If enabled, IOGX will trace debugging info to standard output.
 ```
 
 
-A function to a flake-like attrset.
+A function that returns a flake-like attrset.
 
 You can place additional flake outputs here, which will be recursively updated with the attrset from [`mkFlake.<in>.outputs`](#mkflakeinoutputs).
 

@@ -1,3 +1,5 @@
+# This workflow automates the process of updating all flake inputs and generates 
+# a pull request (PR) that auto-merges if all checks pass successfully.
 name: update-flake-lock
 
 on:
@@ -6,7 +8,7 @@ on:
     - cron: '0 9 * * 1' # Runs weekly on Monday at 9:00am
 
 jobs:
-  lockfile:
+  update-flake-lock:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

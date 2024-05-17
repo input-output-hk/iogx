@@ -75,17 +75,6 @@
         };
       };
 
-      templates-outputs =
-        let getTemplate = src: (import inputs.flake-compat { inherit src; }).defaultNix; in
-        {
-          vanilla = {
-            inherit (getTemplate ./templates/vanilla) devShells;
-          };
-          haskell = {
-            inherit (getTemplate ./templates/haskell) devShells packages checks hydraJobs;
-          };
-        };
-
     in
 
     mkFlake rec {
@@ -137,7 +126,6 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
-          templates-outputs = templates-outputs;
           required = lib.iogx.mkHydraRequiredJob { };
         };
 

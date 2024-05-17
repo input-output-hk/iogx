@@ -126,6 +126,7 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+          devShells.default = inputs.self.devShells.default;
           required = lib.iogx.mkHydraRequiredJob { };
         };
 

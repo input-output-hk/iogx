@@ -77,16 +77,19 @@
 
       mkTemplateOutputs = system:
         let
-          vanilla = import inputs.flake-compat { src = ./templates/vanilla; };
-          haskell = import inputs.flake-compat { src = ./templates/haskell; };
+          vanilla = (import inputs.flake-compat { src = ./templates/vanilla; }).defaultNix;
+          haskell = (import inputs.flake-compat { src = ./templates/haskell; }).defaultNix;
         in
         {
-          vanilla.devShells = vanilla.defaultNix.devShells.${system};
+          vanilla = {
+            devShells = vanilla.devShells.${system};
+          };
+
           haskell = {
-            devShells = haskell.defaultNix.devShells.${system};
-            packages = haskell.defaultNix.packages.${system};
-            checks = haskell.defaultNix.checks.${system};
-            hydraJobs = haskell.defaultNix.hydraJobs.${system};
+            devShells = haskell.devShells.${system};
+            packages = haskell.packages.${system};
+            checks = haskell.checks.${system};
+            hydraJobs = haskell.hydraJobs.${system};
           };
         };
 

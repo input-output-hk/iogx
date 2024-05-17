@@ -82,10 +82,12 @@
         in
         {
           vanilla.devShells = vanilla.defaultNix.devShells.${system};
-          haskell.devShells = haskell.defaultNix.devShells.${system};
-          haskell.packages = haskell.defaultNix.packages.${system};
-          haskell.checks = vanilla.defaultNix.checks.${system};
-          haskell.hydraJobs = vanilla.defaultNix.hydraJobs.${system};
+          haskell = {
+            devShells = haskell.defaultNix.devShells.${system};
+            packages = haskell.defaultNix.packages.${system};
+            checks = haskell.defaultNix.checks.${system};
+            hydraJobs = haskell.defaultNix.hydraJobs.${system};
+          };
         };
 
     in

@@ -75,6 +75,17 @@
         };
       };
 
+      templates-outputs =
+        let getLocalFlake = path: builtins.getFlake (builtins.toPath path); in
+        {
+          vanilla = {
+            inherit (getLocalFlake ./templates/vanilla) devShells;
+          };
+          haskell = {
+            inherit (getLocalFlake ./templates/haskell) devShells packages checks hydraJobs;
+          };
+        };
+
     in
 
     mkFlake rec {
@@ -126,6 +137,7 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+          templates = templates-outputs;
           devShells.default = inputs.self.devShells.default;
           required = lib.iogx.mkHydraRequiredJob { };
         };

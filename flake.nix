@@ -75,6 +75,24 @@
         };
       };
 
+      mkTemplateOutputs = system:
+        let
+          vanilla = (import inputs.flake-compat { src = ./templates/vanilla; }).defaultNix;
+          haskell = (import inputs.flake-compat { src = ./templates/haskell; }).defaultNix;
+        in
+        {
+          vanilla = {
+            devShells = vanilla.devShells.${system};
+          };
+
+          haskell = {
+            devShells = haskell.devShells.${system};
+            packages = haskell.packages.${system};
+            checks = haskell.checks.${system};
+            hydraJobs = haskell.hydraJobs.${system};
+          };
+        };
+
     in
 
     mkFlake rec {
@@ -114,7 +132,7 @@
         };
       };
 
-      outputs = { repoRoot, inputs, pkgs, lib, ... }: [{
+      outputs = { repoRoot, inputs, pkgs, lib, system, ... }: [{
 
         inherit repoRoot pkgs; # For debugging 
 
@@ -127,6 +145,7 @@
           ghc98-shell = mkTestShell lib "ghc98";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           devShells.default = inputs.self.devShells.default;
+          templates = mkTemplateOutputs system;
           required = lib.iogx.mkHydraRequiredJob { };
         };
 

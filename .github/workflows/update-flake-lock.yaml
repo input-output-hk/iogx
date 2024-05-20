@@ -32,7 +32,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6.0.5
         with:
           title: Weekly Update of All flake.lock Files
           commit-message: Weekly Update of All flake.lock Files

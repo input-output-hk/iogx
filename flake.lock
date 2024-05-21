@@ -237,24 +237,6 @@
         "type": "github"
       }
     },
-    "flake-utils_4": {
-      "inputs": {
-        "systems": "systems_4"
-      },
-      "locked": {
-        "lastModified": 1710146030,
-        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "ghc-8.6.5-iohk": {
       "flake": false,
       "locked": {
@@ -333,11 +315,11 @@
     "hackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1715819650,
-        "narHash": "sha256-TbeZoW1S2HL83NhBbhsY+4xwyFT6QrdsW1Ftu7ga+d8=",
+        "lastModified": 1716165244,
+        "narHash": "sha256-nLa5/uCdXT5Nq35EYbgz1hYTnwT70Sk/JInM2f1zg4c=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "cee1570cc026dddeb3fd2ca0d6ec763d06952f04",
+        "rev": "980c35047cc64f93f4b15c0d3b2338fe18ffe97f",
         "type": "github"
       },
       "original": {
@@ -388,11 +370,11 @@
         "stackage": "stackage"
       },
       "locked": {
-        "lastModified": 1715820615,
-        "narHash": "sha256-cULpbivL14Qm6odGGL/7fE/SarflfS78I+6l2+2w40c=",
+        "lastModified": 1716166225,
+        "narHash": "sha256-gFMvOwooBevnHtZyGoiOcRes9ZSylG5YfNoqOHGdP/M=",
         "owner": "input-output-hk",
         "repo": "haskell.nix",
-        "rev": "350c2ad17fe289c708bd685cb2730e72f17a0053",
+        "rev": "6aa8046087d4e6fd70f3b6b99628f77e398e9fd2",
         "type": "github"
       },
       "original": {
@@ -603,11 +585,11 @@
         "sodium": "sodium"
       },
       "locked": {
-        "lastModified": 1714467508,
-        "narHash": "sha256-FuA0HPpBMHTgg/SNC+N5a6spj/O979IBpAJCfSkZL0Q=",
+        "lastModified": 1715898223,
+        "narHash": "sha256-G1LFsvP53twrqaC1FVard/6rjJJ3oitnpJ1E+mTZDGM=",
         "owner": "input-output-hk",
         "repo": "iohk-nix",
-        "rev": "89387f07016fe416c16f7824715238b3d1a4390a",
+        "rev": "29f19cd41dc593cf17bbc24194e34e7c20889fc9",
         "type": "github"
       },
       "original": {
@@ -932,17 +914,16 @@
     "pre-commit-hooks-nix": {
       "inputs": {
         "flake-compat": "flake-compat_3",
-        "flake-utils": "flake-utils_4",
         "gitignore": "gitignore",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-stable": "nixpkgs-stable_2"
       },
       "locked": {
-        "lastModified": 1715850717,
-        "narHash": "sha256-HGY8w2Glb5xe4/l69Auv6R1kxbAQehB1vWFGnvzvSR8=",
+        "lastModified": 1715870890,
+        "narHash": "sha256-nacSOeXtUEM77Gn0G4bTdEOeFIrkCBXiyyFZtdGwuH0=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "963646978438e31c0925e16c4eca089fda69bac2",
+        "rev": "fa606cccd7b0ccebe2880051208e4a0f61bfc8c1",
         "type": "github"
       },
       "original": {
@@ -1023,11 +1004,11 @@
     "stackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1715818858,
-        "narHash": "sha256-P+5O9jClktKdtQoXRSDX4ZgBd5skEIAVegmHryYy84s=",
+        "lastModified": 1716164362,
+        "narHash": "sha256-BXJRk20IcsG8uhuLWxA0Lfzx6VVKNEGQ/TINDkd6MH0=",
         "owner": "input-output-hk",
         "repo": "stackage.nix",
-        "rev": "e49d983f1412f72f97a4e5eec9521deb97f10d3e",
+        "rev": "f27332e59a188f096a67a46fb5d33b0ea1d5a221",
         "type": "github"
       },
       "original": {
@@ -1067,21 +1048,6 @@
       }
     },
     "systems_3": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_4": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

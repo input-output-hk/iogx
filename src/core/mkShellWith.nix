@@ -68,6 +68,7 @@ let
     nixpkgs-fmt = repoRoot.src.ext.nixpkgs-fmt;
     optipng = pkgs.optipng;
     purs-tidy = purescript.purs-tidy;
+    rustfmt = pkgs.rustfmt;
   };
 
 
@@ -90,6 +91,7 @@ let
     nixpkgs-fmt = getTool "nixpkgs-fmt";
     optipng = getTool "optipng";
     purs-tidy = getTool "purs-tidy";
+    rustfmt = getTool "rustfmt";
     haskell-language-server = getTool "haskell-language-server";
     haskell-language-server-wrapper = getTool "haskell-language-server-wrapper";
   };
@@ -156,6 +158,10 @@ let
     purs-tidy = {
       options = "format-in-place";
       include = [ "purs" ];
+    };
+
+    rustfmt = {
+      include = [ "rs" ];
     };
   };
 

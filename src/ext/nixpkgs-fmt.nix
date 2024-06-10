@@ -4,8 +4,7 @@ pkgs.rustPlatform.buildRustPackage rec {
 
   pname = "nixpkgs-fmt";
 
-  # nixpkgs-fmt 1.2.0 breaks indentation of code examples in comments
-  version = "1.1.0";
+  version = "1.3.0";
 
   src = pkgs.fetchFromGitHub {
     owner = "nix-community";

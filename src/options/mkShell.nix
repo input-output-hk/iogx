@@ -276,6 +276,23 @@ let
           }
         '';
       };
+
+      rustfmt = l.mkOption {
+        type = l.types.nullOr l.types.package;
+        default = null;
+        description = ''
+          A package that provides the `rustfmt` executable.
+
+          If unset or `null`, the most recent version available will be used.
+        '';
+        example = l.literalExpression ''
+          # shell.nix 
+          { repoRoot, inputs, pkgs, lib, system }:
+          lib.iogx.mkShell {
+            tools.rustfmt = repoRoot.nix.patched-rustfmt;
+          }
+        '';
+      };
     };
   };
 

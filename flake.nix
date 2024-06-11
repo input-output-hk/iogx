@@ -66,6 +66,7 @@
           nixpkgs-fmt.enable = true;
           optipng.enable = true;
           purs-tidy.enable = true;
+          rustfmt.enable = true;
           custom-hook = {
             enable = true;
             entry = "echo 'Running custom hook' ; exit 1";
@@ -160,6 +161,7 @@
           preCommit = {
             editorconfig-checker.enable = true;
             nixpkgs-fmt.enable = true;
+            rustfmt.enable = true;
           };
           scripts.render-iogx-api-reference = {
             group = "iogx";

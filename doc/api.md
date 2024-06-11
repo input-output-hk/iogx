@@ -2288,6 +2288,31 @@ If unset or `null`, the most recent version available will be used.
 
 ---
 
+### `mkShell.<in>.tools.rustfmt`
+
+**Type**: null or package
+
+**Default**: `null`
+
+
+**Example**: 
+```nix
+# shell.nix 
+{ repoRoot, inputs, pkgs, lib, system }:
+lib.iogx.mkShell {
+  tools.rustfmt = repoRoot.nix.patched-rustfmt;
+}
+
+```
+
+
+A package that provides the `rustfmt` executable.
+
+If unset or `null`, the most recent version available will be used.
+
+
+---
+
 ### `mkShell.<in>.tools.shellcheck`
 
 **Type**: null or package

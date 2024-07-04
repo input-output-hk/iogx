@@ -33,16 +33,18 @@ let
         cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
         configureArgs = "--disable-benchmarks";
       }
+    # TODO add `else if lib.hasInfix "ghc910" ghc` when HLS v2.9.0.0 supports hlint/stylish-haskell for ghc910
     else
       lib.trace
         ''
-          Unsupported GHC version ${ghc}, defaulting to ghc98 for haskell-language-server v1.8.0.0
+          Unsupported GHC version ${ghc}, defaulting to ghc98 for haskell-language-server v2.8.0.0
         ''
         {
           ghc = "ghc98";
-          rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0
-          sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
-          cabalProjectLocal = "constraints: stylish-haskell==0.13.0.0, hlint==3.2.8";
+          rev = "2.8.0.0";
+          sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
+          cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
+          configureArgs = "--disable-benchmarks";
         };
 
 in

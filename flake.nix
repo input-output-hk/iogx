@@ -144,6 +144,7 @@
           ghc92-shell = mkTestShell lib "ghc92";
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
+          ghc910-shell = mkTestShell lib "ghc910";
           rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
           devShells.default = inputs.self.devShells.default;
           templates = mkTemplateOutputs system;

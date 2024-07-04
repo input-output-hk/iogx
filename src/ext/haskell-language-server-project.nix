@@ -33,21 +33,15 @@ let
         cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
         configureArgs = "--disable-benchmarks";
       }
-    else if lib.hasInfix "ghc910" ghc then
-      {
-        rev = "2.9.0.0";
-        sha256 = "sha256-THXSz+iwB1yQQsr/PY151+2GvtoJnTIB2pIQ4OzfjD4=";
-        configureArgs = "--disable-benchmarks";
-      }
     else
       lib.trace
         ''
-          Unsupported GHC version ${ghc}, defaulting to haskell-language-server v2.9.0.0
+          Unsupported GHC version ${ghc}, defaulting to ghc v8.10.7 for haskell-language-server v1.8.0.0
         ''
         {
-          rev = "2.9.0.0";
-          sha256 = "sha256-THXSz+iwB1yQQsr/PY151+2GvtoJnTIB2pIQ4OzfjD4=";
-          configureArgs = "--disable-benchmarks";
+          rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0
+          sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
+          cabalProjectLocal = "constraints: stylish-haskell==0.13.0.0, hlint==3.2.8";
         };
 
 in

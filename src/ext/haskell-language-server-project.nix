@@ -36,9 +36,10 @@ let
     else
       lib.trace
         ''
-          Unsupported GHC version ${ghc}, defaulting to ghc v8.10.7 for haskell-language-server v1.8.0.0
+          Unsupported GHC version ${ghc}, defaulting to ghc98 for haskell-language-server v1.8.0.0
         ''
         {
+          ghc = "ghc98";
           rev = "855a88238279b795634fa6144a4c0e8acc7e9644"; # 1.8.0.0
           sha256 = "sha256-El5wZDn0br/My7cxstRzUyO7VUf1q5V44T55NEQONnI=";
           cabalProjectLocal = "constraints: stylish-haskell==0.13.0.0, hlint==3.2.8";
@@ -69,7 +70,7 @@ pkgs.haskell-nix.cabalProject' {
     inherit (config) rev sha256;
   };
 
-  compiler-nix-name = ghc;
+  compiler-nix-name = config.ghc or ghc;
 
   sha256map = {
     "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" = "sha256-fVwKxGgM0S4Kv/4egVAAiAjV7QB5PBqMVMCfsv7otIQ="; # editorconfig-checker-disable-line

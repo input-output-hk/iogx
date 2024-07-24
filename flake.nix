@@ -135,6 +135,8 @@
 
       outputs = { repoRoot, inputs, pkgs, lib, system, ... }: [{
 
+        __debug = { inherit repoRoot pkgs; };
+
         inherit repoRoot pkgs; # For debugging 
 
         packages.rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;

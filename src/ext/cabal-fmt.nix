@@ -1,13 +1,11 @@
 { pkgs, ... }:
 
-# TODO Remove this patch once the PR makes it into a hackage release.
-# See https://github.com/phadej/cabal-fmt/pull/68
 let
 
   project = pkgs.haskell-nix.hackage-project {
     name = "cabal-fmt";
 
-    version = "0.1.7";
+    version = "0.1.12";
 
     compiler-nix-name = "ghc92";
 

@@ -6,14 +6,8 @@
 let
   project = pkgs.haskell-nix.hackage-project {
     name = "fourmolu";
-    version = "0.13.0.0";
-    compiler-nix-name = "ghc928";
-    index-state = "2023-10-11T00:00:00Z";
-    # Otherwise it would use aeson-2.2.0.0 which no longer exports 
-    # Data.Aeson.Internal, which in turn breask yaml-0.11.11.1
-    cabalProjectLocal = '' 
-      constraints: aeson==2.1.2.1
-    '';
+    version = "0.16.2.0";
+    compiler-nix-name = "ghc982";
 
     modules = [{
       packages.fourmolu.components.exes.fourmolu.dontStrip = false;

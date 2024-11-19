@@ -1650,8 +1650,8 @@ lib.iogx.mkShell {
     editorconfig-checker.enable = false;
     editorconfig-checker.extraOptions = "";
 
-    nixpkgs-fmt.enable = false;
-    nixpkgs-fmt.extraOptions = "";
+    nixfmt-classic.enable = false;
+    nixfmt-classic.extraOptions = "";
 
     optipng.enable = false;
     optipng.extraOptions = "";
@@ -1703,7 +1703,7 @@ The list of pre-configured hooks is presented below:
 - `shellcheck`
 - `prettier`
 - `editorconfig-checker`
-- `nixpkgs-fmt`
+- `nixfmt-classic`
 - `optipng`
 - `fourmolu`
 - `hlint`
@@ -2188,7 +2188,7 @@ If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintool
 
 ---
 
-### `mkShell.<in>.tools.nixpkgs-fmt`
+### `mkShell.<in>.tools.nixfmt-classic`
 
 **Type**: null or package
 
@@ -2200,13 +2200,13 @@ If unset or `null`, [`mkShell.<in>.tools.haskellCompilerVersion`](#mkshellintool
 # shell.nix 
 { repoRoot, inputs, pkgs, lib, system }:
 lib.iogx.mkShell {
-  tools.nixpkgs-fmt = repoRoot.nix.patched-nixpkgs-fmt;
+  tools.nixfmt-classic = repoRoot.nix.patched-nixfmt-classic;
 }
 
 ```
 
 
-A package that provides the `nixpkgs-fmt` executable.
+A package that provides the `nixfmt-classic` executable.
 
 If unset or `null`, the most recent version available will be used.
 

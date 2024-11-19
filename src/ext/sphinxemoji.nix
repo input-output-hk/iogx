@@ -24,7 +24,5 @@ let
       };
     };
 
-in
-
-pkgs.python3Packages.callPackage package { }
+in pkgs.python3Packages.callPackage package { }
 

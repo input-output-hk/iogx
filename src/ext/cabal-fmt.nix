@@ -19,6 +19,4 @@ let
     }];
   };
 
-in
-
-project.hsPkgs.cabal-fmt.components.exes.cabal-fmt
+in project.hsPkgs.cabal-fmt.components.exes.cabal-fmt

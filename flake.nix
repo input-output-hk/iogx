@@ -1,7 +1,6 @@
 {
   description = "Flake Templates for Projects at IOG";
 
-
   inputs = {
 
     haskell-nix = {
@@ -12,7 +11,8 @@
     nixpkgs.follows = "haskell-nix/nixpkgs";
 
     # We use this to replace broken packages in haskell-nix/nixpkgs.
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/b81af66deb21f73a70c67e5ea189568af53b1e8c";
+    nixpkgs-stable.url =
+      "github:NixOS/nixpkgs/b81af66deb21f73a70c67e5ea189568af53b1e8c";
 
     hackage = {
       url = "github:input-output-hk/hackage.nix";
@@ -48,43 +48,44 @@
     flake-compat.url = "github:edolstra/flake-compat";
   };
 
-
   outputs = inputs:
     let
       mkFlake = import ./src/mkFlake.nix inputs;
 
-      mkTestShell = lib: ghc: lib.iogx.mkShell {
-        tools.haskellCompilerVersion = ghc;
-        preCommit = {
-          cabal-fmt.enable = true;
-          stylish-haskell.enable = true;
-          fourmolu.enable = true;
-          hlint.enable = true;
-          shellcheck.enable = true;
-          prettier.enable = true;
-          editorconfig-checker.enable = true;
-          nixpkgs-fmt.enable = true;
-          optipng.enable = true;
-          purs-tidy.enable = true;
-          rustfmt.enable = true;
-          custom-hook = {
-            enable = true;
-            entry = "echo 'Running custom hook' ; exit 1";
-            pass_filenames = false;
-            language = "fail";
+      mkTestShell = lib: ghc:
+        lib.iogx.mkShell {
+          tools.haskellCompilerVersion = ghc;
+          preCommit = {
+            cabal-fmt.enable = true;
+            stylish-haskell.enable = true;
+            fourmolu.enable = true;
+            hlint.enable = true;
+            shellcheck.enable = true;
+            prettier.enable = true;
+            editorconfig-checker.enable = true;
+            nixfmt.enable = true;
+            optipng.enable = true;
+            purs-tidy.enable = true;
+            rustfmt.enable = true;
+            custom-hook = {
+              enable = true;
+              entry = "echo 'Running custom hook' ; exit 1";
+              pass_filenames = false;
+              language = "fail";
+            };
           };
         };
-      };
 
       mkTemplateOutputs = system:
         let
-          vanilla = (import inputs.flake-compat { src = ./templates/vanilla; }).defaultNix;
-          haskell = (import inputs.flake-compat { src = ./templates/haskell; }).defaultNix;
-        in
-        {
-          vanilla = {
-            devShells = vanilla.devShells.${system};
-          };
+          vanilla = (import inputs.flake-compat {
+            src = ./templates/vanilla;
+          }).defaultNix;
+          haskell = (import inputs.flake-compat {
+            src = ./templates/haskell;
+          }).defaultNix;
+        in {
+          vanilla = { devShells = vanilla.devShells.${system}; };
 
           haskell = {
             devShells = haskell.devShells.${system};
@@ -94,14 +95,13 @@
           };
         };
 
-    in
-
-    mkFlake rec {
+    in mkFlake rec {
       inherit inputs;
 
       repoRoot = ./.;
 
-      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
+      systems =
+        [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
 
       flake = { repoRoot, inputs }: rec {
 
@@ -137,9 +137,10 @@
 
         __debug = { inherit repoRoot pkgs; };
 
-        inherit repoRoot pkgs; # For debugging 
+        inherit repoRoot pkgs; # For debugging
 
-        packages.rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+        packages.rendered-iogx-api-reference =
+          repoRoot.src.core.mkRenderedIogxApiReference;
 
         hydraJobs = {
           ghc810-shell = mkTestShell lib "ghc810";
@@ -147,7 +148,8 @@
           ghc96-shell = mkTestShell lib "ghc96";
           ghc98-shell = mkTestShell lib "ghc98";
           ghc910-shell = mkTestShell lib "ghc910";
-          rendered-iogx-api-reference = repoRoot.src.core.mkRenderedIogxApiReference;
+          rendered-iogx-api-reference =
+            repoRoot.src.core.mkRenderedIogxApiReference;
           devShells.default = inputs.self.devShells.default;
           templates = mkTemplateOutputs system;
           required = lib.iogx.mkHydraRequiredJob { };
@@ -155,15 +157,11 @@
 
         devShells.default = lib.iogx.mkShell {
           name = "iogx";
-          packages = [
-            pkgs.jq
-            pkgs.github-cli
-            pkgs.python39
-            pkgs.nix-prefetch-github
-          ];
+          packages =
+            [ pkgs.jq pkgs.github-cli pkgs.python39 pkgs.nix-prefetch-github ];
           preCommit = {
             editorconfig-checker.enable = true;
-            nixpkgs-fmt.enable = true;
+            nixfmt.enable = true;
             rustfmt.enable = true;
           };
           scripts.render-iogx-api-reference = {
@@ -185,12 +183,8 @@
       }];
     };
 
-
   nixConfig = {
-    extra-substituters = [
-      "https://cache.iog.io"
-      "https://cache.zw3rk.com"
-    ];
+    extra-substituters = [ "https://cache.iog.io" "https://cache.zw3rk.com" ];
     extra-trusted-public-keys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "loony-tools:pr9m4BkM/5/eSTZlkQyRt57Jz7OMBxNSUiMC4FkcNfk="

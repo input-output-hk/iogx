@@ -8,7 +8,6 @@ let
 
   link = x: utils.headerToMarkDownLink x x;
 
-
   tools-submodule = l.types.submodule {
     options = {
       haskellCompilerVersion = l.mkOption {
@@ -16,17 +15,21 @@ let
         type = l.types.nullOr l.types.str;
         description = ''
           The haskell compiler version.
-          
+
           Any value that is accepected by `haskell.nix:compiler-nix-name` is valid, e.g: `ghc8107`, `ghc92`, `ghc963`.
-          
+
           This determines the version of other tools like `cabal-install` and `haskell-language-server`.
 
           If this option is unset of null, then no Haskell tools will be made available in the shell.
 
-          However if you enable some Haskell-specific ${link "mkShell.<in>.preCommit"} hooks, then 
+          However if you enable some Haskell-specific ${
+            link "mkShell.<in>.preCommit"
+          } hooks, then 
           that Haskell tool will be installed automatically using `ghc8107` as the default compiler version.
 
-          When using ${link "mkHaskellProject.<in>.shellArgs"}, this option is automatically set to 
+          When using ${
+            link "mkHaskellProject.<in>.shellArgs"
+          }, this option is automatically set to 
           the same value as the project's (or project variant's) `compiler-nix-name`.
         '';
         example = l.literalExpression ''
@@ -45,7 +48,9 @@ let
         description = ''
           A package that provides the `cabal-fmt` executable.
 
-          If unset or `null`, a default `cabal-fmt` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompilerVersion"}.
+          If unset or `null`, a default `cabal-fmt` will be provided, which is independent of ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          }.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -62,7 +67,9 @@ let
         description = ''
           A package that provides the `cabal-install` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -79,7 +86,9 @@ let
         description = ''
           A package that provides the `haskell-language-server` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -96,7 +105,9 @@ let
         description = ''
           A package that provides the `haskell-language-server-wrapper` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -113,7 +124,9 @@ let
         description = ''
           A package that provides the `fourmolu` executable.
 
-          If unset or `null`, a default `fourmolu` will be provided, which is independent of ${link "mkShell.<in>.tools.haskellCompilerVersion"}.
+          If unset or `null`, a default `fourmolu` will be provided, which is independent of ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          }.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -130,7 +143,9 @@ let
         description = ''
           A package that provides the `hlint` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -147,7 +162,9 @@ let
         description = ''
           A package that provides the `stylish-haskell` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -164,7 +181,9 @@ let
         description = ''
           A package that provides the `ghcid` executable.
 
-          If unset or `null`, ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to select a suitable derivation.
+          If unset or `null`, ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to select a suitable derivation.
         '';
         example = l.literalExpression ''
           # shell.nix 
@@ -226,11 +245,11 @@ let
         '';
       };
 
-      nixpkgs-fmt = l.mkOption {
+      nixfmt = l.mkOption {
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          A package that provides the `nixpkgs-fmt` executable.
+          A package that provides the `nixfmt` executable.
 
           If unset or `null`, the most recent version available will be used.
         '';
@@ -238,7 +257,7 @@ let
           # shell.nix 
           { repoRoot, inputs, pkgs, lib, system }:
           lib.iogx.mkShell {
-            tools.nixpkgs-fmt = repoRoot.nix.patched-nixpkgs-fmt;
+            tools.nixfmt = repoRoot.nix.patched-nixfmt;
           }
         '';
       };
@@ -295,7 +314,6 @@ let
       };
     };
   };
-
 
   script-submodule = l.types.submodule {
     options = {
@@ -389,7 +407,6 @@ let
     };
   };
 
-
   mkShell-IN-submodule = l.types.submodule {
     options = {
 
@@ -397,7 +414,9 @@ let
         type = l.types.str;
         default = "nix-shell";
         description = ''
-          This field will be used as the shell's derivation name and it will also be used to fill in the default values for ${link "mkShell.<in>.prompt"} and ${link "mkShell.<in>.welcomeMessage"}.
+          This field will be used as the shell's derivation name and it will also be used to fill in the default values for ${
+            link "mkShell.<in>.prompt"
+          } and ${link "mkShell.<in>.welcomeMessage"}.
         '';
       };
 
@@ -427,9 +446,13 @@ let
         description = ''
           When entering the shell, this welcome message will be printed.
 
-          The same caveat about escaping back slashes in ${link "mkShell.<in>.prompt"} applies here.
+          The same caveat about escaping back slashes in ${
+            link "mkShell.<in>.prompt"
+          } applies here.
 
-          This field is optional and defaults to a simple welcome message using the ${link "mkShell.<in>.name"} field.
+          This field is optional and defaults to a simple welcome message using the ${
+            link "mkShell.<in>.name"
+          } field.
         '';
       };
 
@@ -451,7 +474,9 @@ let
           ]
           ```
 
-          If you `cabalProject` (coming from ${link "mkHaskellProject"}) is in scope, you could use `hsPkgs` to obtain some useful binaries:
+          If you `cabalProject` (coming from ${
+            link "mkHaskellProject"
+          }) is in scope, you could use `hsPkgs` to obtain some useful binaries:
           ```nix
           packages = [
             cabalProject.hsPkgs.cardano-cli.components.exes.cardano-cli
@@ -540,7 +565,9 @@ let
 
           This can be used to override the default derivations used by IOGX.
 
-          The value of ${link "mkShell.<in>.tools.haskellCompilerVersion"} will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
+          The value of ${
+            link "mkShell.<in>.tools.haskellCompilerVersion"
+          } will be used to determine the version of the Haskell tools (e.g. `cabal-install` or `stylish-haskell`).
         '';
       };
 
@@ -559,7 +586,7 @@ let
           Some hooks are pre-configured by default and can be enabled by setting the `enable` option to `true`.
 
           For these hooks, the `extraOptions` option becomes especially relevant.
-          
+
           The list of pre-configured hooks is presented below: 
 
           - `cabal-fmt`
@@ -567,7 +594,7 @@ let
           - `shellcheck`
           - `prettier`
           - `editorconfig-checker`
-          - `nixpkgs-fmt`
+          - `nixfmt`
           - `optipng`
           - `fourmolu`
           - `hlint`
@@ -608,8 +635,8 @@ let
               editorconfig-checker.enable = false;
               editorconfig-checker.extraOptions = "";
 
-              nixpkgs-fmt.enable = false;
-              nixpkgs-fmt.extraOptions = "";
+              nixfmt.enable = false;
+              nixfmt.extraOptions = "";
 
               optipng.enable = false;
               optipng.extraOptions = "";
@@ -643,7 +670,6 @@ let
     };
   };
 
-
   mkShell-OUT-submodule = l.types.submodule {
     options = {
 
@@ -673,14 +699,12 @@ let
     };
   };
 
-
   mkShell-IN = l.mkOption {
     type = mkShell-IN-submodule;
     description = ''
       # Not Rendered In Docs
     '';
   };
-
 
   mkShell-OUT = l.mkOption {
     type = mkShell-OUT-submodule;
@@ -689,10 +713,11 @@ let
     '';
   };
 
-
   mkShell = l.mkOption {
     description = ''
-      The `lib.iogx.mkShell` function takes an attrset of options and returns a normal `devShell` with an additional attribute named ${link "mkShell.<out>.pre-commit-check"}.
+      The `lib.iogx.mkShell` function takes an attrset of options and returns a normal `devShell` with an additional attribute named ${
+        link "mkShell.<out>.pre-commit-check"
+      }.
 
       In this document:
         - Options for the input attrset are prefixed by `mkShell.<in>`.
@@ -727,10 +752,7 @@ let
     '';
   };
 
-
-in
-
-{
+in {
   inherit mkShell;
   "mkShell.<in>" = mkShell-IN;
 }

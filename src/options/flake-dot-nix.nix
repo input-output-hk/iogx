@@ -8,7 +8,6 @@ let
 
   link = x: utils.headerToMarkDownLink x x;
 
-
   flake-dot-nix-submodule = l.types.submodule {
     options = {
       description = l.mkOption {
@@ -209,7 +208,6 @@ let
     };
   };
 
-
   flake-dot-nix = l.mkOption {
     type = flake-dot-nix-submodule;
     description = ''
@@ -229,9 +227,4 @@ let
     '';
   };
 
-
-in
-
-{
-  "flake.nix" = flake-dot-nix;
-}
+in { "flake.nix" = flake-dot-nix; }

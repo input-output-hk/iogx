@@ -1,10 +1,8 @@
 { repoRoot, pkgs, ... }:
 
-let
-  sphinxcontrib-haddock = repoRoot.src.ext.sphinxcontrib-haddock;
-in
+let sphinxcontrib-haddock = repoRoot.src.ext.sphinxcontrib-haddock;
 
-pkgs.python3.withPackages (py: [
+in pkgs.python3.withPackages (py: [
 
   repoRoot.src.ext.sphinxcontrib-bibtex
   repoRoot.src.ext.sphinx-markdown-tables

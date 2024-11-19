@@ -12,40 +12,37 @@ let
   # /tmp). TODO when we bump haskell-nix, check if this is still needed.
   mkCustomNixpkgsOverlay = user-inputs: prev: _:
     let
-      stable-pkgs = import iogx-inputs.nixpkgs-stable { inherit (prev) system; };
-    in
-    {
+      stable-pkgs =
+        import iogx-inputs.nixpkgs-stable { inherit (prev) system; };
+    in {
       prefetch-npm-deps = stable-pkgs.prefetch-npm-deps;
       dockerTools = stable-pkgs.dockerTools;
 
       # NOTE: `self.rev` is only defined when the git tree is not dirty.
       # `gitref` is useful when wanting to embed the current git commit hash in
       # your binary or other build outputs.
-      gitrev = user-inputs.self.rev or "0000000000000000000000000000000000000000";
+      gitrev =
+        user-inputs.self.rev or "0000000000000000000000000000000000000000";
     };
-
 
   mkNixpkgs = user-inputs: system: args:
     import iogx-inputs.nixpkgs {
       inherit system;
       config = iogx-inputs.haskell-nix.config // (args.config or { });
-      overlays =
-        [
-          iogx-inputs.iohk-nix.overlays.crypto
-          iogx-inputs.iohk-nix.overlays.cardano-lib
-          iogx-inputs.haskell-nix.overlay
-          iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
-          # WARNING: The order of these is crucial
-          # The iohk-nix.overlays.haskell-nix-crypto depends on both the 
-          # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
-          # and so must be after them in the list of overlays to nixpkgs.
-          # TODO check if this constraint still applies in the latest haskell.nix.
-          iogx-inputs.iohk-nix.overlays.haskell-nix-extra
-          (mkCustomNixpkgsOverlay user-inputs)
-        ]
-        ++ (args.overlays or [ ]);
+      overlays = [
+        iogx-inputs.iohk-nix.overlays.crypto
+        iogx-inputs.iohk-nix.overlays.cardano-lib
+        iogx-inputs.haskell-nix.overlay
+        iogx-inputs.iohk-nix.overlays.haskell-nix-crypto
+        # WARNING: The order of these is crucial
+        # The iohk-nix.overlays.haskell-nix-crypto depends on both the 
+        # iohk-nix.overlays.crypto and the haskell-nix.overlay overlays 
+        # and so must be after them in the list of overlays to nixpkgs.
+        # TODO check if this constraint still applies in the latest haskell.nix.
+        iogx-inputs.iohk-nix.overlays.haskell-nix-extra
+        (mkCustomNixpkgsOverlay user-inputs)
+      ] ++ (args.overlays or [ ]);
     };
-
 
   # This creates the IOGX lib and will become available as lib.iogx.* to the user.
   mkIogxLib = desystemized-user-inputs: pkgs:
@@ -63,15 +60,13 @@ let
           inherit pkgs;
         };
       };
-    in
-    {
+    in {
       mkShell = repoRoot.src.core.mkShell;
       mkHaskellProject = repoRoot.src.core.mkHaskellProject;
       mkHydraRequiredJob = repoRoot.src.core.mkHydraRequiredJob;
       mkContainerFromCabalExe = repoRoot.src.core.mkContainerFromCabalExe;
       inherit utils modularise options;
     };
-
 
   mkFlake = args':
     let
@@ -114,41 +109,39 @@ let
 
           evaluated-outputs = args.outputs args-for-user-outputs;
 
-          flake = utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
+          flake =
+            utils.recursiveUpdateMany (lib.concatLists [ evaluated-outputs ]);
 
           flake-without-hydraJobs = flake // { hydraJobs = { }; };
 
           # We don't support hydraJobs on aarch64-linux
-          flake' = if system == "aarch64-linux" then flake-without-hydraJobs else flake;
-        in
-        flake';
+          flake' = if system == "aarch64-linux" then
+            flake-without-hydraJobs
+          else
+            flake;
+        in flake';
 
-      systemIndependentFlake =
-        let
-          modularised-user-repo-root = modularise {
-            debug = args.debug;
-            root = args.repoRoot;
-            module = "repoRoot";
-            args = {
-              inputs = args.inputs;
-            };
-          };
+      systemIndependentFlake = let
+        modularised-user-repo-root = modularise {
+          debug = args.debug;
+          root = args.repoRoot;
+          module = "repoRoot";
+          args = { inputs = args.inputs; };
+        };
 
-          args-for-user-flake = {
-            repoRoot = modularised-user-repo-root;
-            inputs = args.inputs;
-          };
+        args-for-user-flake = {
+          repoRoot = modularised-user-repo-root;
+          inputs = args.inputs;
+        };
 
-          flake = args.flake args-for-user-flake;
-        in
-        flake;
+        flake = args.flake args-for-user-flake;
+      in flake;
 
-      perSystemFlake = iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
+      perSystemFlake =
+        iogx-inputs.flake-utils.lib.eachSystem args.systems mkPerSystemFlake;
 
-      flake = iogx-inputs.nixpkgs.lib.recursiveUpdate systemIndependentFlake perSystemFlake;
-    in
-    flake;
+      flake = iogx-inputs.nixpkgs.lib.recursiveUpdate systemIndependentFlake
+        perSystemFlake;
+    in flake;
 
-in
-
-mkFlake
+in mkFlake

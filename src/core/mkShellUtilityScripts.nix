@@ -9,118 +9,103 @@ let
 
   utils = lib.iogx.utils;
 
-
   partitionScriptsByGroup = scripts:
     let
-      getGroup = script: utils.getAttrWithDefault "group" "ungrouped" script.value;
+      getGroup = script:
+        utils.getAttrWithDefault "group" "ungrouped" script.value;
       nameValToScript = script: { "${script.name}" = script.value; };
-      groupToScripts = _: namevals: utils.recursiveUpdateMany (map nameValToScript namevals);
+      groupToScripts = _: namevals:
+        utils.recursiveUpdateMany (map nameValToScript namevals);
       pairs = lib.mapAttrsToList lib.nameValuePair scripts;
       groups = lib.groupBy getGroup pairs;
       partitioned = lib.mapAttrs groupToScripts groups;
-    in
-    partitioned;
+    in partitioned;
 
+  list-flake-outputs = let
+    formatGroup = group: command:
+      if lib.hasAttr group user-inputs.self && user-inputs.self.${group}
+      != { } then
+        let
+          mkCommand = name: _: "nix ${command} .#${utils.ansiBold name}";
+          commands =
+            lib.mapAttrsToList mkCommand user-inputs.self.${group}.${system};
+        in ''
+          ${utils.ansiColor group "purple" "bold"}
 
-  list-flake-outputs =
-    let
-      formatGroup = group: command:
-        if lib.hasAttr group user-inputs.self && user-inputs.self.${group} != { } then
-          let
-            mkCommand = name: _: "nix ${command} .#${utils.ansiBold name}";
-            commands = lib.mapAttrsToList mkCommand user-inputs.self.${group}.${system};
-          in
-          ''
-            ${utils.ansiColor group "purple" "bold"}
+          ${lib.concatStringsSep "\n" commands}''
+      else
+        "";
 
-            ${lib.concatStringsSep "\n" commands}''
-        else
-          "";
+    formatted-outputs = lib.concatStringsSep "\n\n" (utils.filterEmptyStrings [
+      (formatGroup "packages" "build")
+      (formatGroup "apps" "run")
+      (formatGroup "checks" "run")
+      (formatGroup "devShells" "develop")
+    ]);
 
-      formatted-outputs = lib.concatStringsSep "\n\n" (utils.filterEmptyStrings [
-        (formatGroup "packages" "build")
-        (formatGroup "apps" "run")
-        (formatGroup "checks" "run")
-        (formatGroup "devShells" "develop")
-      ]);
+    script = {
+      group = "general";
+      description = "List the flake outputs buildable by nix";
+      exec = ''
+        echo
+        printf "${formatted-outputs}"
+        echo
+      '';
+    };
+  in script;
 
-      script = {
-        group = "general";
-        description = "List the flake outputs buildable by nix";
-        exec = ''
-          echo
-          printf "${formatted-outputs}"
-          echo
+  info = let
+    all-scripts = let
+      filterDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
+      shell-scripts =
+        filterDisabled (utils.getAttrWithDefault "scripts" { } mkShell-IN);
+      extra-scripts = { inherit info list-flake-outputs; };
+    in shell-scripts // extra-scripts;
+
+    formatGroup = group: scripts:
+      let
+        formatScript = name: script: ''
+          — ${utils.ansiBold name} ∷ ${script.description or ""}
         '';
-      };
-    in
-    script;
+        formatted-group =
+          lib.concatStrings (lib.mapAttrsToList formatScript scripts);
+      in ''
+        ${utils.ansiColor "λ ${group}" "purple" "bold"}
+        ${formatted-group}
+      '';
 
+    formatted-script-groups = let groups = partitionScriptsByGroup all-scripts;
+    in lib.concatStrings (lib.mapAttrsToList formatGroup groups);
 
-  info =
-    let
-      all-scripts =
-        let
-          filterDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
-          shell-scripts = filterDisabled (utils.getAttrWithDefault "scripts" { } mkShell-IN);
-          extra-scripts = { inherit info list-flake-outputs; };
-        in
-        shell-scripts // extra-scripts;
+    formatted-env = let
+      internal-vars =
+        [ "NIX_GHC_LIBDIR" "PKG_CONFIG_PATH" "CABAL_CONFIG" "LOCALE_ARCHIVE" ];
+      shell-env = utils.getAttrWithDefault "env" { } mkShell-IN;
+      final-env = removeAttrs shell-env internal-vars;
+      formatVar = var: val: ''
+        — ${utils.ansiBold var} ∷ ${val}
+      '';
+      body = lib.concatStrings (lib.mapAttrsToList formatVar final-env);
+      content = if body == "" then
+        ""
+      else ''
+        ${utils.ansiColor "λ environment" "purple" "bold"}
+        ${body}
+      '';
+    in content;
 
-      formatGroup = group: scripts:
-        let
-          formatScript = name: script: ''
-            — ${utils.ansiBold name} ∷ ${script.description or ""}
-          '';
-          formatted-group = lib.concatStrings (lib.mapAttrsToList formatScript scripts);
-        in
-        ''
-          ${utils.ansiColor "λ ${group}" "purple" "bold"}
-          ${formatted-group}
-        '';
+    content = lib.optionalString (formatted-env != "") formatted-env
+      + "${formatted-script-groups}";
 
-      formatted-script-groups =
-        let groups = partitionScriptsByGroup all-scripts;
-        in lib.concatStrings (lib.mapAttrsToList formatGroup groups);
-
-      formatted-env =
-        let
-          internal-vars = [
-            "NIX_GHC_LIBDIR"
-            "PKG_CONFIG_PATH"
-            "CABAL_CONFIG"
-            "LOCALE_ARCHIVE"
-          ];
-          shell-env = utils.getAttrWithDefault "env" { } mkShell-IN;
-          final-env = removeAttrs shell-env internal-vars;
-          formatVar = var: val: ''
-            — ${utils.ansiBold var} ∷ ${val}
-          '';
-          body = lib.concatStrings (lib.mapAttrsToList formatVar final-env);
-          content = if body == "" then "" else ''
-            ${utils.ansiColor "λ environment" "purple" "bold"}
-            ${body}
-          '';
-        in
-        content;
-
-      content =
-        lib.optionalString (formatted-env != "") formatted-env +
-        "${formatted-script-groups}";
-
-      script = {
-        group = "general";
-        description = "Print this message";
-        exec = ''
-          echo
-          printf "${content}"'';
-      };
-    in
-    script;
-
+    script = {
+      group = "general";
+      description = "Print this message";
+      exec = ''
+        echo
+        printf "${content}"'';
+    };
+  in script;
 
   utility-scripts = { inherit info list-flake-outputs; };
 
-in
-
-utility-scripts
+in utility-scripts

@@ -63,7 +63,7 @@
             shellcheck.enable = true;
             prettier.enable = true;
             editorconfig-checker.enable = true;
-            nixfmt.enable = true;
+            nixfmt-classic.enable = true;
             optipng.enable = true;
             purs-tidy.enable = true;
             rustfmt.enable = true;
@@ -161,7 +161,7 @@
             [ pkgs.jq pkgs.github-cli pkgs.python39 pkgs.nix-prefetch-github ];
           preCommit = {
             editorconfig-checker.enable = true;
-            nixfmt.enable = true;
+            nixfmt-classic.enable = true;
             rustfmt.enable = true;
           };
           scripts.render-iogx-api-reference = {

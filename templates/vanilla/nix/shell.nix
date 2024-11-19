@@ -41,7 +41,7 @@ lib.iogx.mkShell {
     # shellcheck = null;
     # prettier = null;
     # editorconfig-checker = null;
-    # nixfmt = null;
+    # nixfmt-classic = null;
     # optipng = null;
     # purs-tidy = null;
   };
@@ -61,8 +61,8 @@ lib.iogx.mkShell {
   #   prettier.extraOptions = "";
   #   editorconfig-checker.enable = false;
   #   editorconfig-checker.extraOptions = "";
-  #   nixfmt.enable = false;
-  #   nixfmt.extraOptions = "";
+  #   nixfmt-classic.enable = false;
+  #   nixfmt-classic.extraOptions = "";
   #   optipng.enable = false;
   #   optipng.extraOptions = "";
   #   purs-tidy.enable = false;

@@ -245,11 +245,11 @@ let
         '';
       };
 
-      nixfmt = l.mkOption {
+      nixfmt-classic = l.mkOption {
         type = l.types.nullOr l.types.package;
         default = null;
         description = ''
-          A package that provides the `nixfmt` executable.
+          A package that provides the `nixfmt-classic` executable.
 
           If unset or `null`, the most recent version available will be used.
         '';
@@ -257,7 +257,7 @@ let
           # shell.nix 
           { repoRoot, inputs, pkgs, lib, system }:
           lib.iogx.mkShell {
-            tools.nixfmt = repoRoot.nix.patched-nixfmt;
+            tools.nixfmt-classic = repoRoot.nix.patched-nixfmt-classic;
           }
         '';
       };
@@ -594,7 +594,7 @@ let
           - `shellcheck`
           - `prettier`
           - `editorconfig-checker`
-          - `nixfmt`
+          - `nixfmt-classic`
           - `optipng`
           - `fourmolu`
           - `hlint`
@@ -635,8 +635,8 @@ let
               editorconfig-checker.enable = false;
               editorconfig-checker.extraOptions = "";
 
-              nixfmt.enable = false;
-              nixfmt.extraOptions = "";
+              nixfmt-classic.enable = false;
+              nixfmt-classic.extraOptions = "";
 
               optipng.enable = false;
               optipng.extraOptions = "";

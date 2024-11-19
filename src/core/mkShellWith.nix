@@ -61,7 +61,7 @@ let
     shellcheck = pkgs.shellcheck;
     prettier = pkgs.nodePackages.prettier;
     editorconfig-checker = pkgs.editorconfig-checker;
-    nixfmt = pkgs.nixfmt-classic;
+    nixfmt-classic = pkgs.nixfmt-classic;
     optipng = pkgs.optipng;
     purs-tidy = purescript.purs-tidy;
     rustfmt = pkgs.rustfmt;
@@ -83,7 +83,7 @@ let
     shellcheck = getTool "shellcheck";
     prettier = getTool "prettier";
     editorconfig-checker = getTool "editorconfig-checker";
-    nixfmt = getTool "nixfmt";
+    nixfmt-classic = getTool "nixfmt-classic";
     optipng = getTool "optipng";
     purs-tidy = getTool "purs-tidy";
     rustfmt = getTool "rustfmt";
@@ -101,8 +101,10 @@ let
     else
       "";
 
-    entry = lib.getExe' package name + " "
-      + utils.getAttrWithDefault "options" "" hook;
+    # TODO once nixfmt-classic has resolved naming conflicts, we can remove this `if` expression.
+    entry =
+      lib.getExe' package (if name == "nixfmt-classic" then "nixfmt" else name)
+      + " " + utils.getAttrWithDefault "options" "" hook;
   };
 
   builtin-pre-commit-hooks = lib.mapAttrs mkBuiltinPreCommitHook {
@@ -132,7 +134,7 @@ let
 
     editorconfig-checker = { options = "-config .editorconfig"; };
 
-    nixfmt = { include = [ "nix" ]; };
+    nixfmt-classic = { include = [ "nix" ]; };
 
     optipng = { include = [ "png" ]; };
 

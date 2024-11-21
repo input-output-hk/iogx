@@ -15,8 +15,20 @@ let
     name = "read-the-docs-site";
 
     src = lib.sourceFilesBySuffices
-      (user-inputs.self + "/${readTheDocs.siteFolder}")
-      [ ".py" ".rst" ".md" ".hs" ".png" ".svg" ".bib" ".csv" ".css" ".html" ".txt" ".json" ];
+      (user-inputs.self + "/${readTheDocs.siteFolder}") [
+        ".py"
+        ".rst"
+        ".md"
+        ".hs"
+        ".png"
+        ".svg"
+        ".bib"
+        ".csv"
+        ".css"
+        ".html"
+        ".txt"
+        ".json"
+      ];
 
     buildInputs = [
       readTheDocs.sphinxToolchain
@@ -36,12 +48,9 @@ let
     '';
   };
 
-
   dummy-site = pkgs.runCommand "dummy-read-the-docs-site" { } ''
     mkdir -p $out
     echo "This is a dummy read-the-docs site." > $out/index.html
   '';
 
-in
-
-if readTheDocs.enable then site else dummy-site
+in if readTheDocs.enable then site else dummy-site

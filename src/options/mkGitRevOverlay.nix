@@ -1,2 +1,1 @@
-iogx-inputs:
-{ }
+iogx-inputs: { }

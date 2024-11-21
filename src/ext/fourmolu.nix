@@ -9,11 +9,8 @@ let
     version = "0.16.2.0";
     compiler-nix-name = "ghc982";
 
-    modules = [{
-      packages.fourmolu.components.exes.fourmolu.dontStrip = false;
-    }];
+    modules =
+      [{ packages.fourmolu.components.exes.fourmolu.dontStrip = false; }];
   };
 
-in
-
-project.hsPkgs.fourmolu.components.exes.fourmolu
+in project.hsPkgs.fourmolu.components.exes.fourmolu

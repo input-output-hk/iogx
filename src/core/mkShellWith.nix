@@ -12,7 +12,6 @@ let
 
   utils = lib.iogx.utils;
 
-
   evaluated-shell-module = lib.evalModules {
     modules = [{
       options = lib.iogx.options;
@@ -20,44 +19,41 @@ let
     }];
   };
 
-
   shell' = evaluated-shell-module.config."mkShell.<in>";
 
-
   shell = lib.recursiveUpdate shell' {
-    prompt =
-      if shell'.prompt == null
-      then "\n\\[\\033[1;32m\\][${shell'.name}:\\w]\\$\\[\\033[0m\\] "
-      else shell'.prompt;
+    prompt = if shell'.prompt == null then ''
 
-    welcomeMessage =
-      if shell'.welcomeMessage == null
-      then "🤟 \\033[1;31mWelcome to ${shell'.name}\\033[0m 🤟"
-      else shell'.welcomeMessage;
+      \[\033[1;32m\][${shell'.name}:\w]\$\[\033[0m\] '' else
+      shell'.prompt;
+
+    welcomeMessage = if shell'.welcomeMessage == null then
+      "🤟 \\033[1;31mWelcome to ${shell'.name}\\033[0m 🤟"
+    else
+      shell'.welcomeMessage;
   };
 
-
-  ghc =
-    if shell.tools.haskellCompilerVersion == null
-    then "ghc8107"
-    else shell.tools.haskellCompilerVersion;
-
+  ghc = if shell.tools.haskellCompilerVersion == null then
+    "ghc8107"
+  else
+    shell.tools.haskellCompilerVersion;
 
   hls = repoRoot.src.ext.haskell-language-server-project ghc;
 
-
   purescript = pkgs.callPackage iogx-inputs.easy-purescript-nix { };
-
 
   default-tools = {
     cabal-install = repoRoot.src.ext.cabal-install ghc;
-    haskell-language-server = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
-    haskell-language-server-wrapper = hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
+    haskell-language-server =
+      hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server;
+    haskell-language-server-wrapper =
+      hls.hsPkgs.haskell-language-server.components.exes.haskell-language-server-wrapper;
 
     # When using mkHaskellProject, this will be overriden by the ghcWithPackages provided by haskell.nix's shell.
     ghc = hls.pkg-set.config.ghc.package;
 
-    stylish-haskell = hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
+    stylish-haskell =
+      hls.hsPkgs.stylish-haskell.components.exes.stylish-haskell;
     hlint = hls.hsPkgs.hlint.components.exes.hlint;
     cabal-fmt = repoRoot.src.ext.cabal-fmt;
     fourmolu = repoRoot.src.ext.fourmolu;
@@ -65,18 +61,17 @@ let
     shellcheck = pkgs.shellcheck;
     prettier = pkgs.nodePackages.prettier;
     editorconfig-checker = pkgs.editorconfig-checker;
-    nixpkgs-fmt = repoRoot.src.ext.nixpkgs-fmt;
+    nixfmt-classic = pkgs.nixfmt-classic;
     optipng = pkgs.optipng;
     purs-tidy = purescript.purs-tidy;
     rustfmt = pkgs.rustfmt;
   };
 
-
   getTool = name:
-    if utils.getAttrWithDefault name null shell.tools == null
-    then default-tools.${name}
-    else shell.tools.${name};
-
+    if utils.getAttrWithDefault name null shell.tools == null then
+      default-tools.${name}
+    else
+      shell.tools.${name};
 
   shell-tools = {
     ghc = getTool "ghc";
@@ -88,7 +83,7 @@ let
     shellcheck = getTool "shellcheck";
     prettier = getTool "prettier";
     editorconfig-checker = getTool "editorconfig-checker";
-    nixpkgs-fmt = getTool "nixpkgs-fmt";
+    nixfmt-classic = getTool "nixfmt-classic";
     optipng = getTool "optipng";
     purs-tidy = getTool "purs-tidy";
     rustfmt = getTool "rustfmt";
@@ -96,23 +91,21 @@ let
     haskell-language-server-wrapper = getTool "haskell-language-server-wrapper";
   };
 
-
   mkBuiltinPreCommitHook = name: hook: rec {
     package = shell-tools.${name};
 
     pass_filenames = true;
 
-    files =
-      if hook ? include
-      then "\\.(${lib.concatStringsSep "|" hook.include})$"
-      else "";
+    files = if hook ? include then
+      "\\.(${lib.concatStringsSep "|" hook.include})$"
+    else
+      "";
 
+    # TODO once nixfmt-classic has resolved naming conflicts, we can remove this `if` expression.
     entry =
-      lib.getExe' package name +
-      " " +
-      utils.getAttrWithDefault "options" "" hook;
+      lib.getExe' package (if name == "nixfmt-classic" then "nixfmt" else name)
+      + " " + utils.getAttrWithDefault "options" "" hook;
   };
-
 
   builtin-pre-commit-hooks = lib.mapAttrs mkBuiltinPreCommitHook {
     cabal-fmt = {
@@ -135,36 +128,23 @@ let
       include = [ "hs" "lhs" ];
     };
 
-    shellcheck = {
-      include = [ "sh" ];
-    };
+    shellcheck = { include = [ "sh" ]; };
 
-    prettier = {
-      include = [ "ts" "js" "css" "html" ];
-    };
+    prettier = { include = [ "ts" "js" "css" "html" ]; };
 
-    editorconfig-checker = {
-      options = "-config .editorconfig";
-    };
+    editorconfig-checker = { options = "-config .editorconfig"; };
 
-    nixpkgs-fmt = {
-      include = [ "nix" ];
-    };
+    nixfmt-classic = { include = [ "nix" ]; };
 
-    optipng = {
-      include = [ "png" ];
-    };
+    optipng = { include = [ "png" ]; };
 
     purs-tidy = {
       options = "format-in-place";
       include = [ "purs" ];
     };
 
-    rustfmt = {
-      include = [ "rs" ];
-    };
+    rustfmt = { include = [ "rs" ]; };
   };
-
 
   # Note that this is a bit of a hack, this attrses is a valid pre-commit-hook 
   # minus extra fields "extraOptions", "package", which 
@@ -173,10 +153,8 @@ let
   mkAugmentedPreCommitHook = name: hook: {
     package = utils.getAttrWithDefault "package" null hook;
 
-    entry =
-      utils.getAttrWithDefault "entry" "" hook +
-      " " +
-      utils.getAttrWithDefault "extraOptions" "" hook;
+    entry = utils.getAttrWithDefault "entry" "" hook + " "
+      + utils.getAttrWithDefault "extraOptions" "" hook;
 
     enable = utils.getAttrWithDefault "enable" false hook;
     name = utils.getAttrWithDefault "name" name hook;
@@ -187,46 +165,37 @@ let
     pass_filenames = utils.getAttrWithDefault "pass_filenames" false hook;
   };
 
+  augmented-pre-commit-hooks = lib.mapAttrs mkAugmentedPreCommitHook
+    (lib.recursiveUpdate builtin-pre-commit-hooks shell.preCommit);
 
-  augmented-pre-commit-hooks =
-    lib.mapAttrs mkAugmentedPreCommitHook
-      (lib.recursiveUpdate builtin-pre-commit-hooks shell.preCommit);
+  toolchain-profile = let
+    should-include-haskell-tools = shell.tools.haskellCompilerVersion != null
+      || augmented-pre-commit-hooks.cabal-fmt.enable
+      || augmented-pre-commit-hooks.stylish-haskell.enable
+      || augmented-pre-commit-hooks.fourmolu.enable
+      || augmented-pre-commit-hooks.hlint.enable;
 
+    haskell-tools = [
+      shell-tools.haskell-language-server
+      shell-tools.haskell-language-server-wrapper
+      shell-tools.cabal-install
+      shell-tools.cabal-fmt
+      shell-tools.stylish-haskell
+      shell-tools.fourmolu
+      shell-tools.hlint
+      shell-tools.ghc
+    ];
 
-  toolchain-profile =
-    let
-      should-include-haskell-tools =
-        shell.tools.haskellCompilerVersion != null ||
-        augmented-pre-commit-hooks.cabal-fmt.enable ||
-        augmented-pre-commit-hooks.stylish-haskell.enable ||
-        augmented-pre-commit-hooks.fourmolu.enable ||
-        augmented-pre-commit-hooks.hlint.enable;
+    pre-commit-packages =
+      let getPkg = _: hook: if hook.enable then hook.package else null;
+      in lib.mapAttrsToList getPkg augmented-pre-commit-hooks;
 
-      haskell-tools = [
-        shell-tools.haskell-language-server
-        shell-tools.haskell-language-server-wrapper
-        shell-tools.cabal-install
-        shell-tools.cabal-fmt
-        shell-tools.stylish-haskell
-        shell-tools.fourmolu
-        shell-tools.hlint
-        shell-tools.ghc
-      ];
+    packages = pre-commit-packages
+      ++ lib.optional should-include-haskell-tools haskell-tools;
+  in { inherit packages; };
 
-      pre-commit-packages =
-        let getPkg = _: hook: if hook.enable then hook.package else null;
-        in lib.mapAttrsToList getPkg augmented-pre-commit-hooks;
-
-      packages =
-        pre-commit-packages ++
-        lib.optional should-include-haskell-tools haskell-tools;
-    in
-    { inherit packages; };
-
-
-  toValidPreCommitHook = name: hook: lib.mkForce
-    (removeAttrs hook [ "extraOptions" "package" ]);
-
+  toValidPreCommitHook = name: hook:
+    lib.mkForce (removeAttrs hook [ "extraOptions" "package" ]);
 
   pre-commit-check = iogx-inputs.pre-commit-hooks-nix.lib.${system}.run {
     src = lib.cleanSource user-inputs.self;
@@ -234,19 +203,16 @@ let
     # options = {}; # TODO users might want to set this...
   };
 
-
   pre-commit-profile = {
     packages = [ pkgs.pre-commit ];
     shellHook = pre-commit-check.shellHook;
   };
 
-
   shell-as-shell-profile =
     removeAttrs shell [ "name" "prompt" "welcomeMessage" ];
 
-
   name-and-welcome-message-profile = {
-    shellHook = ''  
+    shellHook = ''
       export PS1="${shell.prompt}"
       echo 
       printf "${shell.welcomeMessage}"
@@ -256,64 +222,52 @@ let
     '';
   };
 
-
-  local-archive-profile.env.LOCALE_ARCHIVE = lib.optionalString
-    (pkgs.stdenv.hostPlatform.libc == "glibc")
+  local-archive-profile.env.LOCALE_ARCHIVE =
+    lib.optionalString (pkgs.stdenv.hostPlatform.libc == "glibc")
     ("${pkgs.glibcLocales}/lib/locale/locale-archive");
 
-
-  base-profile = repoRoot.src.core.mkMergedShellProfiles (
-    extra-shell-profiles ++
-    [
+  base-profile = repoRoot.src.core.mkMergedShellProfiles (extra-shell-profiles
+    ++ [
       pre-commit-profile
       shell-as-shell-profile
       local-archive-profile
       toolchain-profile
       name-and-welcome-message-profile
-    ]
-  );
-
+    ]);
 
   utility-scripts-profile = {
     scripts = repoRoot.src.core.mkShellUtilityScripts base-profile;
   };
-
 
   final-profile = repoRoot.src.core.mkMergedShellProfiles [
     base-profile
     utility-scripts-profile
   ];
 
-
-  final-scripts-as-packages =
-    let
-      removeDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
-      enabled-scripts = removeDisabled final-profile.scripts;
-      scriptToPackage = name: script: pkgs.writeShellScriptBin name "${script.exec}";
-    in
-    lib.mapAttrsToList scriptToPackage enabled-scripts;
-
+  final-scripts-as-packages = let
+    removeDisabled = lib.filterAttrs (_: { enable ? true, ... }: enable);
+    enabled-scripts = removeDisabled final-profile.scripts;
+    scriptToPackage = name: script:
+      pkgs.writeShellScriptBin name "${script.exec}";
+  in lib.mapAttrsToList scriptToPackage enabled-scripts;
 
   final-env-as-bash =
     let exportVar = key: val: ''export ${key}="${toString val}"'';
-    in lib.concatStringsSep "\n" (lib.mapAttrsToList exportVar final-profile.env);
-
+    in lib.concatStringsSep "\n"
+    (lib.mapAttrsToList exportVar final-profile.env);
 
   devShell' = pkgs.mkShell {
     name = shell.name;
     buildInputs = final-profile.packages ++ final-scripts-as-packages;
-    shellHook = ''  
+    shellHook = ''
       ${final-profile.shellHook}
       ${final-env-as-bash}
     '';
   };
-
 
   devShell = devShell' // {
     tools = shell-tools;
     inherit pre-commit-check;
   };
 
-in
-
-devShell
+in devShell

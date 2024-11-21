@@ -8,7 +8,6 @@ let
 
   link = x: utils.headerToMarkDownLink x x;
 
-
   mkFlake-IN-submodule = l.types.submodule {
     options = {
 
@@ -17,7 +16,9 @@ let
         description = ''
           Your flake inputs.
 
-          You almost certainly want to do `inherit inputs;` here (see the example in ${link "mkFlake"})
+          You almost certainly want to do `inherit inputs;` here (see the example in ${
+            link "mkFlake"
+          })
         '';
       };
 
@@ -30,14 +31,23 @@ let
       };
 
       systems = l.mkOption {
-        type = l.types.listOf (l.types.enum [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]);
+        type = l.types.listOf (l.types.enum [
+          "x86_64-linux"
+          "x86_64-darwin"
+          "aarch64-darwin"
+          "aarch64-linux"
+        ]);
         description = ''
           The systems you want to build for.
 
-          The ${link "mkFlake.<in>.outputs"} function will be called once for each system.
+          The ${
+            link "mkFlake.<in>.outputs"
+          } function will be called once for each system.
         '';
-        default = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
-        defaultText = l.literalExpression ''[ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]'';
+        default =
+          [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ];
+        defaultText = l.literalExpression ''
+          [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" "aarch64-linux" ]'';
       };
 
       outputs = l.mkOption {
@@ -66,7 +76,9 @@ let
           ]
         '';
         description = ''
-          A function that is called once for each system in ${link "mkFlake.<in>.systems"}.
+          A function that is called once for each system in ${
+            link "mkFlake.<in>.systems"
+          }.
 
           This is the most important option as it will determine your flake outputs.
 
@@ -140,7 +152,9 @@ let
 
           In the case of non-Nix files, internally IOGX calls `builtins.readFile` to read the contents of that file.
 
-          > **_NOTE:_** Any nix file that is referenced this way will also receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like ${link "mkFlake.<in>.outputs"}.
+          > **_NOTE:_** Any nix file that is referenced this way will also receive the attrset `{ repoRoot, inputs, pkgs, system, lib }`, just like ${
+            link "mkFlake.<in>.outputs"
+          }.
 
           Using the `repoRoot` argument is optional, but it has the advantage of not having to thread the standard arguments (especially `pkgs` and `inputs`) all over the place.
 
@@ -149,13 +163,13 @@ let
           Your flake inputs as defined in ${link "mkFlake.<in>.inputs"}.
 
           Note that these `inputs` have been de-systemized against the current system.
-          
+
           This means that you can use the following syntax:
           ```nix
           inputs.n2c.packages.nix2container
           inputs.self.packages.foo
           ```
-          
+
           In addition to the usual syntax which mentions `system` explicitely.
           ```nix 
           inputs.n2c.packages.x86_64-linux.nix2container
@@ -164,7 +178,9 @@ let
 
           #### `pkgs`
 
-          A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your ${link "mkFlake.<in>.systems"}, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
+          A `nixpkgs` instantiated against the current system (as found in `pkgs.stdenv.system`), for each of your ${
+            link "mkFlake.<in>.systems"
+          }, and overlaid with goodies from `haskell.nix` and `iohk-nix`. 
 
           A `nixpkgs` is also available at `inputs.nixpkgs.legacyPackages` but that should *not* be used because it doesn't have the required overlays.
 
@@ -177,7 +193,7 @@ let
           #### `lib`
 
           This is just `pkgs.lib` plus the `iogx` attrset, which contains library functions and utilities.
-          
+
           In here you will find the following: 
           ```nix 
           lib.iogx.mkShell {}
@@ -194,11 +210,15 @@ let
         description = ''
           A function that returns a flake-like attrset.
 
-          You can place additional flake outputs here, which will be recursively updated with the attrset from ${link "mkFlake.<in>.outputs"}.
+          You can place additional flake outputs here, which will be recursively updated with the attrset from ${
+            link "mkFlake.<in>.outputs"
+          }.
 
           This is a good place to put system-independent values like a `lib` attrset or pure Nix values.
 
-          Like ${link "mkFlake.<in>.outputs"}, this function takes an attrset as argument, containing both `repoRoot` and the original (non de-systemized) `inputs`.
+          Like ${
+            link "mkFlake.<in>.outputs"
+          }, this function takes an attrset as argument, containing both `repoRoot` and the original (non de-systemized) `inputs`.
 
           Note that if you use `repoRoot` to reference nix files in this context, the nix files must also be functions from an `{ repoRoot, inputs }` attrset.
         '';
@@ -221,7 +241,9 @@ let
       nixpkgsArgs = l.mkOption {
         type = l.types.attrs;
         description = ''
-          Internally, IOGX calls `import inputs.nixpkgs {}` for each of your ${link "mkFlake.<in>.systems"}.
+          Internally, IOGX calls `import inputs.nixpkgs {}` for each of your ${
+            link "mkFlake.<in>.systems"
+          }.
 
           Using `nixpkgsArgs` you can provide an additional `config` attrset and a list of `overlays` to be appended to nixpkgs.
         '';
@@ -260,7 +282,6 @@ let
     };
   };
 
-
   mkFlake-IN = l.mkOption {
     type = mkFlake-IN-submodule;
     description = ''
@@ -268,14 +289,12 @@ let
     '';
   };
 
-
   mkFlake-OUT = l.mkOption {
     type = l.types.raw;
     description = ''
       # Not Rendered In Docs
     '';
   };
-
 
   mkFlake = l.mkOption {
     type = utils.mkApiFuncOptionType mkFlake-IN.type mkFlake-OUT.type;
@@ -299,9 +318,7 @@ let
     '';
   };
 
-in
-
-{
+in {
   inherit mkFlake;
   "mkFlake.<in>" = mkFlake-IN;
 }

@@ -11,17 +11,12 @@ let
     }];
   };
 
-
   args = evaluated-modules.config."mkGitRevProjectOverlay.<in>";
 
-
   overlay = _: prev: {
-    hsPkgs = prev.pkgs.pkgsHostTarget.setGitRevForPaths
-      prev.pkgs.gitrev
-      args.exePaths
+    hsPkgs =
+      prev.pkgs.pkgsHostTarget.setGitRevForPaths prev.pkgs.gitrev args.exePaths
       prev.hsPkgs;
   };
 
-in
-
-args.project.appendOverlays [ overlay ]
+in args.project.appendOverlays [ overlay ]

@@ -9,11 +9,7 @@ let
 
   shell-profile = {
 
-    packages = [
-      repoRoot.src.ext.sphinx-toolchain
-      pkgs.python3
-    ];
-
+    packages = [ repoRoot.src.ext.sphinx-toolchain pkgs.python3 ];
 
     scripts.develop-rtd-site = {
       description = "Develop your site live in ${readTheDocs.siteFolder}";
@@ -25,7 +21,6 @@ let
       '';
     };
 
-
     scripts.build-rtd-site = {
       description = "Build your site in ${readTheDocs.siteFolder}";
       group = "read-the-docs";
@@ -35,7 +30,6 @@ let
         sphinx-build -j 4 -n "$doc" "$doc/_build"
       '';
     };
-
 
     scripts.serve-rtd-site = {
       description = "Build with nix and then serve your site at localhost:8002";
@@ -47,8 +41,5 @@ let
     };
   };
 
-in
-
-if readTheDocs.enable then shell-profile else { } 
-
+in if readTheDocs.enable then shell-profile else { }
 

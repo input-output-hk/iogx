@@ -55,9 +55,7 @@ let
     };
   };
 
-  mkContainerFromCabalExe-OUT-submodule = l.types.submodule {
-    options = { };
-  };
+  mkContainerFromCabalExe-OUT-submodule = l.types.submodule { options = { }; };
 
   mkContainerFromCabalExe-IN = l.mkOption {
     type = mkContainerFromCabalExe-IN-submodule;
@@ -84,7 +82,8 @@ let
       In this document:
         - Options for the input attrset are prefixed by `mkContainerFromCabalExe.<in>`.
     '';
-    type = utils.mkApiFuncOptionType mkContainerFromCabalExe-IN.type mkContainerFromCabalExe-OUT.type;
+    type = utils.mkApiFuncOptionType mkContainerFromCabalExe-IN.type
+      mkContainerFromCabalExe-OUT.type;
     example = l.literalExpression ''
       # nix/containers.nix
       { repoRoot, inputs, pkgs, lib, system }:
@@ -114,8 +113,7 @@ let
       ]
     '';
   };
-in
-{
+in {
   inherit mkContainerFromCabalExe;
   "mkContainerFromCabalExe.<in>" = mkContainerFromCabalExe-IN;
 }

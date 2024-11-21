@@ -4,11 +4,8 @@ let
 
   project = repoRoot.nix.project;
 
-in
-
-[
+in [
   (
     # Docs for project.flake: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkhaskellprojectoutflake
-    project.flake
-  )
+    project.flake)
 ]

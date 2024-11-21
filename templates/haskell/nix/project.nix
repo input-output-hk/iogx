@@ -7,8 +7,7 @@ let
       # When `isCross` is `true`, it means that we are cross-compiling the project.
       # WARNING You must use the `pkgs` coming from cabalProject' for `isCross` to work.
       isCross = pkgs.stdenv.hostPlatform != pkgs.stdenv.buildPlatform;
-    in
-    {
+    in {
       src = ../.;
 
       shell.withHoogle = false;
@@ -36,20 +35,10 @@ let
       #   compiler-nix-name = "ghc8107";
       # };
 
-      modules =
-        [
-          {
-            packages = { };
-          }
-          {
-            packages = { };
-          }
-        ];
+      modules = [ { packages = { }; } { packages = { }; } ];
     });
 
-
   cabalProject = cabalProject'.appendOverlays [ ];
-
 
   # Docs for mkHaskellProject: https://github.com/input-output-hk/iogx/blob/main/doc/api.md#mkhaskellproject
   project = lib.iogx.mkHaskellProject {
@@ -74,6 +63,4 @@ let
     # };
   };
 
-in
-
-project
+in project

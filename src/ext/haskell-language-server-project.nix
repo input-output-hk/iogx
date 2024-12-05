@@ -19,7 +19,7 @@ let
     sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
     cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
     configureArgs = "--disable-benchmarks";
-  } else if lib.hasInfix "ghc98" ghc then {
+  } else if lib.hasInfix "ghc982" ghc then {
     rev = "2.8.0.0";
     sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
     cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
@@ -32,9 +32,9 @@ let
     hls-fallback = repoRoot.src.ext.haskell-language-server-project "ghc98";
   } else
     lib.trace ''
-      Unsupported GHC version ${ghc}, defaulting to ghc983 and haskell-language-server v2.8.0.0
+      Unsupported GHC version ${ghc}, defaulting to ghc982 and haskell-language-server v2.8.0.0
     '' {
-      ghc = "ghc983";
+      ghc = "ghc982";
       rev = "2.8.0.0";
       sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
       cabalProjectLocal =

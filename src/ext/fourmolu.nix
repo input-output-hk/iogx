@@ -7,7 +7,7 @@ let
   project = pkgs.haskell-nix.hackage-project {
     name = "fourmolu";
     version = "0.16.2.0";
-    compiler-nix-name = "ghc983";
+    compiler-nix-name = "ghc982";
 
     modules =
       [{ packages.fourmolu.components.exes.fourmolu.dontStrip = false; }];

@@ -19,7 +19,9 @@ let
     sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
     cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
     configureArgs = "--disable-benchmarks";
-  } else if lib.hasInfix "ghc98" ghc then {
+  }
+  # TODO replace with ghc98 when HLS supports ghc983
+  else if lib.hasInfix "ghc982" ghc then {
     rev = "2.8.0.0";
     sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
     cabalProjectLocal = "constraints: stylish-haskell ^>= 0.14, hlint ^>= 3.8";
@@ -32,9 +34,9 @@ let
     hls-fallback = repoRoot.src.ext.haskell-language-server-project "ghc98";
   } else
     lib.trace ''
-      Unsupported GHC version ${ghc}, defaulting to ghc98 and haskell-language-server v2.8.0.0
+      Unsupported GHC version ${ghc}, defaulting to ghc982 and haskell-language-server v2.8.0.0
     '' {
-      ghc = "ghc98";
+      ghc = "ghc982";
       rev = "2.8.0.0";
       sha256 = "sha256-Vi/iUt2pWyUJlo9VrYgTcbRviWE0cFO6rmGi9rmALw0=";
       cabalProjectLocal =
@@ -64,7 +66,7 @@ let
       inherit (config) rev sha256;
     };
 
-    compiler-nix-name = ghc;
+    compiler-nix-name = config.ghc or ghc;
 
     sha256map = {
       "https://github.com/pepeiborra/ekg-json"."7a0af7a8fd38045fd15fb13445bdcc7085325460" =

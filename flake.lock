@@ -3,11 +3,11 @@
     "CHaP": {
       "flake": false,
       "locked": {
-        "lastModified": 1734943824,
-        "narHash": "sha256-kcyysnPJbjdJOmtTldC08xj2Ttp2XcY6ecbYOYdwkmY=",
+        "lastModified": 1735999756,
+        "narHash": "sha256-fJeEZoyPrHi4ylsCm4CXypicNf2mfPbtvUfJuFcOllM=",
         "owner": "IntersectMBO",
         "repo": "cardano-haskell-packages",
-        "rev": "6ec767f1afd771816c5f3b383d0e1d3b577d72fe",
+        "rev": "db6a4bdb6b83af17711a23e45266ab031894d788",
         "type": "github"
       },
       "original": {
@@ -278,11 +278,11 @@
     "hackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1735518579,
-        "narHash": "sha256-l06UfEBohBlezqcFV19mBOML9zU8/gjAT3eIYfzbUtQ=",
+        "lastModified": 1736123393,
+        "narHash": "sha256-EozcL63uA8xm7vha2moVB+PU3EXfRhn0ENouIXHUYAM=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "2cd96c7540d0d3b68603c655d3eed5b9a1b34dee",
+        "rev": "fdd96b168694d616cb44e43f388c38ba2311853b",
         "type": "github"
       },
       "original": {
@@ -333,11 +333,11 @@
         "stackage": "stackage"
       },
       "locked": {
-        "lastModified": 1735519876,
-        "narHash": "sha256-fcPihxTs6QGRExH4VcWOEJN4KW+m+cKawUO5PlOcXg8=",
+        "lastModified": 1736124704,
+        "narHash": "sha256-jyNRN/TkXzYXRP31GkzjbTJku6jTd234PCFPHccINUU=",
         "owner": "input-output-hk",
         "repo": "haskell.nix",
-        "rev": "f5146532ce6d94c2d962f988b123f4f01b92e3ba",
+        "rev": "62ead8ba5a359857a655ec7f617d911cdc555542",
         "type": "github"
       },
       "original": {
@@ -827,22 +827,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-stable_2": {
-      "locked": {
-        "lastModified": 1730741070,
-        "narHash": "sha256-edm8WG19kWozJ/GqyYx2VjW99EdhjKwbY3ZwdlPAAlo=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "d063c1dd113c91ab27959ba540c0d9753409edf3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-24.05",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1729980323,
@@ -911,15 +895,14 @@
       "inputs": {
         "flake-compat": "flake-compat_3",
         "gitignore": "gitignore",
-        "nixpkgs": "nixpkgs_3",
-        "nixpkgs-stable": "nixpkgs-stable_2"
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1734797603,
-        "narHash": "sha256-ulZN7ps8nBV31SE+dwkDvKIzvN6hroRY8sYOT0w+E28=",
+        "lastModified": 1735882644,
+        "narHash": "sha256-3FZAG+pGt3OElQjesCAWeMkQ7C/nB1oTHLRQ8ceP110=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "f0f0dc4920a903c3e08f5bdb9246bb572fcae498",
+        "rev": "a5a961387e75ae44cc20f0a57ae463da5e959656",
         "type": "github"
       },
       "original": {
@@ -1000,11 +983,11 @@
     "stackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1735517525,
-        "narHash": "sha256-96Pwuq+VSZwR1zx7IzDXLA9JVoVu5g3cpbxKC8sc33I=",
+        "lastModified": 1736122324,
+        "narHash": "sha256-mDe8PIQBXkRDYKOZYWGY04HUUg0Y5FAQ623IPem7ID8=",
         "owner": "input-output-hk",
         "repo": "stackage.nix",
-        "rev": "8bf7c1eaec50380d70064c87704f599fa9d593ad",
+        "rev": "39c19fbe7f30dce04812c988a576872f20073815",
         "type": "github"
       },
       "original": {

@@ -279,11 +279,11 @@
     "hackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1734913758,
-        "narHash": "sha256-7Vw3r2AqpuepDLcOC38Lml92R99qyeBtgjSWNjnfRJo=",
+        "lastModified": 1735518579,
+        "narHash": "sha256-l06UfEBohBlezqcFV19mBOML9zU8/gjAT3eIYfzbUtQ=",
         "owner": "input-output-hk",
         "repo": "hackage.nix",
-        "rev": "d20abc260d4a72a86003a7a9a80102cedd665e5b",
+        "rev": "2cd96c7540d0d3b68603c655d3eed5b9a1b34dee",
         "type": "github"
       },
       "original": {
@@ -336,11 +336,11 @@
         "stackage": "stackage"
       },
       "locked": {
-        "lastModified": 1734915076,
-        "narHash": "sha256-DIbdEE63uw36dthOwiFCrzx+xNB86cWtU5P40qS40KQ=",
+        "lastModified": 1735519876,
+        "narHash": "sha256-fcPihxTs6QGRExH4VcWOEJN4KW+m+cKawUO5PlOcXg8=",
         "owner": "input-output-hk",
         "repo": "haskell.nix",
-        "rev": "55b597cbba1d472959b6b9ce9a0881fad1a9b297",
+        "rev": "f5146532ce6d94c2d962f988b123f4f01b92e3ba",
         "type": "github"
       },
       "original": {
@@ -579,11 +579,11 @@
         "sphinxcontrib-haddock": "sphinxcontrib-haddock"
       },
       "locked": {
-        "lastModified": 1734948326,
-        "narHash": "sha256-knOZkoMlILaTTfC8Kvb+gRywI3qb/+3pOecQm0Zah+U=",
+        "lastModified": 1735551938,
+        "narHash": "sha256-nf7TckZBJY2XqgJE60+cGLZnqSEK+GMkjtOvNuQR3FI=",
         "owner": "input-output-hk",
         "repo": "iogx",
-        "rev": "8a14594d2f17be99ed86483e6692338c9504de18",
+        "rev": "63cc910a65942e2a1e744277ecb2b26c4dde3868",
         "type": "github"
       },
       "original": {
@@ -1024,11 +1024,11 @@
     "stackage": {
       "flake": false,
       "locked": {
-        "lastModified": 1734912711,
-        "narHash": "sha256-mmWbsVf9yDRY9p5qTP2hxT3G07QlTkyMEddc55egpB0=",
+        "lastModified": 1735517525,
+        "narHash": "sha256-96Pwuq+VSZwR1zx7IzDXLA9JVoVu5g3cpbxKC8sc33I=",
         "owner": "input-output-hk",
         "repo": "stackage.nix",
-        "rev": "62ffd13621d70ab96b583075918527880060b199",
+        "rev": "8bf7c1eaec50380d70064c87704f599fa9d593ad",
         "type": "github"
       },
       "original": {

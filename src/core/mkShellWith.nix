@@ -34,7 +34,7 @@ let
   };
 
   ghc = if shell.tools.haskellCompilerVersion == null then
-    "ghc8107"
+    "ghc96"
   else
     shell.tools.haskellCompilerVersion;
 

@@ -7,7 +7,7 @@ let
 
     version = "0.1.12";
 
-    compiler-nix-name = "ghc92";
+    compiler-nix-name = "ghc96";
 
     # Cabal is a lib library, so haskell.nix would normally use the one coming
     # from the compiler-nix-name (currently 3.2). However cabal-fmt depends on

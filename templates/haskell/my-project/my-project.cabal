@@ -1,4 +1,4 @@
-cabal-version: 3.0
+cabal-version: 3.4
 name:          my-project
 version:       0.1.0.0
 license:       Apache-2.0
@@ -11,8 +11,9 @@ library
     , base                         >=4.9   && <5
 
 executable exec
-  main-is:        Exec.hs
+  main-is:        App.hs
   hs-source-dirs: app
+  ghc-options:    -main-is App
   build-depends:
     , base                     >=4.9   && <5
     , my-project
@@ -21,6 +22,7 @@ benchmark bench
   type:           exitcode-stdio-1.0
   main-is:        Bench.hs
   hs-source-dirs: bench
+  ghc-options:    -main-is bench
   build-depends:
     , base >=4.9     && <5
     , my-project
@@ -29,6 +31,7 @@ test-suite test
   type:           exitcode-stdio-1.0
   main-is:        Test.hs
   hs-source-dirs: test
+  ghc-options:    -main-is test
   build-depends:
     , base >=4.9     && <5
     , my-project

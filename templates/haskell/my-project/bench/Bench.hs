@@ -1,4 +1,4 @@
-module Test where 
+module Bench where 
 
 import Lib (helloWorld)
 

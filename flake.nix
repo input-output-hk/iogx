@@ -25,17 +25,19 @@
           '';
         };
 
-        hydraJobs = {
+        hydraJobs = rec {
 
           templates.haskell = 
             let
               flake = (import inputs.flake-compat { src = ./templates/haskell; }).defaultNix;
             in
-            rec {
+            {
               devShells = flake.devShells.${system};
               packages = flake.packages.${system};
               hydraJobs = flake.hydraJobs.${system};
             };
+
+          required = templates.haskell.hydraJobs.required;
         };
 
         flake = rec {

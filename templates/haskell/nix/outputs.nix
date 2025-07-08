@@ -17,7 +17,7 @@ let
     default = ghc966; 
     ghc8107 = mkShell "ghc8107"; 
     ghc966 = mkShell "ghc966"; 
-    ghc983 = mkShell "ghc983"; 
+    ghc984 = mkShell "ghc984"; 
     ghc9102 = mkShell "ghc9102"; 
     ghc9122 = mkShell "ghc9122"; 
   };
@@ -27,7 +27,7 @@ let
   defaultHydraJobs = { 
     ghc8107 = projectFlake.hydraJobs.ghc8107;
     ghc966 = projectFlake.hydraJobs.ghc966;
-    ghc983 = projectFlake.hydraJobs.ghc983;
+    ghc984 = projectFlake.hydraJobs.ghc984;
     ghc9102 = projectFlake.hydraJobs.ghc9102;
     ghc9122 = projectFlake.hydraJobs.ghc9122;
     inherit packages; 

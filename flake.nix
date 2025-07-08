@@ -35,10 +35,6 @@
               devShells = flake.devShells.${system};
               packages = flake.packages.${system};
               hydraJobs = flake.hydraJobs.${system};
-              required = import ./templates/haskell/nix/utils.nix {
-                inherit pkgs;
-                lib = inputs.nixpkgs.lib;
-              }.makeHydraRequiredJob flake.hydraJobs.${system};
             };
         };
 

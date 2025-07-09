@@ -1,5 +1,3 @@
-module Bench where 
-
 import Lib (helloWorld)
 
 main :: IO ()

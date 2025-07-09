@@ -3,13 +3,6 @@
 let
 
   allTools = {
-    "ghc8107".cabal                   = project.projectVariants.ghc8107.tool "cabal" "latest";
-    "ghc8107".cabal-fmt               = project.projectVariants.ghc8107.tool "cabal-fmt" "latest";
-    "ghc8107".haskell-language-server = project.projectVariants.ghc8107.tool "haskell-language-server" "latest";
-    "ghc8107".stylish-haskell         = project.projectVariants.ghc8107.tool "stylish-haskell" "latest";
-    "ghc8107".fourmolu                = project.projectVariants.ghc8107.tool "fourmolu" "latest";
-    "ghc8107".hlint                   = project.projectVariants.ghc8107.tool "hlint" "latest";
-
     "ghc966".cabal                    = project.projectVariants.ghc966.tool "cabal" "latest";
     "ghc966".cabal-fmt                = project.projectVariants.ghc966.tool "cabal-fmt" "latest";
     "ghc966".haskell-language-server  = project.projectVariants.ghc966.tool "haskell-language-server" "latest";

@@ -1,5 +1,3 @@
-module Test where 
-
 import Lib (helloWorld)
 
 main :: IO ()

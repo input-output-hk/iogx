@@ -15,7 +15,6 @@ let
 
   devShells = rec {
     default = ghc966; 
-    ghc8107 = mkShell "ghc8107"; 
     ghc966 = mkShell "ghc966"; 
     ghc984 = mkShell "ghc984"; 
     ghc9102 = mkShell "ghc9102"; 
@@ -25,7 +24,6 @@ let
   projectFlake = project.flake {};
 
   defaultHydraJobs = { 
-    ghc8107 = projectFlake.hydraJobs.ghc8107;
     ghc966 = projectFlake.hydraJobs.ghc966;
     ghc984 = projectFlake.hydraJobs.ghc984;
     ghc9102 = projectFlake.hydraJobs.ghc9102;

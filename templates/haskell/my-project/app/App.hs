@@ -1,5 +1,3 @@
-module App where 
-
 import Lib (helloWorld)
 
 main :: IO ()

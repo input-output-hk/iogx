@@ -15,3 +15,6 @@ index-state:
 
 packages: 
   my-project 
+
+tests: true
+benchmarks: true

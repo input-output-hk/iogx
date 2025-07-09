@@ -13,7 +13,6 @@ library
 executable exec
   main-is:        App.hs
   hs-source-dirs: app
-  ghc-options:    -main-is App
   build-depends:
     , base                     >=4.9   && <5
     , my-project
@@ -22,7 +21,6 @@ benchmark bench
   type:           exitcode-stdio-1.0
   main-is:        Bench.hs
   hs-source-dirs: bench
-  ghc-options:    -main-is bench
   build-depends:
     , base >=4.9     && <5
     , my-project
@@ -31,7 +29,6 @@ test-suite test
   type:           exitcode-stdio-1.0
   main-is:        Test.hs
   hs-source-dirs: test
-  ghc-options:    -main-is test
   build-depends:
     , base >=4.9     && <5
     , my-project

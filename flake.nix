@@ -39,20 +39,20 @@
 
           required = templates.haskell.hydraJobs.required;
         };
-
-        flake = rec {
-          templates.default = templates.haskell;
-
-          templates.haskell = {
-            path = ./templates/haskell;
-            description = "Flake Template for Haskell Projects";
-            welcomeText = ''
-              # Flake Template for Haskell Projects
-              Edit your cabal.project and run `nix develop` to enter the shell.
-            '';
-          };
-        };
-      });
+      } 
+  ) // { 
+    templates = rec {
+      default = haskell;
+      haskell = {
+        path = ./templates/haskell;
+        description = "Flake Template for Haskell Projects";
+        welcomeText = ''
+          # Flake Template for Haskell Projects
+          Edit your cabal.project and run `nix develop` to enter the shell.
+        '';
+      };
+    };
+  };
 
   nixConfig = {
     extra-substituters = [ 

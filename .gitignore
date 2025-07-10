@@ -1,3 +1,4 @@
 .trash
 .pre-commit-config.yaml
 result
+dist-newstyle

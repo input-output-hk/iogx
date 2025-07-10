@@ -1,5 +1,10 @@
 # Changelog for IOGX
 
+## 07 Jul 2025
+
+This repo is now a minimal Haskell project template using haskell.nix.
+It includes comments and tips, and sets up a full Haskell toolchain (all major GHC versions) — no API, just the Nix file skeleton.
+
 ## 19 Nov 2024
 
 - Removed now-archived `nixpkgs-fmt` in favor of `nixfmt-classic`. 

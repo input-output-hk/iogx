@@ -32,4 +32,3 @@ By default your `hydraJobs` will include every component in your Haskell project
 ### Easy Code Formatting <!-- omit in toc -->
  
 IOGX uses [`pre-commit-hooks`](https://github.com/cachix/pre-commit-hooks.nix) to format your source tree: hooks can be easily configured and are automatically run in CI.
-

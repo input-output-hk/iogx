@@ -24,9 +24,6 @@ jobs:
           cd "$GITHUB_WORKSPACE/templates/haskell"
           nix flake update --accept-flake-config
 
-          cd "$GITHUB_WORKSPACE/templates/vanilla"
-          nix flake update --accept-flake-config
-
           cd "$GITHUB_WORKSPACE"
           git add .
 

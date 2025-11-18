@@ -76,6 +76,7 @@ let
 
   commonPkgs = [
     tools.haskell-language-server
+    tools.haskell-language-server.package.components.exes.haskell-language-server-wrapper
     tools.stylish-haskell
     tools.fourmolu
     tools.cabal

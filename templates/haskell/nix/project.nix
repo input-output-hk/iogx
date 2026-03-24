@@ -8,12 +8,12 @@ let
     {
       name = "my-project";
 
-      compiler-nix-name = lib.mkDefault "ghc966";
+      compiler-nix-name = lib.mkDefault "ghc967";
 
       src = lib.cleanSource ../.;
 
       flake.variants = {
-        ghc966 = {}; # Alias for the default variant
+        ghc967 = {}; # Alias for the default variant
         ghc984.compiler-nix-name = "ghc984";
         ghc9102.compiler-nix-name = "ghc9102";
         ghc9122.compiler-nix-name = "ghc9122";
